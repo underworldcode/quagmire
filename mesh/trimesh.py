@@ -10,21 +10,6 @@ try: range = xrange
 except: pass
 
 
-class Triangulation(object):
-    """
-    An abstraction for the triangle python module <http://dzhelil.info/triangle/>
-    This class mimics the Qhull structure in SciPy.
-    """
-    def __init__(self, coords):
-        import triangle
-        self.points = np.array(coords)
-        self.npoints = len(coords)
-
-        d = dict(vertices=self.points)
-        tri = triangle.triangulate(d)
-        self.simplices = tri['triangles']
-
-
 class RecoverTriangles(object):
     def __init__(self, dm):
         sect = dm.getDefaultSection()
