@@ -6,6 +6,9 @@ from petsc4py import PETSc
 comm = MPI.COMM_WORLD
 from time import clock
 
+try: range = xrange
+except: pass
+
 
 class Triangulation(object):
     """
@@ -30,26 +33,14 @@ class RecoverTriangles(object):
         self.points = dm.getCoordinatesLocal().array.reshape(-1,2)
         self.npoints = self.points.shape[0]
 
-        # Find cells, edges, vertices
-
-        pStart, pEnd = dm.getChart()
-        pRange = np.arange(pStart,pEnd, dtype=PETSc.IntType)
-        dof = np.zeros(pRange.size, dtype=PETSc.IntType)
-        off = np.zeros(pRange.size, dtype=PETSc.IntType)
-
-        for i, p in enumerate(pRange):
-            dof[i] = sect.getDof(p)
-            off[i] = sect.getOffset(p)
-
-        vertices = pRange[dof>0]
-        cells = pRange[np.logical_and(dof==0, off==0)]
-        edges = pRange[np.logical_and(dof==0, off==off[i])]
+        # find cells in the DAG
+        cStart, cEnd = dm.getDepthStratum(2)
 
         # recover triangles
-        simplices = np.empty((cells.size, 3), dtype=PETSc.IntType)
+        simplices = np.empty((cEnd-cStart, 3), dtype=PETSc.IntType)
         lvec.setArray(np.arange(0,self.npoints))
 
-        for t, cell in enumerate(cells):
+        for t, cell in enumerate(range(cStart, cEnd)):
             simplices[t] = dm.vecGetClosure(sect, lvec, cell)
 
 
@@ -88,24 +79,9 @@ class TriMesh(object):
         self.lgmap_col = lgmap_c
         
 
-
-        # Get local coordinates
-        coords = dm.getCoordinatesLocal().array.reshape(-1,2)
-
         # Delaunay triangulation
         t = clock()
-
-        try:
-            tri = Triangulation(coords)
-        except ImportError:
-            pass
-        try:
-            from scipy.spatial import Delaunay
-            tri = Delaunay(coords)
-        except ImportError:
-            tri = RecoverTriangles(dm)
-
-        # tri = RecoverTriangles(dm)
+        tri = RecoverTriangles(dm)
         self.timings['triangulation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Delaunay triangulation {}s".format(clock()-t))
@@ -279,7 +255,7 @@ class TriMesh(object):
         neighbours = [[]]*self.npoints
         closed_neighbours = [[]]*self.npoints
 
-        for i in xrange(indptr.size-1):
+        for i in range(indptr.size-1):
             start, end = indptr[i], indptr[i+1]
             neighbours[i] = np.array(col[start:end])
             closed_neighbours[i] = np.hstack([i, neighbours[i]])
@@ -326,7 +302,7 @@ class TriMesh(object):
         self.dm.localToGlobal(self.lvec, self.gvec)
         smooth_data = self.gvec.copy()
 
-        for i in xrange(0, its):
+        for i in range(0, its):
             self.localSmoothMat.mult(smooth_data, self.gvec)
             smooth_data = centre_weight*smooth_data + (1.0 - centre_weight)*self.gvec
 
@@ -359,7 +335,6 @@ class TriMesh(object):
 
         bmask = np.ones(self.npoints, dtype=bool)
         bmask[boundary_ind] = False
-        bmask[self.lgmap_row.indices < 0] = True
 
         return bmask
 

@@ -21,20 +21,36 @@ class _Triangulation(object):
 
 
 
-def DMPlex_from_points(x, y, bmask):
+def create_DMPlex_from_points(x, y, bmask):
+    """
+    Triangulates x,y coordinates and creates a PETSc DMPlex object
+    from the cells and vertices.
+
+    To-do: use bmask to assign boundary points not on the convex hull.
+    """
     from petsc4py import PETSc
     import numpy as np
 
-    coords = np.column_stack((x,y))
-
     try:
-        tri = _Triangulation(coords)
-    except:
-        from scipy.spatial import Delaunay
-        tri = Delaunay(coords)
+        import triangle
+        triangulation = _Triangulation
+    except ImportError:
+        from scipy.spatial import Delaunay as triangulation
+    else:
+        raise ImportError("Install triangle or scipy to triangulate points")
+
+
+    if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
+        coords = np.column_stack((x,y))
+        tri = triangulation(coords)
+        cells  = tri.simplices
+    else:
+        coords = np.zeros((0,2), dtype=float)
+        cells  = np.zeros((0,3), dtype=PETSc.IntType)
+
 
     dim = 2
-    dm = PETSc.DMPlex().createFromCellList(dim, tri.simplices, tri.points)
+    dm = PETSc.DMPlex().createFromCellList(dim, cells, coords)
     dm.markBoundaryFaces('BC')
 
     origSect = dm.createSection(1, [1,0,0]) # define one DoF on the nodes
@@ -51,6 +67,49 @@ def DMPlex_from_points(x, y, bmask):
 
     dm.stratify()
     return dm
+
+
+def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
+    """
+    Create a box and fill with triangles up to a specified refinement
+    - This only works if PETSc was configured with triangle
+    """
+    from petsc4py import PETSc
+    import numpy as np
+
+    dm = PETSc.DMPlex().create()
+    dm.setDimension(1)
+    boundary = dm.createSquareBoundary([minX,minY], [maxX,maxY], [resX,resY])
+    dm.generate(boundary, name='triangle')
+    if refinement:
+        dm.setRefinementLimit(refinement) # Maximum cell volume
+        dm = dm.refine()
+    dm.markBoundaryFaces('BC')
+
+    pStart, pEnd = dm.getChart()
+
+    origSect = dm.createSection(1, [1,0,0])
+    origSect.setFieldName(0, "points")
+    origSect.setUp()
+    dm.setDefaultSection(origSect)
+
+    origVec = dm.createGlobalVec()
+
+    if PETSc.COMM_WORLD.size > 1:
+        sf = dm.distribute(overlap=1)
+        newSect, newVec = dm.distributeField(sf, origSect, origVec)
+        dm.setDefaultSection(newSect)
+
+    dm.stratify()
+    return dm
+
+
+def create_DMDA(minX, maxX, minY, maxY, res):
+    """
+    Create a PETSc DMDA object from the bounding box of the regularly-
+    spaced grid.
+    """
+
 
 
 
