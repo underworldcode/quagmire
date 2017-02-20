@@ -1,2 +1,2 @@
-from .trimesh import TriMesh, Triangulation
+from .trimesh import TriMesh
 from .pixmesh import PixMesh

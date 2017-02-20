@@ -36,7 +36,7 @@ def create_DMPlex_from_points(x, y, bmask):
         triangulation = _Triangulation
     except ImportError:
         from scipy.spatial import Delaunay as triangulation
-    else:
+    except ImportError:
         raise ImportError("Install triangle or scipy to triangulate points")
 
 
