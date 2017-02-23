@@ -104,12 +104,24 @@ def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
     return dm
 
 
-def create_DMDA(minX, maxX, minY, maxY, res):
+def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     """
     Create a PETSc DMDA object from the bounding box of the regularly-
     spaced grid.
     """
+    from petsc4py import PETSc
+    import numpy as np
 
+    dx = (maxX - minX)/resX
+    dy = (maxY - minY)/resY
+
+    if dx != dy:
+        raise ValueError("Spacing must be uniform in x and y directions")
+
+    dim = 2
+    dm = PETSc.DMDA().create(dim, sizes=(resX, resY), stencil_width=1)
+    dm.setUniformCoordinates(minX, maxX, minY, maxY)
+    return dm
 
 
 

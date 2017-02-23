@@ -309,3 +309,10 @@ class PixMesh(object):
         self.tozero.scatter(self.gvec, self.zvec)
 
         return self.zvec.array.copy()
+
+    def _local_global_local(self, vector):
+        """ Communicate to global then back again """
+        self.lvec.setArray(vector)
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        self.dm.globalToLocal(self.gvec, self.lvec)
+        return self.lvec.array.copy()
