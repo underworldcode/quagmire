@@ -136,6 +136,40 @@ class TopoMesh(object):
         self.downhillMat = self.adjacency1 + self.adjacency2
 
 
+    def _build_downhill_matrix_neighbours(self):
+
+        # Lets see if we can't read all neighbours in
+
+        maxC = 0
+        for row in self.neighbour_array_lo_hi:
+            if row.size > maxC:
+                maxC = row.size # -1 (unless it gives to itself?)
+
+
+        indptr, indices = self.vertex_neighbour_vertices
+
+        downhillMat = self._adjacency_matrix_template(nnz=(maxC,1))
+
+        for i in xrange(0, indptr.size-1):
+            neighbours = self.neighbour_array[i]
+            heightN = self.height[neighbours]
+            
+            # Find all nodes where height is equal or less than current node
+            down_neighbours = neighbours[heightN<=self.height[i]]
+            
+            Z_neighbours = self.slope[down_neighbours]**0.5
+            weight = Z_neighbours/Z_neighbours.sum()
+            if down_neighbours.size == 1 and i==down_neighbours[0]:
+                weight = 0
+            
+            # read in downhill neighbours to downhill matrix
+            downhillMat.setValuesLocal(i, down_neighbours.astype(np.int32), weight)
+            
+
+        downhillMat.assemblyBegin()
+        downhillMat.assemblyEnd()
+        self.downhillMat = downhillMat.transpose()
+
 
 
     def _adjacency_matrix_template(self, nnz=(1,1)):
