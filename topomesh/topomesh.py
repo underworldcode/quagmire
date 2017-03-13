@@ -78,7 +78,8 @@ class TopoMesh(object):
     def _build_downhill_matrices(self, weight=None):
         
         Z_neighbours = self.slope[self.neighbour_array_2_low]**0.5
-        weight = Z_neighbours/Z_neighbours.sum(axis=1).reshape(-1,1)
+        Z_neighbours_sum = np.clip(Z_neighbours.sum(axis=1), 1e-12, 1e99)
+        weight = Z_neighbours/Z_neighbours_sum.reshape(-1,1)
 
         # self._build_adjacency_matrix_1()
         indptr = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
@@ -97,7 +98,7 @@ class TopoMesh(object):
 
 
         # find nodes that are their own low neighbour!
-        data[np.logical_or(index==down_neighbour1, index==~self.bmask)] = 0.0
+        data[np.logical_or(index==down_neighbour1, ~self.bmask)] = 0.0
         mask = index == down_neighbour2
         down_neighbour2[mask] = down_neighbour1[mask]
         
@@ -291,23 +292,21 @@ class TopoMesh(object):
 
         DX0 = self.gvec.copy()
         DX1 = self.gvec.copy()
-
-        err = np.array([True])
-        err_proc = np.ones(comm.size, dtype=bool)
+        DX1_sum = DX1.sum()
 
         niter = 0
-        while err_proc.any():
+        equal = False
+        while not equal:
+            DX1_isum = DX1_sum
             self.downhillMat.mult(DX1, self.gvec)
             DX1.setArray(self.gvec)
-            DX0.axpy(1.0, DX1)
-            err[0] = DX1.max()[1] > 1e-24
-            comm.Allgather([err, MPI.BOOL], [err_proc, MPI.BOOL])
+            DX1_sum = DX1.sum()
+            DX0 += DX1
 
-            # niter += 1
-            # if niter > self.gvec.size//comm.size:
-            #     print niter, DX1.max()
-            #     break
+            equal = DX1_sum == DX1_isum
+            niter += 1
 
+        print "niter", niter
         self.dm.globalToLocal(DX0, self.lvec)
 
         return self.lvec.array.copy()

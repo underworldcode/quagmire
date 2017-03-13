@@ -42,7 +42,7 @@ class PixMesh(object):
 
         dx = (maxX - minX)/(Nx - 1)
         dy = (maxY - minY)/(Ny - 1)
-        assert dx == dy, "Uh oh! Each cell should be square, not rectangular."
+        # assert dx == dy, "Uh oh! Each cell should be square, not rectangular."
 
         self.area = np.array(dx*dy)
         self.adjacency_weight = 0.5
