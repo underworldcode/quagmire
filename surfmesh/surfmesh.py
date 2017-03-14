@@ -21,6 +21,7 @@ class SurfMesh(object):
         from time import clock
         self.rainfall_pattern = rainfall_pattern.copy()
         self.sediment_distribution = sediment_distribution.copy()
+        self.kappa = 1.0 # dummy value
 
         # cumulative flow
         t = clock()
@@ -249,6 +250,7 @@ class SurfMesh(object):
         inverse_bmask = np.invert(self.bmask)
 
         kappa_eff = kappa / (1.01 - (np.clip(self.slope,0.0,critical_slope) / critical_slope)**2)
+        self.kappa = kappa_eff
         diff_timestep   =  self.area.min() / kappa_eff.max()
 
 
@@ -268,3 +270,28 @@ class SurfMesh(object):
             diffDz[inverse_bmask] = 0.0
 
         return diffDz, diff_timestep
+
+
+    def landscape_evolution_timestep(self, diffusion_rate, erosion_rate, deposition_rate, uplift_rate):
+    	"""
+		Calculate the change topography for one timestep
+    	"""
+
+    	time = 0.0
+    	typical_l = np.sqrt(self.area)
+    	critical_slope = 50.0
+
+    	erosion_deposition_rate = deposition_rate - erosion_rate
+
+    	erosion_timestep    = (self.slope*typical_l/(erosion_rate + 1e-12)).min()
+    	deposition_timestep = (self.slope*typical_l/(deposition_rate + 1e-12)).min()
+    	diffusion_timestep  = self.area.min()/np.max(self.kappa)
+
+    	local_timestep = np.array(min(erosion_timestep, deposition_timestep, diffusion_timestep))
+    	timestep = np.array(0.0)
+    	comm.Allreduce([local_timestep, MPI.DOUBLE], [timestep, MPI.DOUBLE], op=MPI.MIN)
+
+    	
+    	dhdt = timestep*(erosion_deposition_rate - diffusion_rate + uplift_rate)
+
+    	return dhdt, timestep
