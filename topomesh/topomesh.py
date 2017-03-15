@@ -38,7 +38,7 @@ class TopoMesh(object):
             print(" - Sort nodes by field {}s".format(clock()-t))
 
         t = clock()
-        self._build_downhill_matrices()
+        self._build_downhill_matrix()
         self.timings['downhill matrices'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Build downhill matrices {}s".format(clock()-t))
@@ -75,7 +75,7 @@ class TopoMesh(object):
         # for node in xrange(0, self.npoints):
         #     neighbours = self.neighbour_array[node]
 
-    def _build_downhill_matrices(self, weight=None):
+    def _build_downhill_matrix(self):
         
         Z_neighbours = self.slope[self.neighbour_array_2_low]**0.5
         Z_neighbours_sum = np.clip(Z_neighbours.sum(axis=1), 1e-12, 1e99)
@@ -152,7 +152,7 @@ class TopoMesh(object):
         downhillMat = self._adjacency_matrix_template(nnz=(maxC,1))
 
         for i in xrange(0, indptr.size-1):
-            neighbours = self.neighbour_array[i]
+            neighbours = self.neighbour_array_lo_hi[i]
             heightN = self.height[neighbours]
             
             # Find all nodes where height is equal or less than current node
@@ -160,8 +160,9 @@ class TopoMesh(object):
             
             Z_neighbours = self.slope[down_neighbours]**0.5
             weight = Z_neighbours/Z_neighbours.sum()
-            if down_neighbours.size == 1 and i==down_neighbours[0]:
-                weight = 0
+            if i==down_neighbours[0]:
+                weight[0] = 0
+
             
             # read in downhill neighbours to downhill matrix
             downhillMat.setValuesLocal(i, down_neighbours.astype(np.int32), weight)
@@ -306,7 +307,6 @@ class TopoMesh(object):
             equal = DX1_sum == DX1_isum
             niter += 1
 
-        print "niter", niter
         self.dm.globalToLocal(DX0, self.lvec)
 
         return self.lvec.array.copy()

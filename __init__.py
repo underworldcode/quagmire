@@ -32,7 +32,7 @@ def TopoMesh(DM):
         class TopoMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
             def __init__(self, dm):
                 known_basemesh_classes[BaseMeshType].__init__(self, dm)
-                _TopoMeshClass.__init__(self, dm)
+                _TopoMeshClass.__init__(self)
                 # super(TopoMeshClass, self).__init__(dm)
 
         return TopoMeshClass(DM)
