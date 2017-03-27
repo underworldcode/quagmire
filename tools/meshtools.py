@@ -11,8 +11,7 @@ class _Triangulation(object):
     """
     def __init__(self, coords):
         import triangle
-        from numpy import array
-        self.points = array(coords)
+        self.points = coords
         self.npoints = len(coords)
 
         d = dict(vertices=self.points)
@@ -20,13 +19,26 @@ class _Triangulation(object):
         self.simplices = tri['triangles']
 
 
+class _ConvexHull(object):
+    """
+    An abstraction for calculating a convex hull using triangle
+    This class mimics the ConvexHull structure in SciPy
+    """
+    def __init__(self, coords):
+        from triangle import convex_hull
+        from numpy import unique
+        self.points = coords
+        self.simplices = convex_hull(coords)
+        self.vertices = unique(self.simplices)
 
-def create_DMPlex_from_points(x, y, bmask):
+
+
+def create_DMPlex_from_points(x, y, bmask=None, convex_hull=False):
     """
     Triangulates x,y coordinates and creates a PETSc DMPlex object
     from the cells and vertices.
 
-    To-do: use bmask to assign boundary points not on the convex hull.
+    bmask is ignored if convex_hull=True
     """
     from petsc4py import PETSc
     import numpy as np
@@ -34,8 +46,10 @@ def create_DMPlex_from_points(x, y, bmask):
     try:
         import triangle
         triangulation = _Triangulation
+        ConvexHull = _ConvexHull
     except ImportError:
         from scipy.spatial import Delaunay as triangulation
+        from scipy.spatial import ConvexHull
     except ImportError:
         raise ImportError("Install triangle or scipy to triangulate points")
 
@@ -51,13 +65,33 @@ def create_DMPlex_from_points(x, y, bmask):
 
     dim = 2
     dm = PETSc.DMPlex().createFromCellList(dim, cells, coords)
-    dm.markBoundaryFaces('BC')
 
     origSect = dm.createSection(1, [1,0,0]) # define one DoF on the nodes
     origSect.setFieldName(0, "points")
     origSect.setUp()
     dm.setDefaultSection(origSect)
 
+    dm.createLabel("boundary")
+    pStart, eEnd = dm.getDepthStratum(0) # points in DAG
+
+    if convex_hull:
+        hull = ConvexHull(tri.points)
+        # convert to DAG ordering
+        boundary_points = hull.vertices + pStart
+        for pt in boundary_points:
+            dm.setLabelValue("boundary", pt, 1)
+
+    elif bmask is not None:
+        # convert to DAG ordering
+        boundary_points = np.nonzero(~bmask)[0] + pStart
+        for pt in boundary_points:
+            dm.setLabelValue("boundary", pt, 1)
+
+    else:
+        raise ValueError("Set convex_hull to True or assign bmask")
+
+
+    # Distribute to other processors
     origVec = dm.createGlobalVector()
 
     if PETSc.COMM_WORLD.size > 1:

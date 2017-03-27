@@ -296,32 +296,43 @@ class TriMesh(object):
         return self.lvec.array
 
 
-    def get_boundary(self, marker="BC"):
+    def get_boundary(self, marker="boundary"):
         """
         Get distributed boundary information
         """
-        # self.dm.markBoundaryFaces(str(marker))
+        bmask = np.ones(self.npoints, dtype=bool)
 
         pStart, pEnd = self.dm.getDepthStratum(0)
         eStart, eEnd = self.dm.getDepthStratum(1)
-        eRange = np.arange(eStart, eEnd, dtype=PETSc.IntType)
+        
+        labels = []
+        for i in range(self.dm.getNumLabels()):
+            labels.append(self.dm.getLabelName(i))
 
-        bnd = np.zeros_like(eRange)
-        for idx, e in enumerate(eRange):
-            bnd[idx] = self.dm.getLabelValue(marker, e)
-            
-        boundary = eRange[bnd==1]
-        boundary_ind = np.zeros((boundary.size, 2), dtype=PETSc.IntType)
+        if marker in labels:
+            for idx, p in enumerate(range(pStart, pEnd)):
+                if self.dm.getLabelValue(marker, p) == 1:
+                    bmask[idx] = False
+        else:
+            print("Warning! No boundary information in DMPlex.\nContinuing with convex hull.")
+            self.dm.markBoundaryFaces(marker)
+            eRange = np.arange(eStart, eEnd, dtype=PETSc.IntType)
 
-        for idx, e in enumerate(boundary):
-            boundary_ind[idx] = self.dm.getCone(e)
-            
-        boundary_ind -= pStart # return to local ordering
+            bnd = np.zeros_like(eRange)
+            for idx, e in enumerate(eRange):
+                bnd[idx] = self.dm.getLabelValue(marker, e)
+                
+            boundary = eRange[bnd==1]
+            boundary_ind = np.zeros((boundary.size, 2), dtype=PETSc.IntType)
 
-        bmask = np.ones(self.npoints, dtype=bool)
-        bmask[boundary_ind] = False
+            for idx, e in enumerate(boundary):
+                boundary_ind[idx] = self.dm.getCone(e)
+                
+            boundary_ind -= pStart # return to local ordering
+            bmask[boundary_ind] = False
 
         return bmask
+
 
     def save_mesh_to_file(self, file):
         """
