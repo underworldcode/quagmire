@@ -10,7 +10,8 @@ Running this code requires the following packages to be installed:
 - Numpy 1.9 and above
 - [mpi4py](http://pythonhosted.org/mpi4py/usrman/index.html)
 - [petsc4py](https://pythonhosted.org/petsc4py/usrman/install.html)
-- h5py (optional - for saving parallel mesh data)
+- h5py (optional - for saving parallel data)
+- matplotlib (optional - for visualisation)
 
 Building unstructured meshes (using the routines in the *tools* folder) require Delaunay triangulations found in either of the following dependencies:
 
@@ -26,4 +27,56 @@ PETSc is used extensively via the Python frontend, petsc4py. It is required that
 [sudo] pip install petsc petsc4py
 ```
 
-If this does not work you must compile these manually.
+If that fails you must compile these manually.
+
+### HDF5 installation
+
+This is an optional installation, but it is very useful for saving data that is distributed across multiple processes. If you are compiling HDF5 from [source](https://support.hdfgroup.org/downloads/index.html) it should be configured with the `--enable-parallel` flag:
+
+```
+CC=/usr/local/mpi/bin/mpicc ./configure --enable-parallel --enable-shared --prefix=<install-directory>
+make	# build the library
+make check	# verify the correctness
+make install
+```
+
+You can then point to this install directory when you install [h5py](http://docs.h5py.org/en/latest/mpi.html#building-against-parallel-hdf5).
+
+## Usage
+
+Quagmire is highly scalable. All of the python scripts in the *examples* subdirectory can be run in parallel, e.g.
+
+```
+mpirun -np 4 python stream_power.py
+```
+
+where the number after the `-np` flag specifies the number of processors.
+
+## Tutorials
+
+Tutorials with worked examples can be found in the *Notebooks* subdirectory. These are Jupyter Notebooks that can be run locally. We recommend installing [FFmpeg](https://ffmpeg.org/) to create videos in some of the notebooks.
+
+The topics covered in the Notebooks include:
+
+**Meshing**
+
+- Square mesh
+- Elliptical mesh
+- Mesh refinement (e.g. Lloyd's mesh improvement)
+- Poisson disc sampling
+
+**Flow algorithms**
+
+- Single and multiple downhill pathways
+- Accumulating flow
+
+**Erosion and deposition**
+
+- Long-range stream flow models
+- Short-range diffusive evolution
+
+**Landscape evolution**
+
+- Explicit timestepping and numerical stability
+- Landscape equilibrium metrics
+- Basement uplift
