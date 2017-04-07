@@ -272,26 +272,7 @@ class PixMesh(object):
         MPI gather operation to root processor
         """
         self.tozero, self.zvec = PETSc.Scatter.toZero(self.gvec)
-
-
-        # Gather x,y points
-        pts = self.tri.points
-        self.lvec.setArray(pts[:,0])
-        self.dm.localToGlobal(self.lvec, self.gvec)
-        self.tozero.scatter(self.gvec, self.zvec)
-
-        x = self.zvec.array.copy()
-        
-        self.lvec.setArray(pts[:,1])
-        self.dm.localToGlobal(self.lvec, self.gvec)
-        self.tozero.scatter(self.gvec, self.zvec)
-
-        y = self.zvec.array.copy()
-
-        if comm.rank == 0:
-            # Re-triangulate with whole domain
-            self.tri0 = Triangulation(np.vstack([x,y]).T)
-
+        self.nvec = self.dm.createNaturalVector()
         self.root = True # yes we have gathered everything
 
 
@@ -306,7 +287,8 @@ class PixMesh(object):
 
         self.lvec.setArray(data)
         self.dm.localToGlobal(self.lvec, self.gvec)
-        self.tozero.scatter(self.gvec, self.zvec)
+        self.dm.globalToNatural(self.gvec, self.nvec)
+        self.tozero.scatter(self.nvec, self.zvec)
 
         return self.zvec.array.copy()
 
