@@ -5,32 +5,10 @@ petsc4py.init(sys.argv)
 from petsc4py import PETSc
 comm = MPI.COMM_WORLD
 from time import clock
+import stripy
 
 try: range = xrange
 except: pass
-
-
-class RecoverTriangles(object):
-    def __init__(self, dm):
-        sect = dm.getDefaultSection()
-        lvec = dm.createLocalVector()
-
-        self.points = dm.getCoordinatesLocal().array.reshape(-1,2)
-        self.npoints = self.points.shape[0]
-
-        # find cells in the DAG
-        cStart, cEnd = dm.getDepthStratum(2)
-
-        # recover triangles
-        simplices = np.empty((cEnd-cStart, 3), dtype=PETSc.IntType)
-        lvec.setArray(np.arange(0,self.npoints))
-
-        for t, cell in enumerate(range(cStart, cEnd)):
-            simplices[t] = dm.vecGetClosure(sect, lvec, cell)
-
-
-        self.simplices = simplices
-
 
 
 class TriMesh(object):
@@ -66,33 +44,20 @@ class TriMesh(object):
 
         # Delaunay triangulation
         t = clock()
-        tri = RecoverTriangles(dm)
+        coords = dm.getCoordinatesLocal().array.reshape(-1,2)
+        self.tri = stripy.Triangulation(coords[:,0], coords[:,1])
+        self.npoints = self.tri.npoints
         self.timings['triangulation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Delaunay triangulation {}s".format(clock()-t))
 
-        self.npoints = tri.npoints
-
-        # Encircling vectors
-        self.v1 = tri.points[tri.simplices[:,1]] - tri.points[tri.simplices[:,0]]
-        self.v2 = tri.points[tri.simplices[:,2]] - tri.points[tri.simplices[:,1]]
-        self.v3 = tri.points[tri.simplices[:,0]] - tri.points[tri.simplices[:,2]]
-
-        self.triangle_area = 0.5*(self.v1[:,0]*self.v2[:,1] - self.v1[:,1]*self.v2[:,0])
-
+        
         # Calculate weigths and pointwise area
-        ntriw = np.zeros(tri.npoints)
-        self.weight = np.zeros(tri.npoints, dtype=PETSc.IntType)
-
-        for t, triangle in enumerate(tri.simplices):
-            self.weight[triangle] += 1
-            ntriw[triangle] += abs(self.v1[t][0]*self.v3[t][1] - self.v1[t][1]*self.v3[t][0])
-
-        self.area = ntriw/6.0
-        self.adjacency_weight = 2.0/3
-
-        self.tri = tri
-
+        t = clock()
+        self.calculate_area_weights()
+        self.timings['area weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.verbose:
+            print(" - Calculate node weights and area {}s".format(clock()-t))
 
 
         # Calculate edge lengths
@@ -129,6 +94,28 @@ class TriMesh(object):
         self.root = False
 
 
+    def calculate_area_weights(self):
+        """
+        Calculate weigths and pointwise area
+        """
+
+        # Encircling vectors
+        v1 = self.tri.points[self.tri.simplices[:,1]] - self.tri.points[self.tri.simplices[:,0]]
+        v2 = self.tri.points[self.tri.simplices[:,2]] - self.tri.points[self.tri.simplices[:,1]]
+        v3 = self.tri.points[self.tri.simplices[:,0]] - self.tri.points[self.tri.simplices[:,2]]
+
+        self.triangle_area = 0.5*(v1[:,0]*v2[:,1] - v1[:,1]*v2[:,0])
+
+        ntriw  = np.zeros(self.npoints)
+        weight = np.zeros(self.npoints, dtype=PETSc.IntType)
+
+        for t, triangle in enumerate(self.tri.simplices):
+            weight[triangle] += 1
+            ntriw[triangle] += abs(v1[t][0]*v3[t][1] - v1[t][1]*v3[t][0])
+
+        self.weight = weight
+        self.area = ntriw/6.0
+
 
     def node_neighbours(self, point):
         """
@@ -140,52 +127,20 @@ class TriMesh(object):
 
     def derivative_grad(self, PHI):
         """
-        Compute x,y derivatives of PHI
+        Compute derivatives of PHI in the x, y directions.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
         """
-        u_yx = self.derivative_grad_centres(PHI)
-
-        u_x = np.zeros(self.npoints)
-        u_y = np.zeros(self.npoints)
-
-        for idx, triangle in enumerate(self.tri.simplices):
-            u_x[triangle] += u_yx[idx,1]
-            u_y[triangle] -= u_yx[idx,0]
-
-        u_x /= self.weight
-        u_y /= self.weight
-
-        return u_x, u_y
+        return self.tri.gradient(PHI, nit=10, tol=1e-8)
 
 
     def derivative_div(self, PHIx, PHIy):
         """
         Compute second order derivative from flux fields PHIx, PHIy
         """
-        u_xy = self.derivative_grad_centres(PHIx)
-        u_yx = self.derivative_grad_centres(PHIy)
-
-        u_xx = np.zeros(self.npoints)
-        u_yy = np.zeros(self.npoints)
-
-        for idx, triangle in enumerate(self.tri.simplices):
-            u_xx[triangle] += u_xy[idx,1]
-            u_yy[triangle] -= u_yx[idx,0]
-
-        u_xx /= self.weight
-        u_yy /= self.weight
+        u_xx, u_xy = self.tri.gradient(PHIx)
+        u_yx, u_yy = self.tri.gradient(PHIy)
 
         return u_xx + u_yy
-
-
-    def derivative_grad_centres(self, PHI):
-        u = PHI.reshape(-1,1)
-
-        u1 = (u[self.tri.simplices[:,0]] + u[self.tri.simplices[:,1]]) * 0.5
-        u2 = (u[self.tri.simplices[:,1]] + u[self.tri.simplices[:,2]]) * 0.5
-        u3 = (u[self.tri.simplices[:,2]] + u[self.tri.simplices[:,0]]) * 0.5
-
-        u_yx = (u1*self.v1 + u2*self.v2 + u3*self.v3)/self.triangle_area.reshape(-1,1)
-        return u_yx
 
 
     def get_edge_lengths(self):
@@ -404,17 +359,13 @@ class TriMesh(object):
         self.dm.localToGlobal(self.lvec, self.gvec)
         self.tozero.scatter(self.gvec, self.zvec)
 
-        x = self.zvec.array.copy()
+        self.root_x = self.zvec.array.copy()
         
         self.lvec.setArray(pts[:,1])
         self.dm.localToGlobal(self.lvec, self.gvec)
         self.tozero.scatter(self.gvec, self.zvec)
 
-        y = self.zvec.array.copy()
-
-        if comm.rank == 0:
-            # Re-triangulate with whole domain
-            self.tri0 = Triangulation(np.vstack([x,y]).T)
+        self.root_y = self.zvec.array.copy()
 
         self.root = True # yes we have gathered everything
 

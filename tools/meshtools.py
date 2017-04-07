@@ -32,6 +32,27 @@ class _ConvexHull(object):
         self.vertices = unique(self.simplices)
 
 
+class _RecoverTriangles(object):
+    def __init__(self, dm):
+        sect = dm.getDefaultSection()
+        lvec = dm.createLocalVector()
+
+        self.points = dm.getCoordinatesLocal().array.reshape(-1,2)
+        self.npoints = self.points.shape[0]
+
+        # find cells in the DAG
+        cStart, cEnd = dm.getDepthStratum(2)
+
+        # recover triangles
+        simplices = np.empty((cEnd-cStart, 3), dtype=PETSc.IntType)
+        lvec.setArray(np.arange(0,self.npoints))
+
+        for t, cell in enumerate(range(cStart, cEnd)):
+            simplices[t] = dm.vecGetClosure(sect, lvec, cell)
+
+        self.simplices = simplices
+
+
 
 def create_DMPlex_from_points(x, y, bmask=None, convex_hull=False):
     """
@@ -159,7 +180,7 @@ def create_DMDA(minX, maxX, minY, maxY, resX, resY):
 
 
 
-def lloyd_mesh_improvment(x, y, bmask, iterations):
+def lloyd_mesh_improvement(x, y, bmask, iterations):
     """
     Applies Lloyd's algorithm of iterated voronoi construction 
     to improve the mesh point locations (assumes no current triangulation)
