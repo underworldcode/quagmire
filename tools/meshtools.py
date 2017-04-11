@@ -56,10 +56,11 @@ class _RecoverTriangles(object):
 
 def create_DMPlex_from_points(x, y, bmask=None, convex_hull=False):
     """
-    Triangulates x,y coordinates and creates a PETSc DMPlex object
-    from the cells and vertices.
+    Triangulates x,y coordinates on rank 0 and creates a PETSc DMPlex object
+    from the cells and vertices to distribute among processors.
 
-    bmask is ignored if convex_hull=True
+    bmask is ignored if convex_hull=True, but if convex_hull=False and
+    bmask is None then a value error will be raised.
     """
     from petsc4py import PETSc
     import numpy as np
@@ -96,17 +97,19 @@ def create_DMPlex_from_points(x, y, bmask=None, convex_hull=False):
     pStart, eEnd = dm.getDepthStratum(0) # points in DAG
 
     if convex_hull:
-        hull = ConvexHull(tri.points)
-        # convert to DAG ordering
-        boundary_points = hull.vertices + pStart
-        for pt in boundary_points:
-            dm.setLabelValue("boundary", pt, 1)
+        if PETSc.COMM_WORLD.rank == 0:
+            hull = ConvexHull(tri.points)
+            # convert to DAG ordering
+            boundary_points = hull.vertices + pStart
+            for pt in boundary_points:
+                dm.setLabelValue("boundary", pt, 1)
 
     elif bmask is not None:
-        # convert to DAG ordering
-        boundary_points = np.nonzero(~bmask)[0] + pStart
-        for pt in boundary_points:
-            dm.setLabelValue("boundary", pt, 1)
+        if PETSc.COMM_WORLD.rank == 0:
+            # convert to DAG ordering
+            boundary_points = np.nonzero(~bmask)[0] + pStart
+            for pt in boundary_points:
+                dm.setLabelValue("boundary", pt, 1)
 
     else:
         raise ValueError("Set convex_hull to True or assign bmask")
