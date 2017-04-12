@@ -29,7 +29,7 @@ class TopoMesh(object):
         self.slope = self._local_global_local(slope)
 
         self.timings['gradient operation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        
+
 
         t = clock()
         self._sort_nodes_by_field(height)
@@ -76,7 +76,7 @@ class TopoMesh(object):
         #     neighbours = self.neighbour_array[node]
 
     def _build_downhill_matrix(self):
-        
+
         Z_neighbours = self.slope[self.neighbour_array_2_low]**0.5
         Z_neighbours_sum = np.clip(Z_neighbours.sum(axis=1), 1e-12, 1e99)
         weight = Z_neighbours/Z_neighbours_sum.reshape(-1,1)
@@ -101,7 +101,7 @@ class TopoMesh(object):
         data[np.logical_or(index==down_neighbour1, ~self.bmask)] = 0.0
         mask = index == down_neighbour2
         down_neighbour2[mask] = down_neighbour1[mask]
-        
+
 
         # read into adjacency matrices
         adjacency1 = self._adjacency_matrix_template()
@@ -140,7 +140,6 @@ class TopoMesh(object):
     def _build_downhill_matrix_neighbours(self):
 
         # Lets see if we can't read all neighbours in
-
         maxC = 0
         for row in self.neighbour_array_lo_hi:
             if row.size > maxC:
@@ -154,19 +153,30 @@ class TopoMesh(object):
         for i in xrange(0, indptr.size-1):
             neighbours = self.neighbour_array_lo_hi[i]
             heightN = self.height[neighbours]
-            
-            # Find all nodes where height is equal or less than current node
-            down_neighbours = neighbours[heightN<=self.height[i]]
-            
+
+# Benchmark - this converges
+            # Find all nodes where height is less than current node
+            down_neighbours = neighbours[heightN<self.height[i]]
+
+# Benchmark - this does not
+#            # Find all nodes where height is equal or less than current node
+#            down_neighbours = neighbours[heightN<=self.height[i]]
+
             Z_neighbours = self.slope[down_neighbours]**0.5
             weight = Z_neighbours/Z_neighbours.sum()
-            if i==down_neighbours[0]:
-                weight[0] = 0
-
             
+## This is wrong - gives incompatible values
+            # if i==down_neighbours[0]:
+            #     weight[0] = 0
+
+## This is probably what is meant by the above but does not really work
+             # weight[np.where(down_neighbours == i)] = 0.0
+
+
+
             # read in downhill neighbours to downhill matrix
             downhillMat.setValuesLocal(i, down_neighbours.astype(np.int32), weight)
-            
+
 
         downhillMat.assemblyBegin()
         downhillMat.assemblyEnd()
@@ -200,7 +210,7 @@ class TopoMesh(object):
 
         # find nodes that are their own low neighbour!
         data[indptr[:-1] == down_neighbour1] = 0.0
-        
+
         # read into matrix
         adjacency1 = self._adjacency_matrix_template()
         adjacency1.setValuesLocalCSR(indptr, down_neighbour1, data)
@@ -228,7 +238,7 @@ class TopoMesh(object):
         data[indptr[:-1] == down_neighbour1] = 0.0
         mask = indptr[:-1] == down_neighbour2
         indices[mask] = down_neighbour1[mask]
-        
+
         # read into matrix
         adjacency2 = self._adjacency_matrix_template()
         adjacency2.setValuesLocalCSR(indptr, indices, data)

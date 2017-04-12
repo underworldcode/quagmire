@@ -1,0 +1,10 @@
+
+*.pyc
+
+*checkpoint.ipynb
+
+Notebooks/sombrero_1n.mp4
+
+Notebooks/sombrero_2n.mp4
+
+Notebooks/sombrero_Nn.mp4
