@@ -64,21 +64,12 @@ def create_DMPlex_from_points(x, y, bmask=None, convex_hull=False):
     """
     from petsc4py import PETSc
     import numpy as np
-
-    try:
-        import triangle
-        triangulation = _Triangulation
-        ConvexHull = _ConvexHull
-    except ImportError:
-        from scipy.spatial import Delaunay as triangulation
-        from scipy.spatial import ConvexHull
-    except ImportError:
-        raise ImportError("Install triangle or scipy to triangulate points")
+    from stripy import Triangulation
 
 
     if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
-        coords = np.column_stack((x,y))
-        tri = triangulation(coords)
+        tri = Triangulation(x,y)
+        coords = tri.points
         cells  = tri.simplices
     else:
         coords = np.zeros((0,2), dtype=float)
@@ -98,9 +89,9 @@ def create_DMPlex_from_points(x, y, bmask=None, convex_hull=False):
 
     if convex_hull:
         if PETSc.COMM_WORLD.rank == 0:
-            hull = ConvexHull(tri.points)
+            hull = tri.convex_hull()
             # convert to DAG ordering
-            boundary_points = hull.vertices + pStart
+            boundary_points = hull + pStart
             for pt in boundary_points:
                 dm.setLabelValue("boundary", pt, 1)
 

@@ -125,20 +125,52 @@ class TriMesh(object):
         return self.vertex_neighbour_vertices[1][self.vertex_neighbour_vertices[0][point]:self.vertex_neighbour_vertices[0][point+1]]
 
 
-    def derivative_grad(self, PHI):
+    def derivative_grad(self, PHI, nit=10, tol=1e-8):
         """
         Compute derivatives of PHI in the x, y directions.
         This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Arguments
+        ---------
+         PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+         nit : int optional (default: 10)
+            number of iterations to reach convergence
+         tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+
+        Returns
+        -------
+         PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+         PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
         """
         return self.tri.gradient(PHI, nit=10, tol=1e-8)
 
 
-    def derivative_div(self, PHIx, PHIy):
+    def derivative_div(self, PHIx, PHIy, **kwargs):
         """
         Compute second order derivative from flux fields PHIx, PHIy
+        We evaluate the gradient on these fields using the derivative-grad method.
+
+        Arguments
+        ---------
+         PHIx : ndarray of floats, shape (n,)
+            array of first partial derivatives in x direction
+         PHIy : ndarray of floats, shape (n,)
+            array of first partial derivatives in y direction
+         kwargs : optional keyword-argument specifiers
+            keyword arguments to be passed onto derivative_grad
+            e.g. nit=5, tol=1e-3
+
+        Returns
+        -------
+         del2PHI : ndarray of floats, shape (n,)
+            second derivative of PHI
         """
-        u_xx, u_xy = self.tri.gradient(PHIx)
-        u_yx, u_yy = self.tri.gradient(PHIy)
+        u_xx, u_xy = self.derivative_grad(PHIx, **kwargs)
+        u_yx, u_yy = self.derivative_grad(PHIy, **kwargs)
 
         return u_xx + u_yy
 
