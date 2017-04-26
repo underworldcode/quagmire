@@ -38,6 +38,7 @@ class SurfMesh(object):
 
 
     def handle_low_points(self, base, its):
+
         self.low_points = self.identify_low_points()
 
         if len(self.low_points) == 0:
@@ -49,15 +50,15 @@ class SurfMesh(object):
         rejected = 0
 
         for point in self.low_points:
-            if self.height[point] - base < 0.005*(self.height.max() - base):
+            if self.height[point] - base < 0.00005*(self.height.max() - base):
                 rejected += 1
                 continue
 
             # find the mean height in the neighbourhood and fill up everything nearby
             fixed += 1
             delta_height[point] = self.height[self.neighbour_array_lo_hi[point]].mean()
-            if self.verbose:
-                print "{} Old height {} -> {}".format(point, self.height[point], delta_height[point])
+            # if self.verbose:
+            #     print "{} Old height {} -> {}".format(point, self.height[point], delta_height[point])
 
 
         # Now march the new height to all the uphill nodes of these nodes
@@ -69,7 +70,7 @@ class SurfMesh(object):
         for p in range(0, its):
             self.downhillMat.multTranspose(global_dH, self.gvec)
             global_dH.setArray(self.gvec)
-            global_dH.scale(1.001)
+        #    global_dH.scale(1.001)
 
         self.dm.globalToLocal(global_dH, delta_height)
 
@@ -78,7 +79,42 @@ class SurfMesh(object):
 
         if self.verbose:
             print "Updated {} points".format(fixed)
-            print "Rejected {} points".format(rejected)
+            print "Rejected {} points (close to base level)".format(rejected)
+
+        return height
+
+    def backfill_points(self, fill_points, new_heights):
+        """
+        Handles *selected* low points by backfilling height array.
+        This can be used to block a stream path, for example. 
+        """
+
+        if len(fill_points) == 0:
+            return self.height
+
+        delta_height = self.lvec.duplicate()
+
+        for point in points:
+            delta_height[point] = new_heights[point]
+
+        # Now march the new height to all the uphill nodes of these nodes
+        height = np.maximum(self.height, delta_height.array)
+
+        self.dm.localToGlobal(delta_height, self.gvec)
+        global_dH = self.gvec.copy()
+
+        for p in range(0, its):
+            self.adjacency1.multTranspose(global_dH, self.gvec)
+            global_dH.setArray(self.gvec)
+        #    global_dH.scale(1.001)  # Maybe !
+
+        self.dm.globalToLocal(global_dH, delta_height)
+
+        height = np.maximum(self.height, delta_height.array)
+
+        if self.verbose:
+            print "Updated {} points".format(fixed)
+            print "Rejected {} points (close to base level)".format(rejected)
 
         return height
 
@@ -90,14 +126,14 @@ class SurfMesh(object):
         """
 
         nodes = np.arange(0, self.npoints, dtype=np.int)
-        low_nodes = self.neighbour_array_2_low[:,0]
+        low_nodes = self.down_neighbour1
         mask = np.logical_and(nodes == low_nodes, self.bmask == True)
 
         return low_nodes[mask]
 
     def identify_high_points(self):
         """
-        Identify if the mesh has (internal) local minima and return an array of node indices
+        Identify where the mesh has (internal) local maxima and return an array of node indices
         """
 
         high_point_list = []
@@ -107,7 +143,7 @@ class SurfMesh(object):
 
         return np.array(high_point_list)
 
-    
+
     def identify_outflow_points(self):
         """
         Identify the (boundary) outflow points and return an array of node indices
@@ -291,7 +327,7 @@ class SurfMesh(object):
     	timestep = np.array(0.0)
     	comm.Allreduce([local_timestep, MPI.DOUBLE], [timestep, MPI.DOUBLE], op=MPI.MIN)
 
-    	
+
     	dhdt = timestep*(erosion_deposition_rate - diffusion_rate + uplift_rate)
 
     	return dhdt, timestep

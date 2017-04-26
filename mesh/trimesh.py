@@ -17,7 +17,7 @@ class TriMesh(object):
     We recommend having 1) triangle or 2) scipy installed for Delaunay triangulations.
     """
     def __init__(self, dm, verbose=True):
-        from scipy.spatial import Delaunay
+        from scipy.spatial import cKDTree as _cKDTree
         self.timings = dict() # store times
 
         self.log = PETSc.Log()
@@ -30,7 +30,7 @@ class TriMesh(object):
         self.lvec = dm.createLocalVector()
         self.sect = dm.getDefaultSection()
         self.sizes = self.gvec.getSizes(), self.gvec.getSizes()
-        
+
         lgmap_r = dm.getLGMap()
         l2g = lgmap_r.indices.copy()
         offproc = l2g < 0
@@ -40,7 +40,7 @@ class TriMesh(object):
 
         self.lgmap_row = lgmap_r
         self.lgmap_col = lgmap_c
-        
+
 
         # Delaunay triangulation
         t = clock()
@@ -51,7 +51,13 @@ class TriMesh(object):
         if self.verbose:
             print(" - Delaunay triangulation {}s".format(clock()-t))
 
-        
+        # cKDTree
+        t = clock()
+        self.cKDTree = _cKDTree(self.tri.points)
+        self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.verbose:
+            print(" - cKDTree {}s".format(clock()-t))
+
         # Calculate weigths and pointwise area
         t = clock()
         self.calculate_area_weights()
@@ -73,7 +79,14 @@ class TriMesh(object):
         self.construct_neighbours()
         self.timings['construct neighbours'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Construct neighbour array {}s".format(clock()-t))
+            print(" - Construct nearest neighbour array {}s".format(clock()-t))
+
+        # Find neighbours
+        t = clock()
+        self.construct_neighbour_cloud()
+        self.timings['construct neighbour cloud'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.verbose:
+            print(" - Construct neighbour cloud array {}s".format(clock()-t))
 
 
         # Find boundary points
@@ -114,7 +127,7 @@ class TriMesh(object):
             ntriw[triangle] += abs(v1[t][0]*v3[t][1] - v1[t][1]*v3[t][0])
 
         self.weight = weight
-        self.area = ntriw/6.0
+        self.area   = ntriw/6.0
 
 
     def node_neighbours(self, point):
@@ -187,7 +200,7 @@ class TriMesh(object):
 
         a = np.hstack([i1, i2, i3]).T
 
-        # find unique rows in numpy array 
+        # find unique rows in numpy array
         # <http://stackoverflow.com/questions/16970982/find-unique-rows-in-numpy-array>
         b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
         edges = np.unique(b).view(a.dtype).reshape(-1, a.shape[1])
@@ -235,6 +248,19 @@ class TriMesh(object):
         self.neighbour_list = np.array(neighbours)
         self.neighbour_array = np.array(closed_neighbours)
 
+    def construct_neighbour_cloud(self, size=50):
+        """
+        Find neighbours from distance cKDTree.
+
+        """
+
+        nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
+
+        self.neighbour_cloud = nncloud
+        self.neighbour_cloud_distances = nndist
+
+        return
+
 
     def _build_smoothing_matrix(self):
 
@@ -243,7 +269,6 @@ class TriMesh(object):
         nweight = weight[indices]
 
         lgmask = self.lgmap_row.indices >= 0
-
 
         nnz = self.vertex_neighbours[lgmask] + 1
 
@@ -256,7 +281,7 @@ class TriMesh(object):
         smoothMat.setFromOptions()
         smoothMat.setPreallocationNNZ(nnz)
 
-        # read in data 
+        # read in data
         smoothMat.setValuesLocalCSR(indptr.astype(PETSc.IntType), indices.astype(PETSc.IntType), nweight)
         self.lvec.setArray(weight)
         self.dm.localToGlobal(self.lvec, self.gvec)
@@ -291,7 +316,7 @@ class TriMesh(object):
 
         pStart, pEnd = self.dm.getDepthStratum(0)
         eStart, eEnd = self.dm.getDepthStratum(1)
-        
+
         labels = []
         for i in range(self.dm.getNumLabels()):
             labels.append(self.dm.getLabelName(i))
@@ -308,13 +333,13 @@ class TriMesh(object):
             bnd = np.zeros_like(eRange)
             for idx, e in enumerate(eRange):
                 bnd[idx] = self.dm.getLabelValue(marker, e)
-                
+
             boundary = eRange[bnd==1]
             boundary_ind = np.zeros((boundary.size, 2), dtype=PETSc.IntType)
 
             for idx, e in enumerate(boundary):
                 boundary_ind[idx] = self.dm.getCone(e)
-                
+
             boundary_ind -= pStart # return to local ordering
             bmask[boundary_ind] = False
 
@@ -392,7 +417,7 @@ class TriMesh(object):
         self.tozero.scatter(self.gvec, self.zvec)
 
         self.root_x = self.zvec.array.copy()
-        
+
         self.lvec.setArray(pts[:,1])
         self.dm.localToGlobal(self.lvec, self.gvec)
         self.tozero.scatter(self.gvec, self.zvec)
@@ -404,7 +429,7 @@ class TriMesh(object):
 
     def gather_data(self, data):
         """
-        Gather data on root processor 
+        Gather data on root processor
         """
 
         # check if we already gathered pts on root

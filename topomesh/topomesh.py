@@ -6,9 +6,12 @@ from petsc4py import PETSc
 from time import clock
 comm = MPI.COMM_WORLD
 
+from scipy.spatial import cKDTree as _cKDTree
+
 
 class TopoMesh(object):
     def __init__(self):
+
         pass
 
 
@@ -16,6 +19,7 @@ class TopoMesh(object):
         """
         Update height field
         """
+
         height = np.array(height)
         if height.size != self.npoints:
             raise IndexError("Incompatible array size, should be {}".format(self.npoints))
@@ -30,7 +34,6 @@ class TopoMesh(object):
 
         self.timings['gradient operation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
 
-
         t = clock()
         self._sort_nodes_by_field(height)
         self.timings['sort heights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
@@ -38,7 +41,7 @@ class TopoMesh(object):
             print(" - Sort nodes by field {}s".format(clock()-t))
 
         t = clock()
-        self._build_downhill_matrix()
+        self._build_downhill_matrix_new()
         self.timings['downhill matrices'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Build downhill matrices {}s".format(clock()-t))
@@ -74,6 +77,37 @@ class TopoMesh(object):
         # neighbour_array_lo_hi = self.neighbour_array.copy()
         # for node in xrange(0, self.npoints):
         #     neighbours = self.neighbour_array[node]
+
+    def _build_downhill_matrix_new(self):
+
+        vec = self.gvec.copy()
+        vec.setArray(self.slope)
+
+        self._build_adjacency_matrix_1()
+        self._build_adjacency_matrix_2()
+
+        w1 = np.sqrt(self.slope[self.down_neighbour1])
+        w2 = np.sqrt(self.slope[self.down_neighbour2])
+
+        w1 /= (w1+w2)
+        w2  = 1.0 - w1
+
+
+        vec.setArray(w1)
+
+        downhillMat  = self.adjacency1.copy()
+        downhillMat2 = self.adjacency2.copy()
+
+        vec.setArray(w1)
+        downhillMat.diagonalScale(L=vec)
+
+        vec.setArray(w2)
+        downhillMat2.diagonalScale(L=vec)
+
+        self.downhillMat = downhillMat + downhillMat2
+
+        downhillMat.destroy()
+        downhillMat2.destroy()
 
     def _build_downhill_matrix(self):
 
@@ -164,7 +198,7 @@ class TopoMesh(object):
 
             Z_neighbours = self.slope[down_neighbours]**0.5
             weight = Z_neighbours/Z_neighbours.sum()
-            
+
 ## This is wrong - gives incompatible values
             # if i==down_neighbours[0]:
             #     weight[0] = 0
@@ -196,6 +230,7 @@ class TopoMesh(object):
         return matrix
 
 
+## This version is based on distance not mesh connectivity
 
     def _build_adjacency_matrix_1(self):
         """
@@ -204,12 +239,33 @@ class TopoMesh(object):
         The downhill matrix pushes information out of the domain and can be used as an increment
         to construct the cumulative area (etc) along the flow paths.
         """
+
         indptr  = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
         down_neighbour1 = self.neighbour_array_2_low[:,0]
         data    = np.ones(self.npoints)
 
+        down_neighbour1 = np.empty(self.npoints,dtype=PETSc.IntType)
+
+        dneigh5  =  self.height[self.neighbour_cloud[:, 0:5]].argmin(axis=1)
+        dneigh10 =  self.height[self.neighbour_cloud[:, 0:10]].argmin(axis=1)
+        dneigh25 =  self.height[self.neighbour_cloud[:, 0:25]].argmin(axis=1)
+        dneigh50 =  self.height[self.neighbour_cloud[:, 0:50]].argmin(axis=1)
+
+        dneigh0 = dneigh5.copy()
+        dneigh0[dneigh5==0]  = dneigh10[dneigh5==0]
+        dneigh0[dneigh10==0] = dneigh25[dneigh10==0]
+        dneigh0[dneigh25==0] = dneigh50[dneigh25==0]
+
+        # Now have to disentangle the lookup table part of dneigh0
+
+        for n in range(0,self.npoints):
+            down_neighbour1[n] = self.neighbour_cloud[n,dneigh0[n]]
+
+        hit_list = np.where(dneigh50 == 0)[0]
+        data[hit_list] = 0.0
+
         # find nodes that are their own low neighbour!
-        data[indptr[:-1] == down_neighbour1] = 0.0
+        # data[indptr[:-1] == down_neighbour1] = 0.0
 
         # read into matrix
         adjacency1 = self._adjacency_matrix_template()
@@ -218,9 +274,59 @@ class TopoMesh(object):
         adjacency1.assemblyEnd()
 
         self.adjacency1 = adjacency1.transpose()
+        self.down_neighbour1 = down_neighbour1
 
+## This version is based on distance not mesh connectivity -
 
     def _build_adjacency_matrix_2(self):
+        """
+        Constructs a sparse matrix to move information downhill by one node in the 2nd steepest direction.
+
+        The downhill matrix pushes information out of the domain and can be used as an increment
+        to construct the cumulative area (etc) along the flow paths.
+        """
+
+        data    = np.ones(self.npoints)
+        down_neighbour2 = self.down_neighbour1.copy()
+        indptr  = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
+
+        # More efficient to do this along with the 1 neighbour above
+
+        dneigh5  =  self.height[self.neighbour_cloud[:, 0:5]].argmin(axis=1)
+        dneigh10 =  self.height[self.neighbour_cloud[:, 0:10]].argmin(axis=1)
+        dneigh25 =  self.height[self.neighbour_cloud[:, 0:25]].argmin(axis=1)
+        dneigh50 =  self.height[self.neighbour_cloud[:, 0:50]].argmin(axis=1)
+
+        dneigh0 = dneigh5.copy()
+        dneigh0[dneigh5==0]  = dneigh10[dneigh5==0]
+        dneigh0[dneigh10==0] = dneigh25[dneigh10==0]
+        dneigh0[dneigh25==0] = dneigh50[dneigh25==0]
+
+        # Could loop over points we know to be correct
+
+        for n in range(0,self.npoints):
+            candidates = np.where(self.height[self.neighbour_cloud[n, dneigh0[n]:50]] < self.height[n])[0]
+            if len(candidates) > 1:
+                nindx = dneigh0[n]+candidates[1]
+                down_neighbour2[n] = self.neighbour_cloud[n,nindx]   ## Copy down_neighbour1, change if valid
+
+        hit_list = np.where(dneigh50 == 0)[0]
+        data[hit_list] = 0.0
+
+        # find nodes that are their own low neighbour!
+        # data[indptr[:-1] == down_neighbour1] = 0.0
+
+        # read into matrix
+        adjacency2 = self._adjacency_matrix_template()
+        adjacency2.setValuesLocalCSR(indptr, down_neighbour2, data)
+        adjacency2.assemblyBegin()
+        adjacency2.assemblyEnd()
+
+        self.adjacency2 = adjacency2.transpose()
+        self.down_neighbour2 = down_neighbour2
+
+
+    def _build_adjacency_matrix_2_old(self):
         """
         Constructs a sparse matrix to move information downhill by one node in the
         direction of the second-steepest node (self.adjacency2)
