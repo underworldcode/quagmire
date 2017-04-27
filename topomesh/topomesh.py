@@ -11,7 +11,7 @@ from scipy.spatial import cKDTree as _cKDTree
 
 class TopoMesh(object):
     def __init__(self):
-
+        self.build3Neighbours = True
         pass
 
 
@@ -83,31 +83,70 @@ class TopoMesh(object):
         vec = self.gvec.copy()
         vec.setArray(self.slope)
 
-        self._build_adjacency_matrix_1()
-        self._build_adjacency_matrix_2()
+        self._build_adjacency_matrix_123()
 
-        w1 = np.sqrt(self.slope[self.down_neighbour1])
-        w2 = np.sqrt(self.slope[self.down_neighbour2])
+        grad1 = np.abs(self.height - self.height[self.down_neighbour1]+1.0e-10) / (1.0e-10 +
+                np.hypot(self.tri.points[:,0] - self.tri.points[self.down_neighbour1,0],
+                         self.tri.points[:,1] - self.tri.points[self.down_neighbour1,1] ))
+
+        grad2 = np.abs(self.height - self.height[self.down_neighbour2]+1.0e-10) / (1.0e-10 +
+                np.hypot(self.tri.points[:,0] - self.tri.points[self.down_neighbour2,0],
+                         self.tri.points[:,1] - self.tri.points[self.down_neighbour2,1] ))
+
+        w1 = np.sqrt(grad1)
+        w2 = np.sqrt(grad2)
 
         w1 /= (w1+w2)
         w2  = 1.0 - w1
-
-
-        vec.setArray(w1)
 
         downhillMat  = self.adjacency1.copy()
         downhillMat2 = self.adjacency2.copy()
 
         vec.setArray(w1)
-        downhillMat.diagonalScale(L=vec)
+        downhillMat.diagonalScale(R=vec)
 
         vec.setArray(w2)
-        downhillMat2.diagonalScale(L=vec)
+        downhillMat2.diagonalScale(R=vec)
 
         self.downhillMat = downhillMat + downhillMat2
 
         downhillMat.destroy()
         downhillMat2.destroy()
+
+        if self.build3Neighbours:
+
+            grad3 = np.abs(self.height - self.height[self.down_neighbour3]+1.0e-15) / (1.0e-10 +
+                    np.hypot(self.tri.points[:,0] - self.tri.points[self.down_neighbour3,0],
+                             self.tri.points[:,1] - self.tri.points[self.down_neighbour3,1] ) )
+
+            w1 = np.sqrt(grad1)
+            w2 = np.sqrt(grad2)
+            w3 = np.sqrt(grad3)
+
+            w1 /= (w1+w2+w3)
+            w2 /= (w1+w2+w3)
+            w3 = 1.0 - (w1+w2)
+
+            downhillMat  = self.adjacency1.copy()
+            downhillMat2 = self.adjacency2.copy()
+            downhillMat3 = self.adjacency3.copy()
+
+            vec.setArray(w1)
+            downhillMat.diagonalScale(R=vec)
+
+            vec.setArray(w2)
+            downhillMat2.diagonalScale(R=vec)
+
+            vec.setArray(w3)
+            downhillMat3.diagonalScale(R=vec)
+
+            self.downhillMat3 = downhillMat + downhillMat2 + downhillMat3
+
+            downhillMat.destroy()
+            downhillMat2.destroy()
+            downhillMat3.destroy()
+
+        return
 
     def _build_downhill_matrix(self):
 
@@ -269,8 +308,8 @@ class TopoMesh(object):
 
         # read into matrix
         adjacency1 = self._adjacency_matrix_template()
-        adjacency1.setValuesLocalCSR(indptr, down_neighbour1, data)
         adjacency1.assemblyBegin()
+        adjacency1.setValuesLocalCSR(indptr, down_neighbour1, data)
         adjacency1.assemblyEnd()
 
         self.adjacency1 = adjacency1.transpose()
@@ -278,7 +317,7 @@ class TopoMesh(object):
 
 ## This version is based on distance not mesh connectivity -
 
-    def _build_adjacency_matrix_2(self):
+    def _build_adjacency_matrix_123(self):
         """
         Constructs a sparse matrix to move information downhill by one node in the 2nd steepest direction.
 
@@ -286,44 +325,76 @@ class TopoMesh(object):
         to construct the cumulative area (etc) along the flow paths.
         """
 
-        data    = np.ones(self.npoints)
-        down_neighbour2 = self.down_neighbour1.copy()
+        # Allocate matrix entry and index arrays
+
+        data1    = np.ones(self.npoints)
+        data2    = np.ones(self.npoints)
+        data3    = np.ones(self.npoints)
+
+        down_neighbour1 = np.empty(self.npoints,dtype=PETSc.IntType)
+        down_neighbour2 = np.empty(self.npoints,dtype=PETSc.IntType)
+        down_neighbour3 = np.empty(self.npoints,dtype=PETSc.IntType)
+
         indptr  = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
 
-        # More efficient to do this along with the 1 neighbour above
+        # compute low neighbours
 
-        dneigh5  =  self.height[self.neighbour_cloud[:, 0:5]].argmin(axis=1)
-        dneigh10 =  self.height[self.neighbour_cloud[:, 0:10]].argmin(axis=1)
-        dneigh25 =  self.height[self.neighbour_cloud[:, 0:25]].argmin(axis=1)
-        dneigh50 =  self.height[self.neighbour_cloud[:, 0:50]].argmin(axis=1)
+        dneighTF = self.height[self.neighbour_cloud[:,:]] < self.height[:].reshape(-1,1)
 
-        dneigh0 = dneigh5.copy()
-        dneigh0[dneigh5==0]  = dneigh10[dneigh5==0]
-        dneigh0[dneigh10==0] = dneigh25[dneigh10==0]
-        dneigh0[dneigh25==0] = dneigh50[dneigh25==0]
+        dneighL1 = np.empty(self.npoints, dtype=np.int)
+        dneighL1[:] = dneighTF[:].argmax(axis=1)
 
-        # Could loop over points we know to be correct
+        for node in range(0, self.npoints):
+            dneighTF[node,dneighL1[node]] = False
 
-        for n in range(0,self.npoints):
-            candidates = np.where(self.height[self.neighbour_cloud[n, dneigh0[n]:50]] < self.height[n])[0]
-            if len(candidates) > 1:
-                nindx = dneigh0[n]+candidates[1]
-                down_neighbour2[n] = self.neighbour_cloud[n,nindx]   ## Copy down_neighbour1, change if valid
+        dneighL2 = np.empty(self.npoints, dtype=np.int)
+        dneighL2[:] = dneighTF[:].argmax(axis=1)
+        dneighL2[dneighL2 == 0] = dneighL1[dneighL2 == 0]
 
-        hit_list = np.where(dneigh50 == 0)[0]
-        data[hit_list] = 0.0
+        for node in range(0, self.npoints):
+            dneighTF[node,dneighL2[node]] = False
 
-        # find nodes that are their own low neighbour!
-        # data[indptr[:-1] == down_neighbour1] = 0.0
+        dneighL3 = np.empty(self.npoints, dtype=np.int)
+        dneighL3[:] = dneighTF[:].argmax(axis=1)
+        dneighL3[dneighL3 == 0] = dneighL1[dneighL3 == 0]
+
+        for node in range(0, self.npoints):
+            down_neighbour1[node] = self.neighbour_cloud[node, dneighL1[node]]
+            down_neighbour2[node] = self.neighbour_cloud[node, dneighL2[node]]
+            down_neighbour3[node] = self.neighbour_cloud[node, dneighL3[node]]
+
+        data1[dneighL1 == 0] = 0.0
+        data2[dneighL2 == 0] = 0.0
+        data3[dneighL3 == 0] = 0.0
+
+        # read into matrix
+        adjacency1 = self._adjacency_matrix_template()
+        adjacency1.assemblyBegin()
+        adjacency1.setValuesLocalCSR(indptr, down_neighbour1, data1)
+        adjacency1.assemblyEnd()
+
+        self.adjacency1 = adjacency1.transpose()
+        self.down_neighbour1 = down_neighbour1
 
         # read into matrix
         adjacency2 = self._adjacency_matrix_template()
-        adjacency2.setValuesLocalCSR(indptr, down_neighbour2, data)
         adjacency2.assemblyBegin()
+        adjacency2.setValuesLocalCSR(indptr, down_neighbour2, data2)
         adjacency2.assemblyEnd()
 
         self.adjacency2 = adjacency2.transpose()
         self.down_neighbour2 = down_neighbour2
+
+        if self.build3Neighbours:
+        # read into matrix
+            adjacency3 = self._adjacency_matrix_template()
+            adjacency3.assemblyBegin()
+            adjacency3.setValuesLocalCSR(indptr, down_neighbour3, data3)
+            adjacency3.assemblyEnd()
+
+            self.adjacency3 = adjacency3.transpose()
+            self.down_neighbour3 = down_neighbour3
+
 
 
     def _build_adjacency_matrix_2_old(self):

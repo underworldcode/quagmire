@@ -86,7 +86,7 @@ class SurfMesh(object):
     def backfill_points(self, fill_points, new_heights):
         """
         Handles *selected* low points by backfilling height array.
-        This can be used to block a stream path, for example. 
+        This can be used to block a stream path, for example.
         """
 
         if len(fill_points) == 0:
@@ -149,11 +149,15 @@ class SurfMesh(object):
         Identify the (boundary) outflow points and return an array of node indices
         """
 
-        nodes = np.arange(0, self.npoints, dtype=np.int)
-        low_nodes = self.neighbour_array_2_low[:,0]
-        mask = np.logical_and(nodes == low_nodes, self.bmask == False)
+        # nodes = np.arange(0, self.npoints, dtype=np.int)
+        # low_nodes = self.down_neighbour1
+        # mask = np.logical_and(nodes == low_nodes, self.bmask == False)
+        #
 
-        return low_nodes[mask]
+        o = (np.logical_and(self.down_neighbour2 == np.indices(self.down_neighbour2.shape), self.bmask == False)).flatten()
+        outflow_nodes = o.nonzero()[0]
+
+        return outflow_nodes
 
 
     def identify_flat_spots(self):
