@@ -81,12 +81,6 @@ class TriMesh(object):
         if self.verbose:
             print(" - Construct nearest neighbour array {}s".format(clock()-t))
 
-        # Find neighbours
-        t = clock()
-        self.construct_neighbour_cloud()
-        self.timings['construct neighbour cloud'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print(" - Construct neighbour cloud array {}s".format(clock()-t))
 
 
         # Find boundary points
@@ -103,6 +97,23 @@ class TriMesh(object):
         self.timings['smoothing matrix'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Build smoothing matrix {}s".format(clock()-t))
+
+
+        # Find neighbours
+        t = clock()
+        self.construct_neighbour_cloud()
+        self.timings['construct neighbour cloud'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.verbose:
+            print(" - Construct neighbour cloud array {}s".format(clock()-t))
+
+
+        # RBF smoothing operator
+        t = clock()
+        self._construct_rbf_weights()
+        self.timings['construct rbf weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.verbose:
+            print(" - Construct rbf weights {}s".format(clock()-t))
+
 
         self.root = False
 
@@ -248,7 +259,7 @@ class TriMesh(object):
         self.neighbour_list = np.array(neighbours)
         self.neighbour_array = np.array(closed_neighbours)
 
-    def construct_neighbour_cloud(self, size=50):
+    def construct_neighbour_cloud(self, size=33):
         """
         Find neighbours from distance cKDTree.
 
@@ -449,3 +460,95 @@ class TriMesh(object):
         self.dm.localToGlobal(self.lvec, self.gvec)
         self.dm.globalToLocal(self.gvec, self.lvec)
         return self.lvec.array.copy()
+
+
+
+    def _construct_rbf_weights(self, delta=None):
+
+        self.delta  = delta
+
+        if self.delta == None:
+            self.delta = self.neighbour_cloud_distances[:,1].mean() # * 0.75
+
+        # Initialise the interpolants
+
+        gaussian_dist_w       = np.zeros_like(self.neighbour_cloud_distances)
+        gaussian_dist_w[:,:]  = np.exp(-np.power(self.neighbour_cloud_distances[:,:]/self.delta, 2.0))
+        gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
+
+        self.gaussian_dist_w = gaussian_dist_w
+
+        return
+
+    def rbf_smoother(self, field):
+
+        # Should do some error checking here to ensure the field and point cloud are compatible
+
+        smoothfield = (field[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+
+        return smoothfield
+
+
+## The following is a scrap of code for ddx and ddy with gaussian rbf on a FD stencil.
+## It works reasonably but is slow compared to the 2D gridding. Maybe in 3D it would be
+## more competitive
+
+        # def _gaussian_dx_dy(self):
+        # """
+        # Compute the gaussian weights for x-dx, x+dx and therefore, d/dx
+        # """
+        #
+        # delta  = self.delta
+        # ddelta = self.ddelta
+        #
+        # gaussian_dist_w = np.zeros_like(self.neighbour_dst)
+        # dxminus         = np.zeros_like(self.neighbour_dst)
+        # dxplus          = np.zeros_like(self.neighbour_dst)
+        # dyminus         = np.zeros_like(self.neighbour_dst)
+        # dyplus          = np.zeros_like(self.neighbour_dst)
+        # dx              = np.zeros( self.neighbour_dst.shape + (2,))
+        #
+        # # ---
+        #
+        # dxminus[:,:] = self.points[:,0].reshape(-1,1) - self.points[self.neighbours[:,:],0] - ddelta
+        # dxplus[:,:]    = dxminus[:,:] + ddelta * 2.0
+        #
+        # dyminus[:,:] = self.points[:,1].reshape(-1,1) - self.points[self.neighbours[:,:],1] - ddelta
+        # dyplus[:,:]  = dyminus[:,:] + ddelta * 2.0
+        #
+        # dx[...,0] = self.points[:,0].reshape(-1,1) - self.points[self.neighbours[:,:],0]
+        # dx[...,1] = self.points[:,1].reshape(-1,1) - self.points[self.neighbours[:,:],1]
+        #
+        # # ----
+        #
+        # distminus = np.hypot(dxminus, dx[...,1])
+        # distplus  = np.hypot(dxplus,  dx[...,1])
+        #
+        # gaussian_dist_wxm  = np.exp(-np.power(distminus[:,:]/delta, 2.0))
+        # gaussian_dist_wxm /= gaussian_dist_wxm.sum(axis=1).reshape(-1,1)
+        #
+        # gaussian_dist_wxp  = np.exp(-np.power(distplus[:,:]/delta, 2.0))
+        # gaussian_dist_wxp /= gaussian_dist_wxp.sum(axis=1).reshape(-1,1)
+        #
+        # gaussian_ddx = 0.5*(gaussian_dist_wxp - gaussian_dist_wxm)/ddelta
+        #
+        # distminus = np.hypot(dx[...,0], dyminus)
+        # distplus  = np.hypot(dx[...,0], dyplus)
+        #
+        # gaussian_dist_wym  = np.exp(-np.power(distminus[:,:]/delta, 2.0))
+        # gaussian_dist_wym /= gaussian_dist_wym.sum(axis=1).reshape(-1,1)
+        # gaussian_dist_wyp  = np.exp(-np.power(distplus[:,:]/delta, 2.0))
+        # gaussian_dist_wyp /= gaussian_dist_wyp.sum(axis=1).reshape(-1,1)
+        #
+        # gaussian_ddy = 0.5*(gaussian_dist_wyp - gaussian_dist_wym)/ddelta
+        #
+        # return gaussian_ddx, gaussian_ddy
+
+        # def ddx_ddy(self, field):
+        #
+        # fx = (field[self.neighbours[:]] * self.gauss_ddx[:,:]).sum(axis=1)
+        # fy = (field[self.neighbours[:]] * self.gauss_ddy[:,:]).sum(axis=1)
+        #
+        #
+        # return fx, fy
+        #

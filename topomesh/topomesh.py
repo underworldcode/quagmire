@@ -10,8 +10,8 @@ from scipy.spatial import cKDTree as _cKDTree
 
 
 class TopoMesh(object):
-    def __init__(self):
-        self.build3Neighbours = True
+    def __init__(self, build3Neighbours=True):
+        self.build3Neighbours = build3Neighbours
         pass
 
 
@@ -148,115 +148,6 @@ class TopoMesh(object):
 
         return
 
-    def _build_downhill_matrix(self):
-
-        Z_neighbours = self.slope[self.neighbour_array_2_low]**0.5
-        Z_neighbours_sum = np.clip(Z_neighbours.sum(axis=1), 1e-12, 1e99)
-        weight = Z_neighbours/Z_neighbours_sum.reshape(-1,1)
-
-        # self._build_adjacency_matrix_1()
-        indptr = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
-        index  = np.arange(0, self.npoints, dtype=PETSc.IntType)
-
-        down_neighbour1 = self.neighbour_array_2_low[:,0]
-        down_neighbour2 = self.neighbour_array_2_low[:,1].copy()
-        data = np.ones(self.npoints)
-
-        # read into accumulator matrix
-        accumulatorMat = self._adjacency_matrix_template()
-        accumulatorMat.setValuesLocalCSR(indptr, down_neighbour1, data)
-        accumulatorMat.assemblyBegin()
-        accumulatorMat.assemblyEnd()
-        self.accumulatorMat = accumulatorMat.transpose()
-
-
-        # find nodes that are their own low neighbour!
-        data[np.logical_or(index==down_neighbour1, ~self.bmask)] = 0.0
-        mask = index == down_neighbour2
-        down_neighbour2[mask] = down_neighbour1[mask]
-
-
-        # read into adjacency matrices
-        adjacency1 = self._adjacency_matrix_template()
-        adjacency1.setValuesLocalCSR(indptr, down_neighbour1, weight[:,0]*data)
-        adjacency1.assemblyBegin()
-        adjacency1.assemblyEnd()
-        self.adjacency1 = adjacency1.transpose()
-
-        adjacency2 = self._adjacency_matrix_template()
-        adjacency2.setValuesLocalCSR(indptr, down_neighbour2, weight[:,1]*data)
-        adjacency2.assemblyBegin()
-        adjacency2.assemblyEnd()
-        self.adjacency2 = adjacency2.transpose()
-
-
-        # indptr = np.arange(0, self.npoints*2+2, 2, dtype=PETSc.IntType)
-        # down_neighbours = np.vstack([down_neighbour1, down_neighbour2]).ravel(order='F')
-        # data2 = np.vstack([data*weight, data*(1.0-weight)]).ravel(order='F')
-
-        # downhillMat = self._adjacency_matrix_template(nnz=(2,2))
-        # downhillMat.setValuesLocalCSR(indptr, down_neighbours, data2, addv=True)
-        # downhillMat.assemblyBegin()
-        # downhillMat.assemblyEnd()
-        # self.downhillMat = downhillMat.transpose()
-
-
-        # self._build_adjacency_matrix_2()
-
-        # self.downhillMat = weight * self.adjacency1 + (1.0-weight) * self.adjacency2
-
-        # self.downhillMat = weight * self.adjacency1
-        # self.downhillMat.axpy(1.0, (1.0-weight)*self.adjacency2)
-        self.downhillMat = self.adjacency1 + self.adjacency2
-
-
-    def _build_downhill_matrix_neighbours(self):
-
-        # Lets see if we can't read all neighbours in
-        maxC = 0
-        for row in self.neighbour_array_lo_hi:
-            if row.size > maxC:
-                maxC = row.size # -1 (unless it gives to itself?)
-
-
-        indptr, indices = self.vertex_neighbour_vertices
-
-        downhillMat = self._adjacency_matrix_template(nnz=(maxC,1))
-
-        for i in xrange(0, indptr.size-1):
-            neighbours = self.neighbour_array_lo_hi[i]
-            heightN = self.height[neighbours]
-
-# Benchmark - this converges
-            # Find all nodes where height is less than current node
-            down_neighbours = neighbours[heightN<self.height[i]]
-
-# Benchmark - this does not
-#            # Find all nodes where height is equal or less than current node
-#            down_neighbours = neighbours[heightN<=self.height[i]]
-
-            Z_neighbours = self.slope[down_neighbours]**0.5
-            weight = Z_neighbours/Z_neighbours.sum()
-
-## This is wrong - gives incompatible values
-            # if i==down_neighbours[0]:
-            #     weight[0] = 0
-
-## This is probably what is meant by the above but does not really work
-             # weight[np.where(down_neighbours == i)] = 0.0
-
-
-
-            # read in downhill neighbours to downhill matrix
-            downhillMat.setValuesLocal(i, down_neighbours.astype(np.int32), weight)
-
-
-        downhillMat.assemblyBegin()
-        downhillMat.assemblyEnd()
-        self.downhillMat = downhillMat.transpose()
-
-
-
     def _adjacency_matrix_template(self, nnz=(1,1)):
 
         matrix = PETSc.Mat().create(comm=comm)
@@ -268,52 +159,6 @@ class TopoMesh(object):
 
         return matrix
 
-
-## This version is based on distance not mesh connectivity
-
-    def _build_adjacency_matrix_1(self):
-        """
-        Constructs a sparse matrix to move information downhill by one node in the steepest direction.
-
-        The downhill matrix pushes information out of the domain and can be used as an increment
-        to construct the cumulative area (etc) along the flow paths.
-        """
-
-        indptr  = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
-        down_neighbour1 = self.neighbour_array_2_low[:,0]
-        data    = np.ones(self.npoints)
-
-        down_neighbour1 = np.empty(self.npoints,dtype=PETSc.IntType)
-
-        dneigh5  =  self.height[self.neighbour_cloud[:, 0:5]].argmin(axis=1)
-        dneigh10 =  self.height[self.neighbour_cloud[:, 0:10]].argmin(axis=1)
-        dneigh25 =  self.height[self.neighbour_cloud[:, 0:25]].argmin(axis=1)
-        dneigh50 =  self.height[self.neighbour_cloud[:, 0:50]].argmin(axis=1)
-
-        dneigh0 = dneigh5.copy()
-        dneigh0[dneigh5==0]  = dneigh10[dneigh5==0]
-        dneigh0[dneigh10==0] = dneigh25[dneigh10==0]
-        dneigh0[dneigh25==0] = dneigh50[dneigh25==0]
-
-        # Now have to disentangle the lookup table part of dneigh0
-
-        for n in range(0,self.npoints):
-            down_neighbour1[n] = self.neighbour_cloud[n,dneigh0[n]]
-
-        hit_list = np.where(dneigh50 == 0)[0]
-        data[hit_list] = 0.0
-
-        # find nodes that are their own low neighbour!
-        # data[indptr[:-1] == down_neighbour1] = 0.0
-
-        # read into matrix
-        adjacency1 = self._adjacency_matrix_template()
-        adjacency1.assemblyBegin()
-        adjacency1.setValuesLocalCSR(indptr, down_neighbour1, data)
-        adjacency1.assemblyEnd()
-
-        self.adjacency1 = adjacency1.transpose()
-        self.down_neighbour1 = down_neighbour1
 
 ## This version is based on distance not mesh connectivity -
 
@@ -396,35 +241,6 @@ class TopoMesh(object):
             self.down_neighbour3 = down_neighbour3
 
 
-
-    def _build_adjacency_matrix_2_old(self):
-        """
-        Constructs a sparse matrix to move information downhill by one node in the
-        direction of the second-steepest node (self.adjacency2)
-
-        The downhill matrix pushes information out of the domain and can be used as an increment
-        to construct the cumulative area (etc) along the flow paths.
-        """
-        indptr  = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
-        down_neighbour1 = self.neighbour_array_2_low[:,0]
-        down_neighbour2 = self.neighbour_array_2_low[:,1]
-        indices = down_neighbour2.copy()
-        data    = np.ones(self.npoints)
-
-        # find nodes that are their own low neighbour!
-        data[indptr[:-1] == down_neighbour1] = 0.0
-        mask = indptr[:-1] == down_neighbour2
-        indices[mask] = down_neighbour1[mask]
-
-        # read into matrix
-        adjacency2 = self._adjacency_matrix_template()
-        adjacency2.setValuesLocalCSR(indptr, indices, data)
-        adjacency2.assemblyBegin()
-        adjacency2.assemblyEnd()
-
-        self.adjacency2 = adjacency2.transpose()
-
-
     def build_cumulative_downhill_matrix(self):
         """
         Build non-sparse, single hit matrices to propagate information downhill
@@ -473,7 +289,13 @@ class TopoMesh(object):
         self.sweepDownToOutflowMat = downSweepMat
 
 
-    def cumulative_flow(self, vector):
+    def cumulative_flow(self, vector, use3path=False):
+
+
+        if self.build3Neighbours and use3path:
+            downhillMat = self.downhillMat3
+        else:
+            downhillMat = self.downhillMat
 
         self.lvec.setArray(vector)
         self.dm.localToGlobal(self.lvec, self.gvec)
@@ -484,14 +306,21 @@ class TopoMesh(object):
 
         niter = 0
         equal = False
+
+        tolerance = 1.0e-8 * DX1_sum
+
         while not equal:
+
             DX1_isum = DX1_sum
-            self.downhillMat.mult(DX1, self.gvec)
+            downhillMat.mult(DX1, self.gvec)
             DX1.setArray(self.gvec)
             DX1_sum = DX1.sum()
             DX0 += DX1
 
-            equal = DX1_sum == DX1_isum
+            # equal = (DX1_sum == DX1_isum) ## This appears to be a problem for the single-neighbour case used in reverse
+                                          ## i.e. for backfilling
+
+            equal = (DX1_sum < tolerance)
             niter += 1
 
         self.dm.globalToLocal(DX0, self.lvec)
@@ -499,7 +328,12 @@ class TopoMesh(object):
         return self.lvec.array.copy()
 
 
-    def downhill_smoothing(self, data, its, centre_weight=0.5):
+    def downhill_smoothing(self, data, its, centre_weight=0.75, use3path=False):
+
+        if self.build3Neighbours and use3path:
+            downhillMat = self.downhillMat3
+        else:
+            downhillMat = self.downhillMat
 
         norm = self.gvec.duplicate()
         smooth_data = self.gvec.duplicate()
@@ -521,7 +355,13 @@ class TopoMesh(object):
         return self.lvec.array.copy()
 
 
-    def uphill_smoothing(self, data, its, centre_weight=0.5):
+    def uphill_smoothing(self, data, its, centre_weight=0.75, use3path=False):
+
+        if self.build3Neighbours and use3path:
+            downhillMat = self.downhillMat3
+        else:
+            downhillMat = self.downhillMat
+
 
         norm2 = self.gvec.duplicate()
         smooth_data = self.gvec.duplicate()
@@ -545,7 +385,7 @@ class TopoMesh(object):
         return self.lvec.array.copy()
 
 
-    def streamwise_smoothing(self, data, its, centre_weight=0.5):
+    def streamwise_smoothing(self, data, its, centre_weight=0.75, use3path=False):
         """
         A smoothing operator that is limited to the uphill / downhill nodes for each point. It's hard to build
         a conservative smoothing operator this way since "boundaries" occur at irregular internal points associated
@@ -554,8 +394,9 @@ class TopoMesh(object):
         done for each application of the smoothing.
         """
 
-        smooth_data_d = self.downhill_smoothing(data, its, centre_weight=centre_weight)
-        smooth_data_u = self.uphill_smoothing(data, its, centre_weight=centre_weight)
+
+        smooth_data_d = self.downhill_smoothing(data, its, centre_weight=centre_weight, use3path=use3path)
+        smooth_data_u = self.uphill_smoothing(data, its, centre_weight=centre_weight, use3path=use3path)
 
         return 0.5*(smooth_data_d + smooth_data_u)
 
