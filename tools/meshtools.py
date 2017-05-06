@@ -3,6 +3,10 @@ Mesh generation functions
 
 """
 
+import numpy as np
+
+try: range = xrange
+except: pass
 
 class _Triangulation(object):
     """
@@ -53,28 +57,74 @@ class _RecoverTriangles(object):
         self.simplices = simplices
 
 
+def _points_to_edges(tri, boundary):
+    """
+    Finds the edges connecting any combination of points in boundary
+    """
+    i1 = np.sort([tri.simplices[:,0], tri.simplices[:,1]], axis=0)
+    i2 = np.sort([tri.simplices[:,0], tri.simplices[:,2]], axis=0)
+    i3 = np.sort([tri.simplices[:,1], tri.simplices[:,2]], axis=0)
 
-def create_DMPlex_from_points(x, y, bmask=None, convex_hull=False):
+    a = np.hstack([i1, i2, i3]).T
+
+    # find unique rows in numpy array 
+    # <http://stackoverflow.com/questions/16970982/find-unique-rows-in-numpy-array>
+    b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
+    edges = np.unique(b).view(a.dtype).reshape(-1, a.shape[1])
+
+    ix = np.in1d(edges.ravel(), boundary).reshape(edges.shape)
+    boundary2 = ix.sum(axis=1)
+    # both points are boundary points that share the line segment
+    boundary_edges = edges[boundary2==2]
+    return boundary_edges
+
+
+def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
     """
     Triangulates x,y coordinates on rank 0 and creates a PETSc DMPlex object
     from the cells and vertices to distribute among processors.
 
-    bmask is ignored if convex_hull=True, but if convex_hull=False and
-    bmask is None then a value error will be raised.
+    Parameters
+    ----------
+     x : array of floats, shape (n,)
+        x coordinates
+     y : array of floats, shape (n,)
+        y coordinates
+     bmask : array of bools, shape (n,)
+        boundary mask where points along the boundary
+        equal False, and the interior equal True
+        if bmask=None (default) then the convex hull of points is used
+     refinement_steps : int
+        number of iterations to refine the mesh (default: 0)
+
+    Returns
+    -------
+     DM : object
+        PETSc DMPlex object
+
+    Notes
+    -----
+     x and y are shuffled on input to aid triangulation efficiency
+
+     Refinement adds the midpoints of every line segment to the DM.
+     Boundary markers are automatically updated with each iteration.
+
     """
     from petsc4py import PETSc
-    import numpy as np
     from stripy import Triangulation
 
-
     if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
+        reshuffle = np.random.permutation(x.size)
+        x = x[reshuffle]
+        y = y[reshuffle]
+        if bmask is not None:
+            bmask = bmask[reshuffle]
         tri = Triangulation(x,y)
         coords = tri.points
         cells  = tri.simplices
     else:
         coords = np.zeros((0,2), dtype=float)
         cells  = np.zeros((0,3), dtype=PETSc.IntType)
-
 
     dim = 2
     dm = PETSc.DMPlex().createFromCellList(dim, cells, coords)
@@ -84,26 +134,38 @@ def create_DMPlex_from_points(x, y, bmask=None, convex_hull=False):
     origSect.setUp()
     dm.setDefaultSection(origSect)
 
-    dm.createLabel("boundary")
     pStart, eEnd = dm.getDepthStratum(0) # points in DAG
 
-    if convex_hull:
-        if PETSc.COMM_WORLD.rank == 0:
-            hull = tri.convex_hull()
+    # Label boundary points and edges
+    dm.createLabel("boundary")
+
+    if PETSc.COMM_WORLD.rank == 0:
+        if bmask is None:
+            ## mark edges
+            dm.markBoundaryFaces("boundary")
+            ## mark points
             # convert to DAG ordering
-            boundary_points = hull + pStart
+            boundary_points = tri.convex_hull() + pStart
             for pt in boundary_points:
                 dm.setLabelValue("boundary", pt, 1)
+        else:
+            boundary_points = np.nonzero(~bmask)[0]
 
-    elif bmask is not None:
-        if PETSc.COMM_WORLD.rank == 0:
+            # mark edges
+            boundary_edges = _points_to_edges(tri, boundary_points)
+
             # convert to DAG ordering
-            boundary_points = np.nonzero(~bmask)[0] + pStart
+            boundary_edges  += pStart
+            boundary_points += pStart
+
+            # join is the common edge to which they are connected
+            for idx, e in enumerate(boundary_edges):
+                join = dm.getJoin(e)
+                dm.setLabelValue("boundary", join[0], 1)
+
+            # mark points
             for pt in boundary_points:
                 dm.setLabelValue("boundary", pt, 1)
-
-    else:
-        raise ValueError("Set convex_hull to True or assign bmask")
 
 
     # Distribute to other processors
@@ -113,6 +175,22 @@ def create_DMPlex_from_points(x, y, bmask=None, convex_hull=False):
         sf = dm.distribute(overlap=1)
         newSect, newVec = dm.distributeField(sf, origSect, origVec)
         dm.setDefaultSection(newSect)
+
+    # Label coarse DM in case it is ever needed again
+    pStart, pEnd = dm.getDepthStratum(0)
+    dm.createLabel("coarse")
+    for pt in range(pStart, pEnd):
+        dm.setLabelValue("coarse", pt, 1)
+
+
+    # Refinement
+    for i in range(0, refinement_steps):
+        dm = dm.refine()
+
+    origSect = dm.createSection(1, [1,0,0]) # define one DoF on the nodes
+    origSect.setFieldName(0, "points")
+    origSect.setUp()
+    dm.setDefaultSection(origSect)
 
     dm.stratify()
     return dm
@@ -124,7 +202,6 @@ def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
     - This only works if PETSc was configured with triangle
     """
     from petsc4py import PETSc
-    import numpy as np
 
     dm = PETSc.DMPlex().create()
     dm.setDimension(1)
@@ -159,7 +236,6 @@ def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     spaced grid.
     """
     from petsc4py import PETSc
-    import numpy as np
 
     dx = (maxX - minX)/resX
     dy = (maxY - minY)/resY
@@ -189,7 +265,6 @@ def lloyd_mesh_improvement(x, y, bmask, iterations):
     """
 
     from scipy.spatial import Voronoi  as __Voronoi
-    import numpy as np
 
 
     points = np.column_stack((x,y))
@@ -214,7 +289,6 @@ def lloyd_mesh_improvement(x, y, bmask, iterations):
 
 def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples ):
     
-    import numpy as np
 
 
     lin_samples = int(np.sqrt(samples))
@@ -261,7 +335,6 @@ def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_sa
 
 def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples ): 
 
-    import numpy as np
 
 
     originX = 0.5 * (maxX + minX)

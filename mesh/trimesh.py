@@ -285,39 +285,29 @@ class TriMesh(object):
 
     def get_boundary(self, marker="boundary"):
         """
-        Get distributed boundary information
+        Find the nodes on the boundary from the DM
+        If marker does not exist then the convex hull is used.
         """
         bmask = np.ones(self.npoints, dtype=bool)
 
         pStart, pEnd = self.dm.getDepthStratum(0)
-        eStart, eEnd = self.dm.getDepthStratum(1)
         
         labels = []
         for i in range(self.dm.getNumLabels()):
             labels.append(self.dm.getLabelName(i))
 
-        if marker in labels:
-            for idx, p in enumerate(range(pStart, pEnd)):
-                if self.dm.getLabelValue(marker, p) == 1:
-                    bmask[idx] = False
-        else:
+        if marker not in labels:
             print("Warning! No boundary information in DMPlex.\nContinuing with convex hull.")
-            self.dm.markBoundaryFaces(marker)
-            eRange = np.arange(eStart, eEnd, dtype=PETSc.IntType)
+            self.dm.markBoundaryFaces(marker) # marks line segments
+            boundary_points = self.tri.convex_hull() + pStart
+            for pt in boundary_points:
+                self.dm.setLabelValue(marker, pt, 1)
 
-            bnd = np.zeros_like(eRange)
-            for idx, e in enumerate(eRange):
-                bnd[idx] = self.dm.getLabelValue(marker, e)
-                
-            boundary = eRange[bnd==1]
-            boundary_ind = np.zeros((boundary.size, 2), dtype=PETSc.IntType)
+        boundaryIS = self.dm.getStratumIS(marker, 1)
+        pt_range = np.logical_and(boundaryIS.indices >= pStart, boundaryIS.indices < pEnd)
+        boundary_points = boundaryIS.indices[pt_range] - pStart
 
-            for idx, e in enumerate(boundary):
-                boundary_ind[idx] = self.dm.getCone(e)
-                
-            boundary_ind -= pStart # return to local ordering
-            bmask[boundary_ind] = False
-
+        bmask[boundary_points] = False
         return bmask
 
 
