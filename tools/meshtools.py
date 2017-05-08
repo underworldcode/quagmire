@@ -257,6 +257,8 @@ def lloyd_mesh_improvement(x, y, bmask, iterations):
 
     (e.g. see http://en.wikipedia.org/wiki/Lloyd's_algorithm )
 
+    This can be very slow for anything but a small mesh.
+
     We do not move boundary points, but some issues can arise near
     boundaries if the initial mesh is poorly constructed with non-boundary points
     very close to the boundary such that the centroid of the cell falls outside the boundary.
@@ -346,8 +348,8 @@ def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundar
     
     lin_samples = int(np.sqrt(samples))
 
-    tiX = np.linspace(minX + 0.75 * spacingX, maxX - 0.75 * spacingX, lin_samples) 
-    tiY = np.linspace(minY + 0.75 * spacingY, maxY - 0.75 * spacingY, lin_samples) 
+    tiX = np.linspace(minX + 0.75 * spacingX, maxX - 0.75 * spacingX, lin_samples)
+    tiY = np.linspace(minY + 0.75 * spacingY, maxY - 0.75 * spacingY, lin_samples)
 
     x,y = np.meshgrid(tiX, tiY)
 
@@ -369,9 +371,9 @@ def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundar
     # Now add boundary points
     
     theta = np.array( [ 2.0 * np.pi * i / (3 * boundary_samples) for i in range(0, 3 * boundary_samples) ])
-        
-    X = np.append(X, 1.001 * radiusX * np.sin(theta))    
-    Y = np.append(Y, 1.001 * radiusX * aspect * np.cos(theta))    
+
+    X = np.append(X, 1.001 * radiusX * np.sin(theta))
+    Y = np.append(Y, 1.001 * radiusX * aspect * np.cos(theta))
     bmask = np.append(bmask, np.zeros_like(theta, dtype=bool))
 
     return X, Y, bmask
