@@ -203,9 +203,12 @@ def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
     """
     from petsc4py import PETSc
 
+    nx = int((maxX - minX)/resX)
+    ny = int((maxY - minY)/resY)
+
     dm = PETSc.DMPlex().create()
     dm.setDimension(1)
-    boundary = dm.createSquareBoundary([minX,minY], [maxX,maxY], [resX,resY])
+    boundary = dm.createSquareBoundary([minX,minY], [maxX,maxY], [nx,ny])
     dm.generate(boundary, name='triangle')
     if refinement:
         dm.setRefinementLimit(refinement) # Maximum cell volume
