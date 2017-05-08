@@ -17,7 +17,7 @@ class TriMesh(object):
     We recommend having 1) triangle or 2) scipy installed for Delaunay triangulations.
     """
     def __init__(self, dm, verbose=True):
-        from scipy.spatial import Delaunay
+        from scipy.spatial import cKDTree as _cKDTree
         self.timings = dict() # store times
 
         self.log = PETSc.Log()
@@ -51,7 +51,13 @@ class TriMesh(object):
         if self.verbose:
             print(" - Delaunay triangulation {}s".format(clock()-t))
 
-        
+        # cKDTree
+        t = clock()
+        self.cKDTree = _cKDTree(self.tri.points)
+        self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.verbose:
+            print(" - cKDTree {}s".format(clock()-t))
+
         # Calculate weigths and pointwise area
         t = clock()
         self.calculate_area_weights()
@@ -73,7 +79,8 @@ class TriMesh(object):
         self.construct_neighbours()
         self.timings['construct neighbours'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Construct neighbour array {}s".format(clock()-t))
+            print(" - Construct nearest neighbour array {}s".format(clock()-t))
+
 
 
         # Find boundary points
@@ -90,6 +97,23 @@ class TriMesh(object):
         self.timings['smoothing matrix'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Build smoothing matrix {}s".format(clock()-t))
+
+
+        # Find neighbours
+        t = clock()
+        self.construct_neighbour_cloud()
+        self.timings['construct neighbour cloud'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.verbose:
+            print(" - Construct neighbour cloud array {}s".format(clock()-t))
+
+
+        # RBF smoothing operator
+        t = clock()
+        self._construct_rbf_weights()
+        self.timings['construct rbf weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.verbose:
+            print(" - Construct rbf weights {}s".format(clock()-t))
+
 
         self.root = False
 
@@ -234,6 +258,19 @@ class TriMesh(object):
 
         self.neighbour_list = np.array(neighbours)
         self.neighbour_array = np.array(closed_neighbours)
+
+    def construct_neighbour_cloud(self, size=33):
+        """
+        Find neighbours from distance cKDTree.
+
+        """
+
+        nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
+
+        self.neighbour_cloud = nncloud
+        self.neighbour_cloud_distances = nndist
+
+        return
 
 
     def _build_smoothing_matrix(self):

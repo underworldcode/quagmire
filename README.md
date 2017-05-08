@@ -8,6 +8,7 @@ Running this code requires the following packages to be installed:
 
 - Python 2.7.x and above
 - Numpy 1.9 and above
+- Scipy 
 - [mpi4py](http://pythonhosted.org/mpi4py/usrman/index.html)
 - [petsc4py](https://pythonhosted.org/petsc4py/usrman/install.html)
 - h5py (optional - for saving parallel data)
