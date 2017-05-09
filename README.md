@@ -2,22 +2,24 @@
 
 Quagmire is a Python surface process framework for building erosion and deposition models on highly parallel, decomposed structured and unstructured meshes.
 
+Quagmire is structured into three major classes that inherit methods and attributes from lower tiers.
+
+![Quagmire hierarchy](assets/hierarchy_chart.png)
+
+The Surface Processes class inherits from the Topography class, which in turn inherits from TriMesh or PixMesh depending on the type of mesh.
+
 ## Dependencies
 
 Running this code requires the following packages to be installed:
 
 - Python 2.7.x and above
 - Numpy 1.9 and above
-- Scipy 
+- Scipy 0.15 and above
 - [mpi4py](http://pythonhosted.org/mpi4py/usrman/index.html)
 - [petsc4py](https://pythonhosted.org/petsc4py/usrman/install.html)
-- h5py (optional - for saving parallel data)
-- matplotlib (optional - for visualisation)
-
-Building unstructured meshes (using the routines in the *tools* folder) require Delaunay triangulations found in either of the following dependencies:
-
-- SciPy 0.15.0 and above
-- [Triangle](http://dzhelil.info/triangle/) (faster)
+- [stripy](https://github.com/University-of-Melbourne-Geodynamics/stripy)
+- [h5py](http://docs.h5py.org/en/latest/mpi.html#building-against-parallel-hdf5) (optional - for saving parallel data)
+- Matplotlib (optional - for visualisation)
 
 ### PETSc installation
 
@@ -45,7 +47,7 @@ You can then point to this install directory when you install [h5py](http://docs
 
 ## Usage
 
-Quagmire is highly scalable. All of the python scripts in the *examples* subdirectory can be run in parallel, e.g.
+Quagmire is highly scalable. All of the python scripts in the *tests* subdirectory can be run in parallel, e.g.
 
 ```
 mpirun -np 4 python stream_power.py
