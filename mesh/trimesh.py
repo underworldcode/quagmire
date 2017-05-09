@@ -451,3 +451,29 @@ class TriMesh(object):
         self.dm.localToGlobal(self.lvec, self.gvec)
         self.dm.globalToLocal(self.gvec, self.lvec)
         return self.lvec.array.copy()
+
+
+    def _construct_rbf_weights(self, delta=None):
+
+        self.delta  = delta
+
+        if self.delta == None:
+            self.delta = self.neighbour_cloud_distances[:,1].mean() # * 0.75
+
+        # Initialise the interpolants
+
+        gaussian_dist_w       = np.zeros_like(self.neighbour_cloud_distances)
+        gaussian_dist_w[:,:]  = np.exp(-np.power(self.neighbour_cloud_distances[:,:]/self.delta, 2.0))
+        gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
+
+        self.gaussian_dist_w = gaussian_dist_w
+
+        return
+
+    def rbf_smoother(self, field):
+
+        # Should do some error checking here to ensure the field and point cloud are compatible
+
+        smoothfield = (field[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+
+        return smoothfield
