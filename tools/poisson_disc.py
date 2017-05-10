@@ -2,10 +2,43 @@ import numpy as np
 try: range = xrange
 except: pass
 
-def poisson_disc_sampler(width, height, radius, k=30, r_grid=None):
+def poisson_disc_sampler(width, height, radius, k=30, r_grid=None,\
+                         cpts=None, spts=None, return_cpts=True):
     """
-    Poisson disc sampler in two dimensions
+    Poisson disc sampler in two dimensions.
+    This is a flood-fill algorithm for generating points that are
+    separated by a minimum radius.
+
+    Arguments
+    ---------
+     width : int
+        width of the domain
+     height : int
+        height of the domain
+     radius : float
+        constant radius to sample across the domain
+        every point is guaranteed to be no less than this distance
+        from each other
+     k : int (default: k=30)
+        number of random samples to generate around a single point
+        30 generally gives good results
+     r_grid : array of floats, optional, shape (height,width)
+        support for variable radii
+        radius is ignored if an array is given here
+     cpts : array of floats, optional, shape (n,2)
+        points that must be sampled; useful for irregular boundaries
+     spts : array of floats, optional, shape (s,2)
+        points used to seed the flood-fill algorithm,
+        samples are generated outwards from these seed points
+     return_cpts : bool (default: True)
+        toggles wheter cpts are returned within points
+        if cpts are poorly sampled it may be undesirable
+        to include them with pts
     
+    Returns
+    -------
+     pts : array of floats, shape (N,2)
+        x, y coordinates for each sample point
     """
 
     def distance_squared(point0, point1):
@@ -54,7 +87,8 @@ def poisson_disc_sampler(width, height, radius, k=30, r_grid=None):
 
 
     if r_grid is not None:
-        assert r_grid.shape == (height, width)
+        if r_grid.shape != (height, width):
+            raise ValueError("r_grid must have shape ({},{})".format(height,width))
         r_min, r_max = r_grid.min(), r_grid.max()
         radius = r_max
     else:
@@ -72,6 +106,18 @@ def poisson_disc_sampler(width, height, radius, k=30, r_grid=None):
     M = np.zeros((rows, cols), dtype=bool)
 
 
+    # Add constraint points
+    ci, cj = [], []
+    if cpts is not None:
+        cpts = cpts.reshape(-1,2)[:,::-1]
+        ci = (cpts[:,0]/cellsize).astype(int)
+        cj = (cpts[:,1]/cellsize).astype(int)
+        P[ci,cj] = cpts
+        M[ci,cj] = True
+        if return_cpts:
+            ci, cj = [], []
+
+
     # Cache generation for neighbourhood
     N = {}
     for i in range(0, rows):
@@ -79,10 +125,16 @@ def poisson_disc_sampler(width, height, radius, k=30, r_grid=None):
             N[(i,j)] = neighbourhood((i,j))
 
 
+    # Add seed points
     points = []
-    # add a random initial point
-    add_point((rows//2, \
-               cols//2))
+    if spts is not None:
+        spts = spts.reshape(-1,2)
+        for pt in spts:
+            add_point(tuple(pt))
+    else:
+        # add a random initial point
+        add_point((np.random.uniform(0, rows),\
+                   np.random.uniform(0, cols)))
 
     length = len(points)
     while length:
@@ -99,6 +151,9 @@ def poisson_disc_sampler(width, height, radius, k=30, r_grid=None):
 
         # re-evaluate length
         length = len(points)
+
+    # Mask any constraint nodes if return_cpts=False
+    M[ci,cj] = False
 
     return P[M]
 

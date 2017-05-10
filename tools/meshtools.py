@@ -57,28 +57,6 @@ class _RecoverTriangles(object):
         self.simplices = simplices
 
 
-def _points_to_edges(tri, boundary):
-    """
-    Finds the edges connecting any combination of points in boundary
-    """
-    i1 = np.sort([tri.simplices[:,0], tri.simplices[:,1]], axis=0)
-    i2 = np.sort([tri.simplices[:,0], tri.simplices[:,2]], axis=0)
-    i3 = np.sort([tri.simplices[:,1], tri.simplices[:,2]], axis=0)
-
-    a = np.hstack([i1, i2, i3]).T
-
-    # find unique rows in numpy array 
-    # <http://stackoverflow.com/questions/16970982/find-unique-rows-in-numpy-array>
-    b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
-    edges = np.unique(b).view(a.dtype).reshape(-1, a.shape[1])
-
-    ix = np.in1d(edges.ravel(), boundary).reshape(edges.shape)
-    boundary2 = ix.sum(axis=1)
-    # both points are boundary points that share the line segment
-    boundary_edges = edges[boundary2==2]
-    return boundary_edges
-
-
 def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
     """
     Triangulates x,y coordinates on rank 0 and creates a PETSc DMPlex object
@@ -113,6 +91,28 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
     from petsc4py import PETSc
     from stripy import Triangulation
 
+    def points_to_edges(tri, boundary):
+        """
+        Finds the edges connecting any combination of points in boundary
+        """
+        i1 = np.sort([tri.simplices[:,0], tri.simplices[:,1]], axis=0)
+        i2 = np.sort([tri.simplices[:,0], tri.simplices[:,2]], axis=0)
+        i3 = np.sort([tri.simplices[:,1], tri.simplices[:,2]], axis=0)
+
+        a = np.hstack([i1, i2, i3]).T
+
+        # find unique rows in numpy array 
+        # <http://stackoverflow.com/questions/16970982/find-unique-rows-in-numpy-array>
+        b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
+        edges = np.unique(b).view(a.dtype).reshape(-1, a.shape[1])
+
+        ix = np.in1d(edges.ravel(), boundary).reshape(edges.shape)
+        boundary2 = ix.sum(axis=1)
+        # both points are boundary points that share the line segment
+        boundary_edges = edges[boundary2==2]
+        return boundary_edges
+
+
     if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
         reshuffle = np.random.permutation(x.size)
         x = x[reshuffle]
@@ -145,18 +145,18 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
             dm.markBoundaryFaces("boundary")
             ## mark points
             # convert to DAG ordering
-            boundary_points = tri.convex_hull() + pStart
-            for pt in boundary_points:
-                dm.setLabelValue("boundary", pt, 1)
+            boundary_indices = tri.convex_hull() + pStart
+            for ind in boundary_indices:
+                dm.setLabelValue("boundary", ind, 1)
         else:
-            boundary_points = np.nonzero(~bmask)[0]
+            boundary_indices = np.nonzero(~bmask)[0]
 
             # mark edges
-            boundary_edges = _points_to_edges(tri, boundary_points)
+            boundary_edges = points_to_edges(tri, boundary_indices)
 
             # convert to DAG ordering
-            boundary_edges  += pStart
-            boundary_points += pStart
+            boundary_edges += pStart
+            boundary_indices += pStart
 
             # join is the common edge to which they are connected
             for idx, e in enumerate(boundary_edges):
@@ -164,8 +164,8 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
                 dm.setLabelValue("boundary", join[0], 1)
 
             # mark points
-            for pt in boundary_points:
-                dm.setLabelValue("boundary", pt, 1)
+            for ind in boundary_indices:
+                dm.setLabelValue("boundary", ind, 1)
 
 
     # Distribute to other processors
