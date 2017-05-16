@@ -182,17 +182,9 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
     for pt in range(pStart, pEnd):
         dm.setLabelValue("coarse", pt, 1)
 
-
     # Refinement
-    for i in range(0, refinement_steps):
-        dm = dm.refine()
+    dm = refine_DM(dm, refinement_steps)
 
-    origSect = dm.createSection(1, [1,0,0]) # define one DoF on the nodes
-    origSect.setFieldName(0, "points")
-    origSect.setUp()
-    dm.setDefaultSection(origSect)
-
-    dm.stratify()
     return dm
 
 
@@ -246,6 +238,42 @@ def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     dim = 2
     dm = PETSc.DMDA().create(dim, sizes=(resX, resY), stencil_width=1)
     dm.setUniformCoordinates(minX, maxX, minY, maxY)
+    return dm
+
+
+def save_DM_to_hdf5(dm, file):
+    """
+    Saves mesh information stored in the DM to HDF5 file
+    If the file already exists, it is overwritten.
+    """
+    from petsc4py import PETSc
+
+    file = str(file)
+    if not file.endswith('.h5'):
+        file += '.h5'
+
+    ViewHDF5 = PETSc.Viewer()
+    ViewHDF5.createHDF5(file, mode='w')
+    ViewHDF5.view(obj=dm)
+    ViewHDF5.destroy()
+    return
+
+
+def refine_DM(dm, refinement_steps):
+    """
+    Refine DM a specified number of refinement steps
+    For each step, the midpoint of every line segment is added 
+    to the DM.
+    """
+    for i in range(0, refinement_steps):
+        dm = dm.refine()
+
+    origSect = dm.createSection(1, [1,0,0]) # define one DoF on the nodes
+    origSect.setFieldName(0, "points")
+    origSect.setUp()
+    dm.setDefaultSection(origSect)
+
+    dm.stratify()
     return dm
 
 
