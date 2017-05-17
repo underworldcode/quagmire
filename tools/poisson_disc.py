@@ -179,7 +179,7 @@ def poisson_disc_sampler(minX, maxX, minY, maxY, spacing, k=30, r_grid=None,\
     return P[M], C[M]
 
 
-def poisson_square_mesh(minX, maxX, minY, maxY, spacing, boundary_samples):
+def poisson_square_mesh(minX, maxX, minY, maxY, spacing, boundary_samples, r_grid=None):
     """
     Create a square mesh using the poisson disc sampler.
 
@@ -190,27 +190,31 @@ def poisson_square_mesh(minX, maxX, minY, maxY, spacing, boundary_samples):
     originX = 0.5 * (maxX + minX)
     originY = 0.5 * (maxY + minY)
     centroid = np.array([originX, originY])
-    ratio = int((maxY - minY)/(maxX - minX))
+    ratio = (maxY - minY)/(maxX - minX)
+
+    boundary_samples_x = int(boundary_samples)
+    boundary_samples_y = int(boundary_samples*ratio)
     
-    x = np.linspace(minX, maxX, boundary_samples*ratio)
-    y = np.ones(boundary_samples*ratio)*minY
+    x = np.linspace(minX, maxX, boundary_samples_x)
+    y = np.ones(boundary_samples_x)*minY
 
-    x = np.append(x, np.linspace(minX, maxX, boundary_samples*ratio) )
-    y = np.append(y, np.ones(boundary_samples*ratio)*maxY )
+    x = np.append(x, np.linspace(minX, maxX, boundary_samples_x) )
+    y = np.append(y, np.ones(boundary_samples_x)*maxY )
 
-    x = np.append(x, np.ones(boundary_samples/ratio)[1:-1] * minX )
-    y = np.append(y, np.linspace(minY, maxY, boundary_samples/ratio)[1:-1] )
+    x = np.append(x, np.ones(boundary_samples_y)[1:-1] * minX )
+    y = np.append(y, np.linspace(minY, maxY, boundary_samples_y)[1:-1] )
 
-    x = np.append(x, np.ones(boundary_samples/ratio)[1:-1] * maxX )
-    y = np.append(y, np.linspace(minY, maxY, boundary_samples/ratio)[1:-1] )
+    x = np.append(x, np.ones(boundary_samples_y)[1:-1] * maxX )
+    y = np.append(y, np.linspace(minY, maxY, boundary_samples_y)[1:-1] )
 
     cpts = np.column_stack([x,y])
 
-    pts, bmask = poisson_disc_sampler(minX, maxX, minY, maxY, spacing, cpts=cpts, spts=centroid)
+    pts, bmask = poisson_disc_sampler(minX, maxX, minY, maxY, spacing,\
+                                      r_grid=r_grid, cpts=cpts, spts=centroid)
     return pts, bmask
 
 
-def poisson_elliptical_mesh(minX, maxX, minY, maxY, spacing, boundary_samples):
+def poisson_elliptical_mesh(minX, maxX, minY, maxY, spacing, boundary_samples, r_grid=None):
     """
     Create an elliptical mesh using the poisson disc sampler.
     
@@ -225,21 +229,22 @@ def poisson_elliptical_mesh(minX, maxX, minY, maxY, spacing, boundary_samples):
 
     centroid = np.array([originX, originY])
 
-    i = np.arange(0, 3*boundary_samples)
+    i = np.arange(0, 3*boundary_samples, 2)
     theta = 2.*np.pi*i/(3*boundary_samples)
 
     X = originX + radiusX * np.sin(theta)
     Y = originY + radiusX * aspect * np.cos(theta)
 
-    i = np.arange(0.5, 3*boundary_samples+0.5)
+    i = np.arange(1, 3*boundary_samples+1, 2)
     theta = 2.*np.pi*i/(3*boundary_samples)
 
-    X = np.append(X, originX + (1.0 - 0.2*spacing) * radiusX * np.sin(theta))
-    Y = np.append(Y, originY + (1.0 - 0.2*spacing) * radiusX * aspect * np.cos(theta))
+    X = np.append(X, originX + (radiusX - spacing) * np.sin(theta))
+    Y = np.append(Y, originY + (radiusX - spacing) * aspect * np.cos(theta))
 
     # these will form the bmask
     cpts = np.column_stack([X,Y])
 
-    pts, bmask = poisson_disc_sampler(minX, maxX, minY, maxY, spacing, cpts=cpts, spts=centroid)
+    pts, bmask = poisson_disc_sampler(minX, maxX, minY, maxY, spacing,\
+                                     r_grid=r_grid, cpts=cpts, spts=centroid)
     return pts, bmask
 
