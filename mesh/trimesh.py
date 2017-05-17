@@ -118,6 +118,58 @@ class TriMesh(object):
         self.root = False
 
 
+    def get_local_mesh(self):
+        """
+        Retrieves the local mesh information
+
+        Returns
+        -------
+         points : array of floats, shape (n,2)
+            x,y coordinates
+         simplices : array of ints, shape (ntri, 3)
+            simplices of the triangulation
+         bmask  : array of bools, shape (n,2)
+        """
+        return self.tri.points, self.tri.simplices, self.bmask
+
+
+    def get_label(self, label):
+        """
+        Retrieves all points in the DM that is marked with a specific label.
+        e.g. "boundary", "coarse"
+        """
+        pStart, pEnd = self.dm.getDepthStratum(0)
+        
+        labels = []
+        for i in range(self.dm.getNumLabels()):
+            labels.append(self.dm.getLabelName(i))
+
+        if label not in labels:
+            raise ValueError("There is no {} label in the DM".format(label))
+
+        labelIS = self.dm.getStratumIS(label, 1)
+        pt_range = np.logical_and(labelIS.indices >= pStart, labelIS.indices < pEnd)
+        indices = labelIS.indices[pt_range] - pStart
+        return indices
+
+
+    def set_label(self, label, indices):
+        """
+        Marks local indices in the DM with a label
+        """
+        pStart, pEnd = self.dm.getDepthStratum(0)
+        indices += pStart
+
+        labels = []
+        for i in range(self.dm.getNumLabels()):
+            labels.append(self.dm.getLabelName(i))
+
+        if label not in labels:
+            self.dm.createLabel(label)
+        for ind in indices:
+            self.dm.setLabelValue(label, ind, 1)
+
+
     def calculate_area_weights(self):
         """
         Calculate weigths and pointwise area
@@ -170,7 +222,7 @@ class TriMesh(object):
          PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         """
-        return self.tri.gradient(PHI, nit=10, tol=1e-8)
+        return self.tri.gradient(PHI, nit, tol)
 
 
     def derivative_div(self, PHIx, PHIy, **kwargs):
@@ -259,6 +311,7 @@ class TriMesh(object):
         self.neighbour_list = np.array(neighbours)
         self.neighbour_array = np.array(closed_neighbours)
 
+
     def construct_neighbour_cloud(self, size=33):
         """
         Find neighbours from distance cKDTree.
@@ -325,84 +378,76 @@ class TriMesh(object):
         Find the nodes on the boundary from the DM
         If marker does not exist then the convex hull is used.
         """
+        pStart, pEnd = self.dm.getDepthStratum(0)
         bmask = np.ones(self.npoints, dtype=bool)
 
-        pStart, pEnd = self.dm.getDepthStratum(0)
-        
-        labels = []
-        for i in range(self.dm.getNumLabels()):
-            labels.append(self.dm.getLabelName(i))
-
-        if marker not in labels:
-            print("Warning! No boundary information in DMPlex.\nContinuing with convex hull.")
+        try:
+            boundary_indices = self.get_label(marker)
+        except ValueError:
+            print("Warning! No boundary information in DMPlex.\n\
+                   Continuing with convex hull.")
             self.dm.markBoundaryFaces(marker) # marks line segments
-            boundary_points = self.tri.convex_hull() + pStart
-            for pt in boundary_points:
-                self.dm.setLabelValue(marker, pt, 1)
+            boundary_indices = self.tri.convex_hull()
+            for ind in boundary_indices:
+                self.dm.setLabelValue(marker, ind + pStart, 1)
 
-        boundaryIS = self.dm.getStratumIS(marker, 1)
-        pt_range = np.logical_and(boundaryIS.indices >= pStart, boundaryIS.indices < pEnd)
-        boundary_points = boundaryIS.indices[pt_range] - pStart
-
-        bmask[boundary_points] = False
+        bmask[boundary_indices] = False
         return bmask
 
 
-    def save_mesh_to_file(self, file):
+    def save_mesh_to_hdf5(self, file):
         """
-        Save mesh points to a HDF5 file.
-        Requires h5py and a HDF5 built with at least the following options:
-            ./configure --enable-parallel --enable-shared
+        Saves mesh information stored in the DM to HDF5 file
+        If the file already exists, it is overwritten.
         """
-        import h5py
+        file = str(file)
+        if not file.endswith('.h5'):
+            file += '.h5'
 
-        if isinstance(file, basestring):
-            if not file.endswith('.h5'):
-                file = file + '.h5'
-
-        on_proc = self.lgmap_row.indices >= 0
-        indices = self.lgmap_row.indices[on_proc]
-
-        gsize = self.gvec.getSizes()[1]
-
-        with h5py.File(str(file), 'w', driver='mpio', comm=comm) as f:
-            grp = f.create_group('dmplex')
-            dset = grp.create_dataset('points', (gsize,2), dtype='f')
-            dset[list(indices)] = self.tri.points[on_proc]
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(file, mode='w')
+        ViewHDF5.view(obj=self.dm)
+        ViewHDF5.destroy()
 
 
-    def save_field_to_file(self, file, *args, **kwargs):
+    def save_field_to_hdf5(self, file, *args, **kwargs):
         """
-        Save field to an HDF5 file.
-        Maps the field from a local vector to global.
-        """
-        import h5py
+        Saves data on the mesh to an HDF5 file
+         e.g. height, rainfall, sea level, etc.
 
-        if isinstance(file, basestring):
-            if not file.endswith('.h5'):
-                file = file + '.h5'
+        Pass these as arguments or keyword arguments for
+        their names to be saved to the hdf5 file
+        """
+        file = str(file)
+        if not file.endswith('.h5'):
+            file += '.h5'
 
         kwdict = kwargs
         for i, arg in enumerate(args):
-            key = 'arr_%d' % i
+            key = "arr_{}".format(i)
             if key in kwdict.keys():
-                raise ValueError("Cannot use un-named variables and keyword %s" % key)
+                raise ValueError("Cannot use un-named variables\
+                                  and keyword: {}".format(key))
             kwdict[key] = arg
 
-        indices = self.lgmap_row.indices[self.lgmap_row.indices >= 0]
-        gsize = self.gvec.getSizes()[1]
-        lsize = self.lvec.getSizes()[1]
+        vec = self.gvec.duplicate()
 
-        with h5py.File(str(file), 'w', driver='mpio', comm=comm) as f:
-            for key in kwdict:
-                val = kwdict[key]
-                if val.size == lsize:
-                    self.lvec.setArray(val)
-                    self.dm.localToGlobal(self.lvec, self.gvec)
-                else:
-                    self.gvec.setArray(val)
-                dset = f.create_dataset(key, (gsize,), dtype='f')
-                dset[list(indices)] = self.gvec.array
+        for key in kwdict:
+            val = kwdict[key]
+            try:
+                vec.setArray(val)
+            except:
+                self.lvec.setArray(val)
+                self.dm.localToGlobal(self.lvec, vec)
+
+            vec.setName(key)
+
+            ViewHDF5 = PETSc.Viewer()
+            ViewHDF5.createHDF5(file, mode='a')
+            ViewHDF5.view(obj=vec)
+            ViewHDF5.destroy()
+            
+        vec.destroy()
 
 
     def _gather_root(self):
