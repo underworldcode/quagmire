@@ -1,1 +1,0 @@
-from .topomesh import TopoMesh

@@ -1,0 +1,19 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module _fortran ! in 
+    interface  ! in :_fortran
+        subroutine ntriw(n,x,y,nt,ltri,area,weight) ! in :_fortran:trimesh.f90
+            integer(kind=4), depend(x), intent(hide) :: n=len(x)
+            real(kind=8) dimension(n), intent(in) :: x
+            real(kind=8) dimension(n), intent(in) :: y
+            integer(kind=4), depend(ltri), intent(hide) :: nt=len(ltri)
+            integer(kind=4) dimension(3,nt), intent(in) :: ltri
+            real(kind=8) dimension(n), intent(out) :: area
+            integer(kind=4) dimension(n), intent(out) :: weight
+        end subroutine ntriw
+    end interface 
+end python module _fortran
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
