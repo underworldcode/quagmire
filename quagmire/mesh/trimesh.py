@@ -193,22 +193,9 @@ class TriMesh(object):
         Calculate weigths and pointwise area
         """
 
-        # Encircling vectors
-        v1 = self.tri.points[self.tri.simplices[:,1]] - self.tri.points[self.tri.simplices[:,0]]
-        v2 = self.tri.points[self.tri.simplices[:,2]] - self.tri.points[self.tri.simplices[:,1]]
-        v3 = self.tri.points[self.tri.simplices[:,0]] - self.tri.points[self.tri.simplices[:,2]]
+        from quagmire._fortran import ntriw
 
-        self.triangle_area = 0.5*(v1[:,0]*v2[:,1] - v1[:,1]*v2[:,0])
-
-        ntriw  = np.zeros(self.npoints)
-        weight = np.zeros(self.npoints, dtype=PETSc.IntType)
-
-        for t, triangle in enumerate(self.tri.simplices):
-            weight[triangle] += 1
-            ntriw[triangle] += abs(v1[t][0]*v3[t][1] - v1[t][1]*v3[t][0])
-
-        self.weight = weight
-        self.area = ntriw/6.0
+        self.area, self.weight = ntriw(self.tri.x, self.tri.y, self.tri.simplices.T+1)
 
 
     def node_neighbours(self, point):

@@ -8,6 +8,17 @@ Quagmire is structured into three major classes that inherit methods and attribu
 
 The Surface Processes class inherits from the Topography class, which in turn inherits from TriMesh or PixMesh depending on the type of mesh.
 
+## Installation
+
+Numpy and a fortran compiler, preferably [gfortran](https://gcc.gnu.org/wiki/GFortran), are required to install Quagmire.
+
+- ``python setup.py build``
+   - If you change the fortran compiler, you may have to add the 
+flags `config_fc --fcompiler=<compiler name>` when setup.py is run
+(see docs for [numpy.distutils](http://docs.scipy.org/doc/numpy-dev/f2py/distutils.html)).
+- ``python setup.py install``
+
+
 ## Dependencies
 
 Running this code requires the following packages to be installed:

@@ -41,15 +41,13 @@ subroutine ntriw ( n, x, y, nt, ltri, area, weight )
     v2x = x(tri(1)) - x(tri(3))
     v2y = y(tri(1)) - y(tri(3))
 
+    area(tri) = area(tri) + abs(v1x*v2y - v1y*v2x)
     weight(tri) = weight(tri) + 1
-    area(tri) = area(tri) + (v1x*v2y - v1y*v2x)
   end do
 !
 ! Now we divide each element by 6
 !
-  do i = 1, n
-    area(i) = area(i) / 6
-  end do
+  area = area/6
 
   return
 end
