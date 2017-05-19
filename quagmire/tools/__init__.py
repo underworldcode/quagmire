@@ -18,3 +18,4 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 
 from meshtools import *
 from poisson_disc import *
+from generate_xdmf import generateXdmf

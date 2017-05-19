@@ -320,8 +320,8 @@ class SurfMesh(object):
 
 
         gradZx, gradZy = self.derivative_grad(self.height)
-        gradZx = self._local_global_local(gradZx)
-        gradZy = self._local_global_local(gradZy)
+        gradZx = self.sync(gradZx)
+        gradZy = self.sync(gradZy)
         flux_x = kappa_eff * gradZx
         flux_y = kappa_eff * gradZy
 
@@ -330,7 +330,7 @@ class SurfMesh(object):
             flux_y[inverse_bmask] = 0.0  # outward normal flux, actually
 
         diffDz = self.derivative_div(flux_x, flux_y)
-        diffDz = self._local_global_local(diffDz)
+        diffDz = self.sync(diffDz)
 
         if not fluxBC:
             diffDz[inverse_bmask] = 0.0

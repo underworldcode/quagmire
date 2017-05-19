@@ -310,8 +310,10 @@ class PixMesh(object):
 
         return self.zvec.array.copy()
 
-    def _local_global_local(self, vector):
-        """ Communicate to global then back again """
+    def sync(self, vector):
+        """
+        Synchronise the local domain with the global domain
+        """
         self.lvec.setArray(vector)
         self.dm.localToGlobal(self.lvec, self.gvec)
         self.dm.globalToLocal(self.gvec, self.lvec)

@@ -48,7 +48,7 @@ class TopoMesh(object):
         slope = np.hypot(dHdx, dHdy)
 
         # Lets send and receive this from the global space
-        self.slope = self._local_global_local(slope)
+        self.slope = self.sync(slope)
 
         self.timings['gradient operation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
 
