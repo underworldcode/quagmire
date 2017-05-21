@@ -423,9 +423,15 @@ class TriMesh(object):
         Pass these as arguments or keyword arguments for
         their names to be saved to the hdf5 file
         """
+        import os.path
+
         file = str(file)
         if not file.endswith('.h5'):
             file += '.h5'
+
+        # write mesh if it doesn't exist
+        if not os.path.isfile(file):
+            self.save_mesh_to_hdf5(file)
 
         kwdict = kwargs
         for i, arg in enumerate(args):

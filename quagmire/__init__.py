@@ -27,6 +27,25 @@ known_basemesh_classes = {type(_PETSc.DMDA())   : _PixMesh,
 
 
 def FlatMesh(DM):
+    """
+    Instantiates a 2-D mesh using TriMesh or PixMesh objects.
+    
+    This object contains methods for the following operations:
+     - calculating derivatives
+     - interpolation (nearest-neighbour, linear, cubic)
+     - local smoothing operations
+     - identifying node neighbours
+
+    Parameters
+    ----------
+     DM : PETSc DM object
+        Either a DMDA or DMPlex object created using the meshing
+        functions within the tools subdirectory
+
+    Returns
+    -------
+     FlatMesh : object
+    """
     BaseMeshType = type(DM)
     if BaseMeshType in known_basemesh_classes.keys():
         class FlatMeshClass(known_basemesh_classes[BaseMeshType]):
@@ -43,6 +62,28 @@ def FlatMesh(DM):
     return
 
 def TopoMesh(DM):
+    """
+    Instantiates a mesh with a height field.
+    TopoMesh inherits from FlatMesh.
+
+    This object contains methods for the following operations:
+     - calculating the slope from height field
+     - constructing downhill matrices
+     - cumulative downstream flow
+     - handling flat spots and local minima
+
+    Call update_height to initialise these data structures.
+
+    Parameters
+    ----------
+     DM : PETSc DM object
+        Either a DMDA or DMPlex object created using the meshing
+        functions within the tools subdirectory
+
+    Returns
+    -------
+     TopoMesh : object
+    """
     BaseMeshType = type(DM)
     if BaseMeshType in known_basemesh_classes.keys():
         class TopoMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
@@ -61,6 +102,29 @@ def TopoMesh(DM):
     return
 
 def SurfaceProcessMesh(DM):
+    """
+    Instantiates a mesh with a height and rainfall field.
+    SurfaceProcessMesh inherits from FlatMesh and TopoMesh.
+
+    This object contains methods for the following operations:
+     - long-range flow models
+     - calculate erosion and deposition rates
+     - landscape equilibrium metrics
+     - stream-wise smoothing
+
+    Call update_height and update_surface_processes to initialise
+    these data structures.
+
+    Parameters
+    ----------
+     DM : PETSc DM object
+        Either a DMDA or DMPlex object created using the meshing
+        functions within the tools subdirectory
+
+    Returns
+    -------
+     SurfaceProcessMesh : object
+    """
     BaseMeshType = type(DM)
     if BaseMeshType in known_basemesh_classes.keys():
         class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass, _SurfaceProcessMeshClass):
