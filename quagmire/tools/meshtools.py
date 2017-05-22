@@ -334,8 +334,6 @@ def lloyd_mesh_improvement(x, y, bmask, iterations):
 
 
 def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples ):
-    
-
 
     lin_samples = int(np.sqrt(samples))
 
@@ -344,37 +342,38 @@ def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_sa
 
     x,y = np.meshgrid(tiX, tiY)
 
-    x = np.reshape(x,len(x)*len(x[0]))
-    y = np.reshape(y,len(y)*len(y[0]))
+    x = x.ravel()
+    y = y.ravel()
 
     xscale = (x.max()-x.min()) / (2.0 * np.sqrt(samples))
     yscale = (y.max()-y.min()) / (2.0 * np.sqrt(samples))
 
-    x += xscale * (0.5 - np.random.rand(len(x)))
-    y += yscale * (0.5 - np.random.rand(len(y)))
+    x += xscale * (0.5 - np.random.rand(x.size))
+    y += yscale * (0.5 - np.random.rand(y.size))
 
 
-    bmask = np.ones_like(x, dtype="Bool") # It's all true !
+    bmask = np.ones_like(x, dtype=bool) # It's all true !
 
-    # add boundary points too 
+    # add boundary points too
 
-    x = np.append(x, np.linspace(minX, maxX, boundary_samples) )
-    y = np.append(y, np.ones(boundary_samples)*minY )
-    bmask = np.append(bmask, np.zeros(boundary_samples, dtype="Bool"))
+    xc = np.linspace(minX, maxX, boundary_samples)
+    yc = np.linspace(minY, maxY, boundary_samples)
 
-    x = np.append(x, np.linspace(minX, maxX, boundary_samples) )
-    y = np.append(y, np.ones(boundary_samples)*maxY )
-    bmask = np.append(bmask, np.zeros(boundary_samples, dtype="Bool"))
+    i = 1.0 - np.linspace(-0.5, 0.5, boundary_samples)**2
 
-    x = np.append(x, np.ones(boundary_samples)[1:-1] * minX )
-    y = np.append(y, np.linspace(minY, maxY, boundary_samples)[1:-1] )
-    bmask = np.append(bmask, np.zeros(boundary_samples-2, dtype="Bool"))
+    x = np.append(x, xc)
+    y = np.append(y, minY - spacingY*i)
 
-    x = np.append(x, np.ones(boundary_samples)[1:-1] * maxX )
-    y = np.append(y, np.linspace(minY, maxY, boundary_samples)[1:-1] )
-    bmask = np.append(bmask, np.zeros(boundary_samples-2, dtype="Bool"))
+    x = np.append(x, xc)
+    y = np.append(y, maxY + spacingY*i)
 
-    # mask: need to keep the boundary conditions from being changed but equally have them available
+    x = np.append(x, minX - spacingX*i[1:-1])
+    y = np.append(y, yc[1:-1])
+
+    x = np.append(x, maxX + spacingX*i[1:-1])
+    y = np.append(y, yc[1:-1])
+
+    bmask = np.append(bmask, np.zeros(2*i.size + 2*(i.size-2), dtype=bool))
 
     return x, y, bmask
 
