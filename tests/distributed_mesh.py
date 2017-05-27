@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from quagmire import FlatMesh
 from quagmire import tools as meshtools
 from mpi4py import MPI
@@ -10,10 +10,13 @@ minX, maxX = -5., 5.
 minY, maxY = -5., 5.
 spacing = 0.05
 
-pts, bmask = meshtools.poisson_elliptical_mesh(minX, maxX, minY, maxY, spacing, 500)
-dm = meshtools.create_DMPlex_from_points(pts[:,0], pts[:,1], bmask)
+ptsx, ptsy, bmask = meshtools.poisson_elliptical_mesh(minX, maxX, minY, maxY, spacing, 500)
+dm = meshtools.create_DMPlex_from_points(ptsx, ptsy, bmask, refinement_steps=1)
 
 mesh = FlatMesh(dm)
+
+#if comm.rank == 0:
+print "Number of nodes in mesh - {}: {}".format(comm.rank, mesh.npoints)
 
 # retrieve local mesh
 pts, simplices, bmask = mesh.get_local_mesh()

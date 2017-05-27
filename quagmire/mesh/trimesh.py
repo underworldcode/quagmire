@@ -48,7 +48,7 @@ class TriMesh(object):
         self.lvec = dm.createLocalVector()
         self.sect = dm.getDefaultSection()
         self.sizes = self.gvec.getSizes(), self.gvec.getSizes()
-        
+
         lgmap_r = dm.getLGMap()
         l2g = lgmap_r.indices.copy()
         offproc = l2g < 0
@@ -58,11 +58,14 @@ class TriMesh(object):
 
         self.lgmap_row = lgmap_r
         self.lgmap_col = lgmap_c
-        
 
         # Delaunay triangulation
         t = clock()
         coords = dm.getCoordinatesLocal().array.reshape(-1,2)
+        length_scale = np.sqrt((coords[:,0].max() - coords[:,0].min()) * (coords[:,1].max() - coords[:,1].min()) / coords.shape[0])
+
+        coords += np.random.random(coords.shape) * 0.0001 * length_scale # This should be aware of the point spacing (small perturbation)
+
         self.tri = stripy.Triangulation(coords[:,0], coords[:,1])
         self.npoints = self.tri.npoints
         self.timings['triangulation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
@@ -134,6 +137,7 @@ class TriMesh(object):
 
 
         self.root = False
+        self.coords = self.tri.points
 
 
     def get_local_mesh(self):
@@ -157,7 +161,7 @@ class TriMesh(object):
         e.g. "boundary", "coarse"
         """
         pStart, pEnd = self.dm.getDepthStratum(0)
-        
+
         labels = []
         for i in range(self.dm.getNumLabels()):
             labels.append(self.dm.getLabelName(i))
@@ -268,7 +272,7 @@ class TriMesh(object):
 
         a = np.hstack([i1, i2, i3]).T
 
-        # find unique rows in numpy array 
+        # find unique rows in numpy array
         # <http://stackoverflow.com/questions/16970982/find-unique-rows-in-numpy-array>
         b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
         edges = np.unique(b).view(a.dtype).reshape(-1, a.shape[1])
@@ -351,7 +355,7 @@ class TriMesh(object):
         smoothMat.setFromOptions()
         smoothMat.setPreallocationNNZ(nnz)
 
-        # read in data 
+        # read in data
         smoothMat.setValuesLocalCSR(indptr.astype(PETSc.IntType), indices.astype(PETSc.IntType), nweight)
         self.lvec.setArray(weight)
         self.dm.localToGlobal(self.lvec, self.gvec)
@@ -457,7 +461,7 @@ class TriMesh(object):
             ViewHDF5.createHDF5(file, mode='a')
             ViewHDF5.view(obj=vec)
             ViewHDF5.destroy()
-            
+
         vec.destroy()
 
 
@@ -475,7 +479,7 @@ class TriMesh(object):
         self.tozero.scatter(self.gvec, self.zvec)
 
         self.root_x = self.zvec.array.copy()
-        
+
         self.lvec.setArray(pts[:,1])
         self.dm.localToGlobal(self.lvec, self.gvec)
         self.tozero.scatter(self.gvec, self.zvec)
@@ -487,7 +491,7 @@ class TriMesh(object):
 
     def gather_data(self, data):
         """
-        Gather data on root processor 
+        Gather data on root processor
         """
 
         # check if we already gathered pts on root

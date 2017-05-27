@@ -114,7 +114,7 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
 
         a = np.hstack([i1, i2, i3]).T
 
-        # find unique rows in numpy array 
+        # find unique rows in numpy array
         # <http://stackoverflow.com/questions/16970982/find-unique-rows-in-numpy-array>
         b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
         edges = np.unique(b).view(a.dtype).reshape(-1, a.shape[1])
@@ -249,7 +249,7 @@ def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     dy = (maxY - minY)/resY
 
     if dx != dy:
-        raise ValueError("Spacing must be uniform in x and y directions")
+        raise ValueError("Spacing must be uniform in x and y directions [{:.4f}, {:.4f}]".format(dx,dy))
 
     dim = 2
     dm = PETSc.DMDA().create(dim, sizes=(resX, resY), stencil_width=1)
@@ -278,7 +278,7 @@ def save_DM_to_hdf5(dm, file):
 def refine_DM(dm, refinement_steps):
     """
     Refine DM a specified number of refinement steps
-    For each step, the midpoint of every line segment is added 
+    For each step, the midpoint of every line segment is added
     to the DM.
     """
     for i in range(0, refinement_steps):
@@ -296,7 +296,7 @@ def refine_DM(dm, refinement_steps):
 
 def lloyd_mesh_improvement(x, y, bmask, iterations):
     """
-    Applies Lloyd's algorithm of iterated voronoi construction 
+    Applies Lloyd's algorithm of iterated voronoi construction
     to improve the mesh point locations (assumes no current triangulation)
 
     (e.g. see http://en.wikipedia.org/wiki/Lloyd's_algorithm )
@@ -322,14 +322,14 @@ def lloyd_mesh_improvement(x, y, bmask, iterations):
         for centre_point, coords in enumerate(vor.points):
             region = vor.regions[vor.point_region[centre_point]]
             if not -1 in region and bmask[centre_point]:
-                polygon = vor.vertices[region]      
+                polygon = vor.vertices[region]
                 new_coords[centre_point] = [polygon[:,0].sum() / len(region), polygon[:,1].sum() / len(region)]
-              
+
         points = new_coords
 
     x = np.array(new_coords[:,0])
-    y = np.array(new_coords[:,1])  
-     
+    y = np.array(new_coords[:,1])
+
     return x, y
 
 
@@ -337,8 +337,8 @@ def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_sa
 
     lin_samples = int(np.sqrt(samples))
 
-    tiX = np.linspace(minX + 0.75 * spacingX, maxX - 0.75 * spacingX, lin_samples) 
-    tiY = np.linspace(minY + 0.75 * spacingY, maxY - 0.75 * spacingY, lin_samples) 
+    tiX = np.linspace(minX + 0.75 * spacingX, maxX - 0.75 * spacingX, lin_samples)
+    tiY = np.linspace(minY + 0.75 * spacingY, maxY - 0.75 * spacingY, lin_samples)
 
     x,y = np.meshgrid(tiX, tiY)
 
@@ -378,7 +378,7 @@ def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_sa
     return x, y, bmask
 
 
-def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples ): 
+def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples ):
 
 
 
@@ -386,9 +386,9 @@ def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundar
     originY = 0.5 * (maxY + minY)
     radiusX = 0.5 * (maxX - minX)
     aspect = 0.5 * (maxY - minY) / radiusX
-    
+
     print "Origin = ", originX, originY, "Radius = ", radiusX, "Aspect = ", aspect
-    
+
     lin_samples = int(np.sqrt(samples))
 
     tiX = np.linspace(minX + 0.75 * spacingX, maxX - 0.75 * spacingX, lin_samples)
@@ -412,7 +412,7 @@ def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundar
     bmask = np.ones_like(X, dtype=bool)
 
     # Now add boundary points
-    
+
     theta = np.array( [ 2.0 * np.pi * i / (3 * boundary_samples) for i in range(0, 3 * boundary_samples) ])
 
     X = np.append(X, 1.001 * radiusX * np.sin(theta))

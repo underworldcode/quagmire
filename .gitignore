@@ -8,3 +8,7 @@ Notebooks/sombrero_2n.mp4
 Notebooks/sombrero_Nn.mp4
 
 *.h5
+
+build/*
+
+*.xmf

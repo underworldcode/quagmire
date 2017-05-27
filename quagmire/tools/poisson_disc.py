@@ -46,7 +46,7 @@ def poisson_disc_sampler(minX, maxX, minY, maxY, spacing, k=30, r_grid=None,\
      spts : array of floats, optional, shape (s,2)
         points used to seed the flood-fill algorithm,
         samples are generated outwards from these seed points
-    
+
     Returns
     -------
      pts : array of floats, shape (N,2)
@@ -202,32 +202,37 @@ def poisson_square_mesh(minX, maxX, minY, maxY, spacing, boundary_samples, r_gri
     Create a square mesh using the poisson disc sampler.
 
     Boundary points are generated around the edge of the domain and used
-    as constraint points. The optimal number of boundary points should be 
-    the circumference of the circle divided by spacing.
+    as constraint points. The optimal number of boundary points should be
+    the circumference of the square divided by spacing.
     """
-    
+
     originX = 0.5 * (maxX + minX)
     originY = 0.5 * (maxY + minY)
     centroid = np.array([originX, originY])
     ratio = (maxY - minY)/(maxX - minX)
-    
-    x, y, bmask = poisson_disc_sampler(minX, maxX, minY, maxY, spacing,\
+
+    minX1 = minX + 0.75 * spacing
+    minY1 = minY + 0.75 * spacing
+    maxX1 = maxX - 0.75 * spacing
+    maxY1 = maxY - 0.75 * spacing
+
+    x, y, bmask = poisson_disc_sampler(minX1, maxX1, minY1, maxY1, spacing,\
                                      r_grid=r_grid, spts=centroid)
-    
+
     bmask = np.ones(x.size, dtype=bool)
-    
+
     # now add boundary points
 
     boundary_samples_x = int(boundary_samples)
     boundary_samples_y = int(boundary_samples*ratio)
     bspace = 1.*spacing
-    
+
     xb = np.linspace(minX, maxX, boundary_samples_x)
     yb = np.linspace(minY, maxY, boundary_samples_y)
-    
-    xi = 1.0 - np.linspace(-0.5, 0.5, boundary_samples_x)**2
-    yi = 1.0 - np.linspace(-0.5, 0.5, boundary_samples_y)**2
-    
+
+    xi = 0.25 - np.linspace(-0.5, 0.5, boundary_samples_x)**2
+    yi = 0.25 - np.linspace(-0.5, 0.5, boundary_samples_y)**2
+
     x = np.append(x, xb)
     y = np.append(y, minY - spacing*xi) # minY
 
@@ -248,7 +253,7 @@ def poisson_square_mesh(minX, maxX, minY, maxY, spacing, boundary_samples, r_gri
 def poisson_elliptical_mesh(minX, maxX, minY, maxY, spacing, boundary_samples, r_grid=None):
     """
     Create an elliptical mesh using the poisson disc sampler.
-    
+
     Boundary points are generated around the edge of the domain and used
     as constraint points. The optimal number of boundary points is the
     length of a boundary divided by the spacing, e.g. (maxX-minX)/spacing.
@@ -278,4 +283,3 @@ def poisson_elliptical_mesh(minX, maxX, minY, maxY, spacing, boundary_samples, r
     x, y, bmask = poisson_disc_sampler(minX, maxX, minY, maxY, spacing,\
                                        r_grid=r_grid, cpts=cpts, spts=centroid)
     return x, y, bmask
-

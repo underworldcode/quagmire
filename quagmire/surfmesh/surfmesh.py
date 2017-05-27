@@ -19,7 +19,9 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 import numpy as np
 from mpi4py import MPI
 import sys,petsc4py
+
 petsc4py.init(sys.argv)
+
 from petsc4py import PETSc
 comm = MPI.COMM_WORLD
 
@@ -63,7 +65,8 @@ class SurfMesh(object):
         if len(self.low_points) == 0:
             return self.height
 
-        delta_height = self.lvec.duplicate()
+        delta_height  = self.lvec.duplicate()
+        delta_height_s = self.lvec.duplicate()
 
         fixed = 0
         rejected = 0
@@ -75,26 +78,30 @@ class SurfMesh(object):
 
             # find the mean height in the neighbourhood and fill up everything nearby
             fixed += 1
-            delta_height[point] = self.height[self.neighbour_array_lo_hi[point]].mean()
+            delta_height[point] = self.height[self.neighbour_cloud[point, 0:10]].mean() - self.height[point]
             # if self.verbose:
             #     print "{} Old height {} -> {}".format(point, self.height[point], delta_height[point])
 
 
-        # Now march the new height to all the uphill nodes of these nodes
-        height = np.maximum(self.height, delta_height.array)
+        # Now march the new height to all the uphill nodes of these nodes one "ring" at a time.
+        # height is updated each time the informtion is propagated
 
-        self.dm.localToGlobal(delta_height, self.gvec)
-        global_dH = self.gvec.copy()
+        delta_height_s.array = self.rbf_smoother(delta_height.array)
 
-        for p in range(0, its):
-            self.downhillMat.multTranspose(global_dH, self.gvec)
-            global_dH.setArray(self.gvec)
-        #    global_dH.scale(1.001)
+        # height = np.maximum(self.height, delta_height.array)
+        self.dm.localToGlobal(delta_height_s, self.gvec)
+        # global_dH = self.gvec.copy()
 
-        self.dm.globalToLocal(global_dH, delta_height)
+        height = self.height + delta_height_s.array
 
 
-        height = np.maximum(self.height, delta_height.array)
+        # for p in range(0, its):
+        #     self.downhillMat.multTranspose(global_dH, self.gvec)
+        #     self.gvec.scale(1.001)
+        #     self.dm.globalToLocal(self.gvec, delta_height)
+        #
+        #     dh = self.rbf_smoother(delta_height.array)
+        #     height = np.maximum(height, dh)
 
         if self.verbose:
             print "Updated {} points".format(fixed)
@@ -150,6 +157,7 @@ class SurfMesh(object):
 
         return low_nodes[mask]
 
+    ## Not needed
     def identify_high_points(self):
         """
         Identify where the mesh has (internal) local maxima and return an array of node indices

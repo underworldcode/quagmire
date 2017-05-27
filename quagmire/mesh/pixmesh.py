@@ -30,8 +30,9 @@ class PixMesh(object):
     Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
     """
     def __init__(self, dm, verbose=True):
-        print "init pix"
         from scipy.spatial import Delaunay
+        from scipy.spatial import cKDTree as _cKDTree
+
         self.timings = dict() # store times
 
         self.log = PETSc.Log()
@@ -43,7 +44,7 @@ class PixMesh(object):
         self.gvec = dm.createGlobalVector()
         self.lvec = dm.createLocalVector()
         self.sizes = self.gvec.getSizes(), self.gvec.getSizes()
-        
+
         lgmap_r = dm.getLGMap()
         l2g = lgmap_r.indices.copy()
         offproc = l2g < 0
@@ -98,6 +99,13 @@ class PixMesh(object):
         if self.verbose:
             print(" - Construct neighbour array {}s".format(clock()-t))
 
+        # cKDTree
+        t = clock()
+        self.cKDTree = _cKDTree(self.coords)
+        self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.verbose:
+            print(" - cKDTree {}s".format(clock()-t))
+
 
         # Find boundary points
         t = clock()
@@ -113,6 +121,25 @@ class PixMesh(object):
         self.timings['smoothing matrix'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Build smoothing matrix {}s".format(clock()-t))
+
+
+
+        # Find neighbours
+        t = clock()
+        self.construct_neighbour_cloud()
+        self.timings['construct neighbour cloud'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.verbose:
+            print(" - Construct neighbour cloud array {}s".format(clock()-t))
+
+
+        # RBF smoothing operator
+        t = clock()
+        self._construct_rbf_weights()
+        self.timings['construct rbf weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.verbose:
+            print(" - Construct rbf weights {}s".format(clock()-t))
+
+
 
         self.root = False
 
@@ -215,16 +242,31 @@ class PixMesh(object):
 
         for i in xrange(0,3):
             node_mask = n_offgrid == i
-            
+
             n0 = order[node_mask,0]    # lowest
             n1 = order[node_mask,1]    # second lowest
             n2 = order[node_mask,-1-i] # highest
-            
+
             neighbour_array_l2h[node_mask,0] = self.neighbour_block[node_mask,n0]
             neighbour_array_l2h[node_mask,1] = self.neighbour_block[node_mask,n1]
             neighbour_array_l2h[node_mask,2] = self.neighbour_block[node_mask,n2]
 
         self.neighbour_array_l2h = neighbour_array_l2h
+
+
+    def construct_neighbour_cloud(self, size=25):
+        """
+        Find neighbours from distance cKDTree.
+
+        """
+
+        nndist, nncloud = self.cKDTree.query(self.coords, k=size)
+
+        self.neighbour_cloud = nncloud
+        self.neighbour_cloud_distances = nndist
+
+        return
+
 
 
     def _build_smoothing_matrix(self):
@@ -246,7 +288,7 @@ class PixMesh(object):
         smoothMat.setFromOptions()
         smoothMat.setPreallocationNNZ(nnz)
 
-        # read in data 
+        # read in data
         smoothMat.setValuesLocalCSR(indptr.astype(PETSc.IntType), indices.astype(PETSc.IntType), nweight)
         # self.lvec.setArray(weight)
         # self.dm.localToGlobal(self.lvec, self.gvec)
@@ -296,7 +338,7 @@ class PixMesh(object):
 
     def gather_data(self, data):
         """
-        Gather data on root processor 
+        Gather data on root processor
         """
 
         # check if we already gathered pts on root
@@ -318,3 +360,28 @@ class PixMesh(object):
         self.dm.localToGlobal(self.lvec, self.gvec)
         self.dm.globalToLocal(self.gvec, self.lvec)
         return self.lvec.array.copy()
+
+    def _construct_rbf_weights(self, delta=None):
+
+        self.delta  = delta
+
+        if self.delta == None:
+            self.delta = self.neighbour_cloud_distances[:,1].mean() # * 0.75
+
+        # Initialise the interpolants
+
+        gaussian_dist_w       = np.zeros_like(self.neighbour_cloud_distances)
+        gaussian_dist_w[:,:]  = np.exp(-np.power(self.neighbour_cloud_distances[:,:]/self.delta, 2.0))
+        gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
+
+        self.gaussian_dist_w = gaussian_dist_w
+
+        return
+
+    def rbf_smoother(self, field):
+
+        # Should do some error checking here to ensure the field and point cloud are compatible
+
+        smoothfield = (field[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+
+        return smoothfield
