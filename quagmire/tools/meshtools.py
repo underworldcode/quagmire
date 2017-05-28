@@ -201,6 +201,37 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
     return dm
 
 
+def create_DMPlex_from_hdf5(file):
+    """
+    Creates a DMPlex object from an HDF5 file.
+    This is useful for rebuilding a mesh that is saved from a
+    previous simulation.
+    
+    Parameters
+    ----------
+     file : string
+        point to the location of hdf5 file
+
+    Returns
+    -------
+     DM : object
+        PETSc DMPlex object
+
+    Notes
+    -----
+     This function requires bleeding edge PETSc and petsc4py
+     These features should arrive in petsc4py 3.8
+    """
+    from petsc4py import PETSc
+
+    file = str(file)
+    if not file.endswith('.h5'):
+        file += '.h5'
+
+    DM = PETSc.DMPlex().createFromFile(file)
+    return DM
+
+
 def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
     """
     Create a box and fill with triangles up to a specified refinement

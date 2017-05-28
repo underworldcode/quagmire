@@ -28,7 +28,7 @@ comm = MPI.COMM_WORLD
 class SurfMesh(object):
 
     def __init__(self):
-        pass
+        self.kappa = 1.0 # dummy value
 
     def update_surface_processes(self, rainfall_pattern, sediment_distribution):
         rainfall_pattern = np.array(rainfall_pattern)
@@ -40,7 +40,6 @@ class SurfMesh(object):
         from time import clock
         self.rainfall_pattern = rainfall_pattern.copy()
         self.sediment_distribution = sediment_distribution.copy()
-        self.kappa = 1.0 # dummy value
 
         # cumulative flow
         t = clock()
@@ -57,6 +56,12 @@ class SurfMesh(object):
 
 
     def handle_low_points(self, base, its):
+
+        # h0 = mesh.height.copy()
+
+        # for i in range(0,5):
+        #     h2 = mesh.handle_low_points(0., 1)
+        #     mesh.update_height(h2)
 
         self.low_points = self.identify_low_points()
 
@@ -407,6 +412,7 @@ class SurfMesh(object):
         full_capacity_sediment_load = stream_power   # Constant ?
 
         # if the sediment load exceeds the capacity, start depositing material
+        # use vec.pointwisemin
         transport_limited_eroded_material = np.minimum(cumulative_eroded_material, full_capacity_sediment_load)
 
         excess = sp.gvec.duplicate()

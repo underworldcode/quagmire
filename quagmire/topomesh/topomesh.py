@@ -28,9 +28,18 @@ from scipy.spatial import cKDTree as _cKDTree
 
 
 class TopoMesh(object):
-    def __init__(self, build3Neighbours=True):
-        self.build3Neighbours = build3Neighbours
-        pass
+    def __init__(self):
+        self.build3Neighbours = False
+        self.downhill_neighbours = 2
+
+        # Initialise cumulative flow vectors
+        self.DX0 = self.gvec.duplicate()
+        self.DX1 = self.gvec.duplicate()
+        self.dDX = self.gvec.duplicate()
+
+        # Initialise mesh fields
+        # self.height = self.gvec.duplicate()
+        # self.slope = self.gvec.duplicate()
 
 
     def update_height(self, height):
@@ -45,18 +54,12 @@ class TopoMesh(object):
         t = clock()
         self.height = height.copy()
         dHdx, dHdy = self.derivative_grad(height)
-        slope = np.hypot(dHdx, dHdy)
+        self.slope = np.hypot(dHdx, dHdy)
 
         # Lets send and receive this from the global space
-        self.slope = self.sync(slope)
-
+        self.slope[:] = self.sync(self.slope)
         self.timings['gradient operation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
 
-        t = clock()
-        self._sort_nodes_by_field(height)
-        self.timings['sort heights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print(" - Sort nodes by field {}s".format(clock()-t))
 
         t = clock()
         self._build_downhill_matrix_new()
@@ -98,10 +101,12 @@ class TopoMesh(object):
 
     def _build_downhill_matrix_new(self):
 
-        vec = self.gvec.copy()
-        vec.setArray(self.slope)
+        vec = self.gvec.duplicate()
+        self.lvec.setArray(self.slope)
+        self.dm.localToGlobal(self.lvec, vec)
 
         self._build_adjacency_matrix_123()
+
 
         grad1 = np.abs(self.height - self.height[self.down_neighbour1]+1.0e-10) / (1.0e-10 +
                 np.hypot(self.tri.points[:,0] - self.tri.points[self.down_neighbour1,0],
@@ -114,53 +119,56 @@ class TopoMesh(object):
         w1 = np.sqrt(grad1)
         w2 = np.sqrt(grad2)
 
-        w1 /= (w1+w2)
-        w2  = 1.0 - w1
+        if not self.build3Neighbours:
+            w1 /= (w1+w2)
+            w2  = 1.0 - w1
 
-        downhillMat  = self.adjacency1.copy()
-        downhillMat2 = self.adjacency2.copy()
+            downhillMat1  = self.adjacency1.copy()
+            downhillMat2 = self.adjacency2.copy()
 
-        vec.setArray(w1)
-        downhillMat.diagonalScale(R=vec)
+            self.lvec.setArray(w1)
+            self.dm.localToGlobal(self.lvec, vec)
+            downhillMat1.diagonalScale(R=vec)
 
-        vec.setArray(w2)
-        downhillMat2.diagonalScale(R=vec)
+            self.lvec.setArray(w2)
+            self.dm.localToGlobal(self.lvec, vec)
+            downhillMat2.diagonalScale(R=vec)
 
-        self.downhillMat = downhillMat + downhillMat2
+            self.downhillMat = downhillMat1 + downhillMat2
 
-        downhillMat.destroy()
-        downhillMat2.destroy()
+            downhillMat1.destroy()
+            downhillMat2.destroy()
 
-        if self.build3Neighbours:
-
+        else:
             grad3 = np.abs(self.height - self.height[self.down_neighbour3]+1.0e-15) / (1.0e-10 +
                     np.hypot(self.tri.points[:,0] - self.tri.points[self.down_neighbour3,0],
                              self.tri.points[:,1] - self.tri.points[self.down_neighbour3,1] ) )
 
-            w1 = np.sqrt(grad1)
-            w2 = np.sqrt(grad2)
             w3 = np.sqrt(grad3)
 
             w1 /= (w1+w2+w3)
             w2 /= (w1+w2+w3)
             w3 = 1.0 - (w1+w2)
 
-            downhillMat  = self.adjacency1.copy()
+            downhillMat1 = self.adjacency1.copy()
             downhillMat2 = self.adjacency2.copy()
             downhillMat3 = self.adjacency3.copy()
 
-            vec.setArray(w1)
-            downhillMat.diagonalScale(R=vec)
+            self.lvec.setArray(w1)
+            self.dm.localToGlobal(self.lvec, vec)
+            downhillMat1.diagonalScale(R=vec)
 
-            vec.setArray(w2)
+            self.lvec.setArray(w2)
+            self.dm.localToGlobal(self.lvec, vec)
             downhillMat2.diagonalScale(R=vec)
 
-            vec.setArray(w3)
+            self.lvec.setArray(w3)
+            self.dm.localToGlobal(self.lvec, vec)
             downhillMat3.diagonalScale(R=vec)
 
-            self.downhillMat3 = downhillMat + downhillMat2 + downhillMat3
+            self.downhillMat = downhillMat1 + downhillMat2 + downhillMat3
 
-            downhillMat.destroy()
+            downhillMat1.destroy()
             downhillMat2.destroy()
             downhillMat3.destroy()
 
@@ -180,6 +188,75 @@ class TopoMesh(object):
 
 ## This version is based on distance not mesh connectivity -
 
+    def _build_adjacency_matrix_iterate(self):
+
+        self.adjacency = dict()
+        self.down_neighbour = dict()
+
+        data = np.empty(self.npoints)
+        down_neighbour = np.empty(self.npoints, dtype=PETSc.IntType)
+
+        indptr = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
+        node_range = indptr[:-1]
+
+        # compute low neighbours
+        dneighTF = self.height[self.neighbour_cloud] < self.height.reshape(-1,1)
+        dneighL1 = dneighTF.argmax(axis=1)
+
+        for i in range(1, self.downhill_neighbours+1):
+            data.fill(1.0)
+
+            dneighL = dneighTF.argmax(axis=1)
+            dneighL[dneighL == 0] = dneighL1[dneighL == 0]
+            dneighTF[node_range, dneighL[node_range]] = False
+
+            down_neighbour[:] = self.neighbour_cloud[node_range, dneighL[node_range]]
+            data[dneighL == 0] = 0.0
+
+            adjacency = self._adjacency_matrix_template()
+            adjacency.assemblyBegin()
+            adjacency.setValuesLocalCSR(indptr, down_neighbour, data)
+            adjacency.assemblyEnd()
+            self.adjacency[i] = adjacency.transpose()
+            self.down_neighbour[i] = down_neighbour.copy()
+
+    def _build_downhill_matrix_iterate(self):
+
+        self._build_adjacency_matrix_iterate()
+        weights = np.empty((self.downhill_neighbours, self.npoints))
+
+        # Process weights
+        for i in range(0, self.downhill_neighbours):
+            down_N = self.down_neighbour[i+1]
+            grad = np.abs(self.height - self.height[down_N]+1.0e-10) / (1.0e-10 + \
+                   np.hypot(self.tri.points[:,0] - self.tri.points[down_N,0],
+                            self.tri.points[:,1] - self.tri.points[down_N,1] ))
+
+            weights[i,:] = np.sqrt(grad)
+
+        weights /= weights.sum(axis=0)
+        w = self.gvec.duplicate()
+
+
+        # Store weighted downhill matrices
+        downhill_matrices = [None]*self.downhill_neighbours
+        for i in range(0, self.downhill_neighbours):
+            N = i + 1
+            self.lvec.setArray(weights[i])
+            self.dm.localToGlobal(self.lvec, w)
+
+            D = self.adjacency[N].copy()
+            D.diagonalScale(R=w)
+            downhill_matrices[i] = D
+
+
+        # Sum downhill matrices
+        self.downhillMat = downhill_matrices[0]
+        for i in range(1, self.downhill_neighbours):
+            self.downhillMat += downhill_matrices[i]
+            downhill_matrices[i].destroy()
+
+
     def _build_adjacency_matrix_123(self):
         """
         Constructs a sparse matrix to move information downhill by one node in the 2nd steepest direction.
@@ -188,43 +265,37 @@ class TopoMesh(object):
         to construct the cumulative area (etc) along the flow paths.
         """
 
-        # Allocate matrix entry and index arrays
+        # preallocate matrix entry and index arrays
+        data1 = np.ones(self.npoints)
+        data2 = np.ones(self.npoints)
+        data3 = np.ones(self.npoints)
 
-        data1    = np.ones(self.npoints)
-        data2    = np.ones(self.npoints)
-        data3    = np.ones(self.npoints)
-
-        down_neighbour1 = np.empty(self.npoints,dtype=PETSc.IntType)
-        down_neighbour2 = np.empty(self.npoints,dtype=PETSc.IntType)
-        down_neighbour3 = np.empty(self.npoints,dtype=PETSc.IntType)
+        down_neighbour1 = np.empty(self.npoints, dtype=PETSc.IntType)
+        down_neighbour2 = np.empty(self.npoints, dtype=PETSc.IntType)
+        down_neighbour3 = np.empty(self.npoints, dtype=PETSc.IntType)
 
         indptr  = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
+        node_range = indptr[:-1]
 
         # compute low neighbours
 
-        dneighTF = self.height[self.neighbour_cloud[:,:]] < self.height[:].reshape(-1,1)
+        dneighTF = self.height[self.neighbour_cloud] < self.height.reshape(-1,1)
 
-        dneighL1 = np.empty(self.npoints, dtype=np.int)
-        dneighL1[:] = dneighTF[:].argmax(axis=1)
+        dneighL1 = dneighTF.argmax(axis=1)
+        dneighTF[node_range, dneighL1[node_range]] = False
 
-        for node in range(0, self.npoints):
-            dneighTF[node,dneighL1[node]] = False
-
-        dneighL2 = np.empty(self.npoints, dtype=np.int)
-        dneighL2[:] = dneighTF[:].argmax(axis=1)
+        dneighL2 = dneighTF.argmax(axis=1)
         dneighL2[dneighL2 == 0] = dneighL1[dneighL2 == 0]
+        dneighTF[node_range, dneighL2[node_range]] = False
 
-        for node in range(0, self.npoints):
-            dneighTF[node,dneighL2[node]] = False
-
-        dneighL3 = np.empty(self.npoints, dtype=np.int)
-        dneighL3[:] = dneighTF[:].argmax(axis=1)
+        dneighL3 = dneighTF.argmax(axis=1)
         dneighL3[dneighL3 == 0] = dneighL1[dneighL3 == 0]
+        dneighTF[node_range, dneighL3[node_range]] = False
 
-        for node in range(0, self.npoints):
-            down_neighbour1[node] = self.neighbour_cloud[node, dneighL1[node]]
-            down_neighbour2[node] = self.neighbour_cloud[node, dneighL2[node]]
-            down_neighbour3[node] = self.neighbour_cloud[node, dneighL3[node]]
+        # update column and data vectors
+        down_neighbour1[:] = self.neighbour_cloud[node_range, dneighL1[node_range]]
+        down_neighbour2[:] = self.neighbour_cloud[node_range, dneighL2[node_range]]
+        down_neighbour3[:] = self.neighbour_cloud[node_range, dneighL3[node_range]]
 
         data1[dneighL1 == 0] = 0.0
         data2[dneighL2 == 0] = 0.0
@@ -307,38 +378,35 @@ class TopoMesh(object):
         self.sweepDownToOutflowMat = downSweepMat
 
 
-    def cumulative_flow(self, vector, use3path=False):
+    def cumulative_flow(self, vector):
 
+        downhillMat = self.downhillMat
 
-        if self.build3Neighbours and use3path:
-            downhillMat = self.downhillMat3
-        else:
-            downhillMat = self.downhillMat
+        DX0 = self.DX0
+        DX1 = self.DX1
+        dDX = self.dDX
 
         self.lvec.setArray(vector)
-        self.dm.localToGlobal(self.lvec, self.gvec)
+        self.dm.localToGlobal(self.lvec, DX0)
 
-        DX0 = self.gvec.copy()
-        DX1 = self.gvec.copy()
-        DX1_sum = DX1.sum()
+        DX1.setArray(DX0)
 
         niter = 0
         equal = False
 
-        tolerance = 1.0e-8 * DX1_sum
+        tolerance = 1e-8
 
         while not equal:
-
-            DX1_isum = DX1_sum
+            dDX.setArray(DX1)
             downhillMat.mult(DX1, self.gvec)
             DX1.setArray(self.gvec)
-            DX1_sum = DX1.sum()
             DX0 += DX1
 
-            # equal = (DX1_sum == DX1_isum) ## This appears to be a problem for the single-neighbour case used in reverse
-                                          ## i.e. for backfilling
+            dDX.axpy(-1.0, DX1)
+            dDX.abs()
+            max_dDX = dDX.max()[1]
 
-            equal = (DX1_sum < tolerance)
+            equal = max_dDX < tolerance
             niter += 1
 
         self.dm.globalToLocal(DX0, self.lvec)
@@ -348,10 +416,7 @@ class TopoMesh(object):
 
     def downhill_smoothing(self, data, its, centre_weight=0.75, use3path=False):
 
-        if self.build3Neighbours and use3path:
-            downhillMat = self.downhillMat3
-        else:
-            downhillMat = self.downhillMat
+        downhillMat = self.downhillMat
 
         norm = self.gvec.duplicate()
         smooth_data = self.gvec.duplicate()
@@ -375,10 +440,7 @@ class TopoMesh(object):
 
     def uphill_smoothing(self, data, its, centre_weight=0.75, use3path=False):
 
-        if self.build3Neighbours and use3path:
-            downhillMat = self.downhillMat3
-        else:
-            downhillMat = self.downhillMat
+        downhillMat = self.downhillMat
 
 
         norm2 = self.gvec.duplicate()

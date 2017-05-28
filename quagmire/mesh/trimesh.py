@@ -69,12 +69,14 @@ class TriMesh(object):
         if self.verbose:
             print(" - Delaunay triangulation {}s".format(clock()-t))
 
+
         # cKDTree
         t = clock()
         self.cKDTree = _cKDTree(self.tri.points)
         self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - cKDTree {}s".format(clock()-t))
+
 
         # Calculate weigths and pointwise area
         t = clock()
@@ -84,37 +86,12 @@ class TriMesh(object):
             print(" - Calculate node weights and area {}s".format(clock()-t))
 
 
-        # Calculate edge lengths
-        t = clock()
-        self.get_edge_lengths()
-        self.timings['edge lengths'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print(" - Compute edge lengths {}s".format(clock()-t))
-
-
-        # Find neighbours
-        t = clock()
-        self.construct_neighbours()
-        self.timings['construct neighbours'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print(" - Construct nearest neighbour array {}s".format(clock()-t))
-
-
-
         # Find boundary points
         t = clock()
         self.bmask = self.get_boundary()
         self.timings['find boundaries'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Find boundaries {}s".format(clock()-t))
-
-
-        # Build smoothing operator
-        t = clock()
-        self._build_smoothing_matrix()
-        self.timings['smoothing matrix'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print(" - Build smoothing matrix {}s".format(clock()-t))
 
 
         # Find neighbours
@@ -142,13 +119,15 @@ class TriMesh(object):
 
         Returns
         -------
-         points : array of floats, shape (n,2)
-            x,y coordinates
+         x : array of floats, shape (n,)
+            x coordinates
+         y : array of floats, shape (n,)
+            y coordinates
          simplices : array of ints, shape (ntri, 3)
             simplices of the triangulation
          bmask  : array of bools, shape (n,2)
         """
-        return self.tri.points, self.tri.simplices, self.bmask
+        return self.tri.x, self.tri.y, self.tri.simplices, self.bmask
 
 
     def get_label(self, label):
@@ -365,6 +344,20 @@ class TriMesh(object):
 
     def local_area_smoothing(self, data, its=1, centre_weight=0.75):
 
+        smooth_data = data.copy()
+        smooth_data_old = data.copy()
+
+        for i in range(0, its):
+            smooth_data_old[:] = smooth_data
+            smooth_data = centre_weight*smooth_data_old + \
+                          (1.0 - centre_weight)*self.rbf_smoother(smooth_data)
+            smooth_data[:] = self.sync(smooth_data)
+
+        return smooth_data
+
+
+    def local_area_smoothing_old(self, data, its=1, centre_weight=0.75):
+
         self.lvec.setArray(data)
         self.dm.localToGlobal(self.lvec, self.gvec)
         smooth_data = self.gvec.copy()
@@ -508,7 +501,7 @@ class TriMesh(object):
         self.lvec.setArray(vector)
         self.dm.localToGlobal(self.lvec, self.gvec)
         self.dm.globalToLocal(self.gvec, self.lvec)
-        return self.lvec.array.copy()
+        return self.lvec.array
 
 
     def _construct_rbf_weights(self, delta=None):

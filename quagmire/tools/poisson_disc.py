@@ -220,7 +220,6 @@ def poisson_square_mesh(minX, maxX, minY, maxY, spacing, boundary_samples, r_gri
 
     boundary_samples_x = int(boundary_samples)
     boundary_samples_y = int(boundary_samples*ratio)
-    bspace = 1.*spacing
     
     xb = np.linspace(minX, maxX, boundary_samples_x)
     yb = np.linspace(minY, maxY, boundary_samples_y)
