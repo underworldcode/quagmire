@@ -109,12 +109,12 @@ class TopoMesh(object):
 
 
         grad1 = np.abs(self.height - self.height[self.down_neighbour1]+1.0e-10) / (1.0e-10 +
-                np.hypot(self.tri.points[:,0] - self.tri.points[self.down_neighbour1,0],
-                         self.tri.points[:,1] - self.tri.points[self.down_neighbour1,1] ))
+                np.hypot(self.coords[:,0] - self.coords[self.down_neighbour1,0],
+                         self.coords[:,1] - self.coords[self.down_neighbour1,1] ))
 
         grad2 = np.abs(self.height - self.height[self.down_neighbour2]+1.0e-10) / (1.0e-10 +
-                np.hypot(self.tri.points[:,0] - self.tri.points[self.down_neighbour2,0],
-                         self.tri.points[:,1] - self.tri.points[self.down_neighbour2,1] ))
+                np.hypot(self.coords[:,0] - self.coords[self.down_neighbour2,0],
+                         self.coords[:,1] - self.coords[self.down_neighbour2,1] ))
 
         w1 = np.sqrt(grad1)
         w2 = np.sqrt(grad2)
@@ -141,8 +141,8 @@ class TopoMesh(object):
 
         else:
             grad3 = np.abs(self.height - self.height[self.down_neighbour3]+1.0e-15) / (1.0e-10 +
-                    np.hypot(self.tri.points[:,0] - self.tri.points[self.down_neighbour3,0],
-                             self.tri.points[:,1] - self.tri.points[self.down_neighbour3,1] ) )
+                    np.hypot(self.coords[:,0] - self.coords[self.down_neighbour3,0],
+                             self.coords[:,1] - self.coords[self.down_neighbour3,1] ) )
 
             w3 = np.sqrt(grad3)
 
