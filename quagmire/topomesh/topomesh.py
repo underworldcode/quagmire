@@ -99,80 +99,6 @@ class TopoMesh(object):
         # for node in xrange(0, self.npoints):
         #     neighbours = self.neighbour_array[node]
 
-    def _build_downhill_matrix_new(self):
-
-        vec = self.gvec.duplicate()
-        self.lvec.setArray(self.slope)
-        self.dm.localToGlobal(self.lvec, vec)
-
-        self._build_adjacency_matrix_123()
-
-
-        grad1 = np.abs(self.height - self.height[self.down_neighbour1]+1.0e-10) / (1.0e-10 +
-                np.hypot(self.coords[:,0] - self.coords[self.down_neighbour1,0],
-                         self.coords[:,1] - self.coords[self.down_neighbour1,1] ))
-
-        grad2 = np.abs(self.height - self.height[self.down_neighbour2]+1.0e-10) / (1.0e-10 +
-                np.hypot(self.coords[:,0] - self.coords[self.down_neighbour2,0],
-                         self.coords[:,1] - self.coords[self.down_neighbour2,1] ))
-
-        w1 = np.sqrt(grad1)
-        w2 = np.sqrt(grad2)
-
-        if not self.build3Neighbours:
-            w1 /= (w1+w2)
-            w2  = 1.0 - w1
-
-            downhillMat1  = self.adjacency1.copy()
-            downhillMat2 = self.adjacency2.copy()
-
-            self.lvec.setArray(w1)
-            self.dm.localToGlobal(self.lvec, vec)
-            downhillMat1.diagonalScale(R=vec)
-
-            self.lvec.setArray(w2)
-            self.dm.localToGlobal(self.lvec, vec)
-            downhillMat2.diagonalScale(R=vec)
-
-            self.downhillMat = downhillMat1 + downhillMat2
-
-            downhillMat1.destroy()
-            downhillMat2.destroy()
-
-        else:
-            grad3 = np.abs(self.height - self.height[self.down_neighbour3]+1.0e-15) / (1.0e-10 +
-                    np.hypot(self.coords[:,0] - self.coords[self.down_neighbour3,0],
-                             self.coords[:,1] - self.coords[self.down_neighbour3,1] ) )
-
-            w3 = np.sqrt(grad3)
-
-            w1 /= (w1+w2+w3)
-            w2 /= (w1+w2+w3)
-            w3 = 1.0 - (w1+w2)
-
-            downhillMat1 = self.adjacency1.copy()
-            downhillMat2 = self.adjacency2.copy()
-            downhillMat3 = self.adjacency3.copy()
-
-            self.lvec.setArray(w1)
-            self.dm.localToGlobal(self.lvec, vec)
-            downhillMat1.diagonalScale(R=vec)
-
-            self.lvec.setArray(w2)
-            self.dm.localToGlobal(self.lvec, vec)
-            downhillMat2.diagonalScale(R=vec)
-
-            self.lvec.setArray(w3)
-            self.dm.localToGlobal(self.lvec, vec)
-            downhillMat3.diagonalScale(R=vec)
-
-            self.downhillMat = downhillMat1 + downhillMat2 + downhillMat3
-
-            downhillMat1.destroy()
-            downhillMat2.destroy()
-            downhillMat3.destroy()
-
-        return
 
     def _adjacency_matrix_template(self, nnz=(1,1)):
 
@@ -229,8 +155,8 @@ class TopoMesh(object):
         for i in range(0, self.downhill_neighbours):
             down_N = self.down_neighbour[i+1]
             grad = np.abs(self.height - self.height[down_N]+1.0e-10) / (1.0e-10 + \
-                   np.hypot(self.tri.points[:,0] - self.tri.points[down_N,0],
-                            self.tri.points[:,1] - self.tri.points[down_N,1] ))
+                   np.hypot(self.coords[:,0] - self.coords[down_N,0],
+                            self.coords[:,1] - self.coords[down_N,1] ))
 
             weights[i,:] = np.sqrt(grad)
 
@@ -255,79 +181,6 @@ class TopoMesh(object):
         for i in range(1, self.downhill_neighbours):
             self.downhillMat += downhill_matrices[i]
             downhill_matrices[i].destroy()
-
-
-    def _build_adjacency_matrix_123(self):
-        """
-        Constructs a sparse matrix to move information downhill by one node in the 2nd steepest direction.
-
-        The downhill matrix pushes information out of the domain and can be used as an increment
-        to construct the cumulative area (etc) along the flow paths.
-        """
-
-        # preallocate matrix entry and index arrays
-        data1 = np.ones(self.npoints)
-        data2 = np.ones(self.npoints)
-        data3 = np.ones(self.npoints)
-
-        down_neighbour1 = np.empty(self.npoints, dtype=PETSc.IntType)
-        down_neighbour2 = np.empty(self.npoints, dtype=PETSc.IntType)
-        down_neighbour3 = np.empty(self.npoints, dtype=PETSc.IntType)
-
-        indptr  = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
-        node_range = indptr[:-1]
-
-        # compute low neighbours
-
-        dneighTF = self.height[self.neighbour_cloud] < self.height.reshape(-1,1)
-
-        dneighL1 = dneighTF.argmax(axis=1)
-        dneighTF[node_range, dneighL1[node_range]] = False
-
-        dneighL2 = dneighTF.argmax(axis=1)
-        dneighL2[dneighL2 == 0] = dneighL1[dneighL2 == 0]
-        dneighTF[node_range, dneighL2[node_range]] = False
-
-        dneighL3 = dneighTF.argmax(axis=1)
-        dneighL3[dneighL3 == 0] = dneighL1[dneighL3 == 0]
-        dneighTF[node_range, dneighL3[node_range]] = False
-
-        # update column and data vectors
-        down_neighbour1[:] = self.neighbour_cloud[node_range, dneighL1[node_range]]
-        down_neighbour2[:] = self.neighbour_cloud[node_range, dneighL2[node_range]]
-        down_neighbour3[:] = self.neighbour_cloud[node_range, dneighL3[node_range]]
-
-        data1[dneighL1 == 0] = 0.0
-        data2[dneighL2 == 0] = 0.0
-        data3[dneighL3 == 0] = 0.0
-
-        # read into matrix
-        adjacency1 = self._adjacency_matrix_template()
-        adjacency1.assemblyBegin()
-        adjacency1.setValuesLocalCSR(indptr, down_neighbour1, data1)
-        adjacency1.assemblyEnd()
-
-        self.adjacency1 = adjacency1.transpose()
-        self.down_neighbour1 = down_neighbour1
-
-        # read into matrix
-        adjacency2 = self._adjacency_matrix_template()
-        adjacency2.assemblyBegin()
-        adjacency2.setValuesLocalCSR(indptr, down_neighbour2, data2)
-        adjacency2.assemblyEnd()
-
-        self.adjacency2 = adjacency2.transpose()
-        self.down_neighbour2 = down_neighbour2
-
-        if self.build3Neighbours:
-        # read into matrix
-            adjacency3 = self._adjacency_matrix_template()
-            adjacency3.assemblyBegin()
-            adjacency3.setValuesLocalCSR(indptr, down_neighbour3, data3)
-            adjacency3.assemblyEnd()
-
-            self.adjacency3 = adjacency3.transpose()
-            self.down_neighbour3 = down_neighbour3
 
 
     def build_cumulative_downhill_matrix(self):
