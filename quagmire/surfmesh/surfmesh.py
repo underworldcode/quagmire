@@ -157,7 +157,7 @@ class SurfMesh(object):
         """
 
         nodes = np.arange(0, self.npoints, dtype=np.int)
-        low_nodes = self.down_neighbour1
+        low_nodes = self.down_neighbour[1]
         mask = np.logical_and(nodes == low_nodes, self.bmask == True)
 
         return low_nodes[mask]
@@ -182,11 +182,11 @@ class SurfMesh(object):
         """
 
         # nodes = np.arange(0, self.npoints, dtype=np.int)
-        # low_nodes = self.down_neighbour1
+        # low_nodes = self.down_neighbour[1]
         # mask = np.logical_and(nodes == low_nodes, self.bmask == False)
         #
 
-        o = (np.logical_and(self.down_neighbour2 == np.indices(self.down_neighbour2.shape), self.bmask == False)).flatten()
+        o = (np.logical_and(self.down_neighbour[2] == np.indices(self.down_neighbour[2].shape), self.bmask == False)).ravel()
         outflow_nodes = o.nonzero()[0]
 
         return outflow_nodes

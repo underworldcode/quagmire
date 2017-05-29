@@ -62,7 +62,7 @@ class TopoMesh(object):
 
 
         t = clock()
-        self._build_downhill_matrix_new()
+        self._build_downhill_matrix_iterate()
         self.timings['downhill matrices'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Build downhill matrices {}s".format(clock()-t))

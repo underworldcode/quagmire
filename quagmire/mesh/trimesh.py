@@ -62,7 +62,9 @@ class TriMesh(object):
         # Delaunay triangulation
         t = clock()
         coords = dm.getCoordinatesLocal().array.reshape(-1,2)
-        length_scale = np.sqrt((coords[:,0].max() - coords[:,0].min()) * (coords[:,1].max() - coords[:,1].min()) / coords.shape[0])
+        minX, minY = coords.min(axis=0)
+        maxX, maxY = coords.max(axis=0)
+        length_scale = np.sqrt((maxX - minX)*(maxY - minY)/coords.shape[0])
 
         coords += np.random.random(coords.shape) * 0.0001 * length_scale # This should be aware of the point spacing (small perturbation)
 
@@ -503,6 +505,7 @@ class TriMesh(object):
         Synchronise the local domain with the global domain
         """
         self.lvec.setArray(vector)
+        # self.dm.localToLocal(self.lvec, self.gvec)
         self.dm.localToGlobal(self.lvec, self.gvec)
         self.dm.globalToLocal(self.gvec, self.lvec)
         return self.lvec.array
