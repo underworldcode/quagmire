@@ -101,7 +101,7 @@ class PixMesh(object):
 
         # cKDTree
         t = clock()
-        self.cKDTree = _cKDTree(self.coords)
+        self.cKDTree = _cKDTree(self.coords, balanced_tree=False)
         self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - cKDTree {}s".format(clock()-t))

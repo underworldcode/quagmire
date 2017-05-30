@@ -77,7 +77,7 @@ class TriMesh(object):
 
         # cKDTree
         t = clock()
-        self.cKDTree = _cKDTree(self.tri.points)
+        self.cKDTree = _cKDTree(self.tri.points, balanced_tree=False)
         self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - cKDTree {}s".format(clock()-t))
@@ -323,8 +323,6 @@ class TriMesh(object):
         nweight = weight[indices]
 
         lgmask = self.lgmap_row.indices >= 0
-
-
         nnz = self.vertex_neighbours[lgmask] + 1
 
         # smoothMat = self.dm.createMatrix()
@@ -337,6 +335,7 @@ class TriMesh(object):
         smoothMat.setPreallocationNNZ(nnz)
 
         # read in data
+
         smoothMat.setValuesLocalCSR(indptr.astype(PETSc.IntType), indices.astype(PETSc.IntType), nweight)
         self.lvec.setArray(weight)
         self.dm.localToGlobal(self.lvec, self.gvec)
