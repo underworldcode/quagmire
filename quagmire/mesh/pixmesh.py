@@ -326,6 +326,66 @@ class PixMesh(object):
 
         return bmask
 
+    def save_mesh_to_hdf5(self, file):
+        """
+        Saves mesh information stored in the DM to HDF5 file
+        If the file already exists, it is overwritten.
+        """
+        file = str(file)
+        if not file.endswith('.h5'):
+            file += '.h5'
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(file, mode='w')
+        ViewHDF5.view(obj=self.dm)
+        ViewHDF5.destroy()
+
+
+    def save_field_to_hdf5(self, file, *args, **kwargs):
+        """
+        Saves data on the mesh to an HDF5 file
+         e.g. height, rainfall, sea level, etc.
+
+        Pass these as arguments or keyword arguments for
+        their names to be saved to the hdf5 file
+        """
+        import os.path
+
+        file = str(file)
+        if not file.endswith('.h5'):
+            file += '.h5'
+
+        # write mesh if it doesn't exist
+        if not os.path.isfile(file):
+            self.save_mesh_to_hdf5(file)
+
+        kwdict = kwargs
+        for i, arg in enumerate(args):
+            key = "arr_{}".format(i)
+            if key in kwdict.keys():
+                raise ValueError("Cannot use un-named variables\
+                                  and keyword: {}".format(key))
+            kwdict[key] = arg
+
+        vec = self.gvec.duplicate()
+
+        for key in kwdict:
+            val = kwdict[key]
+            try:
+                vec.setArray(val)
+            except:
+                self.lvec.setArray(val)
+                self.dm.localToGlobal(self.lvec, vec)
+
+            vec.setName(key)
+
+            ViewHDF5 = PETSc.Viewer()
+            ViewHDF5.createHDF5(file, mode='a')
+            ViewHDF5.view(obj=vec)
+            ViewHDF5.destroy()
+
+        vec.destroy()
+
 
     def _gather_root(self):
         """

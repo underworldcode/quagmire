@@ -527,6 +527,8 @@ class TriMesh(object):
 
         return
 
+
+
     def rbf_smoother(self, field):
 
         # Should do some error checking here to ensure the field and point cloud are compatible
