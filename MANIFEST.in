@@ -1,9 +1,9 @@
 include README.md
 include MANIFEST.in
 include COPYING
+include COPYING.LESSER
 include setup.cfg
-include fortran/*
-include __init__.py
+include quagmire/fortran/*
 recursive-include quagmire/*.py
 include assets/*
 include tests/*.py
