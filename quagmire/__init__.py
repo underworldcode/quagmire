@@ -22,11 +22,11 @@ from .surfmesh import SurfMesh as _SurfaceProcessMeshClass
 
 import tools
 
-known_basemesh_classes = {type(_PETSc.DMDA())   : _PixMesh,
+known_basemesh_classes = {type(_PETSc.DMDA())   : _PixMesh,\
                           type(_PETSc.DMPlex()) : _TriMesh}
 
 
-def FlatMesh(DM):
+def FlatMesh(DM, *args, **kwargs):
     """
     Instantiates a 2-D mesh using TriMesh or PixMesh objects.
     
@@ -48,20 +48,21 @@ def FlatMesh(DM):
     """
     BaseMeshType = type(DM)
     if BaseMeshType in known_basemesh_classes.keys():
-        class FlatMeshClass(known_basemesh_classes[BaseMeshType]):
-            def __init__(self, dm):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm)
-                # super(FlatMeshClass, self).__init__(dm)
 
-        return FlatMeshClass(DM)
+        class FlatMeshClass(known_basemesh_classes[BaseMeshType]):
+            def __init__(self, dm, *args, **kwargs):
+                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
+                # super(FlatMeshClass, self).__init__(dm, *args, **kwargs)
+
+        return FlatMeshClass(DM, *args, **kwargs)
 
     else:
-        print "Warning !! Mesh type {:s} unknown".format(BaseMeshType)
-        print "Known mesh types: {}".format(known_mesh_classes.keys())
+      raise TypeError("Mesh type {:s} unknown\n\
+        Known mesh types: {}".format(BaseMeshType, known_basemesh_classes.keys()))
 
     return
 
-def TopoMesh(DM):
+def TopoMesh(DM, *args, **kwargs):
     """
     Instantiates a mesh with a height field.
     TopoMesh inherits from FlatMesh.
@@ -87,21 +88,20 @@ def TopoMesh(DM):
     BaseMeshType = type(DM)
     if BaseMeshType in known_basemesh_classes.keys():
         class TopoMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
-            def __init__(self, dm):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm)
-                _TopoMeshClass.__init__(self)
-                # super(TopoMeshClass, self).__init__(dm)
+            def __init__(self, dm, *args, **kwargs):
+                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
+                _TopoMeshClass.__init__(self, *args, **kwargs)
+                # super(TopoMeshClass, self).__init__(dm, *args, **kwargs)
 
-        return TopoMeshClass(DM)
+        return TopoMeshClass(DM, *args, **kwargs)
 
     else:
-        print "Warning !! Mesh type {:s} unknown".format(BaseMeshType)
-        print "Known mesh types: {}".format(known_mesh_classes.keys())
-
+      raise TypeError("Mesh type {:s} unknown\n\
+        Known mesh types: {}".format(BaseMeshType, known_basemesh_classes.keys()))
 
     return
 
-def SurfaceProcessMesh(DM):
+def SurfaceProcessMesh(DM, *args, **kwargs):
     """
     Instantiates a mesh with a height and rainfall field.
     SurfaceProcessMesh inherits from FlatMesh and TopoMesh.
@@ -128,16 +128,16 @@ def SurfaceProcessMesh(DM):
     BaseMeshType = type(DM)
     if BaseMeshType in known_basemesh_classes.keys():
         class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass, _SurfaceProcessMeshClass):
-            def __init__(self, dm):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm)
-                _TopoMeshClass.__init__(self)
-                _SurfaceProcessMeshClass.__init__(self)
-                # super(SurfaceProcessMeshClass, self).__init__(dm)
+            def __init__(self, dm, *args, **kwargs):
+                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
+                _TopoMeshClass.__init__(self, *args, **kwargs)
+                _SurfaceProcessMeshClass.__init__(self, *args, **kwargs)
+                # super(SurfaceProcessMeshClass, self).__init__(dm, *args, **kwargs)
 
-        return SurfaceProcessMeshClass(DM)
+        return SurfaceProcessMeshClass(DM, *args, **kwargs)
 
     else:
-        print "Warning !! Mesh type {:s} unknown".format(BaseMeshType)
-        print "Known mesh types: {}".format(known_mesh_classes.keys())
+      raise TypeError("Mesh type {:s} unknown\n\
+        Known mesh types: {}".format(BaseMeshType, known_basemesh_classes.keys()))
 
     return

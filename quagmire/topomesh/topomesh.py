@@ -21,16 +21,16 @@ from mpi4py import MPI
 import sys,petsc4py
 petsc4py.init(sys.argv)
 from petsc4py import PETSc
-from time import clock
 comm = MPI.COMM_WORLD
+from time import clock
 
-from scipy.spatial import cKDTree as _cKDTree
+try: range = xrange
+except: pass
 
 
 class TopoMesh(object):
-    def __init__(self):
-        self.build3Neighbours = False
-        self.downhill_neighbours = 2
+    def __init__(self, downhill_neighbours=2, *args, **kwargs):
+        self.downhill_neighbours = downhill_neighbours
 
         # Initialise cumulative flow vectors
         self.DX0 = self.gvec.duplicate()

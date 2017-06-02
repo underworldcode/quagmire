@@ -24,12 +24,15 @@ from petsc4py import PETSc
 comm = MPI.COMM_WORLD
 from time import clock
 
+try: range = xrange
+except: pass
+
 
 class PixMesh(object):
     """
     Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
     """
-    def __init__(self, dm, verbose=True):
+    def __init__(self, dm, verbose=True, *args, **kwargs):
         from scipy.spatial import Delaunay
         from scipy.spatial import cKDTree as _cKDTree
 

@@ -23,7 +23,6 @@ petsc4py.init(sys.argv)
 from petsc4py import PETSc
 comm = MPI.COMM_WORLD
 from time import clock
-import stripy
 
 try: range = xrange
 except: pass
@@ -34,7 +33,8 @@ class TriMesh(object):
     Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
     We recommend having 1) triangle or 2) scipy installed for Delaunay triangulations.
     """
-    def __init__(self, dm, verbose=True):
+    def __init__(self, dm, verbose=True, *args, **kwargs):
+        import stripy
         self.timings = dict() # store times
 
         self.log = PETSc.Log()

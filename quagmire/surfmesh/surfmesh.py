@@ -19,17 +19,17 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 import numpy as np
 from mpi4py import MPI
 import sys,petsc4py
-
 petsc4py.init(sys.argv)
-
 from petsc4py import PETSc
 comm = MPI.COMM_WORLD
+from time import clock
 
-# from dmplex_grad   import DMPlexGrad
+try: range = xrange
+except: pass
 
 class SurfMesh(object):
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.kappa = 1.0 # dummy value
 
     def update_surface_processes(self, rainfall_pattern, sediment_distribution):
