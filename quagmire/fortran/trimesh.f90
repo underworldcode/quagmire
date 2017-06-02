@@ -1,3 +1,20 @@
+! Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher
+!
+! This file is part of Quagmire.
+!
+! Quagmire is free software: you can redistribute it and/or modify
+! it under the terms of the GNU Lesser General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or any later version.
+!
+! Quagmire is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU Lesser General Public License for more details.
+!
+! You should have received a copy of the GNU Lesser General Public License
+! along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
+!
+
 subroutine ntriw ( n, x, y, nt, ltri, area, weight )
 !*****************************************************************************
 !! NTRIW computes the pointwise area to calculate local areas on a mesh
@@ -51,116 +68,80 @@ subroutine ntriw ( n, x, y, nt, ltri, area, weight )
   return
 end
 
-function euclidean ( x1, y1, x2, y2 )
+subroutine add_pt ( pt, array, n )
+!*****************************************************************************
+! ADD_PT adds a point to an integer array if it does not already exist
+! in this way it mimics a set in Python
+
   implicit none
 
-  real ( kind = 8 ) x1, y1, x2, y2
-  real ( kind = 8 ) euclidean
+  integer ( kind = 4 ) pt, n, i
+  integer ( kind = 4 ) array(n)
 
-  euclidean = sqrt((x2 - x1)**2 + (y2 - y1)**2)
-  return
-end function
-
-function argsort ( n, a )
-! Returns the indices that would sort an array
-  implicit none
-
-  integer ( kind = 4 ) n, i, imin, temp1
-  real ( kind = 8 ) a(n)
-  integer ( kind = 4 ) argsort(n)
-  real ( kind = 8 ) temp2
-  real ( kind = 8 ) a2(n)
-
-  a2 = a
   do i = 1, n
-    argsort(i) = i
-  end do
-  do i = 1, n-1
-    ! find ith smallest in 'a'
-    imin = minloc(a2(i:), 1) + i - 1
-    ! swap to position i in 'a' and 'argsort', if not already there
-    if (imin /= i) then
-      temp2 = a2(i)
-      a2(i) = a2(imin)
-      a2(imin) = temp2
-
-      temp1 = argsort(i)
-      argsort(i) = argsort(imin)
-      argsort(imin) = temp1
+    if (array(i) .eq. 0) then
+      exit
+    else if (array(i) .eq. pt) then
+      return
     end if
   end do
-  return
-end function
 
-subroutine node_neighbours ( nptr, nind, nmax, indptr, indices, node, nn, neighbours )
+  array(i) = pt
+  return
+end subroutine
+
+subroutine ncloud ( nt, ltri, n, nnz, ecloud )
+!*****************************************************************************
+! NCLOUD finds all neighbours and extended neighbours for every point
+! in a triangulation
+
   implicit none
 
-  integer ( kind = 4 ) nptr, nind, nmax, node, nn
-  integer ( kind = 4 ) indptr(nptr)
-  integer ( kind = 4 ) indices(nind)
-! output variables
-  integer ( kind = 4 ) neighbours(nmax)
+  integer ( kind = 4 ) nt, nnz, n
+  integer ( kind = 4 ) ltri(3,nt)
+  integer ( kind = 4 ) ecloud(n,nnz*nnz)
+  integer ( kind = 4 ) cloud(n,nnz)
+  integer ( kind = 4 ) tri(3)
+  integer ( kind = 4 ) neighbours(nnz), eneighbours(nnz)
+  integer ( kind = 4 ) i, t, ncol, np, enp, pt, ept
 
-  nn = size( indices(indptr(node):indptr(node + 1)) )
-  neighbours(1:nn) = indices(indptr(node):indptr(node + 1))
+  ncol = nnz*nnz
 
-  return
-end
+  ecloud(:,:) = 0
+  do t = 1, nt
+    tri = ltri(:,t)
 
-subroutine downhill_neighbour ( nptr, nind, nd, nmax, n, indptr, indices, height, dneighbour )
-  implicit none
+    call add_pt(tri(2), ecloud(tri(1),:), ncol)
+    call add_pt(tri(3), ecloud(tri(1),:), ncol)
+    call add_pt(tri(1), ecloud(tri(2),:), ncol)
+    call add_pt(tri(3), ecloud(tri(2),:), ncol)
+    call add_pt(tri(1), ecloud(tri(3),:), ncol)
+    call add_pt(tri(2), ecloud(tri(3),:), ncol)
 
-  integer ( kind = 4 ) nptr, nind, nd, nmax, n
-  integer ( kind = 4 ) indptr(nptr) 
-  integer ( kind = 4 ) indices(nind)
-  real ( kind = 8 ) height(n)
-! work variables
-  integer ( kind = 4 ) cnt, i, j, ej, nn, enn, node, enode
-  ! real ( kind = 8 ) dist(nmax)
-  integer ( kind = 4 ) neighbours(nmax), eneighbours(nmax)
-  real ( kind = 8 ) h
-! output variables
-  integer ( kind = 4 ) dneighbour(nd,n)
+  end do
+
+  cloud = ecloud(:,1:nnz)
 
   do i = 1, n
-    cnt = 0
-    dneighbour(:,i) = i
-    h = height(i)
-
-    call node_neighbours(nptr, nind, nmax, indptr, indices, i, nn, neighbours)
-
-    do j = 1, nn
-      node = neighbours(j)
-      if (height(node) < h) then
-        dneighbour(i,cnt) = node
-        cnt = cnt + 1
-      end if
-      if (cnt == nd) then
+    neighbours = cloud(i,:)
+    do np = 1, nnz
+      ! Get neighbours
+      pt = neighbours(np)
+      if (pt .eq. 0) then
         exit
-      end if
-    end do
-    
-!***********************************    
-!   look through extended neighbours
-!***********************************
-    if (cnt < nd) then
-      do j = 1, nn
-        node = neighbours(j)
-
-        call node_neighbours(nptr, nind, nmax, indptr, indices, node, enn, eneighbours)
-
-        do ej = 1, enn
-          enode = eneighbours(ej)
-          if (height(enode) < h) then
-            dneighbour(i,cnt) = enode
-            cnt = cnt + 1
-          end if
-          if (cnt == nd) then
-            exit
-          end if
-        end do
+      endif
+      eneighbours = cloud(pt,:)
+      do enp = 1, nnz
+        ! Get extended neighbours
+        ept = eneighbours(enp)
+        if (ept .eq. 0) then
+          exit
+        endif
+        call add_pt(ept, ecloud(i,:), ncol)
       end do
-    end if
+    end do
   end do
+
   return
-end
+end subroutine
+

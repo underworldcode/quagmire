@@ -35,7 +35,6 @@ class TriMesh(object):
     We recommend having 1) triangle or 2) scipy installed for Delaunay triangulations.
     """
     def __init__(self, dm, verbose=True):
-        from scipy.spatial import cKDTree as _cKDTree
         self.timings = dict() # store times
 
         self.log = PETSc.Log()
@@ -75,14 +74,6 @@ class TriMesh(object):
             print(" - Delaunay triangulation {}s".format(clock()-t))
 
 
-        # cKDTree
-        t = clock()
-        self.cKDTree = _cKDTree(self.tri.points)
-        self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print(" - cKDTree {}s".format(clock()-t))
-
-
         # Calculate weigths and pointwise area
         t = clock()
         self.calculate_area_weights()
@@ -101,7 +92,7 @@ class TriMesh(object):
 
         # Find neighbours
         t = clock()
-        self.construct_neighbour_cloud()
+        self.construct_extended_neighbour_cloud()
         self.timings['construct neighbour cloud'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Construct neighbour cloud array {}s".format(clock()-t))
@@ -302,6 +293,20 @@ class TriMesh(object):
         self.neighbour_array = np.array(closed_neighbours)
 
 
+    def construct_extended_neighbour_cloud(self):
+        """
+        Find extended node neighbours
+        """
+        from quagmire._fortran import ncloud
+
+        nnz_max = np.bincount(self.tri.simplices.ravel()).max()
+
+        cloud = ncloud(self.tri.simplices.T + 1, self.npoints, nnz_max)
+        cloud -= 1 # convert to C numbering
+
+        self.neighbour_cloud = np.ma.array(cloud, mask=cloud==-1)
+
+
     def construct_neighbour_cloud(self, size=33):
         """
         Find neighbours from distance cKDTree.
@@ -429,8 +434,8 @@ class TriMesh(object):
             file += '.h5'
 
         # write mesh if it doesn't exist
-        if not os.path.isfile(file):
-            self.save_mesh_to_hdf5(file)
+        # if not os.path.isfile(file):
+        #     self.save_mesh_to_hdf5(file)
 
         kwdict = kwargs
         for i, arg in enumerate(args):
@@ -515,13 +520,18 @@ class TriMesh(object):
 
         self.delta  = delta
 
+        delta_x = self.tri.x[self.neighbour_cloud] - self.tri.x.reshape(-1,1)
+        delta_y = self.tri.y[self.neighbour_cloud] - self.tri.y.reshape(-1,1)
+
+        neighbour_cloud_distances = np.hypot(delta_x, delta_y)
+
         if self.delta == None:
-            self.delta = self.neighbour_cloud_distances[:,1].mean() # * 0.75
+            self.delta = neighbour_cloud_distances[:,1].mean() # * 0.75
 
         # Initialise the interpolants
 
-        gaussian_dist_w       = np.zeros_like(self.neighbour_cloud_distances)
-        gaussian_dist_w[:,:]  = np.exp(-np.power(self.neighbour_cloud_distances[:,:]/self.delta, 2.0))
+        gaussian_dist_w       = np.zeros_like(neighbour_cloud_distances)
+        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/self.delta, 2.0))
         gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
 
         self.gaussian_dist_w = gaussian_dist_w

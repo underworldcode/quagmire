@@ -133,7 +133,8 @@ class TopoMesh(object):
             data.fill(1.0)
 
             dneighL = dneighTF.argmax(axis=1)
-            dneighL[dneighL == 0] = dneighL1[dneighL == 0]
+            own = dneighL == 0
+            dneighL[own] = dneighL1[own]
             dneighTF[node_range, dneighL[node_range]] = False
 
             down_neighbour[:] = self.neighbour_cloud[node_range, dneighL[node_range]]
