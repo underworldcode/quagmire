@@ -29,7 +29,7 @@ comm = MPI.COMM_WORLD
 
 class SurfMesh(object):
 
-    def __init__(self):
+    def __init__(self, verbose=None, neighbour_cloud_size=None):
         self.kappa = 1.0 # dummy value
 
     def update_surface_processes(self, rainfall_pattern, sediment_distribution):
@@ -57,62 +57,36 @@ class SurfMesh(object):
         self.outflow_points = self.identify_outflow_points()
 
 
-    def handle_low_points(self, base, its):
+    def handle_low_points(self, its=1):
+        for iteration in range(0,its):
+            self.low_points = self.identify_low_points()
 
-        # h0 = mesh.height.copy()
+            if self.verbose:
+                print "Low points - ", self.low_points.shape[0]
 
-        # for i in range(0,5):
-        #     h2 = mesh.handle_low_points(0., 1)
-        #     mesh.update_height(h2)
+            if len(self.low_points) == 0:
+                return self.height
 
-        self.low_points = self.identify_low_points()
+            lheight = self.lvec.duplicate()
+            gheight = self.gvec.duplicate()
+            delta_height  = self.lvec.duplicate()
 
-        if len(self.low_points) == 0:
-            return self.height
+            gheight.setArray(self.height)
+            self.dm.globalToLocal(gheight, lheight)
 
-        delta_height  = self.lvec.duplicate()
-        delta_height_s = self.lvec.duplicate()
+            delta_height[self.low_points] = lheight[self.neighbour_cloud[self.low_points,:].astype(PETSc.IntType)].mean(axis=1) - lheight[self.low_points]
+            lheight += self.rbfMat * delta_height
 
-        fixed = 0
-        rejected = 0
+            self.dm.localToGlobal(lheight, gheight)
+            self.dm.globalToLocal(gheight, lheight)
 
-        for point in self.low_points:
-            if self.height[point] - base < 0.00005*(self.height.max() - base):
-                rejected += 1
-                continue
+            ## Push this / rebuild for the next loop
+            self._update_height_partial(gheight.array)
 
-            # find the mean height in the neighbourhood and fill up everything nearby
-            fixed += 1
-            delta_height[point] = self.height[self.neighbour_cloud[point, 0:10]].mean() - self.height[point]
-            # if self.verbose:
-            #     print "{} Old height {} -> {}".format(point, self.height[point], delta_height[point])
+        ## Don't leave the mesh in a half-updated state
+        self.update_height(gheight.array)
 
-
-        # Now march the new height to all the uphill nodes of these nodes one "ring" at a time.
-        # height is updated each time the informtion is propagated
-
-        delta_height_s.array = self.rbf_smoother(delta_height.array)
-
-        # height = np.maximum(self.height, delta_height.array)
-        self.dm.localToGlobal(delta_height_s, self.gvec)
-        # global_dH = self.gvec.copy()
-
-        height = self.height + delta_height_s.array
-
-
-        # for p in range(0, its):
-        #     self.downhillMat.multTranspose(global_dH, self.gvec)
-        #     self.gvec.scale(1.001)
-        #     self.dm.globalToLocal(self.gvec, delta_height)
-        #
-        #     dh = self.rbf_smoother(delta_height.array)
-        #     height = np.maximum(height, dh)
-
-        if self.verbose:
-            print "Updated {} points".format(fixed)
-            print "Rejected {} points (close to base level)".format(rejected)
-
-        return height
+        return self.height
 
     def backfill_points(self, fill_points, new_heights):
         """

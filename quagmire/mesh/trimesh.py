@@ -34,7 +34,7 @@ class TriMesh(object):
     Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
     We recommend having 1) triangle or 2) scipy installed for Delaunay triangulations.
     """
-    def __init__(self, dm, verbose=True):
+    def __init__(self, dm, verbose=True, neighbour_cloud_size=33):
         from scipy.spatial import cKDTree as _cKDTree
         self.timings = dict() # store times
 
@@ -49,6 +49,7 @@ class TriMesh(object):
         self.sect = dm.getDefaultSection()
         self.sizes = self.gvec.getSizes(), self.gvec.getSizes()
 
+
         lgmap_r = dm.getLGMap()
         l2g = lgmap_r.indices.copy()
         offproc = l2g < 0
@@ -58,6 +59,21 @@ class TriMesh(object):
 
         self.lgmap_row = lgmap_r
         self.lgmap_col = lgmap_c
+
+        if neighbour_cloud_size != None:
+            self.neighbour_cloud_array_size = neighbour_cloud_size
+        else:
+            self.neighbour_cloud_array_size = 33
+
+        # RBF matrix pre-allocation
+
+        rbfMat = dm.createMatrix()
+        rbfMat.setType('aij')
+        rbfMat.setSizes(self.sizes)
+        rbfMat.setLGMap(self.lgmap_row, self.lgmap_col)
+        rbfMat.setPreallocationNNZ(self.neighbour_cloud_array_size) # Fixed by neighbour list size - defaults to 33 for Trimesh (currently)
+
+        self.rbfMat = rbfMat
 
         # Delaunay triangulation
         t = clock()
@@ -101,7 +117,7 @@ class TriMesh(object):
 
         # Find neighbours
         t = clock()
-        self.construct_neighbour_cloud()
+        self.construct_neighbour_cloud(size=self.neighbour_cloud_array_size)
         self.timings['construct neighbour cloud'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Construct neighbour cloud array {}s".format(clock()-t))
@@ -109,7 +125,7 @@ class TriMesh(object):
 
         # RBF smoothing operator
         t = clock()
-        self._construct_rbf_weights()
+        self._construct_rbf()
         self.timings['construct rbf weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Construct rbf weights {}s".format(clock()-t))
@@ -312,6 +328,7 @@ class TriMesh(object):
 
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
+        self.neighbour_cloud_array_size=size
 
         return
 
@@ -510,7 +527,7 @@ class TriMesh(object):
         return self.lvec.array
 
 
-    def _construct_rbf_weights(self, delta=None):
+    def _construct_rbf(self, delta=None):
 
         self.delta  = delta
 
@@ -525,14 +542,26 @@ class TriMesh(object):
 
         self.gaussian_dist_w = gaussian_dist_w
 
+        # Now push these into the petsc matrix
+
+        self.rbfMat.assemblyBegin()
+        for node in range(0,self.npoints):
+            self.rbfMat.setValues(node, self.neighbour_cloud[node].astype(np.int32), gaussian_dist_w[node])
+        self.rbfMat.assemblyEnd()
+
+
         return
 
 
+    def rbf_smoother(self, vector, iterations=1):
 
-    def rbf_smoother(self, field):
+        lvec = self.lvec.copy()
+        lvec.setArray(vector)
 
-        # Should do some error checking here to ensure the field and point cloud are compatible
+        for i in range(0,iterations):
+            lvec = self.rbfMat * lvec
 
-        smoothfield = (field[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+            self.dm.localToGlobal(lvec, self.gvec)
+            self.dm.globalToLocal(self.gvec, lvec)
 
-        return smoothfield
+        return lvec.array

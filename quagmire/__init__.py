@@ -26,10 +26,10 @@ known_basemesh_classes = {type(_PETSc.DMDA())   : _PixMesh,
                           type(_PETSc.DMPlex()) : _TriMesh}
 
 
-def FlatMesh(DM):
+def FlatMesh(DM, verbose=None, neighbour_cloud_size=None):
     """
     Instantiates a 2-D mesh using TriMesh or PixMesh objects.
-    
+
     This object contains methods for the following operations:
      - calculating derivatives
      - interpolation (nearest-neighbour, linear, cubic)
@@ -49,19 +49,19 @@ def FlatMesh(DM):
     BaseMeshType = type(DM)
     if BaseMeshType in known_basemesh_classes.keys():
         class FlatMeshClass(known_basemesh_classes[BaseMeshType]):
-            def __init__(self, dm):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm)
+            def __init__(self, dm, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size):
+                known_basemesh_classes[BaseMeshType].__init__(self, dm, verbose, neighbour_cloud_size)
                 # super(FlatMeshClass, self).__init__(dm)
 
-        return FlatMeshClass(DM)
+        return FlatMeshClass(DM, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
 
     else:
-        print "Warning !! Mesh type {:s} unknown".format(BaseMeshType)
-        print "Known mesh types: {}".format(known_mesh_classes.keys())
+        print "Warning !! Mesh type {} unknown. ".format(BaseMeshType)
+        print "Known mesh types: {} ".format(known_mesh_classes.keys())
 
     return
 
-def TopoMesh(DM):
+def TopoMesh(DM, verbose=False, neighbour_cloud_size=None):
     """
     Instantiates a mesh with a height field.
     TopoMesh inherits from FlatMesh.
@@ -84,15 +84,16 @@ def TopoMesh(DM):
     -------
      TopoMesh : object
     """
+
     BaseMeshType = type(DM)
     if BaseMeshType in known_basemesh_classes.keys():
         class TopoMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
-            def __init__(self, dm):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm)
-                _TopoMeshClass.__init__(self)
+            def __init__(self, dm, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size):
+                known_basemesh_classes[BaseMeshType].__init__(self, dm, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
+                _TopoMeshClass.__init__(self, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
                 # super(TopoMeshClass, self).__init__(dm)
 
-        return TopoMeshClass(DM)
+        return TopoMeshClass(DM, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
 
     else:
         print "Warning !! Mesh type {:s} unknown".format(BaseMeshType)
@@ -101,7 +102,7 @@ def TopoMesh(DM):
 
     return
 
-def SurfaceProcessMesh(DM):
+def SurfaceProcessMesh(DM, verbose=False, neighbour_cloud_size=None):
     """
     Instantiates a mesh with a height and rainfall field.
     SurfaceProcessMesh inherits from FlatMesh and TopoMesh.
@@ -127,14 +128,15 @@ def SurfaceProcessMesh(DM):
     """
     BaseMeshType = type(DM)
     if BaseMeshType in known_basemesh_classes.keys():
+
         class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass, _SurfaceProcessMeshClass):
-            def __init__(self, dm):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm)
-                _TopoMeshClass.__init__(self)
-                _SurfaceProcessMeshClass.__init__(self)
+            def __init__(self, dm, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size):
+                known_basemesh_classes[BaseMeshType].__init__(self, dm, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
+                _TopoMeshClass.__init__(self, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
+                _SurfaceProcessMeshClass.__init__(self, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
                 # super(SurfaceProcessMeshClass, self).__init__(dm)
 
-        return SurfaceProcessMeshClass(DM)
+        return SurfaceProcessMeshClass(DM, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
 
     else:
         print "Warning !! Mesh type {:s} unknown".format(BaseMeshType)

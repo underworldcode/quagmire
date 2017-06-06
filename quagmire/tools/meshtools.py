@@ -206,7 +206,7 @@ def create_DMPlex_from_hdf5(file):
     Creates a DMPlex object from an HDF5 file.
     This is useful for rebuilding a mesh that is saved from a
     previous simulation.
-    
+
     Parameters
     ----------
      file : string
@@ -390,7 +390,7 @@ def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_sa
     xc = np.linspace(minX, maxX, boundary_samples)
     yc = np.linspace(minY, maxY, boundary_samples)
 
-    i = 1.0 - np.linspace(-0.5, 0.5, boundary_samples)**2
+    i = 0.25 - np.linspace(-0.5, 0.5, boundary_samples)**2
 
     x = np.append(x, xc)
     y = np.append(y, minY - spacingY*i)

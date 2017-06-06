@@ -28,7 +28,7 @@ from scipy.spatial import cKDTree as _cKDTree
 
 
 class TopoMesh(object):
-    def __init__(self):
+    def __init__(self, verbose=None, neighbour_cloud_size=None):
         self.build3Neighbours = False
         self.downhill_neighbours = 2
 
@@ -66,6 +66,42 @@ class TopoMesh(object):
         self.timings['downhill matrices'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Build downhill matrices {}s".format(clock()-t))
+
+
+    def _update_height_partial(self, height):
+        """
+        Partially update height field for specific purpose of patching topographic low points etc.
+        This allows rebuilding of the Adjacency1/Downhill matrix but does not compute gradients or
+        higher-order descent paths.
+        """
+
+        height = np.array(height)
+        if height.size != self.npoints:
+            raise IndexError("Incompatible array size, should be {}".format(self.npoints))
+
+
+        t = clock()
+        self.height = height.copy()
+        # dHdx, dHdy = self.derivative_grad(height)
+        # self.slope = np.hypot(dHdx, dHdy)
+
+        # Lets send and receive this from the global space
+        #self.slope[:] = self.sync(self.slope)
+        #self.timings['gradient operation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+
+
+        t = clock()
+
+        neighbours = self.downhill_neighbours
+        self.downhill_neighbours = 1
+
+        self._build_adjacency_matrix_iterate()
+        if self.verbose:
+            print(" - Partial rebuild of downhill matrices {}s".format(clock()-t))
+
+        self.downhill_neighbours = neighbours
+
+        return
 
 
     def _sort_nodes_by_field(self, height):
@@ -231,7 +267,10 @@ class TopoMesh(object):
         self.sweepDownToOutflowMat = downSweepMat
 
 
-    def cumulative_flow(self, vector):
+    def cumulative_flow_verbose(self, vector, verbose=False, maximum_its=None):
+
+        if not maximum_its:
+            maximum_its = 1000000000000
 
         downhillMat = self.downhillMat
 
@@ -249,7 +288,7 @@ class TopoMesh(object):
 
         tolerance = 1e-8
 
-        while not equal:
+        while not equal and niter < maximum_its:
             dDX.setArray(DX1)
             downhillMat.mult(DX1, self.gvec)
             DX1.setArray(self.gvec)
@@ -260,11 +299,59 @@ class TopoMesh(object):
             max_dDX = dDX.max()[1]
 
             equal = max_dDX < tolerance
+
+            if verbose and niter%10 == 0:
+                print "Max Delta - {} ".format(max_dDX)
+
+            niter += 1
+
+        self.dm.globalToLocal(DX0, self.lvec)
+
+        return niter, self.lvec.array.copy()
+
+    def cumulative_flow(self, vector):
+
+        niter, cumulative_flow_vector = self.cumulative_flow_verbose(vector)
+
+        return cumulative_flow_vector
+
+
+###
+### Note, this is identically equivalent to applying one round of rbf smoothing to the
+### output of the standard cumulative flow routine. So, not needed
+###
+
+    def _cumulative_flow_rbf_smoothed(self, vector, maxits=1000000):
+
+        downhillMat = self.downhillMat
+
+        self.lvec.setArray(vector)
+        self.dm.localToGlobal(self.lvec, self.gvec)
+
+        DX0 = self.gvec.copy()
+        DX1 = self.gvec.copy()
+        DX1_sum = DX1.sum()
+
+        niter = 0
+        equal = False
+
+        tolerance = 1.0e-8 * DX1_sum
+
+        while not equal and niter < maxits:
+
+            DX1_isum = DX1_sum
+            DX1 = downhillMat * DX1
+            DX1 = self.rbfMat * DX1
+            DX1_sum = DX1.sum()
+            DX0 += DX1
+
+            equal = (DX1_sum < tolerance)
             niter += 1
 
         self.dm.globalToLocal(DX0, self.lvec)
 
         return self.lvec.array.copy()
+
 
 
     def downhill_smoothing(self, data, its, centre_weight=0.75, use3path=False):
@@ -389,6 +476,9 @@ class TopoMesh(object):
 
     def build_node_chains(self):
         """ NEEDS WORK
+
+        NOTE: This does not work in parallel !!
+
         Builds all the chains for the mesh which flow from high to low and terminate
         when they meet with an existing chain.
 
