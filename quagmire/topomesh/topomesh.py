@@ -138,12 +138,18 @@ class TopoMesh(object):
 
     def _adjacency_matrix_template(self, nnz=(1,1)):
 
-        matrix = PETSc.Mat().create(comm=comm)
+        # matrix = PETSc.Mat().create(comm=comm)
+        # matrix.setType('aij')
+        # matrix.setSizes(self.sizes)
+        # matrix.setLGMap(self.lgmap_row, self.lgmap_col)
+        # matrix.setFromOptions()
+        # matrix.setPreallocationNNZ(nnz)
+
+        matrix = self.dm.createMatrix()
         matrix.setType('aij')
-        matrix.setSizes(self.sizes)
-        matrix.setLGMap(self.lgmap_row, self.lgmap_col)
-        matrix.setFromOptions()
-        matrix.setPreallocationNNZ(nnz)
+        matrix.setPreallocationNNZ(1) # Fixed by neighbour list size - defaults to 33 for Trimesh (currently)
+                                                                      # Not sure what happens in shadow zones, there could be some cases where this
+                                                                      # exceeds the neighbour count
 
         return matrix
 
@@ -179,6 +185,9 @@ class TopoMesh(object):
             adjacency.assemblyBegin()
             adjacency.setValuesLocalCSR(indptr, down_neighbour, data)
             adjacency.assemblyEnd()
+
+
+
             self.adjacency[i] = adjacency.transpose()
             self.down_neighbour[i] = down_neighbour.copy()
 
@@ -253,9 +262,11 @@ class TopoMesh(object):
             comm.Allgather([err, MPI.BOOL], [err_proc, MPI.BOOL])
 
         # add identity matrix
+
         I = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
         J = np.arange(0, self.npoints, dtype=PETSc.IntType)
         V = np.ones(self.npoints)
+
         identityMat = self._adjacency_matrix_template()
         identityMat.setValuesLocalCSR(I, J, V)
         identityMat.assemblyBegin()

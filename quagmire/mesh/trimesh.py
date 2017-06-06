@@ -47,8 +47,9 @@ class TriMesh(object):
         self.gvec = dm.createGlobalVector()
         self.lvec = dm.createLocalVector()
         self.sect = dm.getDefaultSection()
-        self.sizes = self.gvec.getSizes(), self.gvec.getSizes()
+        self.sizes = self.lvec.getSizes(), self.gvec.getSizes()
 
+        print "Matrix size:", self.sizes
 
         lgmap_r = dm.getLGMap()
         l2g = lgmap_r.indices.copy()
@@ -69,9 +70,11 @@ class TriMesh(object):
 
         rbfMat = dm.createMatrix()
         rbfMat.setType('aij')
-        rbfMat.setSizes(self.sizes)
-        rbfMat.setLGMap(self.lgmap_row, self.lgmap_col)
-        rbfMat.setPreallocationNNZ(self.neighbour_cloud_array_size) # Fixed by neighbour list size - defaults to 33 for Trimesh (currently)
+        # rbfMat.setSizes(self.sizes)
+        # rbfMat.setLGMap(self.lgmap_row, self.lgmap_col)
+        rbfMat.setPreallocationNNZ(self.neighbour_cloud_array_size*2) # Fixed by neighbour list size - defaults to 33 for Trimesh (currently)
+                                                                      # Not sure what happens in shadow zones, there could be some cases where this
+                                                                      # exceeds the neighbour count
 
         self.rbfMat = rbfMat
 
@@ -353,12 +356,13 @@ class TriMesh(object):
 
         # read in data
 
+        smoothMat.assemblyBegin()
+
         smoothMat.setValuesLocalCSR(indptr.astype(PETSc.IntType), indices.astype(PETSc.IntType), nweight)
         self.lvec.setArray(weight)
         self.dm.localToGlobal(self.lvec, self.gvec)
         smoothMat.setDiagonal(self.gvec)
 
-        smoothMat.assemblyBegin()
         smoothMat.assemblyEnd()
 
         self.localSmoothMat = smoothMat
@@ -544,9 +548,17 @@ class TriMesh(object):
 
         # Now push these into the petsc matrix
 
+        print self.dm.comm.rank, ": NODES -  ", self.npoints
+        print self.rbfMat.getSizes()
+
+        for node in range(0, self.npoints):
+            row = node
+            columns = self.neighbour_cloud[node].astype(PETSc.IntType)
+            values  = gaussian_dist_w[node]
+            self.rbfMat.setValuesLocal(row, columns, values,
+                                    addv=PETSc.InsertMode.INSERT_VALUES)
+
         self.rbfMat.assemblyBegin()
-        for node in range(0,self.npoints):
-            self.rbfMat.setValues(node, self.neighbour_cloud[node].astype(np.int32), gaussian_dist_w[node])
         self.rbfMat.assemblyEnd()
 
 
@@ -556,12 +568,12 @@ class TriMesh(object):
     def rbf_smoother(self, vector, iterations=1):
 
         lvec = self.lvec.copy()
+        gvec = self.gvec.copy()
         lvec.setArray(vector)
 
         for i in range(0,iterations):
-            lvec = self.rbfMat * lvec
-
-            self.dm.localToGlobal(lvec, self.gvec)
-            self.dm.globalToLocal(self.gvec, lvec)
+            self.dm.localToGlobal(lvec, gvec)
+            gvec = self.rbfMat * gvec
+            self.dm.globalToLocal(gvec, lvec)
 
         return lvec.array

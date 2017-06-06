@@ -62,29 +62,32 @@ class SurfMesh(object):
             self.low_points = self.identify_low_points()
 
             if self.verbose:
-                print "Low points - ", self.low_points.shape[0]
+                print "{:03d} no of low points - {} ".format(iteration, self.low_points.shape[0])
 
             if len(self.low_points) == 0:
                 return self.height
 
             lheight = self.lvec.duplicate()
             gheight = self.gvec.duplicate()
+
+            gdelta_height = self.gvec.duplicate()
             delta_height  = self.lvec.duplicate()
 
-            gheight.setArray(self.height)
-            self.dm.globalToLocal(gheight, lheight)
+            lheight.setArray(self.height)
+            self.dm.localToGlobal(lheight, gheight)
 
             delta_height[self.low_points] = lheight[self.neighbour_cloud[self.low_points,:].astype(PETSc.IntType)].mean(axis=1) - lheight[self.low_points]
-            lheight += self.rbfMat * delta_height
 
-            self.dm.localToGlobal(lheight, gheight)
+            self.dm.localToGlobal(delta_height, gdelta_height)
+            gdelta_height = self.rbfMat * gdelta_height
+            gheight += gdelta_height
             self.dm.globalToLocal(gheight, lheight)
 
             ## Push this / rebuild for the next loop
-            self._update_height_partial(gheight.array)
+            self._update_height_partial(lheight.array)
 
         ## Don't leave the mesh in a half-updated state
-        self.update_height(gheight.array)
+        self.update_height(lheight.array)
 
         return self.height
 
@@ -168,9 +171,9 @@ class SurfMesh(object):
 
     def identify_flat_spots(self):
 
-        smooth_grad1 = self.local_area_smoothing(self.slope, its=1, centre_weight=0.5)
+        smooth_grad1 = self.rbf_smoother(self.slope, iterations=1)
 
-        # flat_spot_field = np.where(smooth_grad1 < smooth_grad1.max()/100, 0.0, 1.0)
+        ## Need a global value of this smoothed gradient for parallel codes
 
         flat_spots = np.where(smooth_grad1 < smooth_grad1.max()/1000.0, True, False)
 
