@@ -70,7 +70,7 @@ class _RecoverTriangles(object):
         self.simplices = simplices
 
 
-def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
+def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0, reshuffle=True):
     """
     Triangulates x,y coordinates on rank 0 and creates a PETSc DMPlex object
     from the cells and vertices to distribute among processors.
@@ -87,6 +87,9 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
         if bmask=None (default) then the convex hull of points is used
      refinement_steps : int
         number of iterations to refine the mesh (default: 0)
+     reshuffle : bool
+        reshuffles x, y, bmask to optimise triangulation
+        set to False if you need to preserve ordering
 
     Returns
     -------
@@ -127,11 +130,12 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
 
 
     if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
-        reshuffle = np.random.permutation(x.size)
-        x = x[reshuffle]
-        y = y[reshuffle]
-        if bmask is not None:
-            bmask = bmask[reshuffle]
+        if reshuffle:
+            permute = np.random.permutation(x.size)
+            x = x[permute]
+            y = y[permute]
+            if bmask is not None:
+                bmask = bmask[permute]
         tri = Triangulation(x,y)
         coords = tri.points
         cells  = tri.simplices
@@ -185,7 +189,7 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
     origVec = dm.createGlobalVector()
 
     if PETSc.COMM_WORLD.size > 1:
-        sf = dm.distribute(overlap=1)
+        sf = dm.distribute(overlap=2)
         newSect, newVec = dm.distributeField(sf, origSect, origVec)
         dm.setDefaultSection(newSect)
 
@@ -220,7 +224,8 @@ def create_DMPlex_from_hdf5(file):
     Notes
     -----
      This function requires bleeding edge PETSc and petsc4py
-     These features should arrive in petsc4py 3.8
+     These features should arrive in petsc4py 3.8;
+     until then, we reconstruct the DM manually using h5py
     """
     from petsc4py import PETSc
 
@@ -228,8 +233,37 @@ def create_DMPlex_from_hdf5(file):
     if not file.endswith('.h5'):
         file += '.h5'
 
-    DM = PETSc.DMPlex().createFromFile(file)
-    return DM
+    try:
+        dm = PETSc.DMPlex().createFromFile(file)
+    except:
+        # This version doesn't support reading directly from h5 file
+        import h5py
+        meshFile = h5py.File(file, mode='r')
+        coarse_indices   = meshFile['labels']['coarse']['1']['indices'][:]
+        boundary_indices = meshFile['labels']['boundary']['1']['indices'][:]
+
+        # convert DAG ordering to local ordering
+        minC = coarse_indices.min()
+        coarse_indices   -= minC
+        boundary_indices -= minC
+
+        vertices = meshFile['geometry']['vertices']
+        cmask = np.zeros(vertices.shape[0], dtype=bool)
+        cmask[coarse_indices] = True
+        coords = vertices[cmask,:]
+
+        # approximate refinement
+        refine = int(np.ceil((vertices.shape[0]/coords.shape[0])**(1./3)) - 1)
+
+        meshFile.close()
+
+        bmask = np.ones(coords.shape[0], dtype=bool)
+        bmask[np.intersect1d(boundary_indices, coarse_indices)] = False
+
+        dm = create_DMPlex_from_points(coords[:,0], coords[:,1], bmask,\
+             refinement_steps=refine, reshuffle=False)
+
+    return dm
 
 
 def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
@@ -261,7 +295,7 @@ def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
     origVec = dm.createGlobalVec()
 
     if PETSc.COMM_WORLD.size > 1:
-        sf = dm.distribute(overlap=1)
+        sf = dm.distribute(overlap=2)
         newSect, newVec = dm.distributeField(sf, origSect, origVec)
         dm.setDefaultSection(newSect)
 
@@ -276,14 +310,11 @@ def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     """
     from petsc4py import PETSc
 
-    dx = (maxX - minX)/resX
-    dy = (maxY - minY)/resY
-
-    if dx != dy:
-        raise ValueError("Spacing must be uniform in x and y directions [{:.4f}, {:.4f}]".format(dx,dy))
+    nx = (maxX - minX)/resX
+    ny = (maxY - minY)/resY
 
     dim = 2
-    dm = PETSc.DMDA().create(dim, sizes=(resX, resY), stencil_width=1)
+    dm = PETSc.DMDA().create(dim, sizes=(nx, ny), stencil_width=1)
     dm.setUniformCoordinates(minX, maxX, minY, maxY)
     return dm
 
