@@ -2,8 +2,7 @@ from numpy.distutils.core import setup, Extension
 
 ext = Extension(name    = 'quagmire._fortran',
                 sources = ['quagmire/fortran/quagmire.pyf',\
-                           'quagmire/fortran/trimesh.f90',\
-                           'quagmire/fortran/pixmesh.f90'])
+                           'quagmire/fortran/mesh.f90'])
 
 if __name__ == "__main__":
     setup(name = 'quagmire',

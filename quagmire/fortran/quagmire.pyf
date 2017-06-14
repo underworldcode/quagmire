@@ -19,7 +19,7 @@
 
 python module _fortran ! in 
     interface  ! in :_fortran
-        subroutine ntriw(n,x,y,nt,ltri,area,weight) ! in :_fortran:trimesh.f90
+        subroutine ntriw(n,x,y,nt,ltri,area,weight) ! in :_fortran:mesh.f90
             integer(kind=4), depend(x), intent(hide) :: n=len(x)
             real(kind=8) dimension(n), intent(in) :: x
             real(kind=8) dimension(n), intent(in) :: y
@@ -28,13 +28,20 @@ python module _fortran ! in
             real(kind=8) dimension(n), intent(out) :: area
             integer(kind=4) dimension(n), intent(out) :: weight
         end subroutine ntriw
-        subroutine ncloud(nt,ltri,n,nnz,ecloud) ! in :_fortran:trimesh.f90
+        subroutine tricloud(nt,ltri,n,ncol,cloud,kmax) ! in :_fortran:mesh.f90
             integer(kind=4), depend(ltri), intent(hide) :: nt=shape(ltri,1)
             integer(kind=4) dimension(3,nt), intent(in) :: ltri
             integer(kind=4), intent(in) :: n
-            integer(kind=4), intent(in) :: nnz
-            integer(kind=4) dimension(n,nnz*nnz), intent(out) :: ecloud
-        end subroutine ncloud
+            integer(kind=4), intent(in) :: ncol
+            integer(kind=4), dimension(n,ncol), intent(out) :: cloud
+            integer(kind=4), intent(out) :: kmax
+        end subroutine tricloud
+        subroutine pixcloud(nx,ny,cloud,kmax) ! in :_fortran:mesh.f90
+            integer(kind=4), intent(in) :: nx
+            integer(kind=4), intent(in) :: ny
+            integer(kind=4), dimension(25,nx*ny), depend(nx,ny), intent(out) :: cloud(25,nx*ny)
+            integer(kind=4), intent(out) :: kmax
+        end subroutine pixcloud
     end interface 
 end python module _fortran
 

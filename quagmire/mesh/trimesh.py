@@ -297,12 +297,12 @@ class TriMesh(object):
         """
         Find extended node neighbours
         """
-        from quagmire._fortran import ncloud
+        from quagmire._fortran import tricloud
 
         nnz_max = np.bincount(self.tri.simplices.ravel()).max()
 
-        cloud = ncloud(self.tri.simplices.T + 1, self.npoints, nnz_max)
-        cloud -= 1 # convert to C numbering
+        cloud, kmax = tricloud(self.tri.simplices.T + 1, self.npoints, nnz_max**2)
+        cloud = cloud[:,:kmax] - 1 # convert to C numbering
 
         self.neighbour_cloud = np.ma.array(cloud, mask=cloud==-1)
 

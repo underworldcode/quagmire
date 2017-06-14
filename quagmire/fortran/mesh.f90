@@ -13,6 +13,7 @@
 !
 ! You should have received a copy of the GNU Lesser General Public License
 ! along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
+!
 
 subroutine remove_dups ( n, array_in, array_out, k )
 !*****************************************************************************
@@ -41,6 +42,135 @@ subroutine remove_dups ( n, array_in, array_out, k )
      k = k + 1
      array_out(k) = array_in(i)
   end do outer
+  return
+end subroutine
+
+subroutine ntriw ( n, x, y, nt, ltri, area, weight )
+!*****************************************************************************
+
+!! NTRIW computes the pointwise area to calculate local areas on a mesh
+!
+! Parameters:
+! 
+!   Input, integer ( kind = 4 ), n
+!   number of points in the triangulation
+!
+!   Input, real ( kind = 8 ), x(n), y(n)
+!   x and y coordinates that make up the triangulation
+!
+!   Input, integer ( kind = 4 ), n
+!   number of points in the triangulation
+!
+!   Input, integer ( kind = 4 ), nt
+!   number of triangles in the triangulation
+!
+!   Input, integer ( kind = 4 ), ltri(3,nt)
+!   list of triangles in the triangulation
+!
+!   Ouput, real ( kind = 8 ), area(n), weight(n)
+!   areas and weights for each point
+
+  implicit none
+  
+  integer ( kind = 4 ) n,nt,i
+  real ( kind = 8 ) x(n),y(n),area(n)
+  integer ( kind = 4 ) weight(n)
+  integer ( kind = 4 ) ltri(3,nt)
+  real ( kind = 8 ) v1x,v1y,v2x,v2y
+  integer ( kind = 4 ) tri(3)
+
+!
+! Get 2 sides of triangle
+!
+  do i = 1, nt
+    tri = ltri(:,i)
+    v1x = x(tri(2)) - x(tri(1))
+    v1y = y(tri(2)) - y(tri(1))
+    v2x = x(tri(1)) - x(tri(3))
+    v2y = y(tri(1)) - y(tri(3))
+
+    area(tri) = area(tri) + abs(v1x*v2y - v1y*v2x)
+    weight(tri) = weight(tri) + 1
+  end do
+!
+! Now we divide each element by 6
+!
+  area = area/6
+  return
+end
+
+subroutine tricloud ( nt, ltri, n, ncol, cloud, kmax )
+! Finds all neighbours and extended neighbours for every point
+! in a triangulation
+!
+!   Input, integer ( kind = 4 ), nt
+!   number of points in the triangulation
+!
+!   Input, integer ( kind = 4 ), ltri(3,nt)
+!   list of triangles in the triangulation
+!
+!   Input, integer ( kind = 4 ), n
+!   number of points in the triangulation
+!
+!   Input, integer ( kind = 4 ), ncol
+!   estimated number of neighbours and extended neighbours
+!
+!   Output, integer ( kind = 4 ), cloud(n,ncol)
+!   number of points in the triangulation
+!
+!   Output, integer ( kind = 4 ), kmax
+!   max number of neighbours and extended neighbours
+  implicit none
+
+  integer ( kind = 4 ) nt, n, kmax, ncol
+  integer ( kind = 4 ) ltri(3,nt)
+  integer ( kind = 4 ), target :: cloud(n,ncol)
+  integer ( kind = 4 ) rcloud(ncol*ncol), dedup(ncol*ncol)
+  integer ( kind = 4 ) t1, t2, t3, s1, s2, s3
+  integer ( kind = 4 ) rsize, ksize, i, j, k, p
+  integer ( kind = 4 ) nnz(n)
+  integer, pointer :: neighbours(:)
+  integer, pointer :: eneighbours(:)
+
+  nnz(:) = 1
+  cloud(:,:) = 0
+
+  do i = 1, nt
+    t1 = ltri(1,i); s1 = nnz(t1)
+    t2 = ltri(2,i); s2 = nnz(t2)
+    t3 = ltri(3,i); s3 = nnz(t3)
+
+    cloud(t1,s1) = t2; cloud(t1,s1+1) = t3
+    cloud(t2,s2) = t1; cloud(t2,s2+1) = t3
+    cloud(t3,s3) = t2; cloud(t3,s3+1) = t1
+
+    nnz(t1) = nnz(t1) + 2
+    nnz(t2) = nnz(t2) + 2
+    nnz(t3) = nnz(t3) + 2
+  end do
+
+  kmax = 0
+
+  do i = 1, n
+    rcloud(:) = 0
+    neighbours => cloud(i,:)
+    rsize = nnz(i)
+    rcloud(1:rsize) = neighbours(1:rsize)
+    do j = 1, nnz(i)
+      p = neighbours(j)
+      eneighbours => cloud(p,:)
+      ksize = nnz(p)
+      rcloud(rsize:rsize+ksize) = eneighbours(1:ksize)
+      rsize = rsize + ksize
+    end do
+
+    ! dedup
+    dedup(:) = 0
+    call remove_dups(rsize, rcloud(1:rsize), dedup(1:rsize), k)
+    cloud(i,:) = pack(dedup(1:rsize), dedup(1:rsize) /= 0)
+    cloud(i,k+1:ncol) = 0
+    kmax = max(kmax, k)
+  end do
   return
 end subroutine
 
