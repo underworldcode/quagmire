@@ -23,7 +23,6 @@ petsc4py.init(sys.argv)
 from petsc4py import PETSc
 comm = MPI.COMM_WORLD
 from time import clock
-import stripy
 
 try: range = xrange
 except: pass
@@ -34,8 +33,10 @@ class TriMesh(object):
     Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
     We recommend having 1) triangle or 2) scipy installed for Delaunay triangulations.
     """
-    def __init__(self, dm, verbose=True, neighbour_cloud_size=33):
+    def __init__(self, dm, verbose=True, *args, **kwargs):
+        import stripy
         from scipy.spatial import cKDTree as _cKDTree
+
         self.timings = dict() # store times
 
         self.log = PETSc.Log()
@@ -47,9 +48,7 @@ class TriMesh(object):
         self.gvec = dm.createGlobalVector()
         self.lvec = dm.createLocalVector()
         self.sect = dm.getDefaultSection()
-        self.sizes = self.lvec.getSizes(), self.gvec.getSizes()
-
-        print "Matrix size:", self.sizes
+        self.sizes = self.gvec.getSizes(), self.gvec.getSizes()
 
         lgmap_r = dm.getLGMap()
         l2g = lgmap_r.indices.copy()
@@ -60,23 +59,6 @@ class TriMesh(object):
 
         self.lgmap_row = lgmap_r
         self.lgmap_col = lgmap_c
-
-        if neighbour_cloud_size != None:
-            self.neighbour_cloud_array_size = neighbour_cloud_size
-        else:
-            self.neighbour_cloud_array_size = 33
-
-        # RBF matrix pre-allocation
-
-        rbfMat = dm.createMatrix()
-        rbfMat.setType('aij')
-        # rbfMat.setSizes(self.sizes)
-        # rbfMat.setLGMap(self.lgmap_row, self.lgmap_col)
-        rbfMat.setPreallocationNNZ(self.neighbour_cloud_array_size*2) # Fixed by neighbour list size - defaults to 33 for Trimesh (currently)
-                                                                      # Not sure what happens in shadow zones, there could be some cases where this
-                                                                      # exceeds the neighbour count
-
-        self.rbfMat = rbfMat
 
         # Delaunay triangulation
         t = clock()
@@ -91,15 +73,7 @@ class TriMesh(object):
         self.npoints = self.tri.npoints
         self.timings['triangulation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Delaunay triangulation {}s".format(clock()-t))
-
-
-        # cKDTree
-        t = clock()
-        self.cKDTree = _cKDTree(self.tri.points, balanced_tree=False)
-        self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print(" - cKDTree {}s".format(clock()-t))
+            print("{} - Delaunay triangulation {}s".format(self.dm.comm.rank, clock()-t))
 
 
         # Calculate weigths and pointwise area
@@ -107,7 +81,7 @@ class TriMesh(object):
         self.calculate_area_weights()
         self.timings['area weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Calculate node weights and area {}s".format(clock()-t))
+            print("{} - Calculate node weights and area {}s".format(self.dm.comm.rank, clock()-t))
 
 
         # Find boundary points
@@ -115,23 +89,30 @@ class TriMesh(object):
         self.bmask = self.get_boundary()
         self.timings['find boundaries'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Find boundaries {}s".format(clock()-t))
+            print("{} - Find boundaries {}s".format(self.dm.comm.rank, clock()-t))
+
+        # cKDTree
+        t = clock()
+        self.cKDTree = _cKDTree(self.tri.points, balanced_tree=False)
+        self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.verbose:
+            print("{} - cKDTree {}s".format(self.dm.comm.rank, clock()-t))
 
 
         # Find neighbours
         t = clock()
-        self.construct_neighbour_cloud(size=self.neighbour_cloud_array_size)
+        self.construct_neighbour_cloud()
         self.timings['construct neighbour cloud'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Construct neighbour cloud array {}s".format(clock()-t))
+            print("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, clock()-t))
 
 
         # RBF smoothing operator
         t = clock()
-        self._construct_rbf()
+        self._construct_rbf_weights()
         self.timings['construct rbf weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Construct rbf weights {}s".format(clock()-t))
+            print("{} - Construct rbf weights {}s".format(self.dm.comm.rank, clock()-t))
 
 
         self.root = False
@@ -321,6 +302,61 @@ class TriMesh(object):
         self.neighbour_array = np.array(closed_neighbours)
 
 
+    def construct_extended_neighbour_cloud(self):
+        """
+        Find extended node neighbours
+        """
+        from quagmire._fortran import ncloud
+
+        # nnz_max = np.bincount(self.tri.simplices.ravel()).max()
+
+        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
+        self.near_neighbours = neighbours
+
+
+        nnz_max = self.near_neighbours.max()
+
+        cloud = ncloud(self.tri.simplices.T + 1, self.npoints, nnz_max)
+        cloud -= 1 # convert to C numbering
+        cloud_mask = cloud==-1
+        cloud_masked = np.ma.array(cloud, mask=cloud_mask)
+
+        self.extended_neighbours = np.count_nonzero(~cloud_mask, axis=1)
+        self.extended_neighbours_mask = cloud_mask
+
+        dx = self.tri.points[cloud_masked,0] - self.tri.points[:,0].reshape(-1,1)
+        dy = self.tri.points[cloud_masked,1] - self.tri.points[:,1].reshape(-1,1)
+        dist = np.hypot(dx,dy)
+        dist[cloud_mask] = 1.0e50
+
+        ii =  np.argsort( dist, axis=1)
+
+        t = clock()
+
+        ## Surely there is some np.argsort trick here to avoid the for loop ???
+
+        neighbour_cloud = np.ones_like(cloud, dtype=np.int )
+        neighbour_cloud_distances = np.empty_like(dist)
+
+        for node in range(0, self.npoints):
+            neighbour_cloud[node, :] = cloud[node, ii[node,:]]
+            neighbour_cloud_distances[node, :] = dist[node, ii[node,:]]
+
+        # The same mask should be applicable to the sorted array
+
+        self.neighbour_cloud = np.ma.array( neighbour_cloud, mask = cloud_mask)
+        self.neighbour_cloud_distances = np.ma.array( neighbour_cloud_distances, mask = cloud_mask)
+
+        # Create a mask that can pick the natural neighbours only
+
+        ind = np.indices(self.neighbour_cloud.shape)[1]
+        mask = ind > self.near_neighbours.reshape(-1,1)
+        self.near_neighbours_mask = mask
+
+
+        print(" - Array sort {}s".format(clock()-t))
+
+
     def construct_neighbour_cloud(self, size=33):
         """
         Find neighbours from distance cKDTree.
@@ -331,7 +367,10 @@ class TriMesh(object):
 
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
-        self.neighbour_cloud_array_size=size
+
+        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
+        self.near_neighbours = neighbours
+        self.extended_neighbours = np.empty_like(neighbours).fill(size)
 
         return
 
@@ -343,6 +382,8 @@ class TriMesh(object):
         nweight = weight[indices]
 
         lgmask = self.lgmap_row.indices >= 0
+
+
         nnz = self.vertex_neighbours[lgmask] + 1
 
         # smoothMat = self.dm.createMatrix()
@@ -355,14 +396,12 @@ class TriMesh(object):
         smoothMat.setPreallocationNNZ(nnz)
 
         # read in data
-
-        smoothMat.assemblyBegin()
-
         smoothMat.setValuesLocalCSR(indptr.astype(PETSc.IntType), indices.astype(PETSc.IntType), nweight)
         self.lvec.setArray(weight)
         self.dm.localToGlobal(self.lvec, self.gvec)
         smoothMat.setDiagonal(self.gvec)
 
+        smoothMat.assemblyBegin()
         smoothMat.assemblyEnd()
 
         self.localSmoothMat = smoothMat
@@ -449,8 +488,8 @@ class TriMesh(object):
             file += '.h5'
 
         # write mesh if it doesn't exist
-        if not os.path.isfile(file):
-            self.save_mesh_to_hdf5(file)
+        # if not os.path.isfile(file):
+        #     self.save_mesh_to_hdf5(file)
 
         kwdict = kwargs
         for i, arg in enumerate(args):
@@ -531,49 +570,42 @@ class TriMesh(object):
         return self.lvec.array
 
 
-    def _construct_rbf(self, delta=None):
+    def _construct_rbf_weights(self, delta=None):
 
         self.delta  = delta
 
+        # delta_x = self.tri.x[self.neighbour_cloud] - self.tri.x.reshape(-1,1)
+        # delta_y = self.tri.y[self.neighbour_cloud] - self.tri.y.reshape(-1,1)
+        #
+        # neighbour_cloud_distances = np.hypot(delta_x, delta_y)
+
+        neighbour_cloud_distances = self.neighbour_cloud_distances
+
         if self.delta == None:
-            self.delta = self.neighbour_cloud_distances[:,1].mean() # * 0.75
+            self.delta = self.neighbour_cloud_distances[:, 1].mean()
 
         # Initialise the interpolants
 
-        gaussian_dist_w       = np.zeros_like(self.neighbour_cloud_distances)
-        gaussian_dist_w[:,:]  = np.exp(-np.power(self.neighbour_cloud_distances[:,:]/self.delta, 2.0))
+        gaussian_dist_w       = np.zeros_like(neighbour_cloud_distances)
+        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/self.delta, 2.0))
         gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
 
+        # gaussian_dist_w[self.extended_neighbours_mask] = 0.0
+
         self.gaussian_dist_w = gaussian_dist_w
-
-        # Now push these into the petsc matrix
-
-        print self.dm.comm.rank, ": NODES -  ", self.npoints
-        print self.rbfMat.getSizes()
-
-        for node in range(0, self.npoints):
-            row = node
-            columns = self.neighbour_cloud[node].astype(PETSc.IntType)
-            values  = gaussian_dist_w[node]
-            self.rbfMat.setValuesLocal(row, columns, values,
-                                    addv=PETSc.InsertMode.INSERT_VALUES)
-
-        self.rbfMat.assemblyBegin()
-        self.rbfMat.assemblyEnd()
-
 
         return
 
 
     def rbf_smoother(self, vector, iterations=1):
 
-        lvec = self.lvec.copy()
-        gvec = self.gvec.copy()
-        lvec.setArray(vector)
+         # Should do some error checking here to ensure the field and point cloud are compatible
 
-        for i in range(0,iterations):
-            self.dm.localToGlobal(lvec, gvec)
-            gvec = self.rbfMat * gvec
-            self.dm.globalToLocal(gvec, lvec)
+         lvec = self.lvec.copy()
 
-        return lvec.array
+         for i in range(0, iterations):
+             vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+             self.sync(vector)
+             vector = vector_smoothed.copy()
+
+         return vector_smoothed

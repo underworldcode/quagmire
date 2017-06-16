@@ -24,12 +24,15 @@ from petsc4py import PETSc
 comm = MPI.COMM_WORLD
 from time import clock
 
+try: range = xrange
+except: pass
+
 
 class PixMesh(object):
     """
     Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
     """
-    def __init__(self, dm, verbose=True, neighbour_cloud_size=25):
+    def __init__(self, dm, verbose=True, *args, **kwargs):
         from scipy.spatial import Delaunay
         from scipy.spatial import cKDTree as _cKDTree
 
@@ -92,22 +95,6 @@ class PixMesh(object):
         self.npoints = nx*ny
 
 
-        if neighbour_cloud_size:
-            self.neighbour_cloud_array_size = neighbour_cloud_size
-        else:
-            self.neighbour_cloud_array_size = 25
-
-
-        # RBF matrix pre-allocation
-
-        rbfMat = PETSc.Mat().create(comm=comm)
-        rbfMat.setType('aij')
-        rbfMat.setSizes(self.sizes)
-        rbfMat.setLGMap(self.lgmap_row, self.lgmap_col)
-        rbfMat.setPreallocationNNZ(neighbour_cloud_size)
-
-        self.rbfMat = rbfMat
-
         # Find neighbours
         t = clock()
         self.construct_neighbours()
@@ -117,7 +104,7 @@ class PixMesh(object):
 
         # cKDTree
         t = clock()
-        self.cKDTree = _cKDTree(self.coords, balanced_tree=False)
+        self.cKDTree = _cKDTree(self.coords)
         self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - cKDTree {}s".format(clock()-t))
@@ -142,7 +129,7 @@ class PixMesh(object):
 
         # Find neighbours
         t = clock()
-        self.construct_neighbour_cloud(size=self.neighbour_cloud_array_size)
+        self.construct_neighbour_cloud()
         self.timings['construct neighbour cloud'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Construct neighbour cloud array {}s".format(clock()-t))
@@ -150,8 +137,8 @@ class PixMesh(object):
 
         # RBF smoothing operator
         t = clock()
-        self._construct_rbf()
-        self.timings['construct rbf weights and matrix'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self._construct_rbf_weights()
+        self.timings['construct rbf weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print(" - Construct rbf weights {}s".format(clock()-t))
 
@@ -294,7 +281,7 @@ class PixMesh(object):
         lgmask = self.lgmap_row.indices >= 0
 
 
-        nnz = self.vertex_neighbours.max() + 1
+        nnz = self.vertex_neighbours[lgmask] + 1
 
 
         smoothMat = PETSc.Mat().create(comm=comm)
@@ -342,66 +329,6 @@ class PixMesh(object):
 
         return bmask
 
-    def save_mesh_to_hdf5(self, file):
-        """
-        Saves mesh information stored in the DM to HDF5 file
-        If the file already exists, it is overwritten.
-        """
-        file = str(file)
-        if not file.endswith('.h5'):
-            file += '.h5'
-
-        ViewHDF5 = PETSc.Viewer()
-        ViewHDF5.createHDF5(file, mode='w')
-        ViewHDF5.view(obj=self.dm)
-        ViewHDF5.destroy()
-
-
-    def save_field_to_hdf5(self, file, *args, **kwargs):
-        """
-        Saves data on the mesh to an HDF5 file
-         e.g. height, rainfall, sea level, etc.
-
-        Pass these as arguments or keyword arguments for
-        their names to be saved to the hdf5 file
-        """
-        import os.path
-
-        file = str(file)
-        if not file.endswith('.h5'):
-            file += '.h5'
-
-        # write mesh if it doesn't exist
-        if not os.path.isfile(file):
-            self.save_mesh_to_hdf5(file)
-
-        kwdict = kwargs
-        for i, arg in enumerate(args):
-            key = "arr_{}".format(i)
-            if key in kwdict.keys():
-                raise ValueError("Cannot use un-named variables\
-                                  and keyword: {}".format(key))
-            kwdict[key] = arg
-
-        vec = self.gvec.duplicate()
-
-        for key in kwdict:
-            val = kwdict[key]
-            try:
-                vec.setArray(val)
-            except:
-                self.lvec.setArray(val)
-                self.dm.localToGlobal(self.lvec, vec)
-
-            vec.setName(key)
-
-            ViewHDF5 = PETSc.Viewer()
-            ViewHDF5.createHDF5(file, mode='a')
-            ViewHDF5.view(obj=vec)
-            ViewHDF5.destroy()
-
-        vec.destroy()
-
 
     def _gather_root(self):
         """
@@ -437,9 +364,8 @@ class PixMesh(object):
         self.dm.globalToLocal(self.gvec, self.lvec)
         return self.lvec.array.copy()
 
-    def _construct_rbf(self, delta=None):
+    def _construct_rbf_weights(self, delta=None):
 
-        ## This should be a mesh-wide property not a local mesh property
         self.delta  = delta
 
         if self.delta == None:
@@ -452,17 +378,6 @@ class PixMesh(object):
         gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
 
         self.gaussian_dist_w = gaussian_dist_w
-
-        # Now push these into the petsc matrix
-
-        t = clock()
-
-        self.rbfMat.assemblyBegin()
-        for node in range(0,self.npoints):
-            self.rbfMat.setValues(node, self.neighbour_cloud[node].astype(np.int32), gaussian_dist_w[node])
-        self.rbfMat.assemblyEnd()
-
-        print "RBF matrix assembly - {}s".format(clock()-t)
 
         return
 

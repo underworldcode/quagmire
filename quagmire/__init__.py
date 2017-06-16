@@ -22,14 +22,14 @@ from .surfmesh import SurfMesh as _SurfaceProcessMeshClass
 
 import tools
 
-known_basemesh_classes = {type(_PETSc.DMDA())   : _PixMesh,
+known_basemesh_classes = {type(_PETSc.DMDA())   : _PixMesh,\
                           type(_PETSc.DMPlex()) : _TriMesh}
 
 
-def FlatMesh(DM, verbose=None, neighbour_cloud_size=None):
+def FlatMesh(DM, *args, **kwargs):
     """
     Instantiates a 2-D mesh using TriMesh or PixMesh objects.
-
+    
     This object contains methods for the following operations:
      - calculating derivatives
      - interpolation (nearest-neighbour, linear, cubic)
@@ -48,20 +48,21 @@ def FlatMesh(DM, verbose=None, neighbour_cloud_size=None):
     """
     BaseMeshType = type(DM)
     if BaseMeshType in known_basemesh_classes.keys():
-        class FlatMeshClass(known_basemesh_classes[BaseMeshType]):
-            def __init__(self, dm, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm, verbose, neighbour_cloud_size)
-                # super(FlatMeshClass, self).__init__(dm)
 
-        return FlatMeshClass(DM, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
+        class FlatMeshClass(known_basemesh_classes[BaseMeshType]):
+            def __init__(self, dm, *args, **kwargs):
+                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
+                # super(FlatMeshClass, self).__init__(dm, *args, **kwargs)
+
+        return FlatMeshClass(DM, *args, **kwargs)
 
     else:
-        print "Warning !! Mesh type {} unknown. ".format(BaseMeshType)
-        print "Known mesh types: {} ".format(known_mesh_classes.keys())
+      raise TypeError("Mesh type {:s} unknown\n\
+        Known mesh types: {}".format(BaseMeshType, known_basemesh_classes.keys()))
 
     return
 
-def TopoMesh(DM, verbose=False, neighbour_cloud_size=None):
+def TopoMesh(DM, *args, **kwargs):
     """
     Instantiates a mesh with a height field.
     TopoMesh inherits from FlatMesh.
@@ -84,25 +85,23 @@ def TopoMesh(DM, verbose=False, neighbour_cloud_size=None):
     -------
      TopoMesh : object
     """
-
     BaseMeshType = type(DM)
     if BaseMeshType in known_basemesh_classes.keys():
         class TopoMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
-            def __init__(self, dm, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
-                _TopoMeshClass.__init__(self, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
-                # super(TopoMeshClass, self).__init__(dm)
+            def __init__(self, dm, *args, **kwargs):
+                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
+                _TopoMeshClass.__init__(self, *args, **kwargs)
+                # super(TopoMeshClass, self).__init__(dm, *args, **kwargs)
 
-        return TopoMeshClass(DM, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
+        return TopoMeshClass(DM, *args, **kwargs)
 
     else:
-        print "Warning !! Mesh type {:s} unknown".format(BaseMeshType)
-        print "Known mesh types: {}".format(known_mesh_classes.keys())
-
+      raise TypeError("Mesh type {:s} unknown\n\
+        Known mesh types: {}".format(BaseMeshType, known_basemesh_classes.keys()))
 
     return
 
-def SurfaceProcessMesh(DM, verbose=False, neighbour_cloud_size=None):
+def SurfaceProcessMesh(DM, *args, **kwargs):
     """
     Instantiates a mesh with a height and rainfall field.
     SurfaceProcessMesh inherits from FlatMesh and TopoMesh.
@@ -128,18 +127,17 @@ def SurfaceProcessMesh(DM, verbose=False, neighbour_cloud_size=None):
     """
     BaseMeshType = type(DM)
     if BaseMeshType in known_basemesh_classes.keys():
-
         class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass, _SurfaceProcessMeshClass):
-            def __init__(self, dm, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
-                _TopoMeshClass.__init__(self, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
-                _SurfaceProcessMeshClass.__init__(self, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
-                # super(SurfaceProcessMeshClass, self).__init__(dm)
+            def __init__(self, dm, *args, **kwargs):
+                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
+                _TopoMeshClass.__init__(self, *args, **kwargs)
+                _SurfaceProcessMeshClass.__init__(self, *args, **kwargs)
+                # super(SurfaceProcessMeshClass, self).__init__(dm, *args, **kwargs)
 
-        return SurfaceProcessMeshClass(DM, verbose=verbose, neighbour_cloud_size=neighbour_cloud_size)
+        return SurfaceProcessMeshClass(DM, *args, **kwargs)
 
     else:
-        print "Warning !! Mesh type {:s} unknown".format(BaseMeshType)
-        print "Known mesh types: {}".format(known_mesh_classes.keys())
+      raise TypeError("Mesh type {:s} unknown\n\
+        Known mesh types: {}".format(BaseMeshType, known_basemesh_classes.keys()))
 
     return

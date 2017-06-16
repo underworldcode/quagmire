@@ -141,7 +141,7 @@ meshheights = ndimage.map_coordinates(dem, coords.T, order=3, mode='nearest')
 # In[70]:
 
 mesh.update_height(meshheights)
-meshheights = mesh.handle_low_points(its=500)
+meshheights = mesh.handle_low_points(its=500, smoothing_steps=3)
 low_points = mesh.identify_low_points()
 flats = np.where(mesh.identify_flat_spots())[0]
 
@@ -242,7 +242,7 @@ print("mean gradient {}\nnumber of flat spots {}\nnumber of low points {}".forma
 
 # In[21]:
 
-filename = 'port_macquarie_mesh_lows500.h5'
+filename = 'port_macquarie_mesh_lows500x3.h5'
 
 mesh.save_mesh_to_hdf5(filename)
 mesh.save_field_to_hdf5(filename, height=mesh.height, slope=mesh.slope, flow=np.sqrt(flow2))

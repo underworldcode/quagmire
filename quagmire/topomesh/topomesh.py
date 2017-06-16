@@ -17,20 +17,21 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import numpy as np
+import numpy.ma as ma
 from mpi4py import MPI
 import sys,petsc4py
 petsc4py.init(sys.argv)
 from petsc4py import PETSc
-from time import clock
 comm = MPI.COMM_WORLD
+from time import clock
 
-from scipy.spatial import cKDTree as _cKDTree
+try: range = xrange
+except: pass
 
 
 class TopoMesh(object):
-    def __init__(self, verbose=None, neighbour_cloud_size=None):
-        self.build3Neighbours = False
-        self.downhill_neighbours = 2
+    def __init__(self, downhill_neighbours=2, *args, **kwargs):
+        self.downhill_neighbours = downhill_neighbours
 
         # Initialise cumulative flow vectors
         self.DX0 = self.gvec.duplicate()
@@ -57,15 +58,17 @@ class TopoMesh(object):
         self.slope = np.hypot(dHdx, dHdy)
 
         # Lets send and receive this from the global space
-        self.slope[:] = self.sync(self.slope)
+        # self.slope[:] = self.sync(self.slope)
         self.timings['gradient operation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.verbose:
+            print("{} - Compute slopes {}s".format(self.dm.comm.rank, clock()-t))
 
 
         t = clock()
         self._build_downhill_matrix_iterate()
         self.timings['downhill matrices'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Build downhill matrices {}s".format(clock()-t))
+            print("{} - Build downhill matrices {}s".format(self.dm.comm.rank, clock()-t))
 
 
     def _update_height_partial(self, height):
@@ -81,16 +84,6 @@ class TopoMesh(object):
 
 
         t = clock()
-        self.height = height.copy()
-        # dHdx, dHdy = self.derivative_grad(height)
-        # self.slope = np.hypot(dHdx, dHdy)
-
-        # Lets send and receive this from the global space
-        #self.slope[:] = self.sync(self.slope)
-        #self.timings['gradient operation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-
-
-        t = clock()
 
         neighbours = self.downhill_neighbours
         self.downhill_neighbours = 1
@@ -102,6 +95,7 @@ class TopoMesh(object):
         self.downhill_neighbours = neighbours
 
         return
+
 
 
     def _sort_nodes_by_field(self, height):
@@ -138,23 +132,32 @@ class TopoMesh(object):
 
     def _adjacency_matrix_template(self, nnz=(1,1)):
 
-        # matrix = PETSc.Mat().create(comm=comm)
-        # matrix.setType('aij')
-        # matrix.setSizes(self.sizes)
-        # matrix.setLGMap(self.lgmap_row, self.lgmap_col)
-        # matrix.setFromOptions()
-        # matrix.setPreallocationNNZ(nnz)
-
-        matrix = self.dm.createMatrix()
+        matrix = PETSc.Mat().create(comm=comm)
         matrix.setType('aij')
-        matrix.setPreallocationNNZ(1) # Fixed by neighbour list size - defaults to 33 for Trimesh (currently)
-                                                                      # Not sure what happens in shadow zones, there could be some cases where this
-                                                                      # exceeds the neighbour count
+        matrix.setSizes(self.sizes)
+        matrix.setLGMap(self.lgmap_row, self.lgmap_col)
+        matrix.setFromOptions()
+        matrix.setPreallocationNNZ(nnz)
 
         return matrix
 
 
+## This is the lowest near node / lowest extended neighbour
+
+# hnear = np.ma.array(mesh.height[mesh.neighbour_cloud], mask=mesh.near_neighbours_mask)
+# low_neighbours = np.argmin(hnear, axis=1)
+#
+# hnear = np.ma.array(mesh.height[mesh.neighbour_cloud], mask=mesh.extended_neighbours_mask)
+# low_eneighbours = np.argmin(hnear, axis=1)
+#
+#
+
+
 ## This version is based on distance not mesh connectivity -
+##
+## Be careful - it finds the nearest low node and not the lowest
+## near node.
+##
 
     def _build_adjacency_matrix_iterate(self):
 
@@ -168,26 +171,27 @@ class TopoMesh(object):
         node_range = indptr[:-1]
 
         # compute low neighbours
-        dneighTF = self.height[self.neighbour_cloud] < self.height.reshape(-1,1)
-        dneighL1 = dneighTF.argmax(axis=1)
+        nheight  = self.height[self.neighbour_cloud]
+        # nheightm = ma.array( nheight, mask = self.neighbour_cloud.mask)
+
+        dneighTF = nheight < self.height.reshape(-1,1)
+        dneighL1  = dneighTF.argmax(axis=1)
 
         for i in range(1, self.downhill_neighbours+1):
             data.fill(1.0)
 
             dneighL = dneighTF.argmax(axis=1)
-            dneighL[dneighL == 0] = dneighL1[dneighL == 0]
+            own = dneighL == 0
+            dneighL[own] = dneighL1[own]
             dneighTF[node_range, dneighL[node_range]] = False
 
             down_neighbour[:] = self.neighbour_cloud[node_range, dneighL[node_range]]
             data[dneighL == 0] = 0.0
 
             adjacency = self._adjacency_matrix_template()
-            adjacency.assemblyBegin()
             adjacency.setValuesLocalCSR(indptr, down_neighbour, data)
+            adjacency.assemblyBegin()
             adjacency.assemblyEnd()
-
-
-
             self.adjacency[i] = adjacency.transpose()
             self.down_neighbour[i] = down_neighbour.copy()
 
@@ -262,11 +266,9 @@ class TopoMesh(object):
             comm.Allgather([err, MPI.BOOL], [err_proc, MPI.BOOL])
 
         # add identity matrix
-
         I = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
         J = np.arange(0, self.npoints, dtype=PETSc.IntType)
         V = np.ones(self.npoints)
-
         identityMat = self._adjacency_matrix_template()
         identityMat.setValuesLocalCSR(I, J, V)
         identityMat.assemblyBegin()
@@ -283,26 +285,38 @@ class TopoMesh(object):
         if not maximum_its:
             maximum_its = 1000000000000
 
+
+        print "DHmat**2"
+        # downhillMat2 = self.downhillMat * self.downhillMat
+        # downhillMat4 = downhillMat2 * downhillMat2
+        # downhillMat8 = downhillMat4 * downhillMat4
         downhillMat = self.downhillMat
+        print "DHmat**2 - done "
 
         DX0 = self.DX0
         DX1 = self.DX1
         dDX = self.dDX
 
         self.lvec.setArray(vector)
-        self.dm.localToGlobal(self.lvec, DX0)
+        self.dm.localToGlobal(self.lvec, DX0, addv=PETSc.InsertMode.INSERT_VALUES)
 
         DX1.setArray(DX0)
+        # DX0.assemble()
+        # DX1.assemble()
 
         niter = 0
         equal = False
 
-        tolerance = 1e-8
+        tolerance = 1e-8 * DX1.max()[1]
 
         while not equal and niter < maximum_its:
             dDX.setArray(DX1)
+            #dDX.assemble()
+
             downhillMat.mult(DX1, self.gvec)
             DX1.setArray(self.gvec)
+            DX1.assemble()
+
             DX0 += DX1
 
             dDX.axpy(-1.0, DX1)
@@ -311,8 +325,8 @@ class TopoMesh(object):
 
             equal = max_dDX < tolerance
 
-            if verbose and niter%10 == 0:
-                print "Max Delta - {} ".format(max_dDX)
+            if self.dm.comm.rank==0 and verbose and niter%10 == 0:
+                print "{}: Max Delta - {} ".format(niter, max_dDX)
 
             niter += 1
 
@@ -323,45 +337,7 @@ class TopoMesh(object):
     def cumulative_flow(self, vector):
 
         niter, cumulative_flow_vector = self.cumulative_flow_verbose(vector)
-
         return cumulative_flow_vector
-
-
-###
-### Note, this is identically equivalent to applying one round of rbf smoothing to the
-### output of the standard cumulative flow routine. So, not needed
-###
-
-    def _cumulative_flow_rbf_smoothed(self, vector, maxits=1000000):
-
-        downhillMat = self.downhillMat
-
-        self.lvec.setArray(vector)
-        self.dm.localToGlobal(self.lvec, self.gvec)
-
-        DX0 = self.gvec.copy()
-        DX1 = self.gvec.copy()
-        DX1_sum = DX1.sum()
-
-        niter = 0
-        equal = False
-
-        tolerance = 1.0e-8 * DX1_sum
-
-        while not equal and niter < maxits:
-
-            DX1_isum = DX1_sum
-            DX1 = downhillMat * DX1
-            DX1 = self.rbfMat * DX1
-            DX1_sum = DX1.sum()
-            DX0 += DX1
-
-            equal = (DX1_sum < tolerance)
-            niter += 1
-
-        self.dm.globalToLocal(DX0, self.lvec)
-
-        return self.lvec.array.copy()
 
 
 
@@ -487,9 +463,6 @@ class TopoMesh(object):
 
     def build_node_chains(self):
         """ NEEDS WORK
-
-        NOTE: This does not work in parallel !!
-
         Builds all the chains for the mesh which flow from high to low and terminate
         when they meet with an existing chain.
 

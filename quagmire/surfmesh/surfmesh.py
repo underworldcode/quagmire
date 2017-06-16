@@ -19,17 +19,17 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 import numpy as np
 from mpi4py import MPI
 import sys,petsc4py
-
 petsc4py.init(sys.argv)
-
 from petsc4py import PETSc
 comm = MPI.COMM_WORLD
+from time import clock
 
-# from dmplex_grad   import DMPlexGrad
+try: range = xrange
+except: pass
 
 class SurfMesh(object):
 
-    def __init__(self, verbose=None, neighbour_cloud_size=None):
+    def __init__(self, *args, **kwargs):
         self.kappa = 1.0 # dummy value
 
     def update_surface_processes(self, rainfall_pattern, sediment_distribution):
@@ -57,37 +57,27 @@ class SurfMesh(object):
         self.outflow_points = self.identify_outflow_points()
 
 
-    def handle_low_points(self, its=1):
+    def handle_low_points(self, its=1, smoothing_steps=1):
+
         for iteration in range(0,its):
             self.low_points = self.identify_low_points()
 
             if self.verbose:
-                print "{:03d} no of low points - {} ".format(iteration, self.low_points.shape[0])
+                print "{:03d}/{} no of low points - {} ".format(iteration, self.dm.comm.rank, self.low_points.shape[0])
 
             if len(self.low_points) == 0:
                 return self.height
 
-            lheight = self.lvec.duplicate()
-            gheight = self.gvec.duplicate()
-
-            gdelta_height = self.gvec.duplicate()
-            delta_height  = self.lvec.duplicate()
-
-            lheight.setArray(self.height)
-            self.dm.localToGlobal(lheight, gheight)
-
-            delta_height[self.low_points] = lheight[self.neighbour_cloud[self.low_points,:].astype(PETSc.IntType)].mean(axis=1) - lheight[self.low_points]
-
-            self.dm.localToGlobal(delta_height, gdelta_height)
-            gdelta_height = self.rbfMat * gdelta_height
-            gheight += gdelta_height
-            self.dm.globalToLocal(gheight, lheight)
+            delta_height = np.zeros_like(self.height)
+            delta_height[self.low_points] = self.height[self.neighbour_cloud[self.low_points,:]].mean(axis=1) - self.height[self.low_points]
+            smoothed_delta_height = self.rbf_smoother(delta_height, iterations=smoothing_steps)
+            self.height += smoothed_delta_height
 
             ## Push this / rebuild for the next loop
-            self._update_height_partial(lheight.array)
+            self._update_height_partial(self.height)
 
         ## Don't leave the mesh in a half-updated state
-        self.update_height(lheight.array)
+        self.update_height(self.height)
 
         return self.height
 
@@ -171,9 +161,9 @@ class SurfMesh(object):
 
     def identify_flat_spots(self):
 
-        smooth_grad1 = self.rbf_smoother(self.slope, iterations=1)
+        smooth_grad1 = self.local_area_smoothing(self.slope, its=1, centre_weight=0.5)
 
-        ## Need a global value of this smoothed gradient for parallel codes
+        # flat_spot_field = np.where(smooth_grad1 < smooth_grad1.max()/100, 0.0, 1.0)
 
         flat_spots = np.where(smooth_grad1 < smooth_grad1.max()/1000.0, True, False)
 
