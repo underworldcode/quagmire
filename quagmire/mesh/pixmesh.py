@@ -24,6 +24,8 @@ from petsc4py import PETSc
 comm = MPI.COMM_WORLD
 from time import clock
 
+from .basemesh import MeshVariable as _MeshVariable
+
 try: range = xrange
 except: pass
 
@@ -354,6 +356,9 @@ class PixMesh(object):
         self.tozero.scatter(self.nvec, self.zvec)
 
         return self.zvec.array.copy()
+
+    def create_mesh_variable(self, name):
+        return _MeshVariable(name, self.dm)
 
     def sync(self, vector):
         """

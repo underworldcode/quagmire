@@ -24,6 +24,8 @@ from petsc4py import PETSc
 comm = MPI.COMM_WORLD
 from time import clock
 
+from .basemesh import MeshVariable as _MeshVariable
+
 try: range = xrange
 except: pass
 
@@ -505,16 +507,17 @@ class TriMesh(object):
         return self.zvec.array.copy()
 
 
+    def create_mesh_variable(self, name):
+        return _MeshVariable(name, self.dm)
+
     def sync(self, vector):
         """
         Synchronise the local domain with the global domain
         """
         self.lvec.setArray(vector)
-        # self.dm.localToLocal(self.lvec, self.gvec)
         self.dm.localToGlobal(self.lvec, self.gvec)
         self.dm.globalToLocal(self.gvec, self.lvec)
-        return self.lvec.array
-
+        return self.lvec.array.copy()
 
     def _construct_rbf_weights(self, delta=None):
 
