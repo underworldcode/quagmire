@@ -193,7 +193,8 @@ coords = np.stack((y2r, x2r)).T
 
 print "Map DEM to points"
 
-gtiff = gdal.Open("../Notebooks/data/ausbath_09_v4.tiff")
+gtiff = gdal.Open("../Notebooks/data/ETOPO1_Ice_c_geotiff.tiff")
+
 width = gtiff.RasterXSize
 height = gtiff.RasterYSize
 gt = gtiff.GetGeoTransform()
@@ -202,7 +203,40 @@ minY = gt[3] + width*gt[4] + height*gt[5]
 maxX = gt[0] + width*gt[1] + height*gt[2]
 maxY = gt[3]
 
-img = gtiff.GetRasterBand(1).ReadAsArray()
+img = gtiff.GetRasterBand(1).ReadAsArray().T
+# img = np.flipud(img).astype(float)
+
+img = np.fliplr(img)
+
+print minX, minY, maxX, maxY
+
+ausBounds = [110, -45 , 155, -5]
+minX, minY, maxX, maxY = ausBounds
+
+sliceLeft   = int(180+minX) * 60
+sliceRight  = int(180+maxX) * 60
+sliceBottom = int(90+minY) * 60
+sliceTop    = int(90+maxY) * 60
+
+AusImg = img[ sliceLeft:sliceRight, sliceBottom:sliceTop].T
+AusImg = np.flipud(AusImg)
+
+print AusImg.shape
+
+img = AusImg
+
+#
+#
+# gtiff = gdal.Open("../Notebooks/data/ausbath_09_v4.tiff")
+# width = gtiff.RasterXSize
+# height = gtiff.RasterYSize
+# gt = gtiff.GetGeoTransform()
+# minX = gt[0]
+# minY = gt[3] + width*gt[4] + height*gt[5]
+# maxX = gt[0] + width*gt[1] + height*gt[2]
+# maxY = gt[3]
+#
+# img = gtiff.GetRasterBand(1).ReadAsArray()
 
 im_coords = coords.copy()
 im_coords[:,0] -= minY
@@ -247,34 +281,35 @@ mesh.update_height(meshheights*0.001)
 # flowpaths = mesh.rbf_smoother(flowpaths, iterations=1)
 # flowpaths[~bmaskr] = 0.0
 
-mesh.handle_low_points(its=250)
+mesh.handle_low_points(its=200)
 
 print "Flowpaths - Low point"
-nits, flowpaths = mesh.cumulative_flow_verbose(mesh.area*np.ones_like(mesh.height), verbose=True, maximum_its=1500)
+nits, flowpaths = mesh.cumulative_flow_verbose(np.ones_like(mesh.height), verbose=True, maximum_its=1500)
 flowpaths = mesh.rbf_smoother(flowpaths, iterations=1)
 flowpaths[~bmaskr] = 0.0
 
-print "Smooth topography with RBF (500)"
-super_smooth_topo = mesh.rbf_smoother(mesh.height, iterations=500)
-mesh.update_height(super_smooth_topo)
 
-print "Flowpaths - Smooth"
-nits, flowpathsSmooth = mesh.cumulative_flow_verbose(mesh.area*np.ones_like(mesh.height), verbose=True, maximum_its=1500)
-flowpathsSmooth = mesh.rbf_smoother(flowpathsSmooth, iterations=1)
-flowpathsSmooth[~bmaskr] = 0.0
+# super_smooth_topo = mesh.rbf_smoother(mesh.height, iterations=100)
+# mesh.update_height(super_smooth_topo)
+#
+# print "Flowpaths - Smooth"
+# nits, flowpathsSmooth = mesh.cumulative_flow_verbose(np.ones_like(mesh.height), verbose=True, maximum_its=1500)
+# flowpathsSmooth = mesh.rbf_smoother(flowpathsSmooth, iterations=1)
+# flowpathsSmooth[~bmaskr] = 0.0
 
 
 print "Downhill Flow - complete"
 
-filename = 'austopo-v-smooth500.h5'
+
+filename = 'ausEtopo-ETOPO.h5'
 
 decomp = np.ones_like(mesh.height) * mesh.dm.comm.rank
 
 mesh.save_mesh_to_hdf5(filename)
-mesh.save_field_to_hdf5(filename, height=meshheights*0.001,
+mesh.save_field_to_hdf5(filename, height=meshheights,
                                   slope=mesh.slope,
                                   flowLP=np.sqrt(flowpaths),
-                                  flowSmooth=np.sqrt(flowpathsSmooth),
+                                  # flowSmooth=np.sqrt(flowpathsSmooth),
                                   decomp=decomp)
 
 # to view in Paraview

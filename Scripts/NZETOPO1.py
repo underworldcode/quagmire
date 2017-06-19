@@ -35,52 +35,25 @@ from scipy.ndimage.filters import gaussian_filter
 from petsc4py import PETSc
 
 
-# ## 1. Import coastline shapefile
+
+
+# ne_land = shapefile.Reader("../Notebooks/data/ne_110m_land/ne_110m_land.shp")
+# land_shapes = ne_land.shapeRecords()
 #
-# This requires pyshp to be installed. We scale the points to match the dimensions of the DEM we'll use later.
-
-# In[2]:
-
-# def remove_duplicates(a):
-#     """
-#     find unique rows in numpy array
-#     <http://stackoverflow.com/questions/16970982/find-unique-rows-in-numpy-array>
-#     """
-#     b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
-#     dedup = np.unique(b).view(a.dtype).reshape(-1, a.shape[1])
-#     return dedup
+# polyList = []
+# for i,s in  enumerate(ne_land.shapes()):
+#     if len(s.points) < 3:
+#         print "Dodgy Polygon ", i, s
+#     else:
+#         p = Polygon(s.points)
+#         if p.is_valid:
+#             polyList.append(p)
 #
-# coast_shape = shapefile.Reader("../Notebooks/data/AustCoast/AustCoast2.shp")
-# shapeRecs = coast_shape.shapeRecords()
-# coords = []
-# for record in shapeRecs:
-#     coords.append(record.shape.points[:])
+# pAll_ne110 = MultiPolygon(polyList)
+# tas_poly_ne110 = 11
+# ausmain_poly_ne110 = 21
 #
-# coords = np.vstack(coords)
-#
-# # Remove duplicates
-# points = remove_duplicates(coords)
-
-
-# In[3]:
-
-ne_land = shapefile.Reader("../Notebooks/data/ne_110m_land/ne_110m_land.shp")
-land_shapes = ne_land.shapeRecords()
-
-polyList = []
-for i,s in  enumerate(ne_land.shapes()):
-    if len(s.points) < 3:
-        print "Dodgy Polygon ", i, s
-    else:
-        p = Polygon(s.points)
-        if p.is_valid:
-            polyList.append(p)
-
-pAll_ne110 = MultiPolygon(polyList)
-tas_poly_ne110 = 11
-ausmain_poly_ne110 = 21
-
-AusLandPolygon_ne110 = MultiPolygon([polyList[tas_poly_ne110], polyList[ausmain_poly_ne110]])
+# AusLandPolygon_ne110 = MultiPolygon([polyList[tas_poly_ne110], polyList[ausmain_poly_ne110]])
 
 
 # In[4]:
@@ -97,12 +70,11 @@ for i,s in  enumerate(ne_land.shapes()):
         if p.is_valid:
             polyList.append(p)
 
-pAll_ne50 = MultiPolygon(polyList)
-tas_poly_ne50 = 89
-ausmain_poly_ne50 = 6
+NZNorthI_poly_ne50 = 96
+NZSouthI_poly_ne50 = 97
+NZLandPolygon_ne50 = MultiPolygon([polyList[NZNorthI_poly_ne50], polyList[NZSouthI_poly_ne50]])
 
-AusLandPolygon_ne50 = MultiPolygon([polyList[tas_poly_ne50], polyList[ausmain_poly_ne50]])
-
+LandAreaPolygon_ne50 = NZLandPolygon_ne50
 
 # In[5]:
 
@@ -116,8 +88,8 @@ from shapely.geometry import MultiPoint
 from shapely.geometry import Polygon
 from shapely.geometry import MultiPolygon
 
-ausBounds = [110, -45 , 155, -5]
-minX, minY, maxX, maxY = ausBounds
+bounds = LandAreaPolygon_ne50.bounds
+minX, minY, maxX, maxY = bounds
 
 
 ## All of this should be done on Rank 0 (the DM is built only on rank 0 )
@@ -128,11 +100,14 @@ if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
 
 #    x1, y1, bmask = meshtools.poisson_disc_sampler(minX, maxX, minY, maxY, 0.25)
 
-    xx = np.linspace(minX, maxX, 500)
-    yy = np.linspace(minY, maxY, 250)
+    xres = 500
+    yres = 500
+
+    xx = np.linspace(minX, maxX, xres)
+    yy = np.linspace(minY, maxY, yres)
     x1, y1 = np.meshgrid(xx,yy)
-    x1 += np.random.random(x1.shape) * 0.05 * (maxX-minX) / 500.0
-    y1 += np.random.random(y1.shape) * 0.05 * (maxY-minY) / 250.0
+    x1 += np.random.random(x1.shape) * 0.2 * (maxX-minX) / xres
+    y1 += np.random.random(y1.shape) * 0.2 * (maxY-minY) / yres
 
     x1 = x1.flatten()
     y1 = y1.flatten()
@@ -142,12 +117,12 @@ if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
 
     print "Find Coastline / Interior"
 
-    interior_mpts = mpt.intersection(AusLandPolygon_ne50)
+    interior_mpts = mpt.intersection(NZLandPolygon_ne50)
     interior_points = np.array(interior_mpts)
 
-    fatAus = AusLandPolygon_ne50.buffer(0.5) # A puffed up zone around the interior points
-    ausBoundary = fatAus.difference(AusLandPolygon_ne50)
-    inBuffer = mpt.intersection(ausBoundary)
+    fatBoundary = LandAreaPolygon_ne50.buffer(0.5) # A puffed up zone around the interior points
+    boundary = fatBoundary.difference(LandAreaPolygon_ne50)
+    inBuffer = mpt.intersection(boundary)
 
     buffer_points = np.array(inBuffer)
 
@@ -193,16 +168,50 @@ coords = np.stack((y2r, x2r)).T
 
 print "Map DEM to points"
 
-gtiff = gdal.Open("../Notebooks/data/ausbath_09_v4.tiff")
+gtiff = gdal.Open("../Notebooks/data/ETOPO1_Ice_c_geotiff.tif")
+
 width = gtiff.RasterXSize
 height = gtiff.RasterYSize
 gt = gtiff.GetGeoTransform()
-minX = gt[0]
-minY = gt[3] + width*gt[4] + height*gt[5]
-maxX = gt[0] + width*gt[1] + height*gt[2]
-maxY = gt[3]
+# minX = gt[0]
+# minY = gt[3] + width*gt[4] + height*gt[5]
+# maxX = gt[0] + width*gt[1] + height*gt[2]
+# maxY = gt[3]
 
-img = gtiff.GetRasterBand(1).ReadAsArray()
+img = gtiff.GetRasterBand(1).ReadAsArray().T
+# img = np.flipud(img).astype(float)
+
+img = np.fliplr(img)
+
+# print minX, minY, maxX, maxY
+
+bounds = LandAreaPolygon_ne50.bounds
+minX, minY, maxX, maxY = bounds
+
+sliceLeft   = int(180+minX) * 60
+sliceRight  = int(180+maxX) * 60
+sliceBottom = int(90+minY) * 60
+sliceTop    = int(90+maxY) * 60
+
+LandImg = img[ sliceLeft:sliceRight, sliceBottom:sliceTop].T
+LandImg = np.flipud(LandImg)
+
+print LandImg.shape
+
+img = LandImg
+
+#
+#
+# gtiff = gdal.Open("../Notebooks/data/ausbath_09_v4.tiff")
+# width = gtiff.RasterXSize
+# height = gtiff.RasterYSize
+# gt = gtiff.GetGeoTransform()
+# minX = gt[0]
+# minY = gt[3] + width*gt[4] + height*gt[5]
+# maxX = gt[0] + width*gt[1] + height*gt[2]
+# maxY = gt[3]
+#
+# img = gtiff.GetRasterBand(1).ReadAsArray()
 
 im_coords = coords.copy()
 im_coords[:,0] -= minY
@@ -223,16 +232,30 @@ coords = np.stack((y2r, x2r)).T / spacing
 
 meshheights = ndimage.map_coordinates(img, im_coords.T, order=3, mode='nearest')
 meshheights = np.maximum(-100.0, meshheights)
-meshheights = mesh.rbf_smoother(meshheights, iterations=10)
-meshheights += 40.0*(mesh.coords[:,0]-minX)/(maxX-minX) + 40.0*(mesh.coords[:,1]-minY)/(maxY-minY)
+meshheights = mesh.rbf_smoother(meshheights, iterations=2)
+# meshheights += 40.0*(mesh.coords[:,0]-minX)/(maxX-minX) + 40.0*(mesh.coords[:,1]-minY)/(maxY-minY)
+
+# Some bug in the bmask after refinement means we need to check this
 
 questionable = np.logical_and(bmaskr, meshheights < 10.0)
 qindex = np.where(questionable)[0]
 
 for index in qindex:
     point = Point(mesh.coords[index])
-    if not AusLandPolygon_ne50.contains(point):
+    if not LandAreaPolygon_ne50.contains(point):
          bmaskr[index] =  False
+
+# and this (the reverse condition)
+
+questionable = np.logical_and(~bmaskr, meshheights > -1.0)
+qindex = np.where(questionable)[0]
+
+for index in qindex:
+     point = Point(mesh.coords[index])
+     if  LandAreaPolygon_ne50.contains(point):
+          bmaskr[index] =  True
+
+
 
 
 print "Downhill Flow"
@@ -242,31 +265,27 @@ print "Downhill Flow"
 mesh.downhill_neighbours=2
 mesh.update_height(meshheights*0.001)
 
-# print "Flowpaths "
-# nits, flowpaths = mesh.cumulative_flow_verbose(np.ones_like(mesh.height), verbose=True, maximum_its=1500)
-# flowpaths = mesh.rbf_smoother(flowpaths, iterations=1)
-# flowpaths[~bmaskr] = 0.0
-
-mesh.handle_low_points(its=250)
 
 print "Flowpaths - Low point"
-nits, flowpaths = mesh.cumulative_flow_verbose(mesh.area*np.ones_like(mesh.height), verbose=True, maximum_its=1500)
+
+nits, flowpaths = mesh.cumulative_flow_verbose(mesh.area*np.ones_like(mesh.height), verbose=True, maximum_its=2500)
 flowpaths = mesh.rbf_smoother(flowpaths, iterations=1)
-flowpaths[~bmaskr] = 0.0
+flowpaths[~bmaskr] = -1.0
 
-print "Smooth topography with RBF (500)"
-super_smooth_topo = mesh.rbf_smoother(mesh.height, iterations=500)
-mesh.update_height(super_smooth_topo)
 
-print "Flowpaths - Smooth"
-nits, flowpathsSmooth = mesh.cumulative_flow_verbose(mesh.area*np.ones_like(mesh.height), verbose=True, maximum_its=1500)
-flowpathsSmooth = mesh.rbf_smoother(flowpathsSmooth, iterations=1)
-flowpathsSmooth[~bmaskr] = 0.0
+# super_smooth_topo = mesh.rbf_smoother(mesh.height, iterations=100)
+# mesh.update_height(super_smooth_topo)
+#
+# print "Flowpaths - Smooth"
+# nits, flowpathsSmooth = mesh.cumulative_flow_verbose(np.ones_like(mesh.height), verbose=True, maximum_its=1500)
+# flowpathsSmooth = mesh.rbf_smoother(flowpathsSmooth, iterations=1)
+# flowpathsSmooth[~bmaskr] = 0.0
 
 
 print "Downhill Flow - complete"
 
-filename = 'austopo-v-smooth500.h5'
+
+filename = 'NZ-ETOPO.h5'
 
 decomp = np.ones_like(mesh.height) * mesh.dm.comm.rank
 
@@ -274,7 +293,7 @@ mesh.save_mesh_to_hdf5(filename)
 mesh.save_field_to_hdf5(filename, height=meshheights*0.001,
                                   slope=mesh.slope,
                                   flowLP=np.sqrt(flowpaths),
-                                  flowSmooth=np.sqrt(flowpathsSmooth),
+                                  # flowSmooth=np.sqrt(flowpathsSmooth),
                                   decomp=decomp)
 
 # to view in Paraview
