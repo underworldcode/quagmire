@@ -271,7 +271,7 @@ filename = 'austopo-v-smooth500.h5'
 decomp = np.ones_like(mesh.height) * mesh.dm.comm.rank
 
 mesh.save_mesh_to_hdf5(filename)
-mesh.save_field_to_hdf5(filename, height=meshheights*0.001,
+mesh.save_field_to_hdf5(filename, height=mesh.heights,
                                   slope=mesh.slope,
                                   flowLP=np.sqrt(flowpaths),
                                   flowSmooth=np.sqrt(flowpathsSmooth),

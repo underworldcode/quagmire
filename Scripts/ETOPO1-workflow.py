@@ -25,11 +25,13 @@ from scipy.ndimage.filters import gaussian_filter
 
 ## Define region of interest (here NZ)
 
+
+filename = 'NZTopo.h5'
 bounds = (165.0, -48.5, 179.9, -34.0)
 minX, minY, maxX, maxY = bounds
 
-xres = 250
-yres = 250
+xres = 300
+yres = 300
 
 xx = np.linspace(minX, maxX, xres)
 yy = np.linspace(minY, maxY, yres)
@@ -150,7 +152,11 @@ mesh.bmask = subaerial
 
 
 mesh.update_height(meshheights*0.001)
+<<<<<<< Updated upstream
 mesh.handle_low_points(its=200)
+=======
+mesh.handle_low_points(its=500)
+>>>>>>> Stashed changes
 
 
 # In[84]:
@@ -170,7 +176,10 @@ flowpaths2 = mesh.rbf_smoother(flowpaths, iterations=1)
 
 # In[85]:
 
+<<<<<<< Updated upstream
 filename = 'NZTopo.h5'
+=======
+>>>>>>> Stashed changes
 
 decomp = np.ones_like(mesh.height) * mesh.dm.comm.rank
 
