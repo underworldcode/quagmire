@@ -69,11 +69,12 @@ class SurfMesh(object):
                 return self.height
 
             delta_height = np.zeros_like(self.height)
-            delta_height[self.low_points] = self.height[self.neighbour_cloud[self.low_points,:]].mean(axis=1) - self.height[self.low_points]
+            delta_height[self.low_points] = 1.00001 * (self.height[self.neighbour_cloud[self.low_points,1:]].mean(axis=1) -                                        self.height[self.low_points])
             smoothed_delta_height = self.rbf_smoother(delta_height, iterations=smoothing_steps)
-            self.height += smoothed_delta_height
+            self.height += delta_height
 
             ## Push this / rebuild for the next loop
+
             self._update_height_partial(self.height)
 
         ## Don't leave the mesh in a half-updated state
@@ -81,38 +82,106 @@ class SurfMesh(object):
 
         return self.height
 
-    def backfill_points(self, fill_points, new_heights):
+    # def backfill_points(self, fill_points, new_heights, its):
+    #     """
+    #     Handles *selected* low points by backfilling height array.
+    #     This can be used to block a stream path, for example, or to locate lakes
+    #     """
+    #
+    #     if len(fill_points) == 0:
+    #         return self.height
+    #
+    #     new_height = self.lvec.duplicate()
+    #
+    #     for point in points:
+    #         delta_height[point] = new_heights[point]
+    #
+    #     # Now march the new height to all the uphill nodes of these nodes
+    #     # height = np.maximum(self.height, delta_height.array)
+    #
+    #     self.dm.localToGlobal(delta_height, self.gvec)
+    #     global_dH = self.gvec.copy()
+    #
+    #     for p in range(0, its):
+    #         self.adjacency1.multTranspose(global_dH, self.gvec)
+    #         global_dH.setArray(self.gvec)
+    #         global_dH.scale(1.001)  # Maybe !
+    #
+    #     self.dm.globalToLocal(global_dH, delta_height)
+    #
+    #     height = np.maximum(self.height, delta_height.array)
+    #
+    #     return height
+
+    def backfill_points(self, fill_points, heights, its):
         """
         Handles *selected* low points by backfilling height array.
-        This can be used to block a stream path, for example.
+        This can be used to block a stream path, for example, or to locate lakes
         """
 
         if len(fill_points) == 0:
             return self.height
 
-        delta_height = self.lvec.duplicate()
-
-        for point in points:
-            delta_height[point] = new_heights[point]
+        new_height = self.lvec.duplicate()
+        new_height.setArray(heights)
+        height = np.maximum(self.height, new_height.array)
 
         # Now march the new height to all the uphill nodes of these nodes
-        height = np.maximum(self.height, delta_height.array)
+        # height = np.maximum(self.height, delta_height.array)
 
-        self.dm.localToGlobal(delta_height, self.gvec)
+        self.dm.localToGlobal(new_height, self.gvec)
         global_dH = self.gvec.copy()
 
         for p in range(0, its):
-            self.adjacency1.multTranspose(global_dH, self.gvec)
+            self.adjacency[1].multTranspose(global_dH, self.gvec)
             global_dH.setArray(self.gvec)
-        #    global_dH.scale(1.001)  # Maybe !
+            global_dH.scale(1.001)  # Maybe !
+            self.dm.globalToLocal(global_dH, new_height)
 
-        self.dm.globalToLocal(global_dH, delta_height)
+            height = np.maximum(height, new_height.array)
 
-        height = np.maximum(self.height, delta_height.array)
+        return height
 
-        if self.verbose:
-            print "Updated {} points".format(fixed)
-            print "Rejected {} points (close to base level)".format(rejected)
+    def backfill_low_points(self, cycles):
+        """
+        Handles *selected* low points by backfilling height array.
+        This can be used to block a stream path, for example, or to locate lakes
+        """
+
+        low_points = self.identify_low_points()
+        cycle = cycles
+        its = 100
+
+        while len(low_points) and cycle:
+            print cycle, " Low points = ", len(low_points)
+            low_points = self.identify_low_points()
+            cycle -= 1
+
+            filled_height = np.zeros_like(self.height)
+            filled_height[low_points] = ( self.height[self.neighbour_cloud[low_points,1:10]].mean(axis=1) )
+
+            new_height = self.lvec.duplicate()
+            new_height.setArray(filled_height)
+            height = np.maximum(self.height, new_height.array)
+
+            # Now march the new height to all the uphill nodes of these nodes
+
+            self.dm.localToGlobal(new_height, self.gvec)
+            global_dH = self.gvec.copy()
+
+            for p in range(0, its):
+                self.adjacency[1].multTranspose(global_dH, self.gvec)
+                global_dH.setArray(self.gvec)
+                global_dH.scale(1.001)  # Maybe !
+                self.dm.globalToLocal(global_dH, new_height)
+
+                height = np.maximum(height, new_height.array)
+
+            self._update_height_partial(height)
+
+
+        ## Don't leave the mesh in a half-updated state
+        self.update_height(height)
 
         return height
 

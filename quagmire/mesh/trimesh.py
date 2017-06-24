@@ -357,7 +357,7 @@ class TriMesh(object):
         print(" - Array sort {}s".format(clock()-t))
 
 
-    def construct_neighbour_cloud(self, size=33):
+    def construct_neighbour_cloud(self, size=25):
         """
         Find neighbours from distance cKDTree.
 

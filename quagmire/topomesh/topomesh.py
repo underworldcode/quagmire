@@ -82,6 +82,7 @@ class TopoMesh(object):
         if height.size != self.npoints:
             raise IndexError("Incompatible array size, should be {}".format(self.npoints))
 
+        self.height = height
 
         t = clock()
 
