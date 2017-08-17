@@ -50,6 +50,8 @@ class TriMesh(object):
         self.sect = dm.getDefaultSection()
         self.sizes = self.gvec.getSizes(), self.gvec.getSizes()
 
+        self.rank = self.dm.comm.rank
+
         lgmap_r = dm.getLGMap()
         l2g = lgmap_r.indices.copy()
         offproc = l2g < 0

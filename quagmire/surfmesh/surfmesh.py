@@ -64,6 +64,11 @@ class SurfMesh(object):
 
         """
 
+
+        t = clock()
+        if self.rank==0 and self.verbose:
+            print "Low point local flood fill"
+
         my_low_points = self.identify_low_points()
 
         fill_height =  (self.height[self.neighbour_cloud[my_low_points,1:]].mean(axis=1) -
@@ -77,7 +82,10 @@ class SurfMesh(object):
         new_height = np.maximum(self.height, smoothed_new_height)
         new_height = self.sync(new_height)
 
-        self.update_height(self.height)
+        self._update_height_partial(self.height)
+        if self.rank==0 and self.verbose:
+            print "Low point local flood fill ",  clock()-t, " seconds"
+
         return new_height
 
     def low_points_local_patch_fill(self, its=1, smoothing_steps=1):
@@ -85,7 +93,8 @@ class SurfMesh(object):
         from petsc4py import PETSc
 
         t = clock()
-        print "Low point local fill"
+        if self.rank==0 and self.verbose:
+            print "Low point local patch fill"
 
         for iteration in range(0,its):
             low_points = self.identify_low_points()
@@ -113,13 +122,14 @@ class SurfMesh(object):
             self._update_height_partial(self.height)
 
         ## Don't leave the mesh in a half-updated state
-        self.update_height(self.height)
+        # self.update_height(self.height)
 
-        print clock()-t, " seconds"
+        if self.rank==0 and self.verbose:
+            print "Low point local patch fill ",  clock()-t, " seconds"
 
         return self.height
 
-    def low_points_swamp_fill(self):
+    def low_points_swamp_fill(self, its=100):
 
         import petsc4py
         from petsc4py import PETSc
@@ -129,10 +139,16 @@ class SurfMesh(object):
         size = comm.Get_size()
         rank = comm.Get_rank()
 
+        t0 = clock()
+
         my_low_points = self.identify_low_points()
         my_glow_points = self.lgmap_row.apply(my_low_points.astype(PETSc.IntType))
 
-        ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=250, fill=-999999).astype(np.int)
+        t = clock()
+        ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
+
+        if self.rank==0:
+            print "Build low point catchments - ", clock() - t, " seconds"
 
         cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
         outer_edges = np.where(~self.bmask)[0]
@@ -163,16 +179,18 @@ class SurfMesh(object):
         s, indices = np.unique(spills['c'], return_index=True)
         spill_points = spills[indices]
 
-        print rank, " Sort spills - ", clock() - t
+        if self.rank == 0:
+            print rank, " Sort spills - ", clock() - t
 
         # Gather lists to process 0, stack and remove duplicates
 
         t = clock()
         list_of_spills = comm.gather(spill_points,   root=0)
+
         if rank == 0:
             print rank, " Gather spill data - ", clock() - t
 
-        if rank == 0:
+        if self.rank == 0:
             t = clock()
 
             all_spills = np.hstack(list_of_spills)
@@ -212,7 +230,11 @@ class SurfMesh(object):
         new_height = np.maximum(height, height2)
         new_height = self.sync(new_height)
 
-#        self.update_height(new_height)
+        self._update_height_partial(self.height)
+
+        if self.rank==0 and self.verbose:
+            print "Low point swamp fill ",  clock()-t0, " seconds"
+
 
         return new_height
 
@@ -252,8 +274,8 @@ class SurfMesh(object):
         local_ID = self.lvec.copy()
         global_ID = self.gvec.copy()
 
-        local_ID.set(fill)
-        global_ID.set(fill)
+        local_ID.set(fill+1)
+        global_ID.set(fill+1)
 
         identifier = np.empty_like(self.height)
         identifier.fill(fill)
@@ -327,7 +349,7 @@ class SurfMesh(object):
         # gather/scatter numbers
 
         list_of_nlows  = comm.gather(number_of_lows,   root=0)
-        if rank == 0:
+        if self.rank == 0:
             all_low_counts = np.hstack(list_of_nlows)
             no_global_lows0 = all_low_counts.sum()
 
@@ -341,7 +363,7 @@ class SurfMesh(object):
 
             list_of_lglows = comm.gather(low_gnodes,   root=0)
 
-            if rank == 0:
+            if self.rank == 0:
                 all_glows = np.hstack(list_of_lglows)
                 global_lows0 = np.unique(all_glows)
 

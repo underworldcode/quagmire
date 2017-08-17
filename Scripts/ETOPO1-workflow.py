@@ -156,27 +156,36 @@ mesh.bmask = subaerial
 mesh.update_height(meshheights*0.001)
 raw_height = mesh.height
 
-for ii in range(0,10):
+for ii in range(0,25):
 
 	new_heights=mesh.low_points_local_patch_fill(its=2, smoothing_steps=2)
+	mesh._update_height_partial(new_heights)
+
 
 	for iii in range(0, 10):
 		new_heights = mesh.low_points_swamp_fill()
 		mesh._update_height_partial(new_heights)
+		glows, glow_points = mesh.identify_global_low_points(global_array=False)
+		if mesh.rank == 0:
+			print "Global low points: ",glows
+
+		if glows == 0:
+			break
+
 
 	new_heights=mesh.low_points_local_flood_fill(its=10, scale=1.0001)
 	mesh._update_height_partial(new_heights)
 
 
 	glows, glow_points = mesh.identify_global_low_points(global_array=False)
-	print "gLows: ",glows
+	if mesh.rank == 0:
+		print "Global low points: ",glows
 
 	if glows == 0:
 		break
 
 
-
-# In[84]:
+mesh.update_height(new_heights)
 
 nits, flowpaths = mesh.cumulative_flow_verbose(mesh.area*np.ones_like(mesh.height), verbose=True, maximum_its=2500)
 flowpaths2 = mesh.rbf_smoother(flowpaths, iterations=1)

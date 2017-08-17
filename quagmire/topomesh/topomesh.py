@@ -63,14 +63,15 @@ class TopoMesh(object):
         # self.slope[:] = self.sync(self.slope)
 
         self.timings['gradient operation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.rank==0 and self.verbose:
             print("{} - Compute slopes {}s".format(self.dm.comm.rank, clock()-t))
 
 
         t = clock()
         self._build_downhill_matrix_iterate()
         self.timings['downhill matrices'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+
+        if self.rank==0 and self.verbose:
             print("{} - Build downhill matrices {}s".format(self.dm.comm.rank, clock()-t))
 
 
@@ -94,7 +95,7 @@ class TopoMesh(object):
         self.downhill_neighbours = 2
 
         self._build_adjacency_matrix_iterate()
-        if self.verbose:
+        if self.rank==0 and self.verbose:
             print(" - Partial rebuild of downhill matrices {}s".format(clock()-t))
 
         self.downhill_neighbours = neighbours
