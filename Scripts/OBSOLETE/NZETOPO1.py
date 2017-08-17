@@ -9,7 +9,7 @@
 # 2. Sample its interior using the poisson disc generator
 # 3. Resample the interior using a DEM
 # 4. Create a DM object and refine a few times
-# 5. Save the mesh to HDF5 file
+# 5. Save the mesh to HDF5 file 
 
 # In[1]:
 
@@ -149,7 +149,7 @@ if not (PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1):
     y1 = None
     bmask = None
 
-DM = meshtools.create_DMPlex_from_points(x1, y1, bmask, refinement_steps=3)
+DM = meshtools.create_DMPlex_from_points(x1, y1, bmask, refinement_steps=1)
 
 del x1, y1, bmask
 
@@ -266,7 +266,7 @@ mesh.downhill_neighbours=2
 mesh.update_height(meshheights*0.001)
 
 
-print "Flowpaths - Low point"
+print "Flowpaths 1 - Lows included"
 
 nits, flowpaths = mesh.cumulative_flow_verbose(mesh.area*np.ones_like(mesh.height), verbose=True, maximum_its=2500)
 flowpaths = mesh.rbf_smoother(flowpaths, iterations=1)
@@ -281,6 +281,33 @@ flowpaths[~bmaskr] = -1.0
 # flowpathsSmooth = mesh.rbf_smoother(flowpathsSmooth, iterations=1)
 # flowpathsSmooth[~bmaskr] = 0.0
 
+new_heights=mesh.low_points_local_fill(its=2, smoothing_steps=2)
+mesh._update_height_partial(new_heights)
+low_points2 = mesh.identify_low_points()
+print "Low Points", low_points2.shape
+
+
+for i in range(0,10):
+    new_heights = mesh.low_points_swamp_fill()
+    mesh._update_height_partial(new_heights)
+    # mesh.update_height(new_heights)
+    low_points2 = mesh.identify_low_points()
+    print low_points2.shape
+
+print "Low Points", low_points2.shape
+
+print "Flowpaths 2 - Lows patched"
+
+raw_heights=mesh.height
+mesh.update_height(new_heights)
+
+
+print "Flowpaths 1 - Lows included"
+
+nits, flowpaths2 = mesh.cumulative_flow_verbose(mesh.area*np.ones_like(mesh.height), verbose=True, maximum_its=2500)
+flowpaths2 = mesh.rbf_smoother(flowpaths2, iterations=1)
+flowpaths2[~bmaskr] = -1.0
+
 
 print "Downhill Flow - complete"
 
@@ -293,7 +320,8 @@ mesh.save_mesh_to_hdf5(filename)
 mesh.save_field_to_hdf5(filename, height=meshheights*0.001,
                                   slope=mesh.slope,
                                   flowLP=np.sqrt(flowpaths),
-                                  # flowSmooth=np.sqrt(flowpathsSmooth),
+                                  flow=np.sqrt(flowpaths1),
+                                  lakes=mesh.height - raw_heights,
                                   decomp=decomp)
 
 # to view in Paraview

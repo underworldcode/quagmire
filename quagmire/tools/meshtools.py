@@ -206,7 +206,7 @@ def create_DMPlex_from_hdf5(file):
     Creates a DMPlex object from an HDF5 file.
     This is useful for rebuilding a mesh that is saved from a
     previous simulation.
-    
+
     Parameters
     ----------
      file : string
@@ -228,8 +228,14 @@ def create_DMPlex_from_hdf5(file):
     if not file.endswith('.h5'):
         file += '.h5'
 
-    DM = PETSc.DMPlex().createFromFile(file)
-    return DM
+    dm = PETSc.DMPlex().createFromFile(file)
+
+    origSect = dm.createSection(1, [1,0,0])
+    origSect.setFieldName(0, "points")
+    origSect.setUp()
+    dm.setDefaultSection(origSect)
+
+    return dm
 
 
 def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):

@@ -33,7 +33,7 @@ class TriMesh(object):
     Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
     We recommend having 1) triangle or 2) scipy installed for Delaunay triangulations.
     """
-    def __init__(self, dm, verbose=True, *args, **kwargs):
+    def __init__(self, dm, verbose=True,  *args, **kwargs):
         import stripy
         from scipy.spatial import cKDTree as _cKDTree
 
@@ -63,10 +63,10 @@ class TriMesh(object):
         # Delaunay triangulation
         t = clock()
         coords = dm.getCoordinatesLocal().array.reshape(-1,2)
+
         minX, minY = coords.min(axis=0)
         maxX, maxY = coords.max(axis=0)
         length_scale = np.sqrt((maxX - minX)*(maxY - minY)/coords.shape[0])
-
         coords += np.random.random(coords.shape) * 0.0001 * length_scale # This should be aware of the point spacing (small perturbation)
 
         self.tri = stripy.Triangulation(coords[:,0], coords[:,1])
@@ -107,12 +107,13 @@ class TriMesh(object):
             print("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, clock()-t))
 
 
-        # RBF smoothing operator
+        # sync smoothing operator
         t = clock()
         self._construct_rbf_weights()
         self.timings['construct rbf weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print("{} - Construct rbf weights {}s".format(self.dm.comm.rank, clock()-t))
+
 
 
         self.root = False
@@ -369,8 +370,13 @@ class TriMesh(object):
         self.neighbour_cloud_distances = nndist
 
         unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
-        self.near_neighbours = neighbours
+        self.near_neighbours = neighbours + 2
         self.extended_neighbours = np.empty_like(neighbours).fill(size)
+
+        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+        for node in range(0,self.npoints):
+            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
 
         return
 
@@ -433,7 +439,7 @@ class TriMesh(object):
 
         self.dm.globalToLocal(smooth_data, self.lvec)
 
-        return self.lvec.array
+        return self.lvec.array.copy()
 
 
     def get_boundary(self, marker="boundary"):
@@ -521,7 +527,7 @@ class TriMesh(object):
 
     def _gather_root(self):
         """
-        MPI gather operation to root processor
+        MPI gather operation to root process
         """
         self.tozero, self.zvec = PETSc.Scatter.toZero(self.gvec)
 
@@ -545,7 +551,7 @@ class TriMesh(object):
 
     def gather_data(self, data):
         """
-        Gather data on root processor
+        Gather data on root process
         """
 
         # check if we already gathered pts on root
@@ -558,16 +564,32 @@ class TriMesh(object):
 
         return self.zvec.array.copy()
 
+    def scatter_data(self, data):
+        """
+        Scatter data to all processes
+        """
+
+        toAll, zvec = PETSc.Scatter.toAll(self.gvec)
+
+        self.lvec.setArray(data)
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        toAll.scatter(self.gvec, zvec)
+
+        return zvec.array.copy()
 
     def sync(self, vector):
         """
         Synchronise the local domain with the global domain
+        Replaces shadow values in the local domain (non additive)
         """
+
         self.lvec.setArray(vector)
+
         # self.dm.localToLocal(self.lvec, self.gvec)
         self.dm.localToGlobal(self.lvec, self.gvec)
         self.dm.globalToLocal(self.gvec, self.lvec)
-        return self.lvec.array
+
+        return self.lvec.array.copy()
 
 
     def _construct_rbf_weights(self, delta=None):
@@ -597,15 +619,20 @@ class TriMesh(object):
         return
 
 
+
     def rbf_smoother(self, vector, iterations=1):
 
          # Should do some error checking here to ensure the field and point cloud are compatible
 
-         lvec = self.lvec.copy()
+        #  lvec  = self.lvec.copy()
+        #  gvec  = self.gvec.copy()
+
+         vector = self.sync(vector)
 
          for i in range(0, iterations):
-             vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
-             self.sync(vector)
-             vector = vector_smoothed.copy()
+             # print self.dm.comm.rank, ": RBF ",vector.max(), vector.min()
 
-         return vector_smoothed
+             vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+             vector = self.sync(vector_smoothed)
+
+         return vector

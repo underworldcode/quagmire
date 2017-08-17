@@ -56,22 +56,57 @@ class SurfMesh(object):
         # Find high points
         self.outflow_points = self.identify_outflow_points()
 
+    def low_points_local_flood_fill(self, its=5, scale=1.0, smoothing_steps=2):
+        """
+        Fill low points with a local flooding algorithm.
+          - its is the number of uphill propagation steps
+          - scale
 
-    def handle_low_points(self, its=1, smoothing_steps=1):
+        """
+
+        my_low_points = self.identify_low_points()
+
+        fill_height =  (self.height[self.neighbour_cloud[my_low_points,1:]].mean(axis=1) -
+                         self.height[my_low_points])
+
+        new_h = self.uphill_propagation(my_low_points,  fill_height, scale=scale,  its=its, fill=-100.0)
+        new_h = self.sync(new_h)
+
+        smoothed_new_height = self.rbf_smoother(new_h, iterations=smoothing_steps)
+
+        new_height = np.maximum(self.height, smoothed_new_height)
+        new_height = self.sync(new_height)
+
+        self.update_height(self.height)
+        return new_height
+
+    def low_points_local_patch_fill(self, its=1, smoothing_steps=1):
+
+        from petsc4py import PETSc
+
+        t = clock()
+        print "Low point local fill"
 
         for iteration in range(0,its):
-            self.low_points = self.identify_low_points()
-
-            if self.verbose:
-                print "{:03d}/{} no of low points - {} ".format(iteration, self.dm.comm.rank, self.low_points.shape[0])
-
-            if len(self.low_points) == 0:
-                return self.height
+            low_points = self.identify_low_points()
 
             delta_height = np.zeros_like(self.height)
-            delta_height[self.low_points] = 1.00001 * (self.height[self.neighbour_cloud[self.low_points,1:]].mean(axis=1) -                                        self.height[self.low_points])
+
+            ## Note, the smoother has a communication barrier so needs to be called even if it has no work to do on this process
+
+            if len(low_points) != 0:
+                delta_height[low_points] =  (self.height[self.neighbour_cloud[low_points,1:7]].mean(axis=1) -
+                                                         self.height[low_points])
+
+
+            # self.sync(delta_height)
+
             smoothed_delta_height = self.rbf_smoother(delta_height, iterations=smoothing_steps)
-            self.height += delta_height
+
+            # self.sync(smoothed_delta_height)
+
+            self.height += smoothed_delta_height
+            self.height = self.sync(self.height)
 
             ## Push this / rebuild for the next loop
 
@@ -80,38 +115,108 @@ class SurfMesh(object):
         ## Don't leave the mesh in a half-updated state
         self.update_height(self.height)
 
+        print clock()-t, " seconds"
+
         return self.height
 
-    # def backfill_points(self, fill_points, new_heights, its):
-    #     """
-    #     Handles *selected* low points by backfilling height array.
-    #     This can be used to block a stream path, for example, or to locate lakes
-    #     """
-    #
-    #     if len(fill_points) == 0:
-    #         return self.height
-    #
-    #     new_height = self.lvec.duplicate()
-    #
-    #     for point in points:
-    #         delta_height[point] = new_heights[point]
-    #
-    #     # Now march the new height to all the uphill nodes of these nodes
-    #     # height = np.maximum(self.height, delta_height.array)
-    #
-    #     self.dm.localToGlobal(delta_height, self.gvec)
-    #     global_dH = self.gvec.copy()
-    #
-    #     for p in range(0, its):
-    #         self.adjacency1.multTranspose(global_dH, self.gvec)
-    #         global_dH.setArray(self.gvec)
-    #         global_dH.scale(1.001)  # Maybe !
-    #
-    #     self.dm.globalToLocal(global_dH, delta_height)
-    #
-    #     height = np.maximum(self.height, delta_height.array)
-    #
-    #     return height
+    def low_points_swamp_fill(self):
+
+        import petsc4py
+        from petsc4py import PETSc
+        from mpi4py import MPI
+
+        comm = MPI.COMM_WORLD
+        size = comm.Get_size()
+        rank = comm.Get_rank()
+
+        my_low_points = self.identify_low_points()
+        my_glow_points = self.lgmap_row.apply(my_low_points.astype(PETSc.IntType))
+
+        ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=250, fill=-999999).astype(np.int)
+
+        cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
+        outer_edges = np.where(~self.bmask)[0]
+        edges = np.unique(np.hstack((cedges,outer_edges)))
+
+        height = self.height.copy()
+
+        ## In parallel this is all the low points where this process may have a spill-point
+        my_catchments = np.unique(ctmt)
+
+        spills = np.empty((edges.shape[0]),
+                         dtype=np.dtype([('c', int), ('h', float), ('x', float), ('y', float)]))
+
+        ii = 0
+        for l, this_low in enumerate(my_catchments):
+            this_low_spills = edges[np.where(ctmt[edges] == this_low)]  ## local numbering
+
+            for spill in this_low_spills:
+                spills['c'][ii] = this_low
+                spills['h'][ii] = height[spill]
+                spills['x'][ii] = self.coords[spill,0]
+                spills['y'][ii] = self.coords[spill,1]
+                ii += 1
+
+        t = clock()
+
+        spills.sort(axis=0)  # Sorts by catchment then height ...
+        s, indices = np.unique(spills['c'], return_index=True)
+        spill_points = spills[indices]
+
+        print rank, " Sort spills - ", clock() - t
+
+        # Gather lists to process 0, stack and remove duplicates
+
+        t = clock()
+        list_of_spills = comm.gather(spill_points,   root=0)
+        if rank == 0:
+            print rank, " Gather spill data - ", clock() - t
+
+        if rank == 0:
+            t = clock()
+
+            all_spills = np.hstack(list_of_spills)
+            all_spills.sort(axis=0) # Sorts by catchment then height ...
+            s, indices = np.unique(all_spills['c'], return_index=True)
+            all_spill_points = all_spills[indices]
+
+            print rank, " Sort all spills - ", clock() - t
+
+        else:
+            all_spill_points = None
+            pass
+
+        # Broadcast lists to everyone
+
+        global_spill_points = comm.bcast(all_spill_points, root=0)
+
+        height2 = np.zeros_like(self.height)
+
+        for i, spill in enumerate(global_spill_points):
+            this_catchment = int(spill['c'])
+
+            ## -ve values indicate that the point is connected
+            ## to the outflow of the mesh and needs no modification
+            if this_catchment < 0:
+                continue
+
+            catchment_nodes = np.where(ctmt == this_catchment)
+            separation_x = (self.coords[catchment_nodes,0] - spill['x'])
+            separation_y = (self.coords[catchment_nodes,1] - spill['y'])
+            distance = np.hypot(separation_x, separation_y)
+
+            height2[catchment_nodes] = spill['h'] + 0.0001 * distance  # A 'small' gradient (should be a user-parameter)
+
+        height2 = self.sync(height2)
+
+        new_height = np.maximum(height, height2)
+        new_height = self.sync(new_height)
+
+#        self.update_height(new_height)
+
+        return new_height
+
+
 
     def backfill_points(self, fill_points, heights, its):
         """
@@ -142,79 +247,115 @@ class SurfMesh(object):
 
         return height
 
-    def backfill_low_points(self, cycles):
-        """
-        Handles *selected* low points by backfilling height array.
-        This can be used to block a stream path, for example, or to locate lakes
-        """
+    def uphill_propagation(self, points, values, scale=1.0, its=100, fill=-1):
 
-        low_points = self.identify_low_points()
-        cycle = cycles
-        its = 100
+        local_ID = self.lvec.copy()
+        global_ID = self.gvec.copy()
 
-        while len(low_points) and cycle:
-            print cycle, " Low points = ", len(low_points)
-            low_points = self.identify_low_points()
-            cycle -= 1
+        local_ID.set(fill)
+        global_ID.set(fill)
 
-            filled_height = np.zeros_like(self.height)
-            filled_height[low_points] = ( self.height[self.neighbour_cloud[low_points,1:10]].mean(axis=1) )
+        identifier = np.empty_like(self.height)
+        identifier.fill(fill)
 
-            new_height = self.lvec.duplicate()
-            new_height.setArray(filled_height)
-            height = np.maximum(self.height, new_height.array)
+        if len(points):
+            identifier[points] = values + 1
 
-            # Now march the new height to all the uphill nodes of these nodes
+        local_ID.setArray(identifier)
+        self.dm.localToGlobal(local_ID, global_ID)
 
-            self.dm.localToGlobal(new_height, self.gvec)
-            global_dH = self.gvec.copy()
+        for p in range(0, its):
+            self.adjacency[1].multTranspose(global_ID, self.gvec)
+            self.gvec.scale(scale)
+            self.dm.globalToLocal(self.gvec, local_ID)
+            identifier = np.maximum(identifier, local_ID.array)
+            global_ID.array[:] = self.gvec.array[:]
+            identifier = self.sync(identifier)
 
-            for p in range(0, its):
-                self.adjacency[1].multTranspose(global_dH, self.gvec)
-                global_dH.setArray(self.gvec)
-                global_dH.scale(1.001)  # Maybe !
-                self.dm.globalToLocal(global_dH, new_height)
+        # Note, the -1 is used to identify out of bounds values
 
-                height = np.maximum(height, new_height.array)
-
-            self._update_height_partial(height)
-
-
-        ## Don't leave the mesh in a half-updated state
-        self.update_height(height)
-
-        return height
+        return identifier - 1
 
 
 
-    def identify_low_points(self):
+    def identify_low_points(self, include_shadows=False):
         """
         Identify if the mesh has (internal) local minima and return an array of node indices
         """
 
+        # from petsc4py import PETSc
+
         nodes = np.arange(0, self.npoints, dtype=np.int)
+        gnodes = self.lgmap_row.apply(nodes.astype(PETSc.IntType))
+
         low_nodes = self.down_neighbour[1]
         mask = np.logical_and(nodes == low_nodes, self.bmask == True)
 
-        return low_nodes[mask]
+        if not include_shadows:
+            mask = np.logical_and(mask, gnodes >= 0)
 
-    ## Not needed
-    def identify_high_points(self):
+        return nodes[mask]
+
+    def identify_global_low_points(self, global_array=False):
         """
-        Identify where the mesh has (internal) local maxima and return an array of node indices
+        Identify if the mesh as a whole has (internal) local minima and return an array of local lows in global
+        index format.
+
+        If global_array is True, then lows for the whole mesh are returned
         """
 
-        high_point_list = []
-        for node in xrange(0,self.npoints):
-            if self.neighbour_array_lo_hi[node][-1] == node and self.bmask[node] == True:
-                high_point_list.append(node)
+        import petsc4py
+        from petsc4py import PETSc
+        from mpi4py import MPI
 
-        return np.array(high_point_list)
+        comm = MPI.COMM_WORLD
+        size = comm.Get_size()
+        rank = comm.Get_rank()
+
+        # from petsc4py import PETSc
+
+        nodes = np.arange(0, self.npoints, dtype=np.int)
+        gnodes = self.lgmap_row.apply(nodes.astype(PETSc.IntType))
+
+        low_nodes = self.down_neighbour[1]
+        mask = np.logical_and(nodes == low_nodes, self.bmask == True)
+        mask = np.logical_and(mask, gnodes >= 0)
+
+        number_of_lows = np.count_nonzero(mask)
+        low_gnodes = self.lgmap_row.apply(low_nodes.astype(PETSc.IntType))
+
+        # gather/scatter numbers
+
+        list_of_nlows  = comm.gather(number_of_lows,   root=0)
+        if rank == 0:
+            all_low_counts = np.hstack(list_of_nlows)
+            no_global_lows0 = all_low_counts.sum()
+
+        else:
+            no_global_lows0 = None
+
+        no_global_lows = comm.bcast(no_global_lows0, root=0)
+
+
+        if global_array:
+
+            list_of_lglows = comm.gather(low_gnodes,   root=0)
+
+            if rank == 0:
+                all_glows = np.hstack(list_of_lglows)
+                global_lows0 = np.unique(all_glows)
+
+            else:
+                global_lows0 = None
+
+            low_gnodes = comm.bcast(global_lows0, root=0)
+
+        return no_global_lows, low_gnodes
 
 
     def identify_outflow_points(self):
         """
-        Identify the (boundary) outflow points and return an array of node indices
+        Identify the (boundary) outflow points and return an array of (local) node indices
         """
 
         # nodes = np.arange(0, self.npoints, dtype=np.int)

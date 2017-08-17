@@ -23,18 +23,16 @@ from scipy.ndimage import imread
 from scipy.ndimage.filters import gaussian_filter
 
 
+
+AusBounds = (110, -45 , 155, -5)
+NZbounds  = (85.0, 18.0, 105.0, 36.0)
+
 ## Define region of interest (here NZ)
 
-ausBounds = [110, -45 , 155, -5]
-NZbounds  = [165.0, -48.5, 179.9, -34.0]
+minX, minY, maxX, maxY = AusBounds
 
-filename = 'AusEtopoOnly.h5'
-
-bounds = ausBounds
-minX, minY, maxX, maxY = bounds
-
-xres = 300
-yres = 300
+xres = 250
+yres = 250
 
 xx = np.linspace(minX, maxX, xres)
 yy = np.linspace(minY, maxY, yres)
@@ -48,7 +46,8 @@ y1 = y1.flatten()
 pts = np.stack((x1, y1)).T
 
 
-# In[35]:
+##  The alternative to this is to pre-process ETOPO and save it as h5 or npz
+##  That would eliminate the gdal dependency which is quite annoying on some machines
 
 gtiff = gdal.Open("../Notebooks/data/ETOPO1_Ice_c_geotiff.tif")
 
@@ -111,7 +110,7 @@ subaerial = m1s >= 0.0
 
 # In[75]:
 
-DM = meshtools.create_DMPlex_from_points(x1s, y1s, submarine, refinement_steps=4)
+DM = meshtools.create_DMPlex_from_points(x1s, y1s, submarine, refinement_steps=3)
 mesh = quagmire.SurfaceProcessMesh(DM, verbose=True)
 
 
@@ -155,7 +154,26 @@ mesh.bmask = subaerial
 
 
 mesh.update_height(meshheights*0.001)
-mesh.handle_low_points(its=500)
+raw_height = mesh.height
+
+for ii in range(0,10):
+
+	new_heights=mesh.low_points_local_patch_fill(its=2, smoothing_steps=2)
+
+	for iii in range(0, 10):
+		new_heights = mesh.low_points_swamp_fill()
+		mesh._update_height_partial(new_heights)
+
+	new_heights=mesh.low_points_local_flood_fill(its=10, scale=1.0001)
+	mesh._update_height_partial(new_heights)
+
+
+	glows, glow_points = mesh.identify_global_low_points(global_array=False)
+	print "gLows: ",glows
+
+	if glows == 0:
+		break
+
 
 
 # In[84]:
@@ -175,14 +193,17 @@ flowpaths2 = mesh.rbf_smoother(flowpaths, iterations=1)
 
 # In[85]:
 
+filename = 'AusFlow1a.h5'
 
 decomp = np.ones_like(mesh.height) * mesh.dm.comm.rank
 
 mesh.save_mesh_to_hdf5(filename)
-mesh.save_field_to_hdf5(filename, height=meshheights*0.001,
-                                  slope=mesh.slope,
+mesh.save_field_to_hdf5(filename, height0=raw_height,
+								  height=mesh.height,
+                                  slope=mesh.slope,		
                                   flowLP=np.sqrt(flowpaths2),
-                                  decomp=decomp)
+                                  decomp=decomp,
+                                  lakes=mesh.height-raw_height)
 
 # to view in Paraview
 meshtools.generate_xdmf(filename)

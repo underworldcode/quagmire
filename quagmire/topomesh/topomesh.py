@@ -52,6 +52,8 @@ class TopoMesh(object):
         if height.size != self.npoints:
             raise IndexError("Incompatible array size, should be {}".format(self.npoints))
 
+        height = self.sync(height)
+
         t = clock()
         self.height = height.copy()
         dHdx, dHdy = self.derivative_grad(height)
@@ -59,6 +61,7 @@ class TopoMesh(object):
 
         # Lets send and receive this from the global space
         # self.slope[:] = self.sync(self.slope)
+
         self.timings['gradient operation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
             print("{} - Compute slopes {}s".format(self.dm.comm.rank, clock()-t))
@@ -74,20 +77,21 @@ class TopoMesh(object):
     def _update_height_partial(self, height):
         """
         Partially update height field for specific purpose of patching topographic low points etc.
-        This allows rebuilding of the Adjacency1/Downhill matrix but does not compute gradients or
-        higher-order descent paths.
+        This allows rebuilding of the Adjacency1,2/Downhill matrix but does not compute gradients or
+        a third descent path.
         """
 
         height = np.array(height)
         if height.size != self.npoints:
             raise IndexError("Incompatible array size, should be {}".format(self.npoints))
 
-        self.height = height
+        self.height = self.sync(height)
+
 
         t = clock()
 
         neighbours = self.downhill_neighbours
-        self.downhill_neighbours = 1
+        self.downhill_neighbours = 2
 
         self._build_adjacency_matrix_iterate()
         if self.verbose:
@@ -96,8 +100,6 @@ class TopoMesh(object):
         self.downhill_neighbours = neighbours
 
         return
-
-
 
     def _sort_nodes_by_field(self, height):
 
@@ -126,10 +128,6 @@ class TopoMesh(object):
         self.neighbour_array_2_low = neighbour_array_2_low
 
 
-        # neighbour_array_lo_hi = self.neighbour_array.copy()
-        # for node in xrange(0, self.npoints):
-        #     neighbours = self.neighbour_array[node]
-
 
     def _adjacency_matrix_template(self, nnz=(1,1)):
 
@@ -153,48 +151,97 @@ class TopoMesh(object):
 #
 #
 
+    def _build_down_neighbour_arrays(self, nearest=True):
 
-## This version is based on distance not mesh connectivity -
-##
-## Be careful - it finds the nearest low node and not the lowest
-## near node.
-##
+        nodes = range(0,self.npoints)
+        nheight  = self.height[self.neighbour_cloud]
+        nheightidx = np.argsort(nheight, axis=1)
+
+        nheightn = nheight.copy()
+        nheightn[~self.near_neighbour_mask] += self.height.max()
+        nheightnidx = np.argsort(nheightn, axis=1)
+
+        ## How many low neighbours are there in each ?
+
+        idxrange  = np.where(nheightidx==0)[1]
+        idxnrange = np.where(nheightnidx==0)[1]
+
+        ## First the STD, 1-neighbour
+
+        idx  = nheightidx[:,0]
+        idxn = nheightnidx[:,0]
+
+        use_extended = np.where(idxnrange == 0)
+
+        # Pick either extended or standard ...
+
+        index1 = self.neighbour_cloud[nodes, idxn[nodes]]
+
+        if not nearest:
+            index1[use_extended] = self.neighbour_cloud[use_extended, idx[use_extended]]
+
+        ## OPTIONAL 2nd Neighbour
+
+        idx  = nheightidx[:,1]
+        idxn = nheightnidx[:,1]
+
+        index2 = self.neighbour_cloud[nodes, idxn[nodes]]
+
+        if not nearest:
+            use_extended = np.where(idxnrange < 2)
+            index2[use_extended] = self.neighbour_cloud[use_extended, idx[use_extended]]
+
+            failed = np.where(idxrange < 2)
+            index2[failed] = index1[failed]
+        else:
+            failed = np.where(idxnrange < 2)
+            index2[failed] = index1[failed]
+
+        ## OPTIONAL 3rd Neighbour
+
+        idx  = nheightidx[:,2]
+        idxn = nheightnidx[:,2]
+
+        index3 = self.neighbour_cloud[nodes, idxn[nodes]]
+
+        use_extended = np.where(idxnrange < 3)
+        index3[use_extended] = self.neighbour_cloud[use_extended, idx[use_extended]]
+
+        failed = np.where(idxrange < 3)
+        index3[failed] = index1[failed]
+
+        self.down_neighbour = {}
+
+        self.down_neighbour[1] = index1.astype(PETSc.IntType)
+        if self.downhill_neighbours >= 2:
+            self.down_neighbour[2] = index2.astype(PETSc.IntType)
+        if self.downhill_neighbours >= 3:
+            self.down_neighbour[3] = index3.astype(PETSc.IntType)
+
 
     def _build_adjacency_matrix_iterate(self):
 
-        self.adjacency = dict()
-        self.down_neighbour = dict()
+        self._build_down_neighbour_arrays(nearest=False)
 
-        data = np.empty(self.npoints)
-        down_neighbour = np.empty(self.npoints, dtype=PETSc.IntType)
+        self.adjacency = dict()
+        data = np.ones(self.npoints)
 
         indptr = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
-        node_range = indptr[:-1]
-
-        # compute low neighbours
-        nheight  = self.height[self.neighbour_cloud]
-        # nheightm = ma.array( nheight, mask = self.neighbour_cloud.mask)
-
-        dneighTF = nheight < self.height.reshape(-1,1)
-        dneighL1  = dneighTF.argmax(axis=1)
+        nodes = indptr[:-1]
 
         for i in range(1, self.downhill_neighbours+1):
-            data.fill(1.0)
 
-            dneighL = dneighTF.argmax(axis=1)
-            own = dneighL == 0
-            dneighL[own] = dneighL1[own]
-            dneighTF[node_range, dneighL[node_range]] = False
-
-            down_neighbour[:] = self.neighbour_cloud[node_range, dneighL[node_range]]
-            data[dneighL == 0] = 0.0
+            data[self.down_neighbour[i]==nodes] = 0.0
 
             adjacency = self._adjacency_matrix_template()
-            adjacency.setValuesLocalCSR(indptr, down_neighbour, data)
+
+            adjacency.setValuesLocalCSR(indptr, self.down_neighbour[i], data)
             adjacency.assemblyBegin()
             adjacency.assemblyEnd()
+
             self.adjacency[i] = adjacency.transpose()
-            self.down_neighbour[i] = down_neighbour.copy()
+
+            # self.down_neighbour[i] = down_neighbour.copy()
 
     def _build_downhill_matrix_iterate(self):
 
@@ -235,7 +282,7 @@ class TopoMesh(object):
 
     def build_cumulative_downhill_matrix(self):
         """
-        Build non-sparse, single hit matrices to propagate information downhill
+        Build non-sparse, single hit matrices to cumulative_flow information downhill
         (self.sweepDownToOutflowMat and self.downhillCumulativeMat)
 
         This may be expensive in terms of storage so this is only done if
@@ -287,12 +334,10 @@ class TopoMesh(object):
             maximum_its = 1000000000000
 
 
-        print "DHmat**2"
         # downhillMat2 = self.downhillMat * self.downhillMat
         # downhillMat4 = downhillMat2 * downhillMat2
         # downhillMat8 = downhillMat4 * downhillMat4
         downhillMat = self.downhillMat
-        print "DHmat**2 - done "
 
         DX0 = self.DX0
         DX1 = self.DX1
