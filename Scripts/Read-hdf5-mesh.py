@@ -22,10 +22,14 @@ rank = comm.Get_rank()
 
 import h5py
 
-meshFile = h5py.File(name="../Scripts/Octopants.h5", mode="r")
+meshFile = h5py.File(name="./portmacca.h5", mode="r")
 points = meshFile["geometry"]["vertices"]
 x1 = points.value[:,0]
 y1 = points.value[:,1]
+
+print "Available data in ", meshFile
+print meshFile['fields'].keys()
+
 bmask = meshFile["fields"]["bmask"].value[:].astype(bool)
 height = meshFile["fields"]["height"].value[:]
 lakes = meshFile["fields"]["swamps"].value[:]

@@ -318,6 +318,7 @@ def refine_DM(dm, refinement_steps):
     For each step, the midpoint of every line segment is added
     to the DM.
     """
+    
     for i in range(0, refinement_steps):
         dm = dm.refine()
 
@@ -416,8 +417,6 @@ def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_sa
 
 
 def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples ):
-
-
 
     originX = 0.5 * (maxX + minX)
     originY = 0.5 * (maxY + minY)

@@ -156,13 +156,13 @@ mesh.bmask = subaerial
 mesh.update_height(meshheights*0.001)
 raw_height = mesh.height
 
-for ii in range(0,25):
+for ii in range(0,2):
 
 	new_heights=mesh.low_points_local_patch_fill(its=2, smoothing_steps=2)
 	mesh._update_height_partial(new_heights)
 
 
-	for iii in range(0, 10):
+	for iii in range(0, 5):
 		new_heights = mesh.low_points_swamp_fill()
 		mesh._update_height_partial(new_heights)
 		glows, glow_points = mesh.identify_global_low_points(global_array=False)
@@ -206,12 +206,18 @@ filename = 'AusFlow1a.h5'
 
 decomp = np.ones_like(mesh.height) * mesh.dm.comm.rank
 
+low_points = mesh.identify_low_points()
+glow_points = mesh.lgmap_row.apply(low_points.astype(PETSc.IntType))
+ctmt = mesh.uphill_propagation(low_points,  glow_points, scale=1.0, its=250, fill=-1).astype(np.int)
+
+
 mesh.save_mesh_to_hdf5(filename)
 mesh.save_field_to_hdf5(filename, height0=raw_height,
 								  height=mesh.height,
                                   slope=mesh.slope,		
                                   flowLP=np.sqrt(flowpaths2),
                                   decomp=decomp,
+                                  lpcatch=ctmt,
                                   lakes=mesh.height-raw_height)
 
 # to view in Paraview

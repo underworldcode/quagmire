@@ -87,7 +87,7 @@ meshheights = ndimage.map_coordinates(dem, coords.T, order=3, mode='nearest')
 
 
 
-dm = meshtools.create_DMPlex_from_points(x, y, bmask, refinement_steps=2)
+dm = meshtools.create_DMPlex_from_points(x, y, bmask, refinement_steps=1)
 mesh = SurfaceProcessMesh(dm)
 
 # Triangulation reorders points
@@ -103,7 +103,6 @@ print rank, " : ", "Rebuild height information"
 mesh.downhill_neighbours = 2
 mesh.update_height(meshheights)
 raw_heights = mesh.height.copy()
-
 
 gradient_max = mesh.slope.max()
 gradient_mean = mesh.slope.mean()
@@ -122,17 +121,26 @@ for ii in range(0,5):
 
 	new_heights=mesh.low_points_local_patch_fill(its=3, smoothing_steps=1)
 
+	glows, glow_points = mesh.identify_global_low_points(global_array=False)
+	if rank == 0:
+		print "gLows: ",glows
 
-	for iii in range(0, 10):
+	for iii in range(0, 5):
 		new_heights = mesh.low_points_swamp_fill()
 		mesh._update_height_partial(new_heights)
+		glows, glow_points = mesh.identify_global_low_points(global_array=False)
+		if rank == 0:
+			print "gLows: ",glows
 
-	new_heights=mesh.low_points_local_flood_fill(its=10, scale=1.0001)
-	mesh._update_height_partial(new_heights)
+		if glows == 0:
+			break
 
+		new_heights=mesh.low_points_local_flood_fill(its=10, scale=1.0001)
+		mesh._update_height_partial(new_heights)
 
 	glows, glow_points = mesh.identify_global_low_points(global_array=False)
-	print "gLows: ",glows
+	if rank == 0:
+		print "gLows: ",glows
 
 	if glows == 0:
 		break
@@ -152,19 +160,20 @@ glow_points = mesh.lgmap_row.apply(low_points.astype(PETSc.IntType))
 ctmt = mesh.uphill_propagation(low_points,  glow_points, scale=1.0, its=250, fill=-1).astype(np.int)
 
 
-filename = 'portmacca1.h5'
+filename = 'portmacca.h5'
 
 mesh.save_mesh_to_hdf5(filename)
+
 mesh.save_field_to_hdf5(filename, 
-						height0=raw_heights, 
-						height=mesh.height, 
-						slope=mesh.slope, 
-						flow=np.sqrt(flowpaths2), 
-						lakes=(mesh.height - raw_heights),
-#						deltah=delta_h,
-						catchments=ctmt,
-						decomp=decomp,
-						bmask=mesh.bmask)
+						height0=raw_heights)
+
+						# height=mesh.height, 
+						# slope=mesh.slope, 
+						# flow=np.sqrt(flowpaths2), 
+						# lakes=(mesh.height - raw_heights),
+						# catchments=ctmt,
+						# decomp=decomp,
+						# bmask=mesh.bmask)
 
 # to view in Paraview
 meshtools.generate_xdmf(filename)

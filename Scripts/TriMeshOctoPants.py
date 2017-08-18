@@ -66,18 +66,28 @@ print rank, " : ", "Swamp fill ... "
 
 for ii in range(0,5):
 
-	new_heights=mesh.low_points_local_patch_fill(its=3, smoothing_steps=1)
+	new_heights=mesh.low_points_local_patch_fill(its=2, smoothing_steps=2)
 
+	glows, glow_points = mesh.identify_global_low_points(global_array=False)
+	if rank == 0:
+		print "gLows: ",glows
 
 	for iii in range(0, 10):
 		new_heights = mesh.low_points_swamp_fill()
 		mesh._update_height_partial(new_heights)
+		glows, glow_points = mesh.identify_global_low_points(global_array=False)
+		if rank == 0:
+			print "gLows: ",glows
 
-	new_heights=mesh.low_points_local_flood_fill(its=10, scale=1.0001)
-	mesh._update_height_partial(new_heights)
+		if glows == 0:
+			break
 
-	glows, glow_points = mesh.identify_global_low_points(global_array=False)
-	print "gLows: ",glows
+		new_heights=mesh.low_points_local_flood_fill(its=1000, scale=1.0001)
+		mesh._update_height_partial(new_heights)
+
+	# glows, glow_points = mesh.identify_global_low_points(global_array=False)
+	# if rank == 0:
+	# 	print "gLows: ",glows
 
 	if glows == 0:
 		break
@@ -92,28 +102,13 @@ mesh.update_height(new_heights)
 low_points1= mesh.identify_low_points()
 print rank," : Lows ", low_points1.shape[0]
 
-mesh2 = SurfaceProcessMesh(DM)  ## cloud array etc can surely be done better ...
-height1 = mesh2.rbf_smoother(new_heights)
-
-mesh2.update_height(height1)
-low_points2 = mesh2.identify_low_points()
-print rank," : Lows2 ", low_points2.shape[0]
-
-
 its, flowpaths = mesh.cumulative_flow_verbose(mesh.area, maximum_its=500, verbose=True)
 sqrtpaths = np.sqrt(flowpaths)
-
-its, flowpaths2 = mesh2.cumulative_flow_verbose(mesh.area, maximum_its=500, verbose=True)
-sqrtpaths2 = np.sqrt(flowpaths2)
 
 decomp = np.ones_like(mesh.height) * mesh.dm.comm.rank
 
 low_points = mesh.identify_low_points(include_shadows=False)
 glow_points = mesh.lgmap_row.apply(low_points.astype(PETSc.IntType))
-
-off_proc = np.where(glow_points<0)
-glow_points[off_proc] = -glow_points[off_proc]-1
-
 ctmt = mesh.uphill_propagation(low_points,  glow_points, scale=1.000001, its=1000, fill=-1).astype(np.int)
 
 list_of_lows = comm.gather(glow_points, root=0)
@@ -140,7 +135,6 @@ mesh.save_field_to_hdf5(filename, height0=height0,
 								  deltah=new_heights-height0,
                                   slope=mesh.slope,
                                   flow=np.sqrt(flowpaths),
-                                  flow2=np.sqrt(flowpaths2),
                                   catchments=ctmt,
                                   bmask=mesh.bmask,
                                   decomp=decomp)

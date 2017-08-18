@@ -225,6 +225,7 @@ class TopoMesh(object):
         self._build_down_neighbour_arrays(nearest=False)
 
         self.adjacency = dict()
+        self.uphill = dict()
         data = np.ones(self.npoints)
 
         indptr = np.arange(0, self.npoints+1, dtype=PETSc.IntType)
@@ -240,6 +241,7 @@ class TopoMesh(object):
             adjacency.assemblyBegin()
             adjacency.assemblyEnd()
 
+            self.uphill[i] = adjacency.copy()
             self.adjacency[i] = adjacency.transpose()
 
             # self.down_neighbour[i] = down_neighbour.copy()

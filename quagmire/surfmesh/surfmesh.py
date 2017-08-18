@@ -56,7 +56,7 @@ class SurfMesh(object):
         # Find high points
         self.outflow_points = self.identify_outflow_points()
 
-    def low_points_local_flood_fill(self, its=5, scale=1.0, smoothing_steps=2):
+    def low_points_local_flood_fill(self, its=99999, scale=1.0, smoothing_steps=2):
         """
         Fill low points with a local flooding algorithm.
           - its is the number of uphill propagation steps
@@ -74,7 +74,7 @@ class SurfMesh(object):
         fill_height =  (self.height[self.neighbour_cloud[my_low_points,1:]].mean(axis=1) -
                          self.height[my_low_points])
 
-        new_h = self.uphill_propagation(my_low_points,  fill_height, scale=scale,  its=its, fill=-100.0)
+        new_h = self.uphill_propagation(my_low_points,  fill_height, scale=scale,  its=its, fill=self.height.min())
         new_h = self.sync(new_h)
 
         smoothed_new_height = self.rbf_smoother(new_h, iterations=smoothing_steps)
@@ -129,7 +129,7 @@ class SurfMesh(object):
 
         return self.height
 
-    def low_points_swamp_fill(self, its=100):
+    def low_points_swamp_fill(self, its=1000):
 
         import petsc4py
         from petsc4py import PETSc
@@ -269,7 +269,9 @@ class SurfMesh(object):
 
         return height
 
-    def uphill_propagation(self, points, values, scale=1.0, its=100, fill=-1):
+    def uphill_propagation(self, points, values, scale=1.0, its=1000, fill=-1):
+
+        t0 = clock()
 
         local_ID = self.lvec.copy()
         global_ID = self.gvec.copy()
@@ -278,7 +280,7 @@ class SurfMesh(object):
         global_ID.set(fill+1)
 
         identifier = np.empty_like(self.height)
-        identifier.fill(fill)
+        identifier.fill(fill+1)
 
         if len(points):
             identifier[points] = values + 1
@@ -286,15 +288,32 @@ class SurfMesh(object):
         local_ID.setArray(identifier)
         self.dm.localToGlobal(local_ID, global_ID)
 
+        delta = global_ID.copy()
+        delta.abs()
+        rtolerance = delta.max()[1] * 1.0e-10
+
         for p in range(0, its):
-            self.adjacency[1].multTranspose(global_ID, self.gvec)
+
+            # self.adjacency[1].multTranspose(global_ID, self.gvec)
+            self.gvec = self.uphill[1] * global_ID
+            delta = global_ID - self.gvec
+            delta.abs()
+            max_delta = delta.max()[1]
+
+            if max_delta < rtolerance:
+                break
+
             self.gvec.scale(scale)
             self.dm.globalToLocal(self.gvec, local_ID)
-            identifier = np.maximum(identifier, local_ID.array)
             global_ID.array[:] = self.gvec.array[:]
+
+            identifier = np.maximum(identifier, local_ID.array)
             identifier = self.sync(identifier)
 
         # Note, the -1 is used to identify out of bounds values
+
+        if self.rank == 0:
+            print p, " iterations, time = ", clock() - t0
 
         return identifier - 1
 
