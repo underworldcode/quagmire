@@ -29,7 +29,7 @@ from quagmire import SurfaceProcessMesh
 minX, maxX = 0.0, 10.0
 minY, maxY = 0.0, 10.0,
 
-x1, y1, bmask1 = meshtools.square_mesh(minX, maxX, minY, maxY, 0.1, 0.1, 50001, 500)
+x1, y1, bmask1 = meshtools.square_mesh(minX, maxX, minY, maxY, 0.1, 0.1, 50001, 200)
 
 # In[41]:
 
@@ -37,8 +37,8 @@ DM = meshtools.create_DMPlex_from_points(x1, y1, bmask1, refinement_steps=2)
 mesh = SurfaceProcessMesh(DM)  ## cloud array etc can surely be done better ...
 
 print mesh.dm.comm.rank, "Number of nodes - ", mesh.npoints
-print mesh.dm.comm.rank, "Range - ", mesh.lgmap_row.apply([0, mesh.npoints-1])
-print mesh.dm.comm.rank, "Range2 - ", mesh.lgmap_col.apply([0, mesh.npoints-1])
+# print mesh.dm.comm.rank, "Range - ", mesh.lgmap_row.apply([0, mesh.npoints-1])
+# print mesh.dm.comm.rank, "Range2 - ", mesh.lgmap_col.apply([0, mesh.npoints-1])
 
 
 # In[42]:

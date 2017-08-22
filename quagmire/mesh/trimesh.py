@@ -534,7 +534,7 @@ class TriMesh(object):
                 self.dm.localToGlobal(self.lvec, vec)
 
             vec.setName(key)
-            if rank == 0:
+            if self.rank == 0:
                 print "Saving {} to hdf5".format(key)
 
             ViewHDF5 = PETSc.Viewer()
