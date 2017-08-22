@@ -230,10 +230,10 @@ def create_DMPlex_from_hdf5(file):
 
     dm = PETSc.DMPlex().createFromFile(file)
 
-    origSect = dm.createSection(1, [1,0,0])
-    origSect.setFieldName(0, "points")
-    origSect.setUp()
-    dm.setDefaultSection(origSect)
+    # origSect = dm.createSection(1, [1,0,0])
+    # origSect.setFieldName(0, "points")
+    # origSect.setUp()
+    # dm.setDefaultSection(origSect)
 
     return dm
 
@@ -318,7 +318,7 @@ def refine_DM(dm, refinement_steps):
     For each step, the midpoint of every line segment is added
     to the DM.
     """
-    
+
     for i in range(0, refinement_steps):
         dm = dm.refine()
 

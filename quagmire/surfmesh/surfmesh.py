@@ -61,9 +61,7 @@ class SurfMesh(object):
         Fill low points with a local flooding algorithm.
           - its is the number of uphill propagation steps
           - scale
-
         """
-
 
         t = clock()
         if self.rank==0 and self.verbose:
@@ -71,15 +69,13 @@ class SurfMesh(object):
 
         my_low_points = self.identify_low_points()
 
-        fill_height =  (self.height[self.neighbour_cloud[my_low_points,1:]].mean(axis=1) -
-                         self.height[my_low_points])
+        fill_height =  (self.height[self.neighbour_cloud[my_low_points,1:7]].mean(axis=1)-self.height[my_low_points])
 
-        new_h = self.uphill_propagation(my_low_points,  fill_height, scale=scale,  its=its, fill=self.height.min())
+        new_h = self.uphill_propagation(my_low_points,  fill_height, scale=scale,  its=its, fill=0.0)
         new_h = self.sync(new_h)
 
         smoothed_new_height = self.rbf_smoother(new_h, iterations=smoothing_steps)
-
-        new_height = np.maximum(self.height, smoothed_new_height)
+        new_height = np.maximum(0.0, smoothed_new_height) + self.height
         new_height = self.sync(new_height)
 
         self._update_height_partial(self.height)
@@ -129,7 +125,7 @@ class SurfMesh(object):
 
         return self.height
 
-    def low_points_swamp_fill(self, its=1000):
+    def low_points_swamp_fill(self, its=1000, saddles=True):
 
         import petsc4py
         from petsc4py import PETSc
@@ -144,13 +140,20 @@ class SurfMesh(object):
         my_low_points = self.identify_low_points()
         my_glow_points = self.lgmap_row.apply(my_low_points.astype(PETSc.IntType))
 
+
         t = clock()
         ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
 
         if self.rank==0:
             print "Build low point catchments - ", clock() - t, " seconds"
 
-        cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
+        if saddles:  # Find saddle points on the catchment edge
+            cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
+        else:        # Fine all edge points
+            ctmt2 = ctmt[self.neighbour_cloud] - ctmt.reshape(-1,1)
+            ctmt3 = ctmt2 * self.near_neighbour_mask
+            cedges = np.where(ctmt3.any(axis=1))[0]
+
         outer_edges = np.where(~self.bmask)[0]
         edges = np.unique(np.hstack((cedges,outer_edges)))
 
@@ -223,14 +226,14 @@ class SurfMesh(object):
             separation_y = (self.coords[catchment_nodes,1] - spill['y'])
             distance = np.hypot(separation_x, separation_y)
 
-            height2[catchment_nodes] = spill['h'] + 0.0001 * distance  # A 'small' gradient (should be a user-parameter)
+            height2[catchment_nodes] = spill['h'] + 0.000001 * distance  # A 'small' gradient (should be a user-parameter)
 
         height2 = self.sync(height2)
 
         new_height = np.maximum(height, height2)
         new_height = self.sync(new_height)
 
-        self._update_height_partial(self.height)
+        self._update_height_partial(new_height)
 
         if self.rank==0 and self.verbose:
             print "Low point swamp fill ",  clock()-t0, " seconds"
@@ -295,8 +298,8 @@ class SurfMesh(object):
         for p in range(0, its):
 
             # self.adjacency[1].multTranspose(global_ID, self.gvec)
-            self.gvec = self.uphill[1] * global_ID
-            delta = global_ID - self.gvec
+            gvec = self.uphill[1] * global_ID
+            delta = global_ID - gvec
             delta.abs()
             max_delta = delta.max()[1]
 
@@ -304,8 +307,8 @@ class SurfMesh(object):
                 break
 
             self.gvec.scale(scale)
-            self.dm.globalToLocal(self.gvec, local_ID)
-            global_ID.array[:] = self.gvec.array[:]
+            self.dm.globalToLocal(gvec, local_ID)
+            global_ID.array[:] = gvec.array[:]
 
             identifier = np.maximum(identifier, local_ID.array)
             identifier = self.sync(identifier)

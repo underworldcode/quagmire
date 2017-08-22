@@ -508,6 +508,7 @@ class TriMesh(object):
             kwdict[key] = arg
 
         vec = self.gvec.duplicate()
+        vec = self.dm.createGlobalVec()
 
         for key in kwdict:
             val = kwdict[key]

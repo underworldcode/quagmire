@@ -26,14 +26,15 @@ from quagmire import FlatMesh
 from quagmire import TopoMesh # all routines we need are within this class
 from quagmire import SurfaceProcessMesh
 
-minX, maxX = -5.0, 5.0
-minY, maxY = -5.0, 5.0,
+minX, maxX = 0.0, 10.0
+minY, maxY = 0.0, 10.0,
 
-x1, y1, bmask1 = meshtools.poisson_elliptical_mesh(minX, maxX, minY, maxY, 0.1, 500, r_grid=None)
+x1, y1, bmask1 = meshtools.square_mesh(minX, maxX, minY, maxY, 0.1, 0.1, 25000, 500)
+
 
 # In[41]:
 
-DM = meshtools.create_DMPlex_from_points(x1, y1, bmask1, refinement_steps=2)
+DM = meshtools.create_DMPlex_from_points(x1, y1, bmask1, refinement_steps=1)
 mesh = SurfaceProcessMesh(DM)  ## cloud array etc can surely be done better ...
 
 print mesh.dm.comm.rank, "Number of nodes - ", mesh.npoints
@@ -50,9 +51,14 @@ bmask = mesh.bmask
 radius  = np.sqrt((x**2 + y**2))
 theta   = np.arctan2(y,x)
 
-height  = np.exp(-0.025*(x**2 + y**2)**2) + 0.25 * (0.2*(radius))**4  * np.cos(7.0*theta)**2 ## Less so
-height  += 0.1 * (1.0-0.5*radius)**2
+height  = 1.0 - (np.sin(0.5*x*np.pi)**2 * np.sin(0.5*y*np.pi)**2)
 height  += np.random.random(height.shape) * 0.001
+
+## Steep eggbox - algorithm is quick
+# height  += 1.0 * (x + y) 
+## Flatter eggbox - takes longer to find catchment spills and iterate
+height  += 0.25 * (x + 0.5*y) 
+
 
 height0 = height.copy()
 new_heights = height.copy()
@@ -70,7 +76,7 @@ mesh._update_height_partial(new_heights)
 
 print rank, " : ", "Swamp fill ... "
 
-for ii in range(0,5):
+for ii in range(0,3):
 
 	new_heights=mesh.low_points_local_patch_fill(its=2, smoothing_steps=2)
 
@@ -78,13 +84,9 @@ for ii in range(0,5):
 	if rank == 0:
 		print "gLows: ",glows
 
-	for iii in range(0, 10):
+	for iii in range(0, 5):
 		new_heights = mesh.low_points_swamp_fill(saddles=True)
 		mesh._update_height_partial(new_heights)
-
-		new_heights = mesh.low_points_swamp_fill(saddles=False)
-		mesh._update_height_partial(new_heights)
-	
 		glows, glow_points = mesh.identify_global_low_points(global_array=False)
 		if rank == 0:
 			print "gLows: ",glows
@@ -92,6 +94,8 @@ for ii in range(0,5):
 		if glows == 0:
 			break
 
+		new_heights = mesh.low_points_swamp_fill(saddles=False)
+		mesh._update_height_partial(new_heights)
 
 
 	# new_heights=mesh.low_points_local_flood_fill(its=1000, scale=1.0001)
@@ -139,7 +143,7 @@ else:
 
 
 
-filename="Octopants.h5"
+filename="Eggbox.h5"
 
 mesh.save_mesh_to_hdf5(filename)
 mesh.save_field_to_hdf5(filename, height0=height0,
