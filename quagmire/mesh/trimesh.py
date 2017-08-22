@@ -74,7 +74,7 @@ class TriMesh(object):
         self.tri = stripy.Triangulation(coords[:,0], coords[:,1])
         self.npoints = self.tri.npoints
         self.timings['triangulation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.rank==0 and self.verbose:
             print("{} - Delaunay triangulation {}s".format(self.dm.comm.rank, clock()-t))
 
 
@@ -82,7 +82,7 @@ class TriMesh(object):
         t = clock()
         self.calculate_area_weights()
         self.timings['area weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.rank==0 and self.verbose:
             print("{} - Calculate node weights and area {}s".format(self.dm.comm.rank, clock()-t))
 
 
@@ -90,22 +90,24 @@ class TriMesh(object):
         t = clock()
         self.bmask = self.get_boundary()
         self.timings['find boundaries'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.rank==0 and self.verbose:
             print("{} - Find boundaries {}s".format(self.dm.comm.rank, clock()-t))
 
         # cKDTree
         t = clock()
         self.cKDTree = _cKDTree(self.tri.points, balanced_tree=False)
         self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.rank==0 and self.verbose:
             print("{} - cKDTree {}s".format(self.dm.comm.rank, clock()-t))
 
 
         # Find neighbours
         t = clock()
+
         self.construct_neighbour_cloud()
+
         self.timings['construct neighbour cloud'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.rank==0 and self.verbose:
             print("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, clock()-t))
 
 
@@ -113,7 +115,7 @@ class TriMesh(object):
         t = clock()
         self._construct_rbf_weights()
         self.timings['construct rbf weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.rank==0 and self.verbose:
             print("{} - Construct rbf weights {}s".format(self.dm.comm.rank, clock()-t))
 
 
@@ -146,6 +148,7 @@ class TriMesh(object):
         """
         pStart, pEnd = self.dm.getDepthStratum(0)
 
+
         labels = []
         for i in range(self.dm.getNumLabels()):
             labels.append(self.dm.getLabelName(i))
@@ -153,9 +156,15 @@ class TriMesh(object):
         if label not in labels:
             raise ValueError("There is no {} label in the DM".format(label))
 
-        labelIS = self.dm.getStratumIS(label, 1)
-        pt_range = np.logical_and(labelIS.indices >= pStart, labelIS.indices < pEnd)
-        indices = labelIS.indices[pt_range] - pStart
+
+        stratSize = self.dm.getStratumSize(label, 1)
+        if stratSize > 0:
+            labelIS = self.dm.getStratumIS(label, 1)
+            pt_range = np.logical_and(labelIS.indices >= pStart, labelIS.indices < pEnd)
+            indices = labelIS.indices[pt_range] - pStart
+        else:
+            indices = np.zeros((0,), dtype=np.int)
+
         return indices
 
 
@@ -184,6 +193,8 @@ class TriMesh(object):
         from quagmire._fortran import ntriw
 
         self.area, self.weight = ntriw(self.tri.x, self.tri.y, self.tri.simplices.T+1)
+
+        return
 
 
     def node_neighbours(self, point):
@@ -356,8 +367,8 @@ class TriMesh(object):
         mask = ind > self.near_neighbours.reshape(-1,1)
         self.near_neighbours_mask = mask
 
-
-        print(" - Array sort {}s".format(clock()-t))
+        if self.rank == 0:
+            print(" - Array sort {}s".format(clock()-t))
 
 
     def construct_neighbour_cloud(self, size=25):
@@ -449,11 +460,14 @@ class TriMesh(object):
         Find the nodes on the boundary from the DM
         If marker does not exist then the convex hull is used.
         """
+
         pStart, pEnd = self.dm.getDepthStratum(0)
         bmask = np.ones(self.npoints, dtype=bool)
 
+
         try:
             boundary_indices = self.get_label(marker)
+
         except ValueError:
             print("Warning! No boundary information in DMPlex.\n\
                    Continuing with convex hull.")
@@ -461,6 +475,7 @@ class TriMesh(object):
             boundary_indices = self.tri.convex_hull()
             for ind in boundary_indices:
                 self.dm.setLabelValue(marker, ind + pStart, 1)
+
 
         bmask[boundary_indices] = False
         return bmask
@@ -519,7 +534,8 @@ class TriMesh(object):
                 self.dm.localToGlobal(self.lvec, vec)
 
             vec.setName(key)
-            print "Saving {} to hdf5".format(key)
+            if rank == 0:
+                print "Saving {} to hdf5".format(key)
 
             ViewHDF5 = PETSc.Viewer()
             ViewHDF5.createHDF5(file, mode='a')

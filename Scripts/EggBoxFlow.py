@@ -29,12 +29,11 @@ from quagmire import SurfaceProcessMesh
 minX, maxX = 0.0, 10.0
 minY, maxY = 0.0, 10.0,
 
-x1, y1, bmask1 = meshtools.square_mesh(minX, maxX, minY, maxY, 0.1, 0.1, 25000, 500)
-
+x1, y1, bmask1 = meshtools.square_mesh(minX, maxX, minY, maxY, 0.1, 0.1, 50001, 500)
 
 # In[41]:
 
-DM = meshtools.create_DMPlex_from_points(x1, y1, bmask1, refinement_steps=1)
+DM = meshtools.create_DMPlex_from_points(x1, y1, bmask1, refinement_steps=2)
 mesh = SurfaceProcessMesh(DM)  ## cloud array etc can surely be done better ...
 
 print mesh.dm.comm.rank, "Number of nodes - ", mesh.npoints
@@ -119,7 +118,8 @@ mesh.update_height(new_heights)
 low_points1= mesh.identify_low_points()
 print rank," : Lows ", low_points1.shape[0]
 
-its, flowpaths = mesh.cumulative_flow_verbose(mesh.area, maximum_its=500, verbose=True)
+its, flowpaths = mesh.cumulative_flow_verbose(mesh.area)
+flowpaths = mesh.rbf_smoother(flowpaths, iterations=1)
 sqrtpaths = np.sqrt(flowpaths)
 
 decomp = np.ones_like(mesh.height) * mesh.dm.comm.rank
