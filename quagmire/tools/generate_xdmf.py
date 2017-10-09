@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import h5py
-import numpy as np
 import os, sys
 
 class Xdmf:
@@ -202,6 +200,8 @@ def generateXdmf(hdfFilename, xdmfFilename = None):
   """
   Generate Xdmf file from HDF5 file
   """
+  import h5py
+  import numpy as np
   if xdmfFilename is None:
     xdmfFilename = os.path.splitext(hdfFilename)[0] + '.xmf'
   # Read mesh

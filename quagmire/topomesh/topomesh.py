@@ -237,12 +237,15 @@ class TopoMesh(object):
 
             adjacency = self._adjacency_matrix_template()
 
-            adjacency.setValuesLocalCSR(indptr, self.down_neighbour[i], data)
             adjacency.assemblyBegin()
+            adjacency.setValuesLocalCSR(indptr, self.down_neighbour[i], data)
             adjacency.assemblyEnd()
 
             self.uphill[i] = adjacency.copy()
-            self.adjacency[i] = adjacency.transpose()
+
+            binD = np.bincount(self.down_neighbour[i]).astype(PETSc.IntType)
+            A = self._adjacency_matrix_template((binD,1))
+            self.adjacency[i] = adjacency.transpose(A)
 
             # self.down_neighbour[i] = down_neighbour.copy()
 
@@ -321,8 +324,8 @@ class TopoMesh(object):
         J = np.arange(0, self.npoints, dtype=PETSc.IntType)
         V = np.ones(self.npoints)
         identityMat = self._adjacency_matrix_template()
-        identityMat.setValuesLocalCSR(I, J, V)
         identityMat.assemblyBegin()
+        identityMat.setValuesLocalCSR(I, J, V)
         identityMat.assemblyEnd()
 
         downHillaccuMat += identityMat
