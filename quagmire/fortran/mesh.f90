@@ -43,7 +43,93 @@ subroutine remove_dups ( n, array_in, array_out, k )
      array_out(k) = array_in(i)
   end do outer
   return
-end subroutine
+end subroutine remove_dups
+
+recursive subroutine quicksort (a, b, first, last)
+!*****************************************************************************
+! quicksort.f -*-f90-*-
+! Author: t-nissie
+! License: GPLv3
+! Gist: https://gist.github.com/t-nissie/479f0f16966925fa29ea
+  implicit none
+  integer ( kind = 4 ) a(*), b(*), x, t
+  integer ( kind = 4 ) first, last
+  integer ( kind = 4 ) i, j
+
+  x = a( (first+last) / 2 )
+  i = first
+  j = last
+  do
+    do while (a(i) < x)
+      i=i+1
+    end do
+    do while (x < a(j))
+      j=j-1
+    end do
+    if (i >= j) exit
+    t = a(i);  a(i) = a(j);  a(j) = t
+    b(i) = i; b(j) = j
+    i=i+1
+    j=j-1
+  end do
+  if (first < i-1) call quicksort(a, b, first, i-1)
+  if (j+1 < last)  call quicksort(a, b, j+1, last)
+end subroutine quicksort
+
+function cumsum (n, array)
+!*****************************************************************************
+! cumsum evaluates the cumulative sum on an array
+  implicit none
+  integer ( kind = 4 ) n
+  integer ( kind = 4 ) array(n)
+  integer ( kind = 4 ) cumsum(n)
+  integer ( kind = 4 ) i
+
+  cumsum(:) = array(:)
+  
+  do i = 2, n
+    cumsum(i) = cumsum(i) + cumsum(i-1)
+  end do
+  return
+end function cumsum
+
+subroutine edgesort (n, edges)
+!*****************************************************************************
+! sorts edges by rows with lowest integer first
+  implicit none
+  integer ( kind = 4 ) n
+  integer ( kind = 4 ), target :: edges(2,n)
+  integer ( kind = 4 ) ind(n)
+  integer ( kind = 4 ) i
+  logical ( kind = 4 ) mask(n)
+  integer, pointer :: edge
+
+  ind = minloc(edges, dim=1)
+  mask = ind.eq.2
+
+  ! unpack(edges, mask, )
+
+  ! edge ee
+
+  ! edges(mask) = edges(:mask:-1)
+  return
+end subroutine edgesort
+
+function bincount (n, array)
+!*****************************************************************************
+! bincount evaluates the number of times an integer appears in an array
+  implicit none
+  integer ( kind = 4 ) n
+  integer ( kind = 4 ) array(n)
+  integer ( kind = 4 ) bincount(maxval(array))
+  integer ( kind = 4 ) i
+
+  bincount(:) = 0
+  do i = 1, n
+    bincount(array(i)) = bincount(array(i)) + 1
+  end do
+  return
+end function bincount
 
 subroutine ntriw ( n, x, y, nt, ltri, area, weight )
 !*****************************************************************************
@@ -97,7 +183,7 @@ subroutine ntriw ( n, x, y, nt, ltri, area, weight )
 !
   area = area/6
   return
-end
+end subroutine ntriw
 
 subroutine tricloud ( nt, ltri, n, ncol, cloud, kmax )
 ! Finds all neighbours and extended neighbours for every point
@@ -172,7 +258,7 @@ subroutine tricloud ( nt, ltri, n, ncol, cloud, kmax )
     kmax = max(kmax, k)
   end do
   return
-end subroutine
+end subroutine tricloud
 
 subroutine pixcloud ( nx, ny, cloud, kmax )
 !*****************************************************************************
@@ -262,4 +348,4 @@ subroutine pixcloud ( nx, ny, cloud, kmax )
   end do
 
   return
-end subroutine
+end subroutine pixcloud
