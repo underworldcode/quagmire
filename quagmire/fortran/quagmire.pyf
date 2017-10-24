@@ -16,9 +16,27 @@
 !
 !    -*- f90 -*-
 ! Note: the context of this file is case sensitive.
-
+python module tricloud2__user__routines 
+    interface tricloud2_user_interface 
+        subroutine callable(nk,cloud) ! in :_fortran:mesh.f90:tricloud2:unknown_interface
+            integer(kind=4) :: nk
+            integer(kind=4) :: cloud(nk)
+        end subroutine callable
+    end interface tricloud2_user_interface
+end python module tricloud2__user__routines
 python module _fortran ! in 
     interface  ! in :_fortran
+        subroutine sort_quick(n,a,idx,first,last) ! in :_fortran:mesh.f90
+            integer(kind=4), depend(a), intent(hide) :: n=len(a)
+            integer(kind=4), intent(in,out) :: a(n)
+            integer(kind=4), intent(in,out) :: idx(n)
+            integer(kind=4), intent(hide) :: first=1
+            integer(kind=4), intent(hide) :: last=n
+        end subroutine sort_quick
+        subroutine edgesort(n,edges) ! in :_fortran:mesh.f90
+            integer(kind=4), depend(edges), intent(hide) :: n=shape(edges,1)
+            integer(kind=4) dimension(2,n), intent(in,out) :: edges
+        end subroutine edgesort
         subroutine ntriw(n,x,y,nt,ltri,area,weight) ! in :_fortran:mesh.f90
             integer(kind=4), depend(x), intent(hide) :: n=len(x)
             real(kind=8) dimension(n), intent(in) :: x
@@ -28,6 +46,29 @@ python module _fortran ! in
             real(kind=8) dimension(n), intent(out) :: area
             integer(kind=4) dimension(n), intent(out) :: weight
         end subroutine ntriw
+        subroutine remove_dups2d(nr,nc,arraya,arrayb) ! in :_fortran:mesh.f90
+            integer(kind=4), optional,check(shape(arraya,0)==nr),depend(arraya) :: nr=shape(arraya,0)
+            integer(kind=4), optional,check(shape(arraya,1)==nc),depend(arraya),intent(in,out) :: nc=shape(arraya,1)
+            integer(kind=4) dimension(nr,nc) :: arraya
+            integer(kind=4) dimension(nr,nc), intent(out) :: arrayb
+        end subroutine remove_dups2d
+!        module something ! in :_fortran:mesh.f90
+!            integer(kind=4), allocatable,dimension(:) :: cloud
+!            subroutine tricloud2(nt,ltri,n,k) ! in :_fortran:mesh.f90:something
+!                integer(kind=4), optional,check(shape(ltri,1)==nt),depend(ltri) :: nt=shape(ltri,1)
+!                integer(kind=4) dimension(3,nt) :: ltri
+!                integer(kind=4) :: n
+!                integer(kind=4) :: k
+!            end subroutine tricloud2
+!        end module something
+        subroutine tricloud2(nt,ltri,n,callable) ! in :_fortran:quagmire/fortran/mesh.f90
+            use tricloud2__user__routines, callable=>callable
+            integer(kind=4), optional,check(shape(ltri,1)==nt),depend(ltri) :: nt=shape(ltri,1)
+            integer(kind=4) dimension(3,nt) :: ltri
+            integer(kind=4) :: n
+            intent(callback), callable
+            external callable
+        end subroutine tricloud2
         subroutine tricloud(nt,ltri,n,ncol,cloud,kmax) ! in :_fortran:mesh.f90
             integer(kind=4), depend(ltri), intent(hide) :: nt=shape(ltri,1)
             integer(kind=4) dimension(3,nt), intent(in) :: ltri
