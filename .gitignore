@@ -16,7 +16,4 @@ build/*
 
 
 Notebooks/data/ETOPO.npz
-
-Notebooks/erosion - deposition timestep.ipynb
-
 Notebooks/data/ETOPO1_Ice_c_geotiff.tif
