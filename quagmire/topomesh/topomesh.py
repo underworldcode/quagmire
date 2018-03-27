@@ -243,8 +243,8 @@ class TopoMesh(object):
 
             self.uphill[i] = adjacency.copy()
 
-            binD = np.bincount(self.down_neighbour[i]).astype(PETSc.IntType)
-            A = self._adjacency_matrix_template((binD,1))
+            binD = np.bincount(self.down_neighbour[i]).astype(PETSc.IntType) + 100
+            A = self._adjacency_matrix_template(nnz=binD)
             self.adjacency[i] = adjacency.transpose(A)
 
             # self.down_neighbour[i] = down_neighbour.copy()

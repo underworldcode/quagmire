@@ -102,7 +102,7 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
 
     """
     from petsc4py import PETSc
-    from stripy import Triangulation
+    from stripy   import Triangulation
 
     def points_to_edges(tri, boundary):
         """
@@ -116,6 +116,7 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
 
         # find unique rows in numpy array
         # <http://stackoverflow.com/questions/16970982/find-unique-rows-in-numpy-array>
+
         b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
         edges = np.unique(b).view(a.dtype).reshape(-1, a.shape[1])
 
@@ -140,7 +141,9 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
         cells  = np.zeros((0,3), dtype=PETSc.IntType)
 
     dim = 2
-    dm = PETSc.DMPlex().createFromCellList(dim, cells, coords)
+    dm = PETSc.DMPlex().createFromCellList(dim, cells.astype(PETSc.IntType), coords)
+
+
 
     origSect = dm.createSection(1, [1,0,0]) # define one DoF on the nodes
     origSect.setFieldName(0, "points")
@@ -173,7 +176,7 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
 
             # join is the common edge to which they are connected
             for idx, e in enumerate(boundary_edges):
-                join = dm.getJoin(e)
+                join = dm.getJoin(e.astype(PETSc.IntType))
                 dm.setLabelValue("boundary", join[0], 1)
 
             # mark points

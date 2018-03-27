@@ -64,6 +64,12 @@ rainfall = height ** 2.0
 
 mesh.update_height(height0)	    
 
+
+low_points = mesh.identify_low_points(include_shadows=False)
+glow_points = mesh.lgmap_row.apply(low_points.astype(PETSc.IntType))
+ctmt0 = mesh.uphill_propagation(low_points,  glow_points, scale=1.000001, its=1000, fill=-1).astype(np.int)
+
+
 new_heights = mesh.low_points_swamp_fill(saddles=False)
 mesh._update_height_partial(new_heights)
 
@@ -148,6 +154,7 @@ mesh.save_field_to_hdf5(filename, height0=height0,
 								  deltah=new_heights-height0,
                                   slope=mesh.slope,
                                   flow=np.sqrt(flowpaths),
+                                  catchments0=ctmt0,
                                   catchments=ctmt,
                                   bmask=mesh.bmask,
                                   decomp=decomp)

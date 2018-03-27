@@ -3,12 +3,18 @@
 
 *checkpoint.ipynb
 
-Notebooks/sombrero_1n.mp4
-Notebooks/sombrero_2n.mp4
-Notebooks/sombrero_Nn.mp4
+*.mp4
 
 *.h5
 
 build/*
 
 *.xmf
+
+*.png
+
+
+
+Notebooks/data/ETOPO.npz
+
+Notebooks/erosion - deposition timestep.ipynb

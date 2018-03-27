@@ -125,7 +125,7 @@ class SurfMesh(object):
 
         return self.height
 
-    def low_points_swamp_fill(self, its=1000, saddles=True):
+    def low_points_swamp_fill(self, its=1000, saddles=True, ref_height=0.0):
 
         import petsc4py
         from petsc4py import PETSc
@@ -211,7 +211,7 @@ class SurfMesh(object):
 
         global_spill_points = comm.bcast(all_spill_points, root=0)
 
-        height2 = np.zeros_like(self.height)
+        height2 = np.zeros_like(self.height) + ref_height
 
         for i, spill in enumerate(global_spill_points):
             this_catchment = int(spill['c'])
