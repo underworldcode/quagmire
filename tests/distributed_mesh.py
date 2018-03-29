@@ -19,9 +19,8 @@ mesh = FlatMesh(dm)
 print "Number of nodes in mesh - {}: {}".format(comm.rank, mesh.npoints)
 
 # retrieve local mesh
-pts, simplices, bmask = mesh.get_local_mesh()
-x = pts[:,0]
-y = pts[:,1]
+x = mesh.tri.x
+y = mesh.tri.y
 
 # create height field
 radius  = np.sqrt((x**2 + y**2))
