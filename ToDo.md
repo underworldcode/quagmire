@@ -1,4 +1,4 @@
-## For v 0.2
+## For v 0.4
 
 
 ## Rudimentary mesh variables:
@@ -23,7 +23,7 @@
 
 ## Operations
 
-   - pit filling - done 
+   - pit filling - done
    - swamp / flood computation - done
    -
 

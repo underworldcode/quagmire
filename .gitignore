@@ -9,11 +9,11 @@
 
 build/*
 
+egg-info.*
+
 *.xmf
 
 *.png
 
-
-
-Notebooks/data/ETOPO.npz
-Notebooks/data/ETOPO1_Ice_c_geotiff.tif
+quagmire/Examples/data/ETOPO.npz
+quagmire/Examples/data/ETOPO1_Ice_c_geotiff.tif

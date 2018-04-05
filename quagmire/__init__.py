@@ -19,6 +19,7 @@ from .mesh import TriMesh as _TriMesh
 from petsc4py import PETSc as _PETSc
 from .topomesh import TopoMesh as _TopoMeshClass
 from .surfmesh import SurfMesh as _SurfaceProcessMeshClass
+from . import documentation
 
 import tools
 
@@ -29,7 +30,7 @@ known_basemesh_classes = {type(_PETSc.DMDA())   : _PixMesh,\
 def FlatMesh(DM, *args, **kwargs):
     """
     Instantiates a 2-D mesh using TriMesh or PixMesh objects.
-    
+
     This object contains methods for the following operations:
      - calculating derivatives
      - interpolation (nearest-neighbour, linear, cubic)
