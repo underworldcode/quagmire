@@ -21,54 +21,6 @@ import numpy as np
 try: range = xrange
 except: pass
 
-class _Triangulation(object):
-    """
-    An abstraction for the triangle python module <http://dzhelil.info/triangle/>
-    This class mimics the Qhull structure in SciPy.
-    """
-    def __init__(self, coords):
-        import triangle
-        self.points = coords
-        self.npoints = len(coords)
-
-        d = dict(vertices=self.points)
-        tri = triangle.triangulate(d)
-        self.simplices = tri['triangles']
-
-
-class _ConvexHull(object):
-    """
-    An abstraction for calculating a convex hull using triangle
-    This class mimics the ConvexHull structure in SciPy
-    """
-    def __init__(self, coords):
-        from triangle import convex_hull
-        from numpy import unique
-        self.points = coords
-        self.simplices = convex_hull(coords)
-        self.vertices = unique(self.simplices)
-
-
-class _RecoverTriangles(object):
-    def __init__(self, dm):
-        sect = dm.getDefaultSection()
-        lvec = dm.createLocalVector()
-
-        self.points = dm.getCoordinatesLocal().array.reshape(-1,2)
-        self.npoints = self.points.shape[0]
-
-        # find cells in the DAG
-        cStart, cEnd = dm.getDepthStratum(2)
-
-        # recover triangles
-        simplices = np.empty((cEnd-cStart, 3), dtype=PETSc.IntType)
-        lvec.setArray(np.arange(0,self.npoints))
-
-        for t, cell in enumerate(range(cStart, cEnd)):
-            simplices[t] = dm.vecGetClosure(sect, lvec, cell)
-
-        self.simplices = simplices
-
 
 def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
     """
@@ -101,8 +53,7 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
      Boundary markers are automatically updated with each iteration.
 
     """
-    from petsc4py import PETSc
-    from stripy   import Triangulation
+    from stripy import Triangulation
 
     def points_to_edges(tri, boundary):
         """
@@ -126,82 +77,84 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
         boundary_edges = edges[boundary2==2]
         return boundary_edges
 
+    tri = Triangulation(x,y)
 
-    if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
-        reshuffle = np.random.permutation(x.size)
-        x = x[reshuffle]
-        y = y[reshuffle]
-        if bmask is not None:
-            bmask = bmask[reshuffle]
-        tri = Triangulation(x,y)
-        coords = tri.points
-        cells  = tri.simplices
+    if type(bmask) == type(None):
+        hull = tri.convex_hull()
+        boundary_vertices = np.column_stack([hull, np.hstack([hull[1:], hull[0]])])
     else:
-        coords = np.zeros((0,2), dtype=float)
-        cells  = np.zeros((0,3), dtype=PETSc.IntType)
+        boundary_indices = np.nonzero(~bmask)[0]
+        boundary_vertices = points_to_edges(tri, boundary_indices)
 
-    dim = 2
-    dm = PETSc.DMPlex().createFromCellList(dim, cells.astype(PETSc.IntType), coords)
-
+    return create_DMPlex(tri.x, tri.y, tri.simplices, boundary_vertices)
 
 
-    origSect = dm.createSection(1, [1,0,0]) # define one DoF on the nodes
-    origSect.setFieldName(0, "points")
-    origSect.setUp()
-    dm.setDefaultSection(origSect)
 
-    pStart, eEnd = dm.getDepthStratum(0) # points in DAG
+def set_DMPlex_boundary_points(dm):
+    """
+    Finds the points that join the edges that have been
+    marked as "boundary" faces in the DAG then sets them
+    as boundaries.
+    """
+    pStart, pEnd = dm.getDepthStratum(0) # points
+    eStart, eEnd = dm.getDepthStratum(1) # edges
+    edgeIS = dm.getStratumIS('boundary', 1)
 
-    # Label boundary points and edges
-    dm.createLabel("boundary")
+    edge_mask = np.logical_and(edgeIS.indices >= eStart, edgeIS.indices < eEnd)
+    boundary_edges = edgeIS.indices[edge_mask]
 
-    if PETSc.COMM_WORLD.rank == 0:
-        if bmask is None:
-            ## mark edges
-            dm.markBoundaryFaces("boundary")
-            ## mark points
-            # convert to DAG ordering
-            boundary_indices = tri.convex_hull() + pStart
-            for ind in boundary_indices:
-                dm.setLabelValue("boundary", ind, 1)
-        else:
-            boundary_indices = np.nonzero(~bmask)[0]
+    # query the DAG for points that join an edge
+    for edge in boundary_edges:
+        vertices = dm.getCone(edge)
+        # mark the boundary points
+        for vertex in vertices:
+            dm.setLabelValue("boundary", vertex, 1)
 
-            # mark edges
-            boundary_edges = points_to_edges(tri, boundary_indices)
+def set_DMPlex_boundary_points_and_edges(dm, boundary_vertices):
+    """ Label boundary points and edges """
 
-            # convert to DAG ordering
-            boundary_edges += pStart
-            boundary_indices += pStart
+    from petsc4py import PETSc
 
-            # join is the common edge to which they are connected
-            for idx, e in enumerate(boundary_edges):
-                join = dm.getJoin(e.astype(PETSc.IntType))
-                dm.setLabelValue("boundary", join[0], 1)
+    if np.ndim(boundary_vertices) != 2 and np.shape(boundary_vertices)[1] != 2:
+        raise ValueError("boundary vertices must be of shape (n,2)")
 
-            # mark points
-            for ind in boundary_indices:
-                dm.setLabelValue("boundary", ind, 1)
+    # points in DAG
+    pStart, eEnd = dm.getDepthStratum(0)
 
+    # convert to DAG ordering
+    boundary_edges = np.array(boundary_vertices + pStart, dtype=PETSc.IntType)
+    boundary_indices = np.array(np.unique(boundary_edges), dtype=PETSc.IntType)
 
-    # Distribute to other processors
-    origVec = dm.createGlobalVector()
+    # mark edges
+    for edge in boundary_edges:
+        # join is the common edge to which they are connected
+        join = dm.getJoin(edge)
+        for j in join:
+            dm.setLabelValue("boundary", j, 1)
 
-    if PETSc.COMM_WORLD.size > 1:
-        sf = dm.distribute(overlap=1)
-        newSect, newVec = dm.distributeField(sf, origSect, origVec)
-        dm.setDefaultSection(newSect)
+    # mark points
+    for ind in boundary_indices:
+        dm.setLabelValue("boundary", ind, 1)
 
-    # Label coarse DM in case it is ever needed again
-    pStart, pEnd = dm.getDepthStratum(0)
-    dm.createLabel("coarse")
-    for pt in range(pStart, pEnd):
-        dm.setLabelValue("coarse", pt, 1)
+def get_boundary_points(dm):
 
-    # Refinement
-    dm = refine_DM(dm, refinement_steps)
+    pStart, pEnd = dm.getDepthStratum(0) # points
+    eStart, eEnd = dm.getDepthStratum(1) # edges
+    edgeIS = dm.getStratumIS('boundary', 1)
 
-    return dm
+    edge_mask = np.logical_and(edgeIS.indices >= eStart, edgeIS.indices < eEnd)
+    boundary_edges = edgeIS.indices[edge_mask]
+
+    boundary_vertices = np.empty((boundary_edges.size,2), dtype=PETSc.IntType)
+
+    # query the DAG for points that join an edge
+    for idx, edge in enumerate(boundary_edges):
+        boundary_vertices[idx] = dm.getCone(edge)
+
+    # convert to local point ordering
+    boundary_vertices -= pStart
+    return np.unique(boundary_vertices)
+
 
 
 def create_DMPlex_from_hdf5(file):
@@ -222,8 +175,7 @@ def create_DMPlex_from_hdf5(file):
 
     Notes
     -----
-     This function requires bleeding edge PETSc and petsc4py
-     These features should arrive in petsc4py 3.8
+     This function requires petsc4py >= 3.8
     """
     from petsc4py import PETSc
 
@@ -233,11 +185,20 @@ def create_DMPlex_from_hdf5(file):
 
     dm = PETSc.DMPlex().createFromFile(file)
 
-    # origSect = dm.createSection(1, [1,0,0])
-    # origSect.setFieldName(0, "points")
-    # origSect.setUp()
-    # dm.setDefaultSection(origSect)
+    # define one DoF on the nodes
+    origSect = dm.createSection(1, [1,0,0])
+    origSect.setFieldName(0, "points")
+    origSect.setUp()
+    dm.setDefaultSection(origSect)
 
+    origVec = dm.createGlobalVector()
+
+    if PETSc.COMM_WORLD.size > 1:
+        # Distribute to other processors
+        sf = dm.distribute(overlap=1)
+        newSect, newVec = dm.distributeField(sf, origSect, origVec)
+        dm.setDefaultSection(newSect)
+    
     return dm
 
 
@@ -258,7 +219,7 @@ def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
     if refinement:
         dm.setRefinementLimit(refinement) # Maximum cell volume
         dm = dm.refine()
-    dm.markBoundaryFaces('BC')
+    dm.markBoundaryFaces('boundary')
 
     pStart, pEnd = dm.getChart()
 
@@ -297,6 +258,72 @@ def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     return dm
 
 
+def create_DMPlex(x, y, simplices, boundary_vertices=None):
+    """
+    Create a PETSc DMPlex object on root processor
+    and distribute to other processors
+
+    Parameters
+    ----------
+     x : array of floats, shape (n,) x coordinates
+     y : array of floats, shape (n,) y coordinates
+     simplices : connectivity of the mesh
+     boundary_vertices : array of ints, shape(l,2)
+        (optional) boundary edges
+
+    Returns
+    -------
+     DM : PETSc DMPlex object
+    """
+    from petsc4py import PETSc
+
+    if PETSc.COMM_WORLD.rank == 0:
+        coords = np.column_stack([x,y])
+        cells  = simplices.astype(PETSc.IntType)
+    else:
+        coords = np.zeros((0,2), dtype=np.float)
+        cells  = np.zeros((0,3), dtype=PETSc.IntType)
+
+    dim = 2
+    dm = PETSc.DMPlex().createFromCellList(dim, cells, coords)
+
+    # create labels
+    dm.createLabel("boundary")
+    dm.createLabel("coarse")
+
+    ## label boundary
+    if type(boundary_vertices) == type(None):
+        # boundary is convex hull
+        # mark edges and points
+        dm.markBoundaryFaces("boundary")
+        set_DMPlex_boundary_points(dm)
+    else:
+        # boundary is convex hull
+        set_DMPlex_boundary_points_and_edges(dm, boundary_vertices)
+
+    ## label coarse DM in case it is ever needed again
+    pStart, pEnd = dm.getDepthStratum(0)
+    for pt in range(pStart, pEnd):
+        dm.setLabelValue("coarse", pt, 1)
+
+
+    # define one DoF on the nodes
+    origSect = dm.createSection(1, [1,0,0])
+    origSect.setFieldName(0, "points")
+    origSect.setUp()
+    dm.setDefaultSection(origSect)
+
+    origVec = dm.createGlobalVector()
+
+    if PETSc.COMM_WORLD.size > 1:
+        # Distribute to other processors
+        sf = dm.distribute(overlap=1)
+        newSect, newVec = dm.distributeField(sf, origSect, origVec)
+        dm.setDefaultSection(newSect)
+
+    return dm
+
+
 def save_DM_to_hdf5(dm, file):
     """
     Saves mesh information stored in the DM to HDF5 file
@@ -315,7 +342,7 @@ def save_DM_to_hdf5(dm, file):
     return
 
 
-def refine_DM(dm, refinement_steps):
+def refine_DM(dm, refinement_steps=1):
     """
     Refine DM a specified number of refinement steps
     For each step, the midpoint of every line segment is added
@@ -374,7 +401,33 @@ def lloyd_mesh_improvement(x, y, bmask, iterations):
     return x, y
 
 
-def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples ):
+def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0, refinement_levels=0):
+    """
+    Generate a square mesh using stripy
+    """
+    from stripy import cartesian_meshes
+
+    extent_xy = [minX, maxX, minY, maxY]
+
+    tri = cartesian_meshes.square_mesh(extent_xy, spacingX, spacingY, random_scale, refinement_levels)
+
+    return tri.x, tri.y, tri.simplices
+
+
+def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0, refinement_levels=0):
+    """
+    Generate an elliptical mesh using stripy
+    """
+    from stripy import cartesian_meshes
+
+    extent_xy = [minX, maxX, minY, maxY]
+
+    tri = cartesian_meshes.elliptical_mesh(extent_xy, spacingX, spacingY, random_scale, refinement_levels)
+
+    return tri.x, tri.y, tri.simplices
+
+
+def generate_square_points(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples ):
 
     lin_samples = int(np.sqrt(samples))
 
@@ -419,7 +472,7 @@ def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_sa
     return x, y, bmask
 
 
-def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples ):
+def generate_elliptical_points(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples ):
 
     originX = 0.5 * (maxX + minX)
     originY = 0.5 * (maxY + minY)

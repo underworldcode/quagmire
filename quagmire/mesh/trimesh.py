@@ -469,8 +469,6 @@ class TriMesh(object):
             boundary_indices = self.get_label(marker)
 
         except ValueError:
-            print("Warning! No boundary information in DMPlex.\n\
-                   Continuing with convex hull.")
             self.dm.markBoundaryFaces(marker) # marks line segments
             boundary_indices = self.tri.convex_hull()
             for ind in boundary_indices:
@@ -640,19 +638,38 @@ class TriMesh(object):
 
 
 
-    def rbf_smoother(self, vector, iterations=1):
+    def rbf_smoother(self, vector, iterations=1, delta=None):
+        """
+        Smoothing using a radial-basis function smoothing kernel
 
-         # Should do some error checking here to ensure the field and point cloud are compatible
+        Arguments
+        ---------
+         vector     : field vector shape (n,)
+         iterations : int, number of iterations to smooth vector
+         delta      : distance weights to apply the the Gaussian
+                    : interpolants
+
+        Returns
+        -------
+         smooth_vec : smoothed version of input vector
+             shape (n,)
+
+        """
+
+        # Should do some error checking here to ensure the field and point cloud are compatible
 
         #  lvec  = self.lvec.copy()
         #  gvec  = self.gvec.copy()
 
-         vector = self.sync(vector)
+        if type(delta) != type(None):
+            self._construct_rbf_weights(delta)
 
-         for i in range(0, iterations):
-             # print self.dm.comm.rank, ": RBF ",vector.max(), vector.min()
+        vector = self.sync(vector)
 
-             vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
-             vector = self.sync(vector_smoothed)
+        for i in range(0, iterations):
+            # print self.dm.comm.rank, ": RBF ",vector.max(), vector.min()
 
-         return vector
+            vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+            vector = self.sync(vector_smoothed)
+
+        return vector

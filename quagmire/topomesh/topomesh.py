@@ -113,7 +113,7 @@ class TopoMesh(object):
         neighbour_array_lo_hi = self.neighbour_array.copy()
         neighbour_array_2_low = np.empty((self.npoints, 2), dtype=PETSc.IntType)
 
-        for i in xrange(indptr.size-1):
+        for i in range(indptr.size-1):
             # start, end = indptr[i], indptr[i+1]
             # neighbours = np.hstack([i, indices[start:end]])
             # order = height[neighbours].argsort()
@@ -243,7 +243,7 @@ class TopoMesh(object):
 
             self.uphill[i] = adjacency.copy()
 
-            binD = np.bincount(self.down_neighbour[i]).astype(PETSc.IntType) + 100
+            binD = np.bincount(self.down_neighbour[i], minlength=self.npoints).astype(PETSc.IntType) + 100
             A = self._adjacency_matrix_template(nnz=binD)
             self.adjacency[i] = adjacency.transpose(A)
 
@@ -393,7 +393,7 @@ class TopoMesh(object):
 
 
 
-    def downhill_smoothing(self, data, its, centre_weight=0.75, use3path=False):
+    def downhill_smoothing(self, data, its, centre_weight=0.75):
 
         downhillMat = self.downhillMat
 
@@ -407,7 +407,7 @@ class TopoMesh(object):
 
         self.lvec.setArray(data)
         self.dm.localToGlobal(self.lvec, smooth_data)
-        for i in xrange(0, its):
+        for i in range(0, its):
             self.downhillMat.mult(smooth_data, self.gvec)
             smooth_data.setArray((1.0 - centre_weight) * self.gvec.array + \
                                   smooth_data.array*np.where(mask, 1.0, centre_weight))
@@ -417,7 +417,7 @@ class TopoMesh(object):
         return self.lvec.array.copy()
 
 
-    def uphill_smoothing(self, data, its, centre_weight=0.75, use3path=False):
+    def uphill_smoothing(self, data, its, centre_weight=0.75):
 
         downhillMat = self.downhillMat
 
@@ -433,7 +433,7 @@ class TopoMesh(object):
 
         self.lvec.setArray(data)
         self.dm.localToGlobal(self.lvec, smooth_data)
-        for i in xrange(0, its):
+        for i in range(0, its):
             self.downhillMat.multTranspose(smooth_data, self.gvec)
             smooth_data.setArray((1.0 - centre_weight) * self.gvec.array * norm2 + \
                                   smooth_data.array*np.where(mask, 1.0, centre_weight))
@@ -444,7 +444,7 @@ class TopoMesh(object):
         return self.lvec.array.copy()
 
 
-    def streamwise_smoothing(self, data, its, centre_weight=0.75, use3path=False):
+    def streamwise_smoothing(self, data, its, centre_weight=0.75):
         """
         A smoothing operator that is limited to the uphill / downhill nodes for each point. It's hard to build
         a conservative smoothing operator this way since "boundaries" occur at irregular internal points associated
@@ -454,8 +454,8 @@ class TopoMesh(object):
         """
 
 
-        smooth_data_d = self.downhill_smoothing(data, its, centre_weight=centre_weight, use3path=use3path)
-        smooth_data_u = self.uphill_smoothing(data, its, centre_weight=centre_weight, use3path=use3path)
+        smooth_data_d = self.downhill_smoothing(data, its, centre_weight=centre_weight)
+        smooth_data_u = self.uphill_smoothing(data, its, centre_weight=centre_weight)
 
         return 0.5*(smooth_data_d + smooth_data_u)
 
