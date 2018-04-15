@@ -98,6 +98,7 @@ class TopoMesh(object):
         if self.rank==0 and self.verbose:
             print(" - Partial rebuild of downhill matrices {}s".format(clock()-t))
 
+        # revert to specified n-neighbours
         self.downhill_neighbours = neighbours
 
         return
@@ -154,7 +155,7 @@ class TopoMesh(object):
 
     def _build_down_neighbour_arrays(self, nearest=True):
 
-        nodes = range(0,self.npoints)
+        nodes = list(range(0,self.npoints))
         nheight  = self.height[self.neighbour_cloud]
         nheightidx = np.argsort(nheight, axis=1)
 
@@ -172,52 +173,41 @@ class TopoMesh(object):
         idx  = nheightidx[:,0]
         idxn = nheightnidx[:,0]
 
-        use_extended = np.where(idxnrange == 0)
-
         # Pick either extended or standard ...
+        use_extended = np.where(idxnrange == 0)
 
         index1 = self.neighbour_cloud[nodes, idxn[nodes]]
 
         if not nearest:
             index1[use_extended] = self.neighbour_cloud[use_extended, idx[use_extended]]
 
-        ## OPTIONAL 2nd Neighbour
-
-        idx  = nheightidx[:,1]
-        idxn = nheightnidx[:,1]
-
-        index2 = self.neighbour_cloud[nodes, idxn[nodes]]
-
-        if not nearest:
-            use_extended = np.where(idxnrange < 2)
-            index2[use_extended] = self.neighbour_cloud[use_extended, idx[use_extended]]
-
-            failed = np.where(idxrange < 2)
-            index2[failed] = index1[failed]
-        else:
-            failed = np.where(idxnrange < 2)
-            index2[failed] = index1[failed]
-
-        ## OPTIONAL 3rd Neighbour
-
-        idx  = nheightidx[:,2]
-        idxn = nheightnidx[:,2]
-
-        index3 = self.neighbour_cloud[nodes, idxn[nodes]]
-
-        use_extended = np.where(idxnrange < 3)
-        index3[use_extended] = self.neighbour_cloud[use_extended, idx[use_extended]]
-
-        failed = np.where(idxrange < 3)
-        index3[failed] = index1[failed]
-
-        self.down_neighbour = {}
-
+        # store in neighbour dictionary
+        self.down_neighbour = dict()
         self.down_neighbour[1] = index1.astype(PETSc.IntType)
-        if self.downhill_neighbours >= 2:
-            self.down_neighbour[2] = index2.astype(PETSc.IntType)
-        if self.downhill_neighbours >= 3:
-            self.down_neighbour[3] = index3.astype(PETSc.IntType)
+
+
+        ## Now all higher neighours
+
+        for i in range(1, self.downhill_neighbours):
+            n = i + 1
+
+            idx  = nheightidx[:,i]
+            idxn = nheightnidx[:,i]
+
+            indexN = self.neighbour_cloud[nodes, idxn[nodes]]
+
+            if not nearest:
+                use_extended = np.where(idxnrange < n)
+                indexN[use_extended] = self.neighbour_cloud[use_extended, idx[use_extended]]
+
+                failed = np.where(idxrange < n)
+                indexN[failed] = index1[failed]
+            else:
+                failed = np.where(idxnrange < n)
+                indexN[failed] = index1[failed]
+
+            # store in neighbour dictionary
+            self.down_neighbour[n] = indexN.astype(PETSc.IntType)
 
 
     def _build_adjacency_matrix_iterate(self):

@@ -407,7 +407,9 @@ class SurfMesh(object):
         # mask = np.logical_and(nodes == low_nodes, self.bmask == False)
         #
 
-        o = (np.logical_and(self.down_neighbour[2] == np.indices(self.down_neighbour[2].shape), self.bmask == False)).ravel()
+        i = self.downhill_neighbours
+
+        o = (np.logical_and(self.down_neighbour[i] == np.indices(self.down_neighbour[i].shape), self.bmask == False)).ravel()
         outflow_nodes = o.nonzero()[0]
 
         return outflow_nodes
