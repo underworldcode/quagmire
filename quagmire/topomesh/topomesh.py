@@ -226,16 +226,12 @@ class TopoMesh(object):
             data[self.down_neighbour[i]==nodes] = 0.0
 
             adjacency = self._adjacency_matrix_template()
-
             adjacency.assemblyBegin()
             adjacency.setValuesLocalCSR(indptr, self.down_neighbour[i], data)
             adjacency.assemblyEnd()
 
             self.uphill[i] = adjacency.copy()
-
-            binD = np.bincount(self.down_neighbour[i], minlength=self.npoints).astype(PETSc.IntType) + 100
-            A = self._adjacency_matrix_template(nnz=binD)
-            self.adjacency[i] = adjacency.transpose(A)
+            self.adjacency[i] = adjacency.transpose()
 
             # self.down_neighbour[i] = down_neighbour.copy()
 
@@ -324,7 +320,7 @@ class TopoMesh(object):
         self.sweepDownToOutflowMat = downSweepMat
 
 
-    def cumulative_flow_verbose(self, vector, verbose=False, maximum_its=None):
+    def cumulative_flow_verbose(self, vector, verbose=False, maximum_its=None, uphill=False):
 
         if not maximum_its:
             maximum_its = 1000000000000
@@ -333,7 +329,11 @@ class TopoMesh(object):
         # downhillMat2 = self.downhillMat * self.downhillMat
         # downhillMat4 = downhillMat2 * downhillMat2
         # downhillMat8 = downhillMat4 * downhillMat4
-        downhillMat = self.downhillMat
+        if uphill:
+            downhillMat = self.downhillMat.copy()
+            downhillMat = downhillMat.transpose()
+        else:
+            downhillMat = self.downhillMat
 
         DX0 = self.DX0
         DX1 = self.DX1
