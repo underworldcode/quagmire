@@ -4,7 +4,7 @@ Quagmire is a Python surface process framework for building erosion and depositi
 
 Quagmire is structured into three major classes that inherit methods and attributes from lower tiers.
 
-![Quagmire hierarchy](assets/hierarchy_chart.png)
+![Quagmire hierarchy](docs/images/hierarchy_chart.png)
 
 The Surface Processes class inherits from the Topography class, which in turn inherits from TriMesh or PixMesh depending on the type of mesh.
 
@@ -23,7 +23,7 @@ flags `config_fc --fcompiler=<compiler name>` when setup.py is run
 
 Running this code requires the following packages to be installed:
 
-- Python 2.7.x and above
+- Python 3.7.x and above
 - Numpy 1.9 and above
 - Scipy 0.15 and above
 - [mpi4py](http://pythonhosted.org/mpi4py/usrman/index.html)
