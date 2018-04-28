@@ -71,12 +71,11 @@ class TriMesh(object):
         length_scale = np.sqrt((maxX - minX)*(maxY - minY)/coords.shape[0])
         coords += np.random.random(coords.shape) * 0.0001 * length_scale # This should be aware of the point spacing (small perturbation)
 
-        self.tri = stripy.Triangulation(coords[:,0], coords[:,1])
+        self.tri = stripy.Triangulation(coords[:,0], coords[:,1], permute=True)
         self.npoints = self.tri.npoints
         self.timings['triangulation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
             print("{} - Delaunay triangulation {}s".format(self.dm.comm.rank, clock()-t))
-
 
         # Calculate weigths and pointwise area
         t = clock()

@@ -18,6 +18,8 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 
 import pkg_resources as _pkg_resources
 from distutils import dir_util as _dir_util
+import os
+
 
 def install_documentation(path="./Quagmire-Notebooks"):
     """Install the example notebooks for quagmire in the given location
@@ -26,7 +28,7 @@ def install_documentation(path="./Quagmire-Notebooks"):
     and will overwrite any existing files with which they collide. The default
     path ("./Quagmire-Notebooks") is chosen to make collision less likely / problematic
 
-    The documentation for litho1pt0 is in the form of jupyter notebooks.
+    The documentation for quagmire is in the form of jupyter notebooks.
 
     Some dependencies exist for the notebooks to be useful:
 
@@ -43,7 +45,7 @@ def install_documentation(path="./Quagmire-Notebooks"):
 
     ## Question - overwrite or not ? shutils fails if directory exists.
 
-    Notebooks_Path = _pkg_resources.resource_filename('quagmire', 'Notebooks')
+    Notebooks_Path = _pkg_resources.resource_filename('quagmire', os.path.join("Examples", 'Notebooks'))
 
     ct = _dir_util.copy_tree(Notebooks_Path, path, preserve_mode=1, preserve_times=1, preserve_symlinks=1, update=0, verbose=1, dry_run=0)
 

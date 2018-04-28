@@ -77,7 +77,7 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
         boundary_edges = edges[boundary2==2]
         return boundary_edges
 
-    tri = Triangulation(x,y)
+    tri = Triangulation(x,y, permute=True)
 
     if type(bmask) == type(None):
         hull = tri.convex_hull()
@@ -198,7 +198,7 @@ def create_DMPlex_from_hdf5(file):
         sf = dm.distribute(overlap=1)
         newSect, newVec = dm.distributeField(sf, origSect, origVec)
         dm.setDefaultSection(newSect)
-    
+
     return dm
 
 
@@ -400,6 +400,7 @@ def lloyd_mesh_improvement(x, y, bmask, iterations):
 
     return x, y
 
+## These are not very well cooked - we need boundary points etc
 
 def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0, refinement_levels=0):
     """

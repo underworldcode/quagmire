@@ -100,17 +100,17 @@ class SurfMesh(object):
             ## Note, the smoother has a communication barrier so needs to be called even if it has no work to do on this process
 
             if len(low_points) != 0:
-                delta_height[low_points] =  (self.height[self.neighbour_cloud[low_points,1:7]].mean(axis=1) -
+                delta_height[low_points] =  (self.height[self.neighbour_cloud[low_points,1:5]].mean(axis=1) -
                                                          self.height[low_points])
 
 
             # self.sync(delta_height)
 
-            smoothed_delta_height = self.rbf_smoother(delta_height, iterations=smoothing_steps)
+            smoothed_height = self.rbf_smoother(self.height+delta_height, iterations=smoothing_steps)
 
             # self.sync(smoothed_delta_height)
 
-            self.height += smoothed_delta_height
+            self.height = np.maximum(smoothed_height, self.height)
             self.height = self.sync(self.height)
 
             ## Push this / rebuild for the next loop
