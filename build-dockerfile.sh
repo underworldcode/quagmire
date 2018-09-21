@@ -2,13 +2,13 @@
 
 # Don't forget to increment the version number if you want to keep the old stuff
 
-FROM_IMG="lmoresi/underworld-notebook-bundle:dev"
-IMAGENAME=lmoresi/miller-alaska-moho-srl2018:1.1
-PROJ_NAME=msmoho
+FROM_IMG="lmoresi/uom-py-lavavu-notebook-bundle:1.0.7"
+IMAGENAME=lmoresi/quagmire:0.3
+PROJ_NAME=quagmire
 NB_PORT=8888
 NB_PASSWD=""
 NB_DIR=Notebooks
-START_NB=A0-Index.ipynb
+START_NB="0-StartHere.ipynb"
 
 docker build -t $IMAGENAME \
              -f Docker/Dockerfile \
