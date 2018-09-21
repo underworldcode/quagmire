@@ -1,7 +1,16 @@
+from setuptools import setup, find_packages
 from numpy.distutils.core import setup, Extension
+from os import path
+import io
 
 ext = Extension(name    = 'quagmire._fortran',
-                sources = ['fortran/quagmire.pyf','fortran/trimesh.f90'])
+                        sources = ['fortran/quagmire.pyf','fortran/trimesh.f90'])
+
+
+this_directory = path.abspath(path.dirname(__file__))
+with io.open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+        long_description = f.read()
+
 
 if __name__ == "__main__":
     setup(name = 'quagmire',
@@ -10,6 +19,8 @@ if __name__ == "__main__":
           url               = "https://github.com/University-of-Melbourne-Geodynamics/quagmire",
           version           = "0.1",
           description       = "Python surface process framework on highly scalable unstructured meshes",
+long_description  = long_description,
+                           long_description_content_type='text/markdown',
           ext_modules       = [ext],
           packages          = ['quagmire', 'quagmire.tools', 'quagmire.mesh', 'quagmire.topomesh', 'quagmire.surfmesh'],
           package_data      = {'quagmire': ['Examples/Notebooks/data',
