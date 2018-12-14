@@ -79,7 +79,7 @@ radius2 = gaussian_filter(radius, 5.)
 
 x1, y1, bmask1 = meshtools.poisson_square_mesh(minX, maxX, minY, maxY, spacing*20,
                                             boundary_samples=100)
-print("{} samples".format(x1.size))
+print(("{} samples".format(x1.size)))
 
 # randomize
 
@@ -127,8 +127,8 @@ from quagmire import SurfaceProcessMesh
 
 dm = meshtools.create_DMPlex_from_points(x, y, bmask, refinement_steps=2)
 
-print "gLPoints: ", dm.getCoordinates().array.shape[0]/2
-print " LPoints: ", dm.getCoordinatesLocal().array.shape[0]/2
+print("gLPoints: ", dm.getCoordinates().array.shape[0]/2)
+print(" LPoints: ", dm.getCoordinatesLocal().array.shape[0]/2)
 
 
 # In[68]:
@@ -235,9 +235,9 @@ flat_spots = np.where(mesh.slope < gradient_mean*0.001)[0]
 low_points = mesh.identify_low_points()
 
 # print statistics
-print("mean gradient {}\nnumber of flat spots {}\nnumber of low points {}".format(gradient_mean,
+print(("mean gradient {}\nnumber of flat spots {}\nnumber of low points {}".format(gradient_mean,
                                                                                   flat_spots.size,
-                                                                                  low_points.shape[0]))
+                                                                                  low_points.shape[0])))
 
 
 # In[21]:

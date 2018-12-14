@@ -36,7 +36,7 @@ x1, y1, bmask1 = meshtools.square_mesh(minX, maxX, minY, maxY, 0.1, 0.1, 50001, 
 DM = meshtools.create_DMPlex_from_points(x1, y1, bmask1, refinement_steps=2)
 mesh = SurfaceProcessMesh(DM)  ## cloud array etc can surely be done better ...
 
-print mesh.dm.comm.rank, "Number of nodes - ", mesh.npoints
+print(mesh.dm.comm.rank, "Number of nodes - ", mesh.npoints)
 # print mesh.dm.comm.rank, "Range - ", mesh.lgmap_row.apply([0, mesh.npoints-1])
 # print mesh.dm.comm.rank, "Range2 - ", mesh.lgmap_col.apply([0, mesh.npoints-1])
 
@@ -73,7 +73,7 @@ new_heights = mesh.low_points_swamp_fill(saddles=False)
 mesh._update_height_partial(new_heights)
 
 
-print rank, " : ", "Swamp fill ... "
+print(rank, " : ", "Swamp fill ... ")
 
 for ii in range(0,3):
 
@@ -81,14 +81,14 @@ for ii in range(0,3):
 
 	glows, glow_points = mesh.identify_global_low_points(global_array=False)
 	if rank == 0:
-		print "gLows: ",glows
+		print("gLows: ",glows)
 
 	for iii in range(0, 5):
 		new_heights = mesh.low_points_swamp_fill(saddles=True)
 		mesh._update_height_partial(new_heights)
 		glows, glow_points = mesh.identify_global_low_points(global_array=False)
 		if rank == 0:
-			print "gLows: ",glows
+			print("gLows: ",glows)
 
 		if glows == 0:
 			break
@@ -109,14 +109,14 @@ for ii in range(0,3):
 		break
 
 
-print "Compute downhill flow ... "
+print("Compute downhill flow ... ")
 
 # In[44]:
 
 mesh.downhill_neighbours = 2
 mesh.update_height(new_heights)
 low_points1= mesh.identify_low_points()
-print rank," : Lows ", low_points1.shape[0]
+print(rank," : Lows ", low_points1.shape[0])
 
 its, flowpaths = mesh.cumulative_flow_verbose(mesh.area)
 flowpaths = mesh.rbf_smoother(flowpaths, iterations=1)
@@ -132,11 +132,11 @@ list_of_lows = comm.gather(glow_points, root=0)
 
 if rank == 0:
    for i in range(size):
-       print "Proc ",i,":",list_of_lows[i], mesh.npoints
+       print("Proc ",i,":",list_of_lows[i], mesh.npoints)
 
    lows = np.hstack(list_of_lows)
    lows = np.unique(lows)
-   print lows
+   print(lows)
 
 else:
    pass

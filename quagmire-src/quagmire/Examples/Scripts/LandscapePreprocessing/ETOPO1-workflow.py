@@ -167,7 +167,7 @@ for ii in range(0,2):
 		mesh._update_height_partial(new_heights)
 		glows, glow_points = mesh.identify_global_low_points(global_array=False)
 		if mesh.rank == 0:
-			print "Global low points: ",glows
+			print("Global low points: ",glows)
 
 		if glows == 0:
 			break
@@ -179,7 +179,7 @@ for ii in range(0,2):
 
 	glows, glow_points = mesh.identify_global_low_points(global_array=False)
 	if mesh.rank == 0:
-		print "Global low points: ",glows
+		print("Global low points: ",glows)
 
 	if glows == 0:
 		break

@@ -79,9 +79,9 @@ mesh.downhill_neighbours = 3
 
 # Creating the DM reorders points
 
-print mesh.neighbour_array.shape
-print mesh.coords.shape
-print dem[::2,::2].shape
+print(mesh.neighbour_array.shape)
+print(mesh.coords.shape)
+print(dem[::2,::2].shape)
 
 
 # In[11]:
@@ -100,12 +100,12 @@ flowpaths = mesh.cumulative_flow(np.ones_like(mesh.height))
 flowpathsS = mesh.rbf_smoother(flowpaths)
 low_points = mesh.identify_low_points()
 
-print low_points.shape[0]
+print(low_points.shape[0])
 
 # In[24]:
 
 flats = np.where(mesh.identify_flat_spots())[0]
-print flats.shape[0]
+print(flats.shape[0])
 
 
 # In[36]:
@@ -167,9 +167,9 @@ nodes = np.arange(0, mesh.npoints)
 lows =  np.where(np.logical_and(mesh.down_neighbour[1] == nodes, mesh.height > 0.5))[0]
 
 # print statistics
-print("mean gradient {}\nnumber of flat spots {}\nnumber of low points {}".format(gradient_mean,
+print(("mean gradient {}\nnumber of flat spots {}\nnumber of low points {}".format(gradient_mean,
                                                                                   flat_spots.size,
-                                                                                  low_points.shape[0]))
+                                                                                  low_points.shape[0])))
 
 
 # In[ ]:

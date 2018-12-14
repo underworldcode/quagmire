@@ -27,8 +27,8 @@ points = meshFile["geometry"]["vertices"]
 x1 = points.value[:,0]
 y1 = points.value[:,1]
 
-print "Available data in ", meshFile
-print meshFile['fields'].keys()
+print("Available data in ", meshFile)
+print(list(meshFile['fields'].keys()))
 
 bmask = meshFile["fields"]["bmask"].value[:].astype(bool)
 height = meshFile["fields"]["height"].value[:]
@@ -65,7 +65,7 @@ its, flowpaths2 = SPM.cumulative_flow_verbose(SPM.area, maximum_its=2000, verbos
 
 low_points = SPM.identify_low_points()
 low_points_plus = SPM.identify_low_points(include_shadows=True)
-print dm.comm.rank,"Lows: ", low_points.shape[0], low_points_plus.shape[0]
+print(dm.comm.rank,"Lows: ", low_points.shape[0], low_points_plus.shape[0])
 
 glow_points = SPM.lgmap_row.apply(low_points.astype(PETSc.IntType))
 list_of_lows = comm.gather(glow_points, root=0)
@@ -73,11 +73,11 @@ list_of_lows = comm.gather(glow_points, root=0)
 
 if rank == 0:
    for i in range(size):
-       print "Proc ",i,":",list_of_lows[i], SPM.npoints
+       print("Proc ",i,":",list_of_lows[i], SPM.npoints)
 
    lows = np.hstack(list_of_lows)
    lows = np.unique(lows)
-   print lows
+   print(lows)
 
 else:
    pass

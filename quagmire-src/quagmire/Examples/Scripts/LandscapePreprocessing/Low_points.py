@@ -54,7 +54,7 @@ minY, maxY = 0.0, spacing*dem.shape[0]
 gradX, gradY = np.gradient(dem, 5., 5.) # 5m resolution in each direction
 slope = np.hypot(gradX, gradY)
 
-print("min/max slope {}".format((slope.min(), slope.max())))
+print(("min/max slope {}".format((slope.min(), slope.max()))))
 
 
 # In[4]:
@@ -75,7 +75,7 @@ radius2 = gaussian_filter(radius, 5.)
 # In[5]:
 
 x, y, bmask = meshtools.poisson_square_mesh(minX, maxX, minY, maxY, spacing*2.0, boundary_samples=500, r_grid=radius2*2.0)
-print("{} samples".format(x.size))
+print(("{} samples".format(x.size)))
 
 
 # In[6]:
@@ -92,12 +92,12 @@ mesh = SurfaceProcessMesh(dm)
 
 # Triangulation reorders points
 
-print rank, " : ", "Map DEM to local triangles"
+print(rank, " : ", "Map DEM to local triangles")
 
 coords = np.stack((mesh.tri.points[:,1], mesh.tri.points[:,0])).T / spacing
 meshheights = ndimage.map_coordinates(dem, coords.T, order=3, mode='nearest')
 
-print rank, " : ", "Rebuild height information"
+print(rank, " : ", "Rebuild height information")
 
 
 mesh.downhill_neighbours = 2
@@ -116,9 +116,9 @@ flat_spots = np.where(mesh.slope < gradient_mean*0.01)[0]
 low_points = mesh.identify_low_points()
 
 # print statistics
-print("mean gradient {}\nnumber of flat spots {}\nnumber of low points {}".format(gradient_mean,
+print(("mean gradient {}\nnumber of flat spots {}\nnumber of low points {}".format(gradient_mean,
                                                                                   flat_spots.size,
-                                                                                  low_points.shape[0]))
+                                                                                  low_points.shape[0])))
 
 
 # In[18]:
@@ -131,14 +131,14 @@ for ii in range(0,5):
 
 	glows, glow_points = mesh.identify_global_low_points(global_array=False)
 	if rank == 0:
-		print "gLows: ",glows
+		print("gLows: ",glows)
 
 	for iii in range(0, 5):
 		new_heights = mesh.low_points_swamp_fill()
 		mesh._update_height_partial(new_heights)
 		glows, glow_points = mesh.identify_global_low_points(global_array=False)
 		if rank == 0:
-			print "gLows: ",glows
+			print("gLows: ",glows)
 
 		if glows == 0:
 			break
@@ -146,7 +146,7 @@ for ii in range(0,5):
 
 	glows, glow_points = mesh.identify_global_low_points(global_array=False)
 	if rank == 0:
-		print "gLows: ",glows
+		print("gLows: ",glows)
 
 	if glows == 0:
 		break

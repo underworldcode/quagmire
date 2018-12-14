@@ -2,12 +2,12 @@
 
 # Don't forget to increment the version number if you want to keep the old stuff
 
-FROM_IMG="lmoresi/uom-py-lavavu-notebook-bundle:1.0.7"
-IMAGENAME=lmoresi/quagmire:0.3
+FROM_IMG="brmather/petsc4py-debian:3.10.2"
+IMAGENAME=brmather/quagmire:0.3
 PROJ_NAME=quagmire
 NB_PORT=8888
 NB_PASSWD=""
-NB_DIR=Notebooks
+NB_DIR=Examples
 START_NB="0-StartHere.ipynb"
 
 docker build -t $IMAGENAME \

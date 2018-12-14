@@ -44,13 +44,13 @@ class MeshVariable(object):
 
     @data.getter
     def data(self):
-        print "getter"
+        print("getter")
         self._dm.globalToLocal(self._gdata, self._ldata)
         return self._ldata
 
     @data.setter
     def data(self, val):
-        print "setter"
+        print("setter")
         if type(val) is float:
             self._ldata.set(val)
             self._gdata.set(val)
@@ -60,14 +60,14 @@ class MeshVariable(object):
 
     @data.deleter
     def data(self):
-        print "deleter"
+        print("deleter")
         self._ldata.destroy()
         self._gdata.destroy()
 
     def getGlobal(self):
-        print "global"
+        print("global")
         return self._gdata
 
     def getLocal(self):
-        print "local"
+        print("local")
         return self.data

@@ -34,7 +34,7 @@ users   = { "www"       : ["vieps-pye-boss", 8080 ],
 
 # Maybe we need to quote the password in case it has odd characters in it
 
-for dir in users.keys():
+for dir in list(users.keys()):
     password = users[dir][0]
     port     = users[dir][1]
     call( "cd {:s} && nohup jupyter notebook --port={:d} --ip='*' --no-browser\

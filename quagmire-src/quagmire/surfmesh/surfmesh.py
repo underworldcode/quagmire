@@ -48,7 +48,7 @@ class SurfMesh(object):
         self.upstream_area = self.cumulative_flow(self.area) # err - this is number of triangles
         self.timings['Upstream area'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Upstream area {}s".format(clock()-t))
+            print((" - Upstream area {}s".format(clock()-t)))
 
         # Find low points
         self.low_points = self.identify_low_points()
@@ -65,7 +65,7 @@ class SurfMesh(object):
 
         t = clock()
         if self.rank==0 and self.verbose:
-            print "Low point local flood fill"
+            print("Low point local flood fill")
 
         my_low_points = self.identify_low_points()
 
@@ -80,7 +80,7 @@ class SurfMesh(object):
 
         self._update_height_partial(self.height)
         if self.rank==0 and self.verbose:
-            print "Low point local flood fill ",  clock()-t, " seconds"
+            print("Low point local flood fill ",  clock()-t, " seconds")
 
         return new_height
 
@@ -90,7 +90,7 @@ class SurfMesh(object):
 
         t = clock()
         if self.rank==0 and self.verbose:
-            print "Low point local patch fill"
+            print("Low point local patch fill")
 
         for iteration in range(0,its):
             low_points = self.identify_low_points()
@@ -121,7 +121,7 @@ class SurfMesh(object):
         # self.update_height(self.height)
 
         if self.rank==0 and self.verbose:
-            print "Low point local patch fill ",  clock()-t, " seconds"
+            print("Low point local patch fill ",  clock()-t, " seconds")
 
         return self.height
 
@@ -145,7 +145,7 @@ class SurfMesh(object):
         ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
 
         if self.rank==0:
-            print "Build low point catchments - ", clock() - t, " seconds"
+            print("Build low point catchments - ", clock() - t, " seconds")
 
         if saddles:  # Find saddle points on the catchment edge
             cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
@@ -183,7 +183,7 @@ class SurfMesh(object):
         spill_points = spills[indices]
 
         if self.rank == 0:
-            print rank, " Sort spills - ", clock() - t
+            print(rank, " Sort spills - ", clock() - t)
 
         # Gather lists to process 0, stack and remove duplicates
 
@@ -191,7 +191,7 @@ class SurfMesh(object):
         list_of_spills = comm.gather(spill_points,   root=0)
 
         if rank == 0:
-            print rank, " Gather spill data - ", clock() - t
+            print(rank, " Gather spill data - ", clock() - t)
 
         if self.rank == 0:
             t = clock()
@@ -201,7 +201,7 @@ class SurfMesh(object):
             s, indices = np.unique(all_spills['c'], return_index=True)
             all_spill_points = all_spills[indices]
 
-            print rank, " Sort all spills - ", clock() - t
+            print(rank, " Sort all spills - ", clock() - t)
 
         else:
             all_spill_points = None
@@ -236,7 +236,7 @@ class SurfMesh(object):
         self._update_height_partial(new_height)
 
         if self.rank==0 and self.verbose:
-            print "Low point swamp fill ",  clock()-t0, " seconds"
+            print("Low point swamp fill ",  clock()-t0, " seconds")
 
 
         return new_height
@@ -316,7 +316,7 @@ class SurfMesh(object):
         # Note, the -1 is used to identify out of bounds values
 
         if self.rank == 0:
-            print p, " iterations, time = ", clock() - t0
+            print(p, " iterations, time = ", clock() - t0)
 
         return identifier - 1
 
@@ -575,29 +575,29 @@ class SurfMesh(object):
 
 
     def landscape_evolution_timestep(self, diffusion_rate, erosion_rate, deposition_rate, uplift_rate):
-    	"""
-		Calculate the change in topography for one timestep
-    	"""
+        """
+        Calculate the change in topography for one timestep
+        """
 
-    	time = 0.0
-    	typical_l = np.sqrt(self.area)
-    	critical_slope = 50.0
+        time = 0.0
+        typical_l = np.sqrt(self.area)
+        critical_slope = 50.0
 
         slope = np.maximum(self.slope, critical_slope)
 
-    	erosion_deposition_rate = deposition_rate - erosion_rate
+        erosion_deposition_rate = deposition_rate - erosion_rate
 
-    	erosion_timestep    = (self.slope*typical_l/(erosion_rate + 1e-12)).min()
-    	deposition_timestep = (self.slope*typical_l/(deposition_rate + 1e-12)).min()
-    	diffusion_timestep  = self.area.min()/np.max(self.kappa)
+        erosion_timestep    = (self.slope*typical_l/(erosion_rate + 1e-12)).min()
+        deposition_timestep = (self.slope*typical_l/(deposition_rate + 1e-12)).min()
+        diffusion_timestep  = self.area.min()/np.max(self.kappa)
 
-    	local_timestep = np.array(min(erosion_timestep, deposition_timestep, diffusion_timestep))
-    	timestep = np.array(0.0)
-    	comm.Allreduce([local_timestep, MPI.DOUBLE], [timestep, MPI.DOUBLE], op=MPI.MIN)
+        local_timestep = np.array(min(erosion_timestep, deposition_timestep, diffusion_timestep))
+        timestep = np.array(0.0)
+        comm.Allreduce([local_timestep, MPI.DOUBLE], [timestep, MPI.DOUBLE], op=MPI.MIN)
 
-    	delta_h = timestep * (erosion_deposition_rate - diffusion_rate + uplift_rate)
+        delta_h = timestep * (erosion_deposition_rate - diffusion_rate + uplift_rate)
 
-    	return delta_h, timestep
+        return delta_h, timestep
 
 
 

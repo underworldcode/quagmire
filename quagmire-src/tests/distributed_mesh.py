@@ -16,7 +16,7 @@ dm = meshtools.create_DMPlex_from_points(ptsx, ptsy, bmask, refinement_steps=1)
 mesh = FlatMesh(dm)
 
 #if comm.rank == 0:
-print "Number of nodes in mesh - {}: {}".format(comm.rank, mesh.npoints)
+print("Number of nodes in mesh - {}: {}".format(comm.rank, mesh.npoints))
 
 # retrieve local mesh
 x = mesh.tri.x

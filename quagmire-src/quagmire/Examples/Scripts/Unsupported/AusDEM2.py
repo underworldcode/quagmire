@@ -70,7 +70,7 @@ land_shapes = ne_land.shapeRecords()
 polyList = []
 for i,s in  enumerate(ne_land.shapes()):
     if len(s.points) < 3:
-        print "Dodgy Polygon ", i, s
+        print("Dodgy Polygon ", i, s)
     else:
         p = Polygon(s.points)
         if p.is_valid:
@@ -91,7 +91,7 @@ land_shapes = ne_land.shapeRecords()
 polyList = []
 for i,s in  enumerate(ne_land.shapes()):
     if len(s.points) < 3:
-        print "Dodgy Polygon ", i, s
+        print("Dodgy Polygon ", i, s)
     else:
         p = Polygon(s.points)
         if p.is_valid:
@@ -124,7 +124,7 @@ minX, minY, maxX, maxY = ausBounds
 
 if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
 
-    print "Build grid points"
+    print("Build grid points")
 
 #    x1, y1, bmask = meshtools.poisson_disc_sampler(minX, maxX, minY, maxY, 0.25)
 
@@ -140,7 +140,7 @@ if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
     pts = np.stack((x1, y1)).T
     mpt = MultiPoint(points=pts)
 
-    print "Find Coastline / Interior"
+    print("Find Coastline / Interior")
 
     interior_mpts = mpt.intersection(AusLandPolygon_ne50)
     interior_points = np.array(interior_mpts)
@@ -166,7 +166,7 @@ if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
     #
     # The points are now read into a DM and refined so that we can achieve very high resolutions. Refinement is achieved by adding midpoints along line segments connecting each point.
 
-print "Create DM"
+print("Create DM")
 
 
 if not (PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1):
@@ -178,10 +178,10 @@ DM = meshtools.create_DMPlex_from_points(x1, y1, bmask, refinement_steps=3)
 
 del x1, y1, bmask
 
-print "Built and distributed DM"
+print("Built and distributed DM")
 
 mesh = quagmire.SurfaceProcessMesh(DM, verbose=True)
-print mesh.dm.comm.rank, ": Points: ", mesh.npoints
+print(mesh.dm.comm.rank, ": Points: ", mesh.npoints)
 
 # In[71]:
 
@@ -191,7 +191,7 @@ simplices = mesh.tri.simplices
 bmaskr = mesh.bmask
 coords = np.stack((y2r, x2r)).T
 
-print "Map DEM to points"
+print("Map DEM to points")
 
 gtiff = gdal.Open("../Notebooks/data/ausbath_09_v4.tiff")
 width = gtiff.RasterXSize
@@ -235,7 +235,7 @@ for index in qindex:
          bmaskr[index] =  False
 
 
-print "Downhill Flow"
+print("Downhill Flow")
 
 # m v km !
 
@@ -249,22 +249,22 @@ mesh.update_height(meshheights*0.001)
 
 mesh.handle_low_points(its=250)
 
-print "Flowpaths - Low point"
+print("Flowpaths - Low point")
 nits, flowpaths = mesh.cumulative_flow_verbose(mesh.area*np.ones_like(mesh.height), verbose=True, maximum_its=1500)
 flowpaths = mesh.rbf_smoother(flowpaths, iterations=1)
 flowpaths[~bmaskr] = 0.0
 
-print "Smooth topography with RBF (500)"
+print("Smooth topography with RBF (500)")
 super_smooth_topo = mesh.rbf_smoother(mesh.height, iterations=500)
 mesh.update_height(super_smooth_topo)
 
-print "Flowpaths - Smooth"
+print("Flowpaths - Smooth")
 nits, flowpathsSmooth = mesh.cumulative_flow_verbose(mesh.area*np.ones_like(mesh.height), verbose=True, maximum_its=1500)
 flowpathsSmooth = mesh.rbf_smoother(flowpathsSmooth, iterations=1)
 flowpathsSmooth[~bmaskr] = 0.0
 
 
-print "Downhill Flow - complete"
+print("Downhill Flow - complete")
 
 filename = 'austopo-v-smooth500.h5'
 

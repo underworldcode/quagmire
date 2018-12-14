@@ -48,7 +48,7 @@ class Xdmf:
       <Time TimeType="List">
         <DataItem Format="XML" NumberType="Float" Dimensions="%d">
           ''' % (len(time)))
-    fp.write(' '.join(map(str, map(float, time))))
+    fp.write(' '.join(map(str, list(map(float, time)))))
     fp.write('''
         </DataItem>
       </Time>
@@ -231,8 +231,8 @@ def generateXdmf(hdfFilename, xdmfFilename = None):
     time      = [-1]
   vfields     = []
   cfields     = []
-  if 'vertex_fields' in h5: vfields = h5['vertex_fields'].items()
-  if 'cell_fields' in h5: cfields = h5['cell_fields'].items()
+  if 'vertex_fields' in h5: vfields = list(h5['vertex_fields'].items())
+  if 'cell_fields' in h5: cfields = list(h5['cell_fields'].items())
 
   # Write Xdmf
   Xdmf(xdmfFilename).write(hdfFilename, topoPath, numCells, numCorners, cellDim, geomPath, numVertices, spaceDim, time, vfields, cfields)

@@ -21,7 +21,7 @@ from .topomesh import TopoMesh as _TopoMeshClass
 from .surfmesh import SurfMesh as _SurfaceProcessMeshClass
 from . import documentation
 
-import tools
+from . import tools
 
 known_basemesh_classes = {type(_PETSc.DMDA())   : _PixMesh,\
                           type(_PETSc.DMPlex()) : _TriMesh}
@@ -48,7 +48,7 @@ def FlatMesh(DM, *args, **kwargs):
      FlatMesh : object
     """
     BaseMeshType = type(DM)
-    if BaseMeshType in known_basemesh_classes.keys():
+    if BaseMeshType in list(known_basemesh_classes.keys()):
 
         class FlatMeshClass(known_basemesh_classes[BaseMeshType]):
             def __init__(self, dm, *args, **kwargs):
@@ -59,7 +59,7 @@ def FlatMesh(DM, *args, **kwargs):
 
     else:
       raise TypeError("Mesh type {:s} unknown\n\
-        Known mesh types: {}".format(BaseMeshType, known_basemesh_classes.keys()))
+        Known mesh types: {}".format(BaseMeshType, list(known_basemesh_classes.keys())))
 
     return
 
@@ -87,7 +87,7 @@ def TopoMesh(DM, *args, **kwargs):
      TopoMesh : object
     """
     BaseMeshType = type(DM)
-    if BaseMeshType in known_basemesh_classes.keys():
+    if BaseMeshType in list(known_basemesh_classes.keys()):
         class TopoMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
             def __init__(self, dm, *args, **kwargs):
                 known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
@@ -98,7 +98,7 @@ def TopoMesh(DM, *args, **kwargs):
 
     else:
       raise TypeError("Mesh type {:s} unknown\n\
-        Known mesh types: {}".format(BaseMeshType, known_basemesh_classes.keys()))
+        Known mesh types: {}".format(BaseMeshType, list(known_basemesh_classes.keys())))
 
     return
 
@@ -127,7 +127,7 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
      SurfaceProcessMesh : object
     """
     BaseMeshType = type(DM)
-    if BaseMeshType in known_basemesh_classes.keys():
+    if BaseMeshType in list(known_basemesh_classes.keys()):
         class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass, _SurfaceProcessMeshClass):
             def __init__(self, dm, *args, **kwargs):
                 known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
@@ -139,6 +139,6 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
 
     else:
       raise TypeError("Mesh type {:s} unknown\n\
-        Known mesh types: {}".format(BaseMeshType, known_basemesh_classes.keys()))
+        Known mesh types: {}".format(BaseMeshType, list(known_basemesh_classes.keys())))
 
     return

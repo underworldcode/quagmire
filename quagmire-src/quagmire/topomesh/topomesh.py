@@ -64,7 +64,7 @@ class TopoMesh(object):
 
         self.timings['gradient operation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
-            print("{} - Compute slopes {}s".format(self.dm.comm.rank, clock()-t))
+            print(("{} - Compute slopes {}s".format(self.dm.comm.rank, clock()-t)))
 
 
         t = clock()
@@ -72,7 +72,7 @@ class TopoMesh(object):
         self.timings['downhill matrices'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
 
         if self.rank==0 and self.verbose:
-            print("{} - Build downhill matrices {}s".format(self.dm.comm.rank, clock()-t))
+            print(("{} - Build downhill matrices {}s".format(self.dm.comm.rank, clock()-t)))
 
 
     def _update_height_partial(self, height):
@@ -96,7 +96,7 @@ class TopoMesh(object):
 
         self._build_adjacency_matrix_iterate()
         if self.rank==0 and self.verbose:
-            print(" - Partial rebuild of downhill matrices {}s".format(clock()-t))
+            print((" - Partial rebuild of downhill matrices {}s".format(clock()-t)))
 
         # revert to specified n-neighbours
         self.downhill_neighbours = neighbours
@@ -368,7 +368,7 @@ class TopoMesh(object):
             equal = max_dDX < tolerance
 
             if self.dm.comm.rank==0 and verbose and niter%10 == 0:
-                print "{}: Max Delta - {} ".format(niter, max_dDX)
+                print("{}: Max Delta - {} ".format(niter, max_dDX))
 
             niter += 1
 

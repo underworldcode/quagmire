@@ -44,7 +44,7 @@ class Diffusion(TriMesh):
         if i - last_i == 10:
             uu = u.copy()
             self.history.append((i, t, uu.array))
-            print("cpu {}  - step = {:3d},  time = {:2.3f}".format(comm.rank, i, t))
+            print(("cpu {}  - step = {:3d},  time = {:2.3f}".format(comm.rank, i, t)))
 
 
     def plotHistory(self):
@@ -67,7 +67,7 @@ class Diffusion(TriMesh):
             self.tozero.scatter(self.gvec, self.zvec)
 
             if comm.rank == 0:
-                print("plotting timestep {:3d}, t = {:2.3f}".format(i, t))
+                print(("plotting timestep {:3d}, t = {:2.3f}".format(i, t)))
                 fig = plt.figure(1)
                 ax = fig.add_subplot(111, xlim=[x.min(), x.max()], \
                                           ylim=[y.min(), y.max()])

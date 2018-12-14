@@ -20,7 +20,7 @@ notebookPath = os.path.join(sitePath,"Notebooks")
 
 siteDir = os.path.join(sitePath,"www")
 
-print "Building {:s}".format(siteDir)
+print("Building {:s}".format(siteDir))
 
 call("cd {:s} && mkdocs build --theme united --clean".format(sitePath), shell=True)
 call("ln -s {:s}/Data/ {:s}".format(sitePath, siteDir), shell=True)
@@ -32,7 +32,7 @@ userList = [ str(i) for i in range(1,13) ]
 
 for user in userList:
     siteDir = os.path.join(sitePath,"build","www"+user)
-    print "Building {:s}".format(siteDir)
+    print("Building {:s}".format(siteDir))
     call("cd {:s} && mkdocs build --site-dir {:s}".format(sitePath, siteDir), shell=True)
     call("ln -s {:s}/Data/ {:s}".format(sitePath, siteDir), shell=True)
     call("ln -s {:s}/Documentation/ {:s}".format(sitePath, siteDir), shell=True)

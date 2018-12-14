@@ -100,14 +100,14 @@ class PixMesh(object):
         self.construct_neighbours()
         self.timings['construct neighbours'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Construct neighbour array {}s".format(clock()-t))
+            print((" - Construct neighbour array {}s".format(clock()-t)))
 
         # cKDTree
         t = clock()
         self.cKDTree = _cKDTree(self.coords)
         self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - cKDTree {}s".format(clock()-t))
+            print((" - cKDTree {}s".format(clock()-t)))
 
 
         # Find boundary points
@@ -115,7 +115,7 @@ class PixMesh(object):
         self.bmask = self.get_boundary()
         self.timings['find boundaries'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Find boundaries {}s".format(clock()-t))
+            print((" - Find boundaries {}s".format(clock()-t)))
 
 
         # Build smoothing operator
@@ -123,7 +123,7 @@ class PixMesh(object):
         self._build_smoothing_matrix()
         self.timings['smoothing matrix'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Build smoothing matrix {}s".format(clock()-t))
+            print((" - Build smoothing matrix {}s".format(clock()-t)))
 
 
 
@@ -132,7 +132,7 @@ class PixMesh(object):
         self.construct_neighbour_cloud()
         self.timings['construct neighbour cloud'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Construct neighbour cloud array {}s".format(clock()-t))
+            print((" - Construct neighbour cloud array {}s".format(clock()-t)))
 
 
         # RBF smoothing operator
@@ -140,7 +140,7 @@ class PixMesh(object):
         self._construct_rbf_weights()
         self.timings['construct rbf weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print(" - Construct rbf weights {}s".format(clock()-t))
+            print((" - Construct rbf weights {}s".format(clock()-t)))
 
 
 
@@ -180,7 +180,7 @@ class PixMesh(object):
         cols = np.empty((nc,n), dtype=PETSc.IntType)
         vals = np.empty((nc,n))
 
-        for i in xrange(0,nc):
+        for i in range(0,nc):
             rs, re = closure[i]
             cs, ce = closure[-1+i]
 
@@ -216,7 +216,7 @@ class PixMesh(object):
         # We may not need this, but constuct anyway for now!
         closed_neighbours = [[]]*self.npoints
 
-        for i in xrange(0,indptr.size-1):
+        for i in range(0,indptr.size-1):
             start, end = indptr[i], indptr[i+1]
             closed_neighbours[i] = np.array(col[start:end])
 
@@ -243,7 +243,7 @@ class PixMesh(object):
         # [lowest, 2nd lowest, highest]
         neighbour_array_l2h = np.empty((self.npoints,3), dtype=PETSc.IntType)
 
-        for i in xrange(0,3):
+        for i in range(0,3):
             node_mask = n_offgrid == i
 
             n0 = order[node_mask,0]    # lowest
@@ -309,7 +309,7 @@ class PixMesh(object):
         self.dm.localToGlobal(self.lvec, self.gvec)
         smooth_data = self.gvec.copy()
 
-        for i in xrange(0, its):
+        for i in range(0, its):
             self.localSmoothMat.mult(smooth_data, self.gvec)
             smooth_data = centre_weight*smooth_data + (1.0 - centre_weight)*self.gvec
 

@@ -480,7 +480,7 @@ def generate_elliptical_points(minX, maxX, minY, maxY, spacingX, spacingY, sampl
     radiusX = 0.5 * (maxX - minX)
     aspect = 0.5 * (maxY - minY) / radiusX
 
-    print "Origin = ", originX, originY, "Radius = ", radiusX, "Aspect = ", aspect
+    print("Origin = ", originX, originY, "Radius = ", radiusX, "Aspect = ", aspect)
 
     lin_samples = int(np.sqrt(samples))
 

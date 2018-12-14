@@ -64,7 +64,7 @@ land_shapes = ne_land.shapeRecords()
 polyList = []
 for i,s in  enumerate(ne_land.shapes()):
     if len(s.points) < 3:
-        print "Dodgy Polygon ", i, s
+        print("Dodgy Polygon ", i, s)
     else:
         p = Polygon(s.points)
         if p.is_valid:
@@ -96,7 +96,7 @@ minX, minY, maxX, maxY = bounds
 
 if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
 
-    print "Build grid points"
+    print("Build grid points")
 
 #    x1, y1, bmask = meshtools.poisson_disc_sampler(minX, maxX, minY, maxY, 0.25)
 
@@ -115,7 +115,7 @@ if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
     pts = np.stack((x1, y1)).T
     mpt = MultiPoint(points=pts)
 
-    print "Find Coastline / Interior"
+    print("Find Coastline / Interior")
 
     interior_mpts = mpt.intersection(NZLandPolygon_ne50)
     interior_points = np.array(interior_mpts)
@@ -141,7 +141,7 @@ if PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1:
     #
     # The points are now read into a DM and refined so that we can achieve very high resolutions. Refinement is achieved by adding midpoints along line segments connecting each point.
 
-print "Create DM"
+print("Create DM")
 
 
 if not (PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1):
@@ -153,10 +153,10 @@ DM = meshtools.create_DMPlex_from_points(x1, y1, bmask, refinement_steps=1)
 
 del x1, y1, bmask
 
-print "Built and distributed DM"
+print("Built and distributed DM")
 
 mesh = quagmire.SurfaceProcessMesh(DM, verbose=True)
-print mesh.dm.comm.rank, ": Points: ", mesh.npoints
+print(mesh.dm.comm.rank, ": Points: ", mesh.npoints)
 
 # In[71]:
 
@@ -166,7 +166,7 @@ simplices = mesh.tri.simplices
 bmaskr = mesh.bmask
 coords = np.stack((y2r, x2r)).T
 
-print "Map DEM to points"
+print("Map DEM to points")
 
 gtiff = gdal.Open("../Notebooks/data/ETOPO1_Ice_c_geotiff.tif")
 
@@ -196,7 +196,7 @@ sliceTop    = int(90+maxY) * 60
 LandImg = img[ sliceLeft:sliceRight, sliceBottom:sliceTop].T
 LandImg = np.flipud(LandImg)
 
-print LandImg.shape
+print(LandImg.shape)
 
 img = LandImg
 
@@ -258,7 +258,7 @@ for index in qindex:
 
 
 
-print "Downhill Flow"
+print("Downhill Flow")
 
 # m v km !
 
@@ -266,7 +266,7 @@ mesh.downhill_neighbours=2
 mesh.update_height(meshheights*0.001)
 
 
-print "Flowpaths 1 - Lows included"
+print("Flowpaths 1 - Lows included")
 
 nits, flowpaths = mesh.cumulative_flow_verbose(mesh.area*np.ones_like(mesh.height), verbose=True, maximum_its=2500)
 flowpaths = mesh.rbf_smoother(flowpaths, iterations=1)
@@ -284,7 +284,7 @@ flowpaths[~bmaskr] = -1.0
 new_heights=mesh.low_points_local_fill(its=2, smoothing_steps=2)
 mesh._update_height_partial(new_heights)
 low_points2 = mesh.identify_low_points()
-print "Low Points", low_points2.shape
+print("Low Points", low_points2.shape)
 
 
 for i in range(0,10):
@@ -292,24 +292,24 @@ for i in range(0,10):
     mesh._update_height_partial(new_heights)
     # mesh.update_height(new_heights)
     low_points2 = mesh.identify_low_points()
-    print low_points2.shape
+    print(low_points2.shape)
 
-print "Low Points", low_points2.shape
+print("Low Points", low_points2.shape)
 
-print "Flowpaths 2 - Lows patched"
+print("Flowpaths 2 - Lows patched")
 
 raw_heights=mesh.height
 mesh.update_height(new_heights)
 
 
-print "Flowpaths 1 - Lows included"
+print("Flowpaths 1 - Lows included")
 
 nits, flowpaths2 = mesh.cumulative_flow_verbose(mesh.area*np.ones_like(mesh.height), verbose=True, maximum_its=2500)
 flowpaths2 = mesh.rbf_smoother(flowpaths2, iterations=1)
 flowpaths2[~bmaskr] = -1.0
 
 
-print "Downhill Flow - complete"
+print("Downhill Flow - complete")
 
 
 filename = 'NZ-ETOPO.h5'
