@@ -12,17 +12,20 @@ USER root
 RUN useradd -ms /bin/bash jovyan
 
 ### DEPENDENCIES 
-RUN python3 -m pip install --no-deps --upgrade --no-cache-dir stripy
+RUN python3 -m pip install --upgrade --no-cache-dir stripy pyvirtualdisplay
 
 ### Quagmire - Notebooks
 
 ENV MODULE_DIR="quagmire-src"
 ADD --chown=jovyan:jovyan $MODULE_DIR $MODULE_DIR
-RUN cd $MODULE_DIR && python3 -m pip install --no-deps --upgrade .
+RUN cd $MODULE_DIR && python3 -m pip install --no-deps --upgrade . && \
+    mv quagmire/Examples/data /home/jovyan/ && \
+    mv quagmire/Examples/Notebooks /home/jovyan/ && \
+    mv quagmire/Examples/Scripts /home/jovyan/ && \
+    rm -rf $MODULE_DIR
 
 
 # Add examples
-ADD  --chown=jovyan:jovyan $MODULE_DIR/quagmire/Examples  Examples
 
 # RUN ipython -c 'import quagmire; quagmire.documentation.install_documentation(path="Examples/Notebooks")'
 # ADD  --chown=jovyan:jovyan $NB_DIR/0-StartHere.ipynb Examples/Notebooks/0-StartHere.ipynb
@@ -66,6 +69,8 @@ EXPOSE $NB_PORT
 
 # Trust all notebooks
 RUN find -name \*.ipynb  -print0 | xargs -0 jupyter trust
+
+WORKDIR /home/jovyan/
 
 # launch notebook
 CMD ["jupyter", "notebook", "--ip='0.0.0.0'", "--no-browser"]

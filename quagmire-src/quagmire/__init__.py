@@ -23,6 +23,41 @@ from . import documentation
 
 from . import tools
 
+
+try:
+    import lavavu
+except:
+    pass
+
+_display = None
+
+class _xvfb_runner(object):
+    """
+    This class will initialise the X virtual framebuffer (Xvfb).
+    Xvfb is useful on headless systems. Note that xvfb will need to be 
+    installed, as will pyvirtualdisplay.
+    This class also manages the lifetime of the virtual display driver. When
+    the object is garbage collected, the driver is stopped.
+    """
+    def __init__(self):
+        from pyvirtualdisplay import Display
+        self._xvfb = Display(visible=0, size=(1600, 1200))
+        self._xvfb.start()
+
+    def __del__(self):
+        if not self._xvfb is None :
+            self._xvfb.stop()
+
+import os as _os
+# disable collection of data if requested
+if "GLUCIFER_USE_XVFB" in _os.environ:
+    from mpi4py import MPI as _MPI
+    _comm = _MPI.COMM_WORLD
+    if _comm.rank == 0:
+        _display = _xvfb_runner()
+
+
+
 known_basemesh_classes = {type(_PETSc.DMDA())   : _PixMesh,\
                           type(_PETSc.DMPlex()) : _TriMesh}
 
