@@ -22,7 +22,7 @@ from mpi4py import MPI
 import sys,petsc4py
 petsc4py.init(sys.argv)
 from petsc4py import PETSc
-comm = MPI.COMM_WORLD
+# comm = MPI.COMM_WORLD
 from time import clock
 
 try: range = xrange
@@ -133,7 +133,7 @@ class TopoMesh(object):
 
     def _adjacency_matrix_template(self, nnz=(1,1)):
 
-        matrix = PETSc.Mat().create(comm=comm)
+        matrix = PETSc.Mat().create(comm=self.dm.comm)
         matrix.setType('aij')
         matrix.setSizes(self.sizes)
         matrix.setLGMap(self.lgmap_row, self.lgmap_col)
@@ -284,6 +284,8 @@ class TopoMesh(object):
         downhillCumulativeMat = I + D + D**2 + D**3 + ... D**N where N is the length of the graph
 
         """
+
+        comm = self.dm.comm
 
         downSweepMat    = self.accumulatorMat.copy()
         downHillaccuMat = self.downhillMat.copy()

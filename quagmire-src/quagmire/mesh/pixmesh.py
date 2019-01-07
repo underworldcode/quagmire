@@ -21,7 +21,7 @@ from mpi4py import MPI
 import sys,petsc4py
 petsc4py.init(sys.argv)
 from petsc4py import PETSc
-comm = MPI.COMM_WORLD
+# comm = MPI.COMM_WORLD
 from time import clock
 
 try: range = xrange
@@ -53,7 +53,7 @@ class PixMesh(object):
         offproc = l2g < 0
 
         l2g[offproc] = -(l2g[offproc] + 1)
-        lgmap_c = PETSc.LGMap().create(l2g, comm=comm)
+        lgmap_c = PETSc.LGMap().create(l2g, comm=dm.comm)
 
         self.lgmap_row = lgmap_r
         self.lgmap_col = lgmap_c
@@ -270,8 +270,6 @@ class PixMesh(object):
 
         return
 
-
-
     def _build_smoothing_matrix(self):
 
         indptr, indices = self.vertex_neighbour_vertices
@@ -284,7 +282,7 @@ class PixMesh(object):
         nnz = self.vertex_neighbours[lgmask] + 1
 
 
-        smoothMat = PETSc.Mat().create(comm=comm)
+        smoothMat = PETSc.Mat().create(comm=self.dm.comm)
         smoothMat.setType('aij')
         smoothMat.setSizes(self.sizes)
         smoothMat.setLGMap(self.lgmap_row, self.lgmap_col)

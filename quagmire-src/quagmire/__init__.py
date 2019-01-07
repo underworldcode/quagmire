@@ -34,7 +34,7 @@ _display = None
 class _xvfb_runner(object):
     """
     This class will initialise the X virtual framebuffer (Xvfb).
-    Xvfb is useful on headless systems. Note that xvfb will need to be 
+    Xvfb is useful on headless systems. Note that xvfb will need to be
     installed, as will pyvirtualdisplay.
     This class also manages the lifetime of the virtual display driver. When
     the object is garbage collected, the driver is stopped.
@@ -82,7 +82,9 @@ def FlatMesh(DM, *args, **kwargs):
     -------
      FlatMesh : object
     """
+
     BaseMeshType = type(DM)
+
     if BaseMeshType in list(known_basemesh_classes.keys()):
 
         class FlatMeshClass(known_basemesh_classes[BaseMeshType]):
@@ -121,6 +123,7 @@ def TopoMesh(DM, *args, **kwargs):
     -------
      TopoMesh : object
     """
+
     BaseMeshType = type(DM)
     if BaseMeshType in list(known_basemesh_classes.keys()):
         class TopoMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):

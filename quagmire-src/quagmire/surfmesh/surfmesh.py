@@ -21,7 +21,7 @@ from mpi4py import MPI
 import sys,petsc4py
 petsc4py.init(sys.argv)
 from petsc4py import PETSc
-comm = MPI.COMM_WORLD
+# comm = MPI.COMM_WORLD
 from time import clock
 
 try: range = xrange
@@ -131,7 +131,7 @@ class SurfMesh(object):
         from petsc4py import PETSc
         from mpi4py import MPI
 
-        comm = MPI.COMM_WORLD
+        comm = self.dm.comm
         size = comm.Get_size()
         rank = comm.Get_rank()
 
@@ -352,7 +352,7 @@ class SurfMesh(object):
         from petsc4py import PETSc
         from mpi4py import MPI
 
-        comm = MPI.COMM_WORLD
+        comm = self.dm.comm
         size = comm.Get_size()
         rank = comm.Get_rank()
 

@@ -21,7 +21,7 @@ from mpi4py import MPI
 import sys,petsc4py
 petsc4py.init(sys.argv)
 from petsc4py import PETSc
-comm = MPI.COMM_WORLD
+# comm = MPI.COMM_WORLD
 from time import clock
 
 try: range = xrange
@@ -57,7 +57,7 @@ class TriMesh(object):
         offproc = l2g < 0
 
         l2g[offproc] = -(l2g[offproc] + 1)
-        lgmap_c = PETSc.LGMap().create(l2g, comm=comm)
+        lgmap_c = PETSc.LGMap().create(l2g, comm=dm.comm)
 
         self.lgmap_row = lgmap_r
         self.lgmap_col = lgmap_c
@@ -83,7 +83,6 @@ class TriMesh(object):
         self.timings['area weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
             print(("{} - Calculate node weights and area {}s".format(self.dm.comm.rank, clock()-t)))
-
 
         # Find boundary points
         t = clock()
@@ -406,7 +405,7 @@ class TriMesh(object):
 
         # smoothMat = self.dm.createMatrix()
         # smoothMat.setOption(smoothMat.Option.NEW_NONZERO_LOCATIONS, False)
-        smoothMat = PETSc.Mat().create(comm=comm)
+        smoothMat = PETSc.Mat().create(comm=self.dm.comm)
         smoothMat.setType('aij')
         smoothMat.setSizes(self.sizes)
         smoothMat.setLGMap(self.lgmap_row, self.lgmap_col)
