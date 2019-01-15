@@ -19,10 +19,10 @@ RUN python3 -m pip install --upgrade --no-cache-dir stripy pyvirtualdisplay
 ENV MODULE_DIR="quagmire-src"
 ADD --chown=jovyan:jovyan $MODULE_DIR $MODULE_DIR
 RUN cd $MODULE_DIR && python3 -m pip install --no-deps --upgrade . && \
-    mv quagmire/Examples/data /home/jovyan/ && \
-    mv quagmire/Examples/Notebooks /home/jovyan/ && \
-    mv quagmire/Examples/Scripts /home/jovyan/ && \
-    rm -rf $MODULE_DIR
+    mv quagmire/Examples/data /home/jovyan/data && \
+    mv quagmire/Examples/Notebooks /home/jovyan/Notebooks && \
+    mv quagmire/Examples/Scripts /home/jovyan/Scripts && \
+    cd .. && rm -rf $MODULE_DIR
 
 
 # Add examples
@@ -32,7 +32,7 @@ RUN cd $MODULE_DIR && python3 -m pip install --no-deps --upgrade . && \
 
 # change ownership of everything
 ENV NB_USER jovyan
-RUN chown -R jovyan:jovyan $MODULE_DIR /home/jovyan
+RUN chown -R jovyan:jovyan /home/jovyan
 USER jovyan
 
 ## These are supplied by the build script
