@@ -3,7 +3,7 @@
 #################################################
 
 ARG FROMIMG_ARG
-FROM ${FROMIMG_ARG}
+FROM underworldcode/quagmire-base
 
 #################################################
 # Non standard as the files come from the package
