@@ -21,7 +21,7 @@ from mpi4py import MPI
 import sys,petsc4py
 petsc4py.init(sys.argv)
 from petsc4py import PETSc
-# comm = MPI.COMM_WORLD
+comm = MPI.COMM_WORLD
 from time import clock
 
 try: range = xrange
@@ -50,14 +50,14 @@ class TriMesh(object):
         self.sect = dm.getDefaultSection()
         self.sizes = self.gvec.getSizes(), self.gvec.getSizes()
 
-        self.rank = self.dm.comm.rank
+        self.rank = comm.rank
 
         lgmap_r = dm.getLGMap()
         l2g = lgmap_r.indices.copy()
         offproc = l2g < 0
 
         l2g[offproc] = -(l2g[offproc] + 1)
-        lgmap_c = PETSc.LGMap().create(l2g, comm=dm.comm)
+        lgmap_c = PETSc.LGMap().create(l2g, comm=comm)
 
         self.lgmap_row = lgmap_r
         self.lgmap_col = lgmap_c
@@ -405,7 +405,7 @@ class TriMesh(object):
 
         # smoothMat = self.dm.createMatrix()
         # smoothMat.setOption(smoothMat.Option.NEW_NONZERO_LOCATIONS, False)
-        smoothMat = PETSc.Mat().create(comm=self.dm.comm)
+        smoothMat = PETSc.Mat().create(comm=comm)
         smoothMat.setType('aij')
         smoothMat.setSizes(self.sizes)
         smoothMat.setLGMap(self.lgmap_row, self.lgmap_col)
@@ -599,13 +599,18 @@ class TriMesh(object):
         Replaces shadow values in the local domain (non additive)
         """
 
-        self.lvec.setArray(vector)
+        if self.dm.comm.Get_size() == 1:
+            return vector
+        else:
 
-        # self.dm.localToLocal(self.lvec, self.gvec)
-        self.dm.localToGlobal(self.lvec, self.gvec)
-        self.dm.globalToLocal(self.gvec, self.lvec)
+            # Is this the same under 3.10 ?
 
-        return self.lvec.array.copy()
+            self.lvec.setArray(vector)
+            self.dm.localToLocal(self.lvec, self.gvec)
+            self.dm.localToGlobal(self.lvec, self.gvec)
+            self.dm.globalToLocal(self.gvec, self.lvec)
+
+            return self.lvec.array.copy()
 
 
     def _construct_rbf_weights(self, delta=None):

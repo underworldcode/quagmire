@@ -374,9 +374,12 @@ class TopoMesh(object):
 
             niter += 1
 
-        self.dm.globalToLocal(DX0, self.lvec)
+        if self.dm.comm.Get_size() == 1:
+            return niter, DX0.array.copy()
+        else:
+            self.dm.globalToLocal(DX0, self.lvec)
+            return niter, self.lvec.array.copy()
 
-        return niter, self.lvec.array.copy()
 
     def cumulative_flow(self, vector):
 
@@ -404,9 +407,11 @@ class TopoMesh(object):
             smooth_data.setArray((1.0 - centre_weight) * self.gvec.array + \
                                   smooth_data.array*np.where(mask, 1.0, centre_weight))
 
-        self.dm.globalToLocal(smooth_data, self.lvec)
-
-        return self.lvec.array.copy()
+        if self.dm.comm.Get_size() == 1:
+            return smooth_data.array.copy()
+        else:
+            self.dm.globalToLocal(smooth_data, self.lvec)
+            return self.lvec.array.copy()
 
 
     def uphill_smoothing(self, data, its, centre_weight=0.75):
@@ -430,10 +435,15 @@ class TopoMesh(object):
             smooth_data.setArray((1.0 - centre_weight) * self.gvec.array * norm2 + \
                                   smooth_data.array*np.where(mask, 1.0, centre_weight))
 
-        self.dm.globalToLocal(smooth_data, self.lvec)
-        self.lvec *= data.mean()/self.lvec.array.mean()
 
-        return self.lvec.array.copy()
+        if self.dm.comm.Get_size() == 1:
+            smooth_data *= data.mean()/smooth_data.array.mean()
+            return smooth_data.copy()
+        else:
+
+            self.dm.globalToLocal(smooth_data, self.lvec)
+            self.lvec *= data.mean()/self.lvec.array.mean()
+            return self.lvec.array.copy()
 
 
     def streamwise_smoothing(self, data, its, centre_weight=0.75):

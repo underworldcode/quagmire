@@ -131,7 +131,7 @@ class SurfMesh(object):
         from petsc4py import PETSc
         from mpi4py import MPI
 
-        comm = self.dm.comm
+        comm = MPI.COMM_WORLD
         size = comm.Get_size()
         rank = comm.Get_rank()
 
@@ -307,7 +307,12 @@ class SurfMesh(object):
                 break
 
             self.gvec.scale(scale)
-            self.dm.globalToLocal(gvec, local_ID)
+
+            if self.dm.comm.Get_size() == 1:
+                local_ID.array[:] = gvec.array[:]
+            else:
+                self.dm.globalToLocal(gvec, local_ID)
+
             global_ID.array[:] = gvec.array[:]
 
             identifier = np.maximum(identifier, local_ID.array)
@@ -352,7 +357,7 @@ class SurfMesh(object):
         from petsc4py import PETSc
         from mpi4py import MPI
 
-        comm = self.dm.comm
+        comm = MPI.COMM_WORLD
         size = comm.Get_size()
         rank = comm.Get_rank()
 

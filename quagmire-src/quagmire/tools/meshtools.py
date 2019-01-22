@@ -18,6 +18,9 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
 
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+
 try: range = xrange
 except: pass
 
@@ -96,9 +99,14 @@ def set_DMPlex_boundary_points(dm):
     marked as "boundary" faces in the DAG then sets them
     as boundaries.
     """
+
     pStart, pEnd = dm.getDepthStratum(0) # points
     eStart, eEnd = dm.getDepthStratum(1) # edges
     edgeIS = dm.getStratumIS('boundary', 1)
+
+    if eEnd == eStart:
+        ## CAUTION: don't do this if any of the dm calls have barriers
+        return
 
     edge_mask = np.logical_and(edgeIS.indices >= eStart, edgeIS.indices < eEnd)
     boundary_edges = edgeIS.indices[edge_mask]
@@ -110,6 +118,8 @@ def set_DMPlex_boundary_points(dm):
         for vertex in vertices:
             dm.setLabelValue("boundary", vertex, 1)
 
+    return
+
 def set_DMPlex_boundary_points_and_edges(dm, boundary_vertices):
     """ Label boundary points and edges """
 
@@ -119,7 +129,11 @@ def set_DMPlex_boundary_points_and_edges(dm, boundary_vertices):
         raise ValueError("boundary vertices must be of shape (n,2)")
 
     # points in DAG
-    pStart, eEnd = dm.getDepthStratum(0)
+    pStart, pEnd = dm.getDepthStratum(0)
+
+    if pStart == pEnd:
+        ## CAUTION not if there is a barrier in any of the dm calls that lie ahead.
+        return
 
     # convert to DAG ordering
     boundary_edges = np.array(boundary_vertices + pStart, dtype=PETSc.IntType)
@@ -277,7 +291,8 @@ def create_DMPlex(x, y, simplices, boundary_vertices=None):
     """
     from petsc4py import PETSc
 
-    if PETSc.COMM_WORLD.rank == 0:
+
+    if comm.rank == 0:
         coords = np.column_stack([x,y])
         cells  = simplices.astype(PETSc.IntType)
     else:
@@ -292,20 +307,22 @@ def create_DMPlex(x, y, simplices, boundary_vertices=None):
     dm.createLabel("coarse")
 
     ## label boundary
-    if type(boundary_vertices) == type(None):
+    if boundary_vertices is None:
         # boundary is convex hull
         # mark edges and points
+
         dm.markBoundaryFaces("boundary")
         set_DMPlex_boundary_points(dm)
+
     else:
         # boundary is convex hull
         set_DMPlex_boundary_points_and_edges(dm, boundary_vertices)
+
 
     ## label coarse DM in case it is ever needed again
     pStart, pEnd = dm.getDepthStratum(0)
     for pt in range(pStart, pEnd):
         dm.setLabelValue("coarse", pt, 1)
-
 
     # define one DoF on the nodes
     origSect = dm.createSection(1, [1,0,0])

@@ -18,3 +18,4 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 
 from .trimesh import TriMesh
 from .pixmesh import PixMesh
+from .basemesh import MeshVariable
