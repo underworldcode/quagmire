@@ -91,6 +91,43 @@ class MeshVariable(object):
 
         return
 
+    def save(self, filename=None):
+        """
+        Save mesh variable to hdf5 file
+        """
+        from petsc4py import PETSc
+
+        vname = self._ldata.getName()
+        if type(filename) == type(None):
+            filename = vname + '.h5'
+
+        # need a global vector
+        gdata = self._dm.getGlobalVec()
+        gdata.setName(vname)
+        self._dm.localToGlobal(self._ldata, gdata)
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(filename, mode='w')
+        ViewHDF5.view(obj=gdata)
+        ViewHDF5.destroy()
+
+        return
+
+
+    def gradient(self):
+        import numpy as np
+
+        grad_vecs = self._mesh.derivative_grad(self._ldata.array)
+        grad_stacked = np.column_stack(grad_vecs)
+
+        # create Vector object
+        vname = self._ldata.getName() + "_gradient"
+        vec = VectorMeshVariable(vname, self._mesh)
+        vec.data = grad_stacked.ravel()
+        vec.sync()
+        return vec
+
+
     ## For printing and other introspection we actually want to look through to the
     ## numpy array not the petsc vector description
 
@@ -99,3 +136,20 @@ class MeshVariable(object):
 
     def __repr__(self):
         return "MeshVariable({})".format(self._ldata.array.__str__())
+
+
+class VectorMeshVariable(MeshVariable):
+
+    def __init__(self, name, mesh):
+        self._mesh = mesh
+        self._dm = mesh.dm.getCoordinateDM()
+
+        name = str(name)
+
+        # mesh variable vector
+        self._ldata = self._dm.createLocalVector()
+        self._ldata.setName(name)
+        return
+
+    def gradient(self):
+        raise TypeError("VectorMeshVariable does not support gradient operations")
