@@ -42,6 +42,11 @@ class TopoMesh(object):
         # self.height = self.gvec.duplicate()
         # self.slope = self.gvec.duplicate()
 
+        ## We should replace the existing np arrays with
+        ## this variable, but for now we just use the array
+
+        self.heightVariable = self.add_variable(name="height")
+        self.slopeVariable  = self.add_variable(name="slope")
 
     def update_height(self, height):
         """
@@ -55,9 +60,14 @@ class TopoMesh(object):
         height = self.sync(height)
 
         t = clock()
-        self.height = height.copy()
-        dHdx, dHdy = self.derivative_grad(height)
-        self.slope = np.hypot(dHdx, dHdy)
+        # self.height = height.copy()
+        self.heightVariable.data = height
+
+
+        # dHdx, dHdy = self.derivative_grad(height)
+        dHdx, dHdy = self.heightVariable.gradient()
+        #self.slope = np.hypot(dHdx, dHdy)
+        self.slopeVariable.data = np.hypot(dHdx, dHdy)
 
         # Lets send and receive this from the global space
         # self.slope[:] = self.sync(self.slope)
@@ -87,6 +97,7 @@ class TopoMesh(object):
             raise IndexError("Incompatible array size, should be {}".format(self.npoints))
 
         self.height = self.sync(height)
+        self.heightVariable.data = self.height
 
 
         t = clock()
@@ -156,11 +167,14 @@ class TopoMesh(object):
     def _build_down_neighbour_arrays(self, nearest=True):
 
         nodes = list(range(0,self.npoints))
-        nheight  = self.height[self.neighbour_cloud]
+        # nheight  = self.height[self.neighbour_cloud]
+        nheight  = self.heightVariable.data[self.neighbour_cloud]
+
         nheightidx = np.argsort(nheight, axis=1)
 
         nheightn = nheight.copy()
-        nheightn[~self.near_neighbour_mask] += self.height.max()
+        # nheightn[~self.near_neighbour_mask] += self.height.max()
+        nheightn[~self.near_neighbour_mask] += self.heightVariable.data.max()
         nheightnidx = np.argsort(nheightn, axis=1)
 
         ## How many low neighbours are there in each ?
@@ -240,10 +254,13 @@ class TopoMesh(object):
         self._build_adjacency_matrix_iterate()
         weights = np.empty((self.downhill_neighbours, self.npoints))
 
+        # height = self.height
+        height = self.heightVariable.data
+
         # Process weights
         for i in range(0, self.downhill_neighbours):
             down_N = self.down_neighbour[i+1]
-            grad = np.abs(self.height - self.height[down_N]+1.0e-10) / (1.0e-10 + \
+            grad = np.abs(height - height[down_N]+1.0e-10) / (1.0e-10 + \
                    np.hypot(self.coords[:,0] - self.coords[down_N,0],
                             self.coords[:,1] - self.coords[down_N,1] ))
 

@@ -50,7 +50,7 @@ class MeshVariable(object):
 
     @data.getter
     def data(self):
-        return self._ldata
+        return self._ldata.array
 
     @data.setter
     def data(self, val):
@@ -98,4 +98,57 @@ class MeshVariable(object):
         return "{}".format(self._ldata.array.__str__())
 
     def __repr__(self):
-        return "MeshVariable({})".format(self._ldata.array.__str__())
+        return "<MeshVariable(local_data:{})>".format(self._ldata.array.__str__())
+
+
+    def gradient(self, nit=10, tol=1e-8):
+        """
+        Compute derivatives of PHI in the x, y directions.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Arguments
+        ---------
+         PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+         nit : int optional (default: 10)
+            number of iterations to reach convergence
+         tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+
+        Returns
+        -------
+         PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+         PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
+        """
+
+        PHI = self._ldata.array
+        mesh = self._mesh
+
+        return mesh.tri.gradient(PHI, nit, tol)
+
+
+    def interpolate(self, xi, yi, err=False, **kwargs):
+        ## pass through for the mesh's interpolate method
+        import numpy as np
+
+        mesh = self._mesh
+        PHI = self._ldata.array
+        xi_array = np.array(xi).reshape(-1,1)
+        yi_array = np.array(yi).reshape(-1,1)
+
+
+        i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
+
+        if err:
+            return i, e
+        else:
+            return i
+
+
+    def evaluate(self, *args, **kwargs):
+        """A pass through for the interpolate method chosen for
+        consistency with underworld"""
+
+        return self.interpolate(*args, **kwargs)
