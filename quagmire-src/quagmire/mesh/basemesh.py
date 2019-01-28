@@ -91,6 +91,67 @@ class MeshVariable(object):
 
         return
 
+    def save(self, filename=None):
+        """
+        Save mesh variable to hdf5 file
+        """
+        from petsc4py import PETSc
+
+        vname = self._ldata.getName()
+        if type(filename) == type(None):
+            filename = vname + '.h5'
+
+        # need a global vector
+        gdata = self._dm.getGlobalVec()
+        gdata.setName(vname)
+        self._dm.localToGlobal(self._ldata, gdata)
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(filename, mode='w')
+        ViewHDF5.view(obj=gdata)
+        ViewHDF5.destroy()
+
+        return
+
+
+    def gradient(self):
+        import numpy as np
+
+        grad_vecs = self._mesh.derivative_grad(self._ldata.array)
+        grad_stacked = np.column_stack(grad_vecs)
+
+        # create Vector object
+        vname = self._ldata.getName() + "_gradient"
+        vec = VectorMeshVariable(vname, self._mesh)
+        vec.data = grad_stacked.ravel()
+        vec.sync()
+        return vec
+
+        def interpolate(self, xi, yi, err=False, **kwargs):
+            ## pass through for the mesh's interpolate method
+            import numpy as np
+
+            mesh = self._mesh
+            PHI = self._ldata.array
+            xi_array = np.array(xi).reshape(-1,1)
+            yi_array = np.array(yi).reshape(-1,1)
+
+
+            i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
+
+            if err:
+                return i, e
+            else:
+                return i
+
+
+        def evaluate(self, *args, **kwargs):
+            """A pass through for the interpolate method chosen for
+            consistency with underworld"""
+
+            return self.interpolate(*args, **kwargs)
+
+
     ## For printing and other introspection we actually want to look through to the
     ## numpy array not the petsc vector description
 
@@ -98,35 +159,7 @@ class MeshVariable(object):
         return "{}".format(self._ldata.array.__str__())
 
     def __repr__(self):
-        return "<MeshVariable(local_data:{})>".format(self._ldata.array.__str__())
-
-
-    def gradient(self, nit=10, tol=1e-8):
-        """
-        Compute derivatives of PHI in the x, y directions.
-        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
-
-        Arguments
-        ---------
-         PHI : ndarray of floats, shape (n,)
-            compute the derivative of this array
-         nit : int optional (default: 10)
-            number of iterations to reach convergence
-         tol : float optional (default: 1e-8)
-            convergence is reached when this tolerance is met
-
-        Returns
-        -------
-         PHIx : ndarray of floats, shape(n,)
-            first partial derivative of PHI in x direction
-         PHIy : ndarray of floats, shape(n,)
-            first partial derivative of PHI in y direction
-        """
-
-        PHI = self._ldata.array
-        mesh = self._mesh
-
-        return mesh.tri.gradient(PHI, nit, tol)
+        return "MeshVariable({})".format(self._ldata.array.__str__())
 
 
     def interpolate(self, xi, yi, err=False, **kwargs):
@@ -152,3 +185,20 @@ class MeshVariable(object):
         consistency with underworld"""
 
         return self.interpolate(*args, **kwargs)
+
+
+class VectorMeshVariable(MeshVariable):
+
+    def __init__(self, name, mesh):
+        self._mesh = mesh
+        self._dm = mesh.dm.getCoordinateDM()
+
+        name = str(name)
+
+        # mesh variable vector
+        self._ldata = self._dm.createLocalVector()
+        self._ldata.setName(name)
+        return
+
+    def gradient(self):
+        raise TypeError("VectorMeshVariable does not currently support gradient operations")
