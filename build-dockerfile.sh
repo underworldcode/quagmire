@@ -11,7 +11,7 @@ NB_DIR=Examples
 START_NB="0-StartHere.ipynb"
 
 docker build -t $IMAGENAME \
-             -f Dockerfile \
+             -f Docker/Dockerfile \
              --build-arg IMAGENAME_ARG=$IMAGENAME \
              --build-arg PROJ_NAME_ARG=$PROJ_NAME \
              --build-arg NB_PORT_ARG=$NB_PORT \

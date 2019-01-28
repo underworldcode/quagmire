@@ -32,6 +32,12 @@ class SurfMesh(object):
     def __init__(self, *args, **kwargs):
         self.kappa = 1.0 # dummy value
 
+        ## Variables that are needed by default methods
+
+        self.rainfall_pattern_Variable = self.add_variable(name="precipitation")
+        self.sediment_distribution_Variable = self.add_variable(name="sediment")
+
+
     def update_surface_processes(self, rainfall_pattern, sediment_distribution):
         rainfall_pattern = np.array(rainfall_pattern)
         sediment_distribution = np.array(sediment_distribution)
@@ -40,8 +46,11 @@ class SurfMesh(object):
             raise IndexError("Incompatible array size, should be {}".format(self.npoints))
 
         from time import clock
-        self.rainfall_pattern = rainfall_pattern.copy()
-        self.sediment_distribution = sediment_distribution.copy()
+        #self.rainfall_pattern = rainfall_pattern.copy()
+        #self.sediment_distribution = sediment_distribution.copy()
+
+        self.rainfall_pattern_Variable.data = rainfall_pattern
+        self.sediment_distribution_Variable = sediment_distribution
 
         # cumulative flow
         t = clock()
@@ -69,16 +78,18 @@ class SurfMesh(object):
 
         my_low_points = self.identify_low_points()
 
-        fill_height =  (self.height[self.neighbour_cloud[my_low_points,1:7]].mean(axis=1)-self.height[my_low_points])
+        h = self.heightVariable.data
+
+        fill_height =  (h[self.neighbour_cloud[my_low_points,1:7]].mean(axis=1)-h[my_low_points])
 
         new_h = self.uphill_propagation(my_low_points,  fill_height, scale=scale,  its=its, fill=0.0)
         new_h = self.sync(new_h)
 
         smoothed_new_height = self.rbf_smoother(new_h, iterations=smoothing_steps)
-        new_height = np.maximum(0.0, smoothed_new_height) + self.height
+        new_height = np.maximum(0.0, smoothed_new_height) + h
         new_height = self.sync(new_height)
 
-        self._update_height_partial(self.height)
+        self._update_height_partial(new_height)
         if self.rank==0 and self.verbose:
             print("Low point local flood fill ",  clock()-t, " seconds")
 
@@ -87,7 +98,6 @@ class SurfMesh(object):
     def low_points_local_patch_fill(self, its=1, smoothing_steps=1):
 
         from petsc4py import PETSc
-
         t = clock()
         if self.rank==0 and self.verbose:
             print("Low point local patch fill")
@@ -95,27 +105,30 @@ class SurfMesh(object):
         for iteration in range(0,its):
             low_points = self.identify_low_points()
 
-            delta_height = np.zeros_like(self.height)
+            h = self.heightVariable.data
+
+            delta_height = np.zeros_like(h)
 
             ## Note, the smoother has a communication barrier so needs to be called even if it has no work to do on this process
 
             if len(low_points) != 0:
-                delta_height[low_points] =  (self.height[self.neighbour_cloud[low_points,1:5]].mean(axis=1) -
-                                                         self.height[low_points])
+                delta_height[low_points] =  (h[self.neighbour_cloud[low_points,1:5]].mean(axis=1) -
+                                                         h[low_points])
 
+            smoothed_height = self.rbf_smoother(h+delta_height, iterations=smoothing_steps)
 
-            # self.sync(delta_height)
-
-            smoothed_height = self.rbf_smoother(self.height+delta_height, iterations=smoothing_steps)
-
-            # self.sync(smoothed_delta_height)
-
-            self.height = np.maximum(smoothed_height, self.height)
-            self.height = self.sync(self.height)
+            self.heightVariable.data = np.maximum(smoothed_height, h)
+            ## ?? what does this sync do with the shadows
+            self.heightVariable.data = self.sync(self.heightVariable.data)
+            # Should be equivalent to:
+            # self.heightVariable.sync()
 
             ## Push this / rebuild for the next loop
 
-            self._update_height_partial(self.height)
+            # Keep this alive while we test the variable implementation
+            self.height = self.heightVariable.data
+
+            self._update_height_partial(self.heightVariable.data)
 
         ## Don't leave the mesh in a half-updated state
         # self.update_height(self.height)
@@ -124,6 +137,10 @@ class SurfMesh(object):
             print("Low point local patch fill ",  clock()-t, " seconds")
 
         return self.height
+
+    ## These would be better if they did not modify the height but
+    ## that would be expensive because the partial update is needed
+    ## in the calculations and so we would have to restore the height.
 
     def low_points_swamp_fill(self, its=1000, saddles=True, ref_height=0.0):
 
@@ -157,7 +174,7 @@ class SurfMesh(object):
         outer_edges = np.where(~self.bmask)[0]
         edges = np.unique(np.hstack((cedges,outer_edges)))
 
-        height = self.height.copy()
+        height = self.heightVariable.data.copy()
 
         ## In parallel this is all the low points where this process may have a spill-point
         my_catchments = np.unique(ctmt)
@@ -211,7 +228,7 @@ class SurfMesh(object):
 
         global_spill_points = comm.bcast(all_spill_points, root=0)
 
-        height2 = np.zeros_like(self.height) + ref_height
+        height2 = np.zeros_like(height) + ref_height
 
         for i, spill in enumerate(global_spill_points):
             this_catchment = int(spill['c'])
@@ -242,7 +259,6 @@ class SurfMesh(object):
         return new_height
 
 
-
     def backfill_points(self, fill_points, heights, its):
         """
         Handles *selected* low points by backfilling height array.
@@ -250,7 +266,7 @@ class SurfMesh(object):
         """
 
         if len(fill_points) == 0:
-            return self.height
+            return self.heightVariable.data
 
         new_height = self.lvec.duplicate()
         new_height.setArray(heights)
@@ -282,7 +298,7 @@ class SurfMesh(object):
         local_ID.set(fill+1)
         global_ID.set(fill+1)
 
-        identifier = np.empty_like(self.height)
+        identifier = np.empty_like(self.heightVariable.data)
         identifier.fill(fill+1)
 
         if len(points):
@@ -555,14 +571,15 @@ class SurfMesh(object):
 
         inverse_bmask = np.invert(self.bmask)
 
-        kappa_eff = kappa / (1.01 - (np.clip(self.slope,0.0,critical_slope) / critical_slope)**2)
+        kappa_eff = kappa / (1.01 - (np.clip(self.slopeVariable.data,0.0,critical_slope) / critical_slope)**2)
         self.kappa = kappa_eff
         diff_timestep   =  self.area.min() / kappa_eff.max()
 
 
-        gradZx, gradZy = self.derivative_grad(self.height, nit=3, tol=1e-3)
+        gradZx, gradZy = self.derivative_grad(self.heightVariable.data, nit=3, tol=1e-3)
         gradZx = self.sync(gradZx)
         gradZy = self.sync(gradZy)
+
         flux_x = kappa_eff * gradZx
         flux_y = kappa_eff * gradZy
 

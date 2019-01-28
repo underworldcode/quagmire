@@ -23,7 +23,6 @@ mesh = TopoMesh(DM, downhill_neighbours=1, verbose=False)
 print("{}: mesh size:{}".format(comm.rank, mesh.npoints))
 
 
-
 v = MeshVariable("stuff", mesh)
 h = np.ones(mesh.npoints) * comm.rank
 
@@ -33,15 +32,16 @@ v.data = h
 gdata = DM.getGlobalVec()
 v.getGlobalVector(gdata)
 
-print("MeshVariable\n-------")
-print("{}: vl min/max = {}/{}".format(comm.rank, v.data.array.min(), v.data.array.max()))
+print("{}: vl min/max = {}/{}".format(comm.rank, v.data.min(), v.data.max()))
 print("{}: vg min/max = {}/{}".format(comm.rank, gdata.array.min(), gdata.array.max()))
 
-v.sync()
-v.sync()
+v.data = mesh.sync(v.data)
 
-print("{}: vlSync min/max = {}/{}".format(comm.rank, v.data.array.min(), v.data.array.max()))
+
+print("{}: vlSync min/max = {}/{}".format(comm.rank, v.data.min(), v.data.max()))
 print("{}: vgSync min/max = {}/{}".format(comm.rank, gdata.array.min(), gdata.array.max()))
+
+v.sync(mergeShadow=False)
 
 v.save()
 print(v.data)
@@ -49,6 +49,11 @@ print(v.data)
 dv = v.gradient()
 print(type(dv))
 
+
+print("INTERP")
+print(v.interpolate([0.1, 10.0], [0.1, 10.0], err=False))
+print(v.interpolate(0.1, 0.1))
+print(v.evaluate(0.1, 0.1))
 
 v = VectorMeshVariable("more_stuff", mesh)
 h = np.ones(mesh.npoints*2) * comm.rank

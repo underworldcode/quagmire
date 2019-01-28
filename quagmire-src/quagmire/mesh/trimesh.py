@@ -98,7 +98,6 @@ class TriMesh(object):
         if self.rank==0 and self.verbose:
             print(("{} - cKDTree {}s".format(self.dm.comm.rank, clock()-t)))
 
-
         # Find neighbours
         t = clock()
 
@@ -108,7 +107,6 @@ class TriMesh(object):
         if self.rank==0 and self.verbose:
             print(("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, clock()-t)))
 
-
         # sync smoothing operator
         t = clock()
         self._construct_rbf_weights()
@@ -116,10 +114,19 @@ class TriMesh(object):
         if self.rank==0 and self.verbose:
             print(("{} - Construct rbf weights {}s".format(self.dm.comm.rank, clock()-t)))
 
-
-
         self.root = False
         self.coords = self.tri.points
+        self.data = self.coords
+        self.interpolate = self.tri.interpolate
+
+
+    def add_variable(self, name=None):
+
+        from quagmire.mesh import MeshVariable
+
+        variable = MeshVariable(name=name, mesh=self)
+
+        return variable
 
 
     def get_local_mesh(self):
@@ -136,6 +143,7 @@ class TriMesh(object):
             simplices of the triangulation
          bmask  : array of bools, shape (n,2)
         """
+
         return self.tri.x, self.tri.y, self.tri.simplices, self.bmask
 
 
@@ -596,7 +604,6 @@ class TriMesh(object):
     def sync(self, vector):
         """
         Synchronise the local domain with the global domain
-        Replaces shadow values in the local domain (non additive)
         """
 
         if self.dm.comm.Get_size() == 1:
@@ -606,7 +613,7 @@ class TriMesh(object):
             # Is this the same under 3.10 ?
 
             self.lvec.setArray(vector)
-            self.dm.localToLocal(self.lvec, self.gvec)
+            # self.dm.localToLocal(self.lvec, self.gvec)
             self.dm.localToGlobal(self.lvec, self.gvec)
             self.dm.globalToLocal(self.gvec, self.lvec)
 

@@ -86,6 +86,7 @@ class PixMesh(object):
 
         # Get local coordinates
         self.coords = dm.getCoordinatesLocal().array.reshape(-1,2)
+        self.data = self.coords
 
         (minX, maxX), (minY, maxY) = dm.getLocalBoundingBox()
 

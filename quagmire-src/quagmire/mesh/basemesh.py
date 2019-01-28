@@ -50,7 +50,7 @@ class MeshVariable(object):
 
     @data.getter
     def data(self):
-        return self._ldata
+        return self._ldata.array
 
     @data.setter
     def data(self, val):
@@ -127,6 +127,30 @@ class MeshVariable(object):
         vec.sync()
         return vec
 
+        def interpolate(self, xi, yi, err=False, **kwargs):
+            ## pass through for the mesh's interpolate method
+            import numpy as np
+
+            mesh = self._mesh
+            PHI = self._ldata.array
+            xi_array = np.array(xi).reshape(-1,1)
+            yi_array = np.array(yi).reshape(-1,1)
+
+
+            i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
+
+            if err:
+                return i, e
+            else:
+                return i
+
+
+        def evaluate(self, *args, **kwargs):
+            """A pass through for the interpolate method chosen for
+            consistency with underworld"""
+
+            return self.interpolate(*args, **kwargs)
+
 
     ## For printing and other introspection we actually want to look through to the
     ## numpy array not the petsc vector description
@@ -136,6 +160,31 @@ class MeshVariable(object):
 
     def __repr__(self):
         return "MeshVariable({})".format(self._ldata.array.__str__())
+
+
+    def interpolate(self, xi, yi, err=False, **kwargs):
+        ## pass through for the mesh's interpolate method
+        import numpy as np
+
+        mesh = self._mesh
+        PHI = self._ldata.array
+        xi_array = np.array(xi).reshape(-1,1)
+        yi_array = np.array(yi).reshape(-1,1)
+
+
+        i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
+
+        if err:
+            return i, e
+        else:
+            return i
+
+
+    def evaluate(self, *args, **kwargs):
+        """A pass through for the interpolate method chosen for
+        consistency with underworld"""
+
+        return self.interpolate(*args, **kwargs)
 
 
 class VectorMeshVariable(MeshVariable):
@@ -152,4 +201,13 @@ class VectorMeshVariable(MeshVariable):
         return
 
     def gradient(self):
-        raise TypeError("VectorMeshVariable does not support gradient operations")
+        raise TypeError("VectorMeshVariable does not currently support gradient operations")
+
+    def interpolate(self, xi, yi, err=False, **kwargs):
+        raise TypeError("VectorMeshVariable does not currently support interpolate operations")
+
+    def evaluate(self, xi, yi, err=False, **kwargs):
+        """A pass through for the interpolate method chosen for
+        consistency with underworld"""
+
+        return self.interpolate(*args, **kwargs)
