@@ -65,6 +65,7 @@ class MeshVariable(object):
         if type(val) is float:
             self._ldata.set(val)
         else:
+            from petsc4py import PETSc
             self._ldata.setArray(val)
 
 

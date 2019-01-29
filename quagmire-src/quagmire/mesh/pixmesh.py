@@ -387,3 +387,11 @@ class PixMesh(object):
         smoothfield = (field[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
 
         return smoothfield
+
+    def add_variable(self, name=None):
+
+        from quagmire.mesh import MeshVariable
+
+        variable = MeshVariable(name=name, mesh=self)
+
+        return variable
