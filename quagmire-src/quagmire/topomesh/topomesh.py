@@ -65,9 +65,9 @@ class TopoMesh(object):
 
 
         # dHdx, dHdy = self.derivative_grad(height)
-        dHdx, dHdy = self.heightVariable.gradient()
+        gradH = self.heightVariable.gradient()
         #self.slope = np.hypot(dHdx, dHdy)
-        self.slopeVariable.data = np.hypot(dHdx, dHdy)
+        self.slopeVariable.data = gradH.norm(axis=1)
 
         # Lets send and receive this from the global space
         # self.slope[:] = self.sync(self.slope)

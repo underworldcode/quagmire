@@ -573,27 +573,26 @@ class SurfMesh(object):
 
         kappa_eff = kappa / (1.01 - (np.clip(self.slopeVariable.data,0.0,critical_slope) / critical_slope)**2)
         self.kappa = kappa_eff
-        diff_timestep   =  self.area.min() / kappa_eff.max()
 
+        # get minimum timestep across the global mesh
+        local_diffusion_timestep = np.array((self.area / kappa_eff).min())
+        global_diffusion_timestep = np.array(0.0)
+        self.comm.Allreduce([local_diffusion_timestep, MPI.DOUBLE], \
+                            [global_diffusion_timestep, MPI.DOUBLE], op=MPI.MIN)
 
-        gradZx, gradZy = self.derivative_grad(self.heightVariable.data, nit=3, tol=1e-3)
-        gradZx = self.sync(gradZx)
-        gradZy = self.sync(gradZy)
-
-        flux_x = kappa_eff * gradZx
-        flux_y = kappa_eff * gradZy
-
+        
+        fluxVariable = self.heightVariable.gradient(nit=3, tol=1e-3)
+        fluxVariable.data *= kappa_eff.reshape(-1,1)
         if fluxBC:
-            flux_x[inverse_bmask] = 0.0
-            flux_y[inverse_bmask] = 0.0  # outward normal flux, actually
+            fluxVariable.data[inverse_bmask] = 0.0 # outward normal flux, actually
 
-        diffDz = self.derivative_div(flux_x, flux_y, nit=3, tol=1e-3)
+        diffDz = self.derivative_div(*fluxVariable.data.T, nit=3, tol=1e-3)
         diffDz = self.sync(diffDz)
 
         if not fluxBC:
             diffDz[inverse_bmask] = 0.0
 
-        return diffDz, diff_timestep
+        return diffDz, global_diffusion_timestep
 
 
     def landscape_evolution_timestep(self, diffusion_rate, erosion_rate, deposition_rate, uplift_rate):

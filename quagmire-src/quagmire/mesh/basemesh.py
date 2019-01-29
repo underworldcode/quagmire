@@ -22,8 +22,16 @@ except: pass
 
 class MeshVariable(object):
     """
-    Mesh variables live on the global mesh
-    Every time its data is called a local instance is returned
+    The MeshVariable class generates a variable supported on the mesh.
+    
+    To set / read nodal values, use the numpy interface via the 'data' property.
+
+    Parameters
+    ----------
+     name : str
+        Assign the MeshVariable a unique identifier
+     mesh : quagmire mesh object
+        The supporting mesh for the variable
     """
     def __init__(self, name, mesh):
         self._mesh = mesh
@@ -57,7 +65,6 @@ class MeshVariable(object):
         if type(val) is float:
             self._ldata.set(val)
         else:
-            from petsc4py import PETSc
             self._ldata.setArray(val)
 
 
@@ -93,7 +100,17 @@ class MeshVariable(object):
 
     def save(self, filename=None):
         """
-        Save mesh variable to hdf5 file
+        Save the MeshVariable to disk.
+
+        Parameters
+        ----------
+         filename : str (optional)
+            The name of the output file. Relative or absolute paths may be
+            used, but all directories must exist.
+
+        Notes
+        -----
+         This method must be called collectively by all processes.
         """
         from petsc4py import PETSc
 
@@ -111,19 +128,69 @@ class MeshVariable(object):
         ViewHDF5.view(obj=gdata)
         ViewHDF5.destroy()
 
+        self._dm.restoreGlobalVec(gdata)
+
         return
 
+    # def load(self, filename):
+    #     """
+    #     Load the MeshVariable from disk.
 
-    def gradient(self):
+    #     Parameters
+    #     ----------
+    #      filename: str
+    #          The filename for the saved file. Relative or absolute paths may be
+    #          used, but all directories must exist.
+
+    #     Notes
+    #     -----
+    #      Provided files must be in hdf5 format, and contain a vector the same
+    #      size and with the same name as the current MeshVariable
+    #     """
+    #     from petsc4py import PETSc
+    #     # need a global vector
+    #     gdata = self._dm.getGlobalVec()
+    #     gdata.setName(self._ldata.getName())
+
+    #     ViewHDF5 = PETSc.Viewer()
+    #     ViewHDF5.createHDF5(str(filename), mode='r')
+    #     ViewHDF5.view(obj=gdata)
+    #     ViewHDF5.destroy()
+
+    #     self._dm.globalToLocal(gdata, self._ldata)
+    #     self._dm.restoreGlobalVec(gdata)
+
+    #     return
+
+
+    def gradient(self, nit=10, tol=1e-8):
+        """
+        Compute derivatives of PHI in the x, y directions.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+        Arguments
+        ---------
+         PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+         nit : int optional (default: 10)
+            number of iterations to reach convergence
+         tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+        Returns
+        -------
+         PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+         PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
+        """
         import numpy as np
 
-        grad_vecs = self._mesh.derivative_grad(self._ldata.array)
+        grad_vecs = self._mesh.derivative_grad(self._ldata.array, nit, tol)
         grad_stacked = np.column_stack(grad_vecs)
 
         # create Vector object
         vname = self._ldata.getName() + "_gradient"
         vec = VectorMeshVariable(vname, self._mesh)
-        vec.data = grad_stacked.ravel()
+        vec.data = grad_stacked
         vec.sync()
         return vec
 
@@ -187,8 +254,45 @@ class MeshVariable(object):
         return self.interpolate(*args, **kwargs)
 
 
-class VectorMeshVariable(MeshVariable):
+    ## Basic global operations
 
+    def max(self):
+        """ Retrieve the maximum value """
+        gdata = self._dm.getGlobalVec()
+        self._dm.localToGlobal(self._ldata, gdata)
+        idx, val = gdata.max()
+        return val
+    def min(self):
+        """ Retrieve the minimum value """
+        gdata = self._dm.getGlobalVec()
+        self._dm.localToGlobal(self._ldata, gdata)
+        idx, val = gdata.min()
+        return val
+    def sum(self):
+        """ Calculate the sum of all entries """
+        gdata = self._dm.getGlobalVec()
+        self._dm.localToGlobal(self._ldata, gdata)
+        return gdata.sum()
+
+
+
+class VectorMeshVariable(MeshVariable):
+    """
+    The VectorMeshVariable class generates a vector variable supported on the mesh.
+    
+    To set / read nodal values, use the numpy interface via the 'data' property.
+
+    Parameters
+    ----------
+     name : str
+        Assign the MeshVariable a unique identifier
+     mesh : quagmire mesh object
+        The supporting mesh for the variable
+
+    Notes
+    -----
+     This class inherits several methods from the MeshVariable class.
+    """
     def __init__(self, name, mesh):
         self._mesh = mesh
         self._dm = mesh.dm.getCoordinateDM()
@@ -199,6 +303,24 @@ class VectorMeshVariable(MeshVariable):
         self._ldata = self._dm.createLocalVector()
         self._ldata.setName(name)
         return
+
+    @property
+    def data(self):
+        pass
+
+    @data.getter
+    def data(self):
+        return self._ldata.array.reshape(-1,2)
+
+    @data.setter
+    def data(self, val):
+        import numpy as np
+        if type(val) is float:
+            self._ldata.set(val)
+        elif np.shape(val) == (self._mesh.npoints,2):
+            self._ldata.setArray(np.ravel(val))
+        else:
+            raise ValueError("NumPy array must be of shape ({},{})".format(self._mesh.npoints,2))
 
     def gradient(self):
         raise TypeError("VectorMeshVariable does not currently support gradient operations")
@@ -211,3 +333,8 @@ class VectorMeshVariable(MeshVariable):
         consistency with underworld"""
 
         return self.interpolate(*args, **kwargs)
+
+    def norm(self, axis=1):
+        """ evaluate the normal vector of the data along the specified axis """
+        import numpy as np
+        return np.linalg.norm(self.data, axis=axis)
