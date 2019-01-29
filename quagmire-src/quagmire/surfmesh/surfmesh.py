@@ -438,7 +438,7 @@ class SurfMesh(object):
 
     def identify_flat_spots(self):
 
-        smooth_grad1 = self.local_area_smoothing(self.slope, its=1, centre_weight=0.5)
+        smooth_grad1 = self.local_area_smoothing(self.slopeVariable.data, its=1, centre_weight=0.5)
 
         # flat_spot_field = np.where(smooth_grad1 < smooth_grad1.max()/100, 0.0, 1.0)
 
@@ -490,7 +490,7 @@ class SurfMesh(object):
 
         cumulative_flow_rate = cumulative_rain / self.area
 
-        stream_power = self.uphill_smoothing(cumulative_flow_rate * self.slope, smooth_power, centre_weight=centre_weight_u)
+        stream_power = self.uphill_smoothing(cumulative_flow_rate * self.slopeVariable.data, smooth_power, centre_weight=centre_weight_u)
 
         #  predicted erosion rate from stream power * efficiency
         #  maximum sediment that can be transported is limited by the local carrying capacity (assume also prop to stream power)
@@ -555,16 +555,54 @@ class SurfMesh(object):
 
 
 
+    # def landscape_diffusion_critical_slope(self, kappa, critical_slope, fluxBC):
+    #     '''
+    #     Non-linear diffusion to keep slopes at a critical value. Assumes a background
+    #     diffusion rate (can be a vector of length mesh.tri.npoints) and a critical slope value.
+    #
+    #     This term is suitable for the sloughing of sediment from hillslopes.
+    #
+    #     To Do: The critical slope should be a function of the material (sediment, basement etc)
+    #     but currently it is not.
+    #
+    #     To Do: The fluxBC flag is global ... it should apply to the outward normal
+    #     at selected nodes but currently it is set to kill both fluxes at all boundary nodes.
+    #     '''
+    #
+    #     inverse_bmask = np.invert(self.bmask)
+    #
+    #     kappa_eff = kappa / (1.01 - (np.clip(self.slopeVariable.data,0.0,critical_slope) / critical_slope)**2)
+    #     self.kappa = kappa_eff
+    #
+    #     # get minimum timestep across the global mesh
+    #     local_diffusion_timestep = np.array((self.area / kappa_eff).min())
+    #     global_diffusion_timestep = np.array(0.0)
+    #     self.comm.Allreduce([local_diffusion_timestep, MPI.DOUBLE], \
+    #                         [global_diffusion_timestep, MPI.DOUBLE], op=MPI.MIN)
+    #
+    #
+    #     fluxVariable = self.heightVariable.gradient(nit=3, tol=1e-3)
+    #     fluxVariable.data *= kappa_eff.reshape(-1,1)
+    #     if fluxBC:
+    #         fluxVariable.data[inverse_bmask] = 0.0 # outward normal flux, actually
+    #
+    #     diffDz = self.derivative_div(*fluxVariable.data.T, nit=3, tol=1e-3)
+    #     diffDz = self.sync(diffDz)
+    #
+    #     if not fluxBC:
+    #         diffDz[inverse_bmask] = 0.0
+    #
+    #     return diffDz, global_diffusion_timestep
+    #
+
+
     def landscape_diffusion_critical_slope(self, kappa, critical_slope, fluxBC):
         '''
         Non-linear diffusion to keep slopes at a critical value. Assumes a background
         diffusion rate (can be a vector of length mesh.tri.npoints) and a critical slope value.
-
         This term is suitable for the sloughing of sediment from hillslopes.
-
         To Do: The critical slope should be a function of the material (sediment, basement etc)
         but currently it is not.
-
         To Do: The fluxBC flag is global ... it should apply to the outward normal
         at selected nodes but currently it is set to kill both fluxes at all boundary nodes.
         '''
@@ -573,6 +611,7 @@ class SurfMesh(object):
 
         kappa_eff = kappa / (1.01 - (np.clip(self.slopeVariable.data,0.0,critical_slope) / critical_slope)**2)
         self.kappa = kappa_eff
+        diff_timestep   =  self.area.min() / kappa_eff.max()
 
         # get minimum timestep across the global mesh
         local_diffusion_timestep = np.array((self.area / kappa_eff).min())
@@ -580,19 +619,25 @@ class SurfMesh(object):
         self.comm.Allreduce([local_diffusion_timestep, MPI.DOUBLE], \
                             [global_diffusion_timestep, MPI.DOUBLE], op=MPI.MIN)
 
-        
-        fluxVariable = self.heightVariable.gradient(nit=3, tol=1e-3)
-        fluxVariable.data *= kappa_eff.reshape(-1,1)
-        if fluxBC:
-            fluxVariable.data[inverse_bmask] = 0.0 # outward normal flux, actually
 
-        diffDz = self.derivative_div(*fluxVariable.data.T, nit=3, tol=1e-3)
+        gradZx, gradZy = self.derivative_grad(self.heightVariable.data)
+        gradZx = self.sync(gradZx)
+        gradZy = self.sync(gradZy)
+        flux_x = kappa_eff * gradZx
+        flux_y = kappa_eff * gradZy
+
+        if fluxBC:
+            flux_x[inverse_bmask] = 0.0
+            flux_y[inverse_bmask] = 0.0  # outward normal flux, actually
+
+        diffDz = self.derivative_div(flux_x, flux_y)
         diffDz = self.sync(diffDz)
 
         if not fluxBC:
             diffDz[inverse_bmask] = 0.0
 
         return diffDz, global_diffusion_timestep
+
 
 
     def landscape_evolution_timestep(self, diffusion_rate, erosion_rate, deposition_rate, uplift_rate):
@@ -604,12 +649,12 @@ class SurfMesh(object):
         typical_l = np.sqrt(self.area)
         critical_slope = 50.0
 
-        slope = np.maximum(self.slope, critical_slope)
+        slope = np.maximum(self.slopeVariable.data, critical_slope)
 
         erosion_deposition_rate = deposition_rate - erosion_rate
 
-        erosion_timestep    = (self.slope*typical_l/(erosion_rate + 1e-12)).min()
-        deposition_timestep = (self.slope*typical_l/(deposition_rate + 1e-12)).min()
+        erosion_timestep    = (self.slopeVariable.data*typical_l/(erosion_rate + 1e-12)).min()
+        deposition_timestep = (self.slopeVariable.data*typical_l/(deposition_rate + 1e-12)).min()
         diffusion_timestep  = self.area.min()/np.max(self.kappa)
 
         local_timestep = np.array(min(erosion_timestep, deposition_timestep, diffusion_timestep))
@@ -618,6 +663,7 @@ class SurfMesh(object):
 
         delta_h = timestep * (erosion_deposition_rate - diffusion_rate + uplift_rate)
 
+        # Note this is based on local information, and must be synced
         return delta_h, timestep
 
 
