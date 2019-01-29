@@ -22,6 +22,7 @@ RUN cd $MODULE_DIR && python3 -m pip install --no-deps --upgrade . && \
     mv quagmire/Examples/data /home/jovyan/data && \
     mv quagmire/Examples/Notebooks /home/jovyan/Notebooks && \
     mv quagmire/Examples/Scripts /home/jovyan/Scripts && \
+    mv quagmire/Examples/Images /home/jovyan/Images && \
     mv quagmire/Examples/0-StartHere.ipynb /home/jovyan && \
     cd .. && rm -rf $MODULE_DIR
 

@@ -114,42 +114,66 @@ class MeshVariable(object):
         return
 
 
-    def gradient(self):
+    # def gradient(self):
+    #     import numpy as np
+    #
+    #     # grad_vecs = self._mesh.derivative_grad(self._ldata.array)
+    #     # grad_stacked = np.column_stack(grad_vecs)
+    #     #
+    #     # # create Vector object
+    #     # vname = self._ldata.getName() + "_gradient"
+    #     # vec = VectorMeshVariable(vname, self._mesh)
+    #     # vec.data = grad_stacked.ravel()
+    #     # vec.sync()
+    #     # return vec
+
+    def gradient(self, nit=10, tol=1e-8):
+        """
+        Compute derivatives of PHI in the x, y directions.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+        Arguments
+        ---------
+         PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+         nit : int optional (default: 10)
+            number of iterations to reach convergence
+         tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+        Returns
+        -------
+         PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+         PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
+        """
+
+        dx, dy = self._mesh.derivative_grad(self._ldata.array, nit, tol)
+
+        return dx, dy
+
+    def interpolate(self, xi, yi, err=False, **kwargs):
+        ## pass through for the mesh's interpolate method
         import numpy as np
 
-        grad_vecs = self._mesh.derivative_grad(self._ldata.array)
-        grad_stacked = np.column_stack(grad_vecs)
-
-        # create Vector object
-        vname = self._ldata.getName() + "_gradient"
-        vec = VectorMeshVariable(vname, self._mesh)
-        vec.data = grad_stacked.ravel()
-        vec.sync()
-        return vec
-
-        def interpolate(self, xi, yi, err=False, **kwargs):
-            ## pass through for the mesh's interpolate method
-            import numpy as np
-
-            mesh = self._mesh
-            PHI = self._ldata.array
-            xi_array = np.array(xi).reshape(-1,1)
-            yi_array = np.array(yi).reshape(-1,1)
+        mesh = self._mesh
+        PHI = self._ldata.array
+        xi_array = np.array(xi).reshape(-1,1)
+        yi_array = np.array(yi).reshape(-1,1)
 
 
-            i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
+        i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
 
-            if err:
-                return i, e
-            else:
-                return i
+        if err:
+            return i, e
+        else:
+            return i
 
 
-        def evaluate(self, *args, **kwargs):
-            """A pass through for the interpolate method chosen for
-            consistency with underworld"""
+    def evaluate(self, *args, **kwargs):
+        """A pass through for the interpolate method chosen for
+        consistency with underworld"""
 
-            return self.interpolate(*args, **kwargs)
+        return self.interpolate(*args, **kwargs)
 
 
     ## For printing and other introspection we actually want to look through to the
@@ -188,7 +212,20 @@ class MeshVariable(object):
 
 
 class VectorMeshVariable(MeshVariable):
+    """
+    The VectorMeshVariable class generates a vector variable supported on the mesh.
 
+    To set / read nodal values, use the numpy interface via the 'data' property.
+    Parameters
+    ----------
+     name : str
+        Assign the MeshVariable a unique identifier
+     mesh : quagmire mesh object
+        The supporting mesh for the variable
+    Notes
+    -----
+     This class inherits several methods from the MeshVariable class.
+    """
     def __init__(self, name, mesh):
         self._mesh = mesh
         self._dm = mesh.dm.getCoordinateDM()
@@ -199,6 +236,24 @@ class VectorMeshVariable(MeshVariable):
         self._ldata = self._dm.createLocalVector()
         self._ldata.setName(name)
         return
+
+    @property
+    def data(self):
+        pass
+
+    @data.getter
+    def data(self):
+        return self._ldata.array.reshape(-1,2)
+
+    @data.setter
+    def data(self, val):
+        import numpy as np
+        if type(val) is float:
+            self._ldata.set(val)
+        elif np.shape(val) == (self._mesh.npoints,2):
+            self._ldata.setArray(np.ravel(val))
+        else:
+            raise ValueError("NumPy array must be of shape ({},{})".format(self._mesh.npoints,2))
 
     def gradient(self):
         raise TypeError("VectorMeshVariable does not currently support gradient operations")
@@ -211,3 +266,8 @@ class VectorMeshVariable(MeshVariable):
         consistency with underworld"""
 
         return self.interpolate(*args, **kwargs)
+
+    def norm(self, axis=1):
+        """ evaluate the normal vector of the data along the specified axis """
+        import numpy as np
+        return np.linalg.norm(self.data, axis=axis)
