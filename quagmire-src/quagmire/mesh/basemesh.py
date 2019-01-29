@@ -202,3 +202,12 @@ class VectorMeshVariable(MeshVariable):
 
     def gradient(self):
         raise TypeError("VectorMeshVariable does not currently support gradient operations")
+
+    def interpolate(self, xi, yi, err=False, **kwargs):
+        raise TypeError("VectorMeshVariable does not currently support interpolate operations")
+
+    def evaluate(self, xi, yi, err=False, **kwargs):
+        """A pass through for the interpolate method chosen for
+        consistency with underworld"""
+
+        return self.interpolate(*args, **kwargs)
