@@ -50,6 +50,7 @@ class TriMesh(object):
         self.sect = dm.getDefaultSection()
         self.sizes = self.gvec.getSizes(), self.gvec.getSizes()
 
+        self.comm = comm
         self.rank = comm.rank
 
         lgmap_r = dm.getLGMap()
@@ -529,6 +530,12 @@ class TriMesh(object):
         vec = self.gvec.duplicate()
         vec = self.dm.createGlobalVec()
 
+        if os.path.isfile(file):
+            mode = "a"
+        else:
+            mode = "w"
+
+
         for key in kwdict:
             val = kwdict[key]
             try:
@@ -538,13 +545,14 @@ class TriMesh(object):
                 self.dm.localToGlobal(self.lvec, vec)
 
             vec.setName(key)
-            if self.rank == 0:
+            if self.rank == 0 and self.verbose:
                 print("Saving {} to hdf5".format(key))
 
             ViewHDF5 = PETSc.Viewer()
-            ViewHDF5.createHDF5(file, mode='a')
+            ViewHDF5.createHDF5(file, mode=mode)
             ViewHDF5.view(obj=vec)
             ViewHDF5.destroy()
+            mode = "a"
 
         vec.destroy()
 

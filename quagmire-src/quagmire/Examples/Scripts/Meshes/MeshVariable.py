@@ -33,13 +33,13 @@ gdata = DM.getGlobalVec()
 v.getGlobalVector(gdata)
 
 print("{}: vl min/max = {}/{}".format(comm.rank, v.data.min(), v.data.max()))
-print("{}: vg min/max = {}/{}".format(comm.rank, gdata.array.min(), gdata.array.max()))
+print("{}: vg min/max = {}/{}".format(comm.rank, gdata.min(), gdata.max()))
 
 v.data = mesh.sync(v.data)
 
 
 print("{}: vlSync min/max = {}/{}".format(comm.rank, v.data.min(), v.data.max()))
-print("{}: vgSync min/max = {}/{}".format(comm.rank, gdata.array.min(), gdata.array.max()))
+print("{}: vgSync min/max = {}/{}".format(comm.rank, gdata.min(), gdata.max()))
 
 v.sync(mergeShadow=False)
 
@@ -56,22 +56,22 @@ print(v.interpolate(0.1, 0.1))
 print(v.evaluate(0.1, 0.1))
 
 v = VectorMeshVariable("more_stuff", mesh)
-h = np.ones(mesh.npoints*2) * comm.rank
+h = np.ones((mesh.npoints, 2)) * comm.rank
 
 v.data = h
 
-gdata = DM.getCoordinates()
+gdata = DM.getCoordinates().duplicate()
 v.getGlobalVector(gdata)
 
 print("VectorMeshVariable\n-------")
-print("{}: vl min/max = {}/{}".format(comm.rank, v.data.array.min(), v.data.array.max()))
-print("{}: vg min/max = {}/{}".format(comm.rank, gdata.array.min(), gdata.array.max()))
+print("{}: vl min/max = {}/{}".format(comm.rank, v.data.min(), v.data.max()))
+print("{}: vg min/max = {}/{}".format(comm.rank, gdata.min(), gdata.max()))
 
 v.sync()
 v.sync()
 
-print("{}: vlSync min/max = {}/{}".format(comm.rank, v.data.array.min(), v.data.array.max()))
-print("{}: vgSync min/max = {}/{}".format(comm.rank, gdata.array.min(), gdata.array.max()))
+print("{}: vlSync min/max = {}/{}".format(comm.rank, v.data.min(), v.data.max()))
+print("{}: vgSync min/max = {}/{}".format(comm.rank, gdata.min(), gdata.max()))
 
 v.save()
 

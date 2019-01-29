@@ -22,8 +22,16 @@ except: pass
 
 class MeshVariable(object):
     """
-    Mesh variables live on the global mesh
-    Every time its data is called a local instance is returned
+    The MeshVariable class generates a variable supported on the mesh.
+
+    To set / read nodal values, use the numpy interface via the 'data' property.
+
+    Parameters
+    ----------
+     name : str
+        Assign the MeshVariable a unique identifier
+     mesh : quagmire mesh object
+        The supporting mesh for the variable
     """
     def __init__(self, name, mesh):
         self._mesh = mesh
@@ -93,7 +101,15 @@ class MeshVariable(object):
 
     def save(self, filename=None):
         """
-        Save mesh variable to hdf5 file
+        Save the MeshVariable to disk.
+        Parameters
+        ----------
+         filename : str (optional)
+            The name of the output file. Relative or absolute paths may be
+            used, but all directories must exist.
+        Notes
+        -----
+         This method must be called collectively by all processes.
         """
         from petsc4py import PETSc
 
@@ -111,8 +127,39 @@ class MeshVariable(object):
         ViewHDF5.view(obj=gdata)
         ViewHDF5.destroy()
 
+        self._dm.restoreGlobalVec(gdata)
+
         return
 
+# def load(self, filename):
+    #     """
+    #     Load the MeshVariable from disk.
+
+    #     Parameters
+    #     ----------
+    #      filename: str
+    #          The filename for the saved file. Relative or absolute paths may be
+    #          used, but all directories must exist.
+
+    #     Notes
+    #     -----
+    #      Provided files must be in hdf5 format, and contain a vector the same
+    #      size and with the same name as the current MeshVariable
+    #     """
+    #     from petsc4py import PETSc
+    #     # need a global vector
+    #     gdata = self._dm.getGlobalVec()
+    #     gdata.setName(self._ldata.getName())
+
+    #     ViewHDF5 = PETSc.Viewer()
+    #     ViewHDF5.createHDF5(str(filename), mode='r')
+    #     ViewHDF5.view(obj=gdata)
+    #     ViewHDF5.destroy()
+
+    #     self._dm.globalToLocal(gdata, self._ldata)
+    #     self._dm.restoreGlobalVec(gdata)
+
+    #     return
 
     # def gradient(self):
     #     import numpy as np
@@ -186,29 +233,28 @@ class MeshVariable(object):
         return "MeshVariable({})".format(self._ldata.array.__str__())
 
 
-    def interpolate(self, xi, yi, err=False, **kwargs):
-        ## pass through for the mesh's interpolate method
-        import numpy as np
 
-        mesh = self._mesh
-        PHI = self._ldata.array
-        xi_array = np.array(xi).reshape(-1,1)
-        yi_array = np.array(yi).reshape(-1,1)
+    ## Basic global operations (these are not global operations are they ??? )
 
-
-        i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
-
-        if err:
-            return i, e
-        else:
-            return i
-
-
-    def evaluate(self, *args, **kwargs):
-        """A pass through for the interpolate method chosen for
-        consistency with underworld"""
-
-        return self.interpolate(*args, **kwargs)
+    # def max(self):
+    #     """ Retrieve the maximum value """
+    #     gdata = self._dm.getGlobalVec()
+    #     self._dm.localToGlobal(self._ldata, gdata)
+    #     idx, val = gdata.max()
+    #     return val
+    #
+    # def min(self):
+    #     """ Retrieve the minimum value """
+    #     gdata = self._dm.getGlobalVec()
+    #     self._dm.localToGlobal(self._ldata, gdata)
+    #     idx, val = gdata.min()
+    #     return val
+    #
+    # def sum(self):
+    #     """ Calculate the sum of all entries """
+    #     gdata = self._dm.getGlobalVec()
+    #     self._dm.localToGlobal(self._ldata, gdata)
+    #     return gdata.sum()
 
 
 class VectorMeshVariable(MeshVariable):
@@ -267,7 +313,11 @@ class VectorMeshVariable(MeshVariable):
 
         return self.interpolate(*args, **kwargs)
 
+
     def norm(self, axis=1):
         """ evaluate the normal vector of the data along the specified axis """
         import numpy as np
         return np.linalg.norm(self.data, axis=axis)
+
+
+    # We should wait to do this one for global operations
