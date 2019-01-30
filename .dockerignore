@@ -1,0 +1,20 @@
+
+.git/*
+
+*.pyc
+
+*checkpoint.ipynb
+
+*.mp4
+
+*.h5
+
+build/*
+egg-info.*
+*.xmf
+
+
+## These should be downloaded if required
+
+quagmire/Examples/data/ETOPO.npz
+quagmire/Examples/data/ETOPO1_Ice_c_geotiff.tif

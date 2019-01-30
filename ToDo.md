@@ -1,34 +1,14 @@
-## For v 0.2
+## TO DO
 
 
-## Rudimentary mesh variables:
-
-   - initialise
-   - synchronise
-   - checkpoints
-   - gradient operations (?)
-   - vector / scalar ?
-
-   - are petsc vectors really
+Dockerfile:  needs mpirun in the path
+Dockerfile:  needs to have the proper token stuff for Jupyter
+Dockerfile:  add the help script etc.
 
 
-## Examples
+MeshVariable: add print function to output array value (DONE) __str__ and __repr__
+MeshVariable: add gradient and interpolation / evaluate methods (DONE)
 
-   - Erosion notebooks
-   - Landscape processing / analysis
-   - Data preparation
-   - Shuttle tiles for topography
+mesh.add_variable ... cf underworld
 
-   - catchment analysis
-
-## Operations
-
-   - pit filling - done 
-   - swamp / flood computation - done
-   -
-
-
-## Operators
-
-   - streamwise gradients / smoothing
-   -
+Pixmesh: add an interpolate method.
