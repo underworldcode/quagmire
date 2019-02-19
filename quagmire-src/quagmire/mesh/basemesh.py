@@ -20,7 +20,12 @@ try: range = xrange
 except: pass
 
 
-class MeshVariable(object):
+## These also need to be lazy evaluation objects
+
+from ..function import LazyEvaluation as _LazyEvaluation
+
+
+class MeshVariable(_LazyEvaluation):
     """
     The MeshVariable class generates a variable supported on the mesh.
 
@@ -33,11 +38,13 @@ class MeshVariable(object):
      mesh : quagmire mesh object
         The supporting mesh for the variable
     """
-    def __init__(self, name, mesh):
+    def __init__(self, name=None, mesh=None):
+        super(MeshVariable, self).__init__()
+
         self._mesh = mesh
         self._dm = mesh.dm
-
-        name = str(name)
+        self._name = str(name)
+        self.description = self._name
 
         # mesh variable vector
         self._ldata = self._dm.createLocalVector()
@@ -71,9 +78,7 @@ class MeshVariable(object):
 
     def getGlobalVector(self, gdata):
         from petsc4py import PETSc
-
         self._dm.localToGlobal(self._ldata, gdata, addv=PETSc.InsertMode.INSERT_VALUES)
-
         return
 
 
@@ -174,6 +179,7 @@ class MeshVariable(object):
     #     # vec.sync()
     #     # return vec
 
+
     def gradient(self, nit=10, tol=1e-8):
         """
         Compute derivatives of PHI in the x, y directions.
@@ -198,6 +204,38 @@ class MeshVariable(object):
 
         return dx, dy
 
+    # def lazy_gradient(self, nit=10, tol=1e-8):
+    #     """
+    #     Compute derivatives of PHI in the x, y directions.
+    #     This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+    #     Arguments
+    #     ---------
+    #      PHI : ndarray of floats, shape (n,)
+    #         compute the derivative of this array
+    #      nit : int optional (default: 10)
+    #         number of iterations to reach convergence
+    #      tol : float optional (default: 1e-8)
+    #         convergence is reached when this tolerance is met
+    #     Returns
+    #     -------
+    #      PHIx : ndarray of floats, shape(n,)
+    #         first partial derivative of PHI in x direction
+    #      PHIy : ndarray of floats, shape(n,)
+    #         first partial derivative of PHI in y direction
+    #     """
+    #
+    #     ## need a local numpy array for computation
+    #     local_array = self._ldata.array.copy()
+    #
+    #     ## First call to evaluate on the mesh
+    #     local_array = self.evaluate(self._mesh)
+    #
+    #     dx, dy = self._mesh.derivative_grad(local_array, nit, tol)
+    #
+    #     return dx, dy
+    #
+
+
     def interpolate(self, xi, yi, err=False, **kwargs):
         ## pass through for the mesh's interpolate method
         import numpy as np
@@ -206,7 +244,6 @@ class MeshVariable(object):
         PHI = self._ldata.array
         xi_array = np.array(xi).reshape(-1,1)
         yi_array = np.array(yi).reshape(-1,1)
-
 
         i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
 
@@ -217,10 +254,16 @@ class MeshVariable(object):
 
 
     def evaluate(self, *args, **kwargs):
-        """A pass through for the interpolate method chosen for
-        consistency with underworld"""
+        """ If no arguments or the argument is the mesh, return the
+            values at the nodes. In all other cases call the interpolate
+            method """
 
-        return self.interpolate(*args, **kwargs)
+        if len(args) == 0: # or args == self._mesh: ???
+            return self._ldata.array
+        elif len(args) == 1 and args[0] == self._mesh:
+            return self._ldata.array
+        else:
+            return self.interpolate(*args, **kwargs)
 
 
     ## For printing and other introspection we actually want to look through to the
@@ -232,7 +275,50 @@ class MeshVariable(object):
     def __repr__(self):
         return "MeshVariable({})".format(self._ldata.array.__str__())
 
+    ## This should be possible to do with some kind of factory
 
+    # def __mul__(self, other):
+    #     self._typecompare_and_raise(other)
+    #     name = None # but should perhaps be self.name + other.name + randomness ?
+    #     V = MeshVariable(name=None, mesh=self._mesh)
+    #     V.data = self.data * other.data
+    #     V.sync()
+    #     return(V)
+    #
+    # def __add__(self, other):
+    #     self._typecompare_and_raise(other)
+    #     name = None # but should perhaps be self.name + other.name + randomness ?
+    #     V = MeshVariable(name=None, mesh=self._mesh)
+    #     V.data = self.data + other.data
+    #     V.sync()
+    #     return(V)
+    #
+    # def __sub__(self, other):
+    #     self._typecompare_and_raise(other)
+    #     name = None # but should perhaps be self.name + other.name + randomness ?
+    #     V = MeshVariable(name=None, mesh=self._mesh)
+    #     V.data = self.data - other.data
+    #     V.sync()
+    #     return(V)
+    #
+    # def __neg__(self):
+    #
+    #     name = None # but should perhaps be self.name + other.name + randomness ?
+    #     V = MeshVariable(name=None, mesh=self._mesh)
+    #     V.data = -self.data
+    #     V.sync()
+    #     return(V)
+    #
+
+    def _typecompare_and_raise(self, other):
+
+        if type(other) != type(self):
+            raise RuntimeError('MeshVariable mismatch error')
+
+        if self._mesh != other._mesh:
+            raise RuntimeError('MeshVariable meshes must match')
+
+        return
 
     ## Basic global operations (these are not global operations are they ??? )
 

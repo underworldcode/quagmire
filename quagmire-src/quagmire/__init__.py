@@ -19,10 +19,10 @@ from .mesh import TriMesh as _TriMesh
 from petsc4py import PETSc as _PETSc
 from .topomesh import TopoMesh as _TopoMeshClass
 from .surfmesh import SurfMesh as _SurfaceProcessMeshClass
+
 from . import documentation
-
 from . import tools
-
+from . import function
 
 try:
     import lavavu
