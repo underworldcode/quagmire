@@ -75,6 +75,12 @@ class MeshVariable(_LazyEvaluation):
             from petsc4py import PETSc
             self._ldata.setArray(val)
 
+    ## For printing and other introspection we actually want to look through to the
+    ## meshVariable's own description
+
+    def __repr__(self):
+        return "quagmire.MeshVariable: {}".format(self.description)
+
 
     def getGlobalVector(self, gdata):
         from petsc4py import PETSc
@@ -166,23 +172,10 @@ class MeshVariable(_LazyEvaluation):
 
     #     return
 
-    # def gradient(self):
-    #     import numpy as np
-    #
-    #     # grad_vecs = self._mesh.derivative_grad(self._ldata.array)
-    #     # grad_stacked = np.column_stack(grad_vecs)
-    #     #
-    #     # # create Vector object
-    #     # vname = self._ldata.getName() + "_gradient"
-    #     # vec = VectorMeshVariable(vname, self._mesh)
-    #     # vec.data = grad_stacked.ravel()
-    #     # vec.sync()
-    #     # return vec
-
 
     def gradient(self, nit=10, tol=1e-8):
         """
-        Compute derivatives of PHI in the x, y directions.
+        Compute values of the derivatives of PHI in the x, y directions at the nodal points.
         This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
         Arguments
         ---------
@@ -204,37 +197,6 @@ class MeshVariable(_LazyEvaluation):
 
         return dx, dy
 
-    # def lazy_gradient(self, nit=10, tol=1e-8):
-    #     """
-    #     Compute derivatives of PHI in the x, y directions.
-    #     This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
-    #     Arguments
-    #     ---------
-    #      PHI : ndarray of floats, shape (n,)
-    #         compute the derivative of this array
-    #      nit : int optional (default: 10)
-    #         number of iterations to reach convergence
-    #      tol : float optional (default: 1e-8)
-    #         convergence is reached when this tolerance is met
-    #     Returns
-    #     -------
-    #      PHIx : ndarray of floats, shape(n,)
-    #         first partial derivative of PHI in x direction
-    #      PHIy : ndarray of floats, shape(n,)
-    #         first partial derivative of PHI in y direction
-    #     """
-    #
-    #     ## need a local numpy array for computation
-    #     local_array = self._ldata.array.copy()
-    #
-    #     ## First call to evaluate on the mesh
-    #     local_array = self.evaluate(self._mesh)
-    #
-    #     dx, dy = self._mesh.derivative_grad(local_array, nit, tol)
-    #
-    #     return dx, dy
-    #
-
 
     def interpolate(self, xi, yi, err=False, **kwargs):
         ## pass through for the mesh's interpolate method
@@ -254,93 +216,41 @@ class MeshVariable(_LazyEvaluation):
 
 
     def evaluate(self, *args, **kwargs):
-        """ If no arguments or the argument is the mesh, return the
+        """ If the argument is a mesh, return the
             values at the nodes. In all other cases call the interpolate
             method """
 
-        if len(args) == 0: # or args == self._mesh: ???
+        if len(args) == 1 and args[0] == self._mesh:
             return self._ldata.array
-        elif len(args) == 1 and args[0] == self._mesh:
-            return self._ldata.array
+        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            mesh = args[0]
+            return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], **kwargs)
         else:
             return self.interpolate(*args, **kwargs)
 
 
-    ## For printing and other introspection we actually want to look through to the
-    ## numpy array not the petsc vector description
 
-    def __str__(self):
-        return "{}".format(self._ldata.array.__str__())
+    ## Basic global operations provided by petsc4py
 
-    def __repr__(self):
-        return "MeshVariable({})".format(self._ldata.array.__str__())
+    def max(self):
+        """ Retrieve the maximum value """
+        gdata = self._dm.getGlobalVec()
+        self._dm.localToGlobal(self._ldata, gdata)
+        idx, val = gdata.max()
+        return val
 
-    ## This should be possible to do with some kind of factory
+    def min(self):
+        """ Retrieve the minimum value """
+        gdata = self._dm.getGlobalVec()
+        self._dm.localToGlobal(self._ldata, gdata)
+        idx, val = gdata.min()
+        return val
 
-    # def __mul__(self, other):
-    #     self._typecompare_and_raise(other)
-    #     name = None # but should perhaps be self.name + other.name + randomness ?
-    #     V = MeshVariable(name=None, mesh=self._mesh)
-    #     V.data = self.data * other.data
-    #     V.sync()
-    #     return(V)
-    #
-    # def __add__(self, other):
-    #     self._typecompare_and_raise(other)
-    #     name = None # but should perhaps be self.name + other.name + randomness ?
-    #     V = MeshVariable(name=None, mesh=self._mesh)
-    #     V.data = self.data + other.data
-    #     V.sync()
-    #     return(V)
-    #
-    # def __sub__(self, other):
-    #     self._typecompare_and_raise(other)
-    #     name = None # but should perhaps be self.name + other.name + randomness ?
-    #     V = MeshVariable(name=None, mesh=self._mesh)
-    #     V.data = self.data - other.data
-    #     V.sync()
-    #     return(V)
-    #
-    # def __neg__(self):
-    #
-    #     name = None # but should perhaps be self.name + other.name + randomness ?
-    #     V = MeshVariable(name=None, mesh=self._mesh)
-    #     V.data = -self.data
-    #     V.sync()
-    #     return(V)
-    #
-
-    def _typecompare_and_raise(self, other):
-
-        if type(other) != type(self):
-            raise RuntimeError('MeshVariable mismatch error')
-
-        if self._mesh != other._mesh:
-            raise RuntimeError('MeshVariable meshes must match')
-
-        return
-
-    ## Basic global operations (these are not global operations are they ??? )
-
-    # def max(self):
-    #     """ Retrieve the maximum value """
-    #     gdata = self._dm.getGlobalVec()
-    #     self._dm.localToGlobal(self._ldata, gdata)
-    #     idx, val = gdata.max()
-    #     return val
-    #
-    # def min(self):
-    #     """ Retrieve the minimum value """
-    #     gdata = self._dm.getGlobalVec()
-    #     self._dm.localToGlobal(self._ldata, gdata)
-    #     idx, val = gdata.min()
-    #     return val
-    #
-    # def sum(self):
-    #     """ Calculate the sum of all entries """
-    #     gdata = self._dm.getGlobalVec()
-    #     self._dm.localToGlobal(self._ldata, gdata)
-    #     return gdata.sum()
+    def sum(self):
+        """ Calculate the sum of all entries """
+        gdata = self._dm.getGlobalVec()
+        self._dm.localToGlobal(self._ldata, gdata)
+        return gdata.sum()
 
 
 class VectorMeshVariable(MeshVariable):

@@ -31,6 +31,11 @@ except:
 
 _display = None
 
+from mpi4py import MPI as _MPI
+mpi_rank = _MPI.COMM_WORLD.rank
+mpi_size = _MPI.COMM_WORLD.size
+
+
 class _xvfb_runner(object):
     """
     This class will initialise the X virtual framebuffer (Xvfb).
