@@ -135,50 +135,49 @@ class MeshVariable(_LazyEvaluation):
 
         ViewHDF5 = PETSc.Viewer()
         ViewHDF5.createHDF5(filename, mode='w')
-        ViewHDF5.view(obj=gdata)
+        ViewHDF5(gdata)
         ViewHDF5.destroy()
 
         self._dm.restoreGlobalVec(gdata)
 
         return
 
-# def load(self, filename):
-    #     """
-    #     Load the MeshVariable from disk.
+    def load(self, filename):
+        """
+        Load the MeshVariable from disk.
 
-    #     Parameters
-    #     ----------
-    #      filename: str
-    #          The filename for the saved file. Relative or absolute paths may be
-    #          used, but all directories must exist.
+        Parameters
+        ----------
+         filename: str
+             The filename for the saved file. Relative or absolute paths may be
+             used, but all directories must exist.
 
-    #     Notes
-    #     -----
-    #      Provided files must be in hdf5 format, and contain a vector the same
-    #      size and with the same name as the current MeshVariable
-    #     """
-    #     from petsc4py import PETSc
-    #     # need a global vector
-    #     gdata = self._dm.getGlobalVec()
-    #     gdata.setName(self._ldata.getName())
+        Notes
+        -----
+         Provided files must be in hdf5 format, and contain a vector the same
+         size and with the same name as the current MeshVariable
+        """
+        from petsc4py import PETSc
+        # need a global vector
+        gdata = self._dm.getGlobalVec()
+        gdata.setName(self._ldata.getName())
 
-    #     ViewHDF5 = PETSc.Viewer()
-    #     ViewHDF5.createHDF5(str(filename), mode='r')
-    #     ViewHDF5.view(obj=gdata)
-    #     ViewHDF5.destroy()
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(str(filename), mode='r')
+        gdata.load(ViewHDF5)
+        ViewHDF5.destroy()
 
-    #     self._dm.globalToLocal(gdata, self._ldata)
-    #     self._dm.restoreGlobalVec(gdata)
-
-    #     return
+        self._dm.globalToLocal(gdata, self._ldata)
+        self._dm.restoreGlobalVec(gdata)
 
 
     def gradient(self, nit=10, tol=1e-8):
         """
         Compute values of the derivatives of PHI in the x, y directions at the nodal points.
         This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
-        Arguments
-        ---------
+
+        Parameters
+        ----------
          PHI : ndarray of floats, shape (n,)
             compute the derivative of this array
          nit : int optional (default: 10)

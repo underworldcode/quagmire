@@ -43,8 +43,12 @@ print("{}: vgSync min/max = {}/{}".format(comm.rank, gdata.min(), gdata.max()))
 
 v.sync(mergeShadow=False)
 
-v.save()
 print(v.data)
+v.save()
+
+v2 = MeshVariable("stuff", mesh)
+v2.load("stuff.h5")
+print("{}: save/load ".format(comm.rank), np.all(v2.data == v.data))
 
 dv = v.gradient()
 print(type(dv))
@@ -73,7 +77,10 @@ v.sync()
 print("{}: vlSync min/max = {}/{}".format(comm.rank, v.data.min(), v.data.max()))
 print("{}: vgSync min/max = {}/{}".format(comm.rank, gdata.min(), gdata.max()))
 
+print(v.data)
 v.save()
 
 
-print(v.data)
+v2 = VectorMeshVariable("more_stuff", mesh)
+v2.load("more_stuff.h5")
+print("{}: save/load ".format(comm.rank), np.all(v2.data == v.data))
