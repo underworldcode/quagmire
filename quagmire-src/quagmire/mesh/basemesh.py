@@ -25,9 +25,32 @@ except: pass
 from ..function import LazyEvaluation as _LazyEvaluation
 
 
+# class VirtualMeshVariable(_LazyEvaluation):
+#     """Wrapper for function objects so they can spoof being a MeshVariable if required"""
+#
+#     def __init__(self, name=None, mesh=None, fn=None):
+#         super(VirtualMeshVariable, self).__init__()
+#
+#         from quagmire.function import parameter
+#
+#         if fn is None:
+#             fn = parameter(0.0)
+#
+#         self._mesh = mesh
+#         self._dm = mesh.dm
+#         self._name = str(name)
+#
+#         self.description = fn.description
+#         self._locked = True
+#         self.mesh_data = False
+#
+#         return
+#
+#
+
+
 class MeshVariable(_LazyEvaluation):
-    """
-    The MeshVariable class generates a variable supported on the mesh.
+    """The MeshVariable class generates a variable supported on the mesh.
 
     To set / read nodal values, use the numpy interface via the 'data' property.
 
@@ -38,13 +61,15 @@ class MeshVariable(_LazyEvaluation):
      mesh : quagmire mesh object
         The supporting mesh for the variable
     """
-    def __init__(self, name=None, mesh=None):
+    def __init__(self, name=None, mesh=None, locked=False):
         super(MeshVariable, self).__init__()
 
         self._mesh = mesh
         self._dm = mesh.dm
         self._name = str(name)
         self.description = self._name
+        self._locked = locked
+        self.mesh_data = True
 
         # mesh variable vector
         self._ldata = self._dm.createLocalVector()
@@ -52,12 +77,18 @@ class MeshVariable(_LazyEvaluation):
         return
 
 
+    def lock(self):
+        self._locked = True
+
+    def unlock(self):
+        self._locked = False
+
 ## This is a redundancy - @property definition is nuked by the @ .getter
 ## LM: See this: https://stackoverflow.com/questions/51244348/use-of-propertys-getter-in-python
 
 ## Don't sync on get / set as this prevents doing a series of computations on the array and
 ## doing the sync when finished. I can also imagine this going wrong if sync nukes values
-## in the shadow zone unexpectedly.
+## in the shadow zone unexpectedly. Also get is called for any indexing operation ...  ugh !
 
     @property
     def data(self):
@@ -65,21 +96,45 @@ class MeshVariable(_LazyEvaluation):
 
     @data.getter
     def data(self):
-        return self._ldata.array
+        # This step is necessary because the numpy array is writeable
+        # through to the petsc vector and this cannot be blocked.
+        # Access to the numpy array will not automatically be sync'd and this
+        # would also be a way to circumvent access to locked arrays - where such
+        # locking is intended to ensure we update dependent data when the variable is
+        # updated
+
+# if self._locked:
+        view = self._ldata.array[:]
+        view.setflags(write=False)
+        return view
+        
+#        else:
+#            return self._ldata.array
 
     @data.setter
     def data(self, val):
+        if self._locked:
+            import quagmire
+            if quagmire.mpi_rank == 0:
+                print("quagmire.MeshVariable: {} - is locked".format(self.description))
+            return
+
         if type(val) is float:
-            self._ldata.set(val)
+                self._ldata.set(val)
         else:
             from petsc4py import PETSc
             self._ldata.setArray(val)
+
+
 
     ## For printing and other introspection we actually want to look through to the
     ## meshVariable's own description
 
     def __repr__(self):
-        return "quagmire.MeshVariable: {}".format(self.description)
+        if self._locked:
+            return "quagmire.MeshVariable: {} - RO".format(self.description)
+        else:
+            return "quagmire.MeshVariable: {} - RW".format(self.description)
 
 
     def getGlobalVector(self, gdata):
@@ -219,6 +274,8 @@ class MeshVariable(_LazyEvaluation):
         """ If the argument is a mesh, return the
             values at the nodes. In all other cases call the interpolate
             method """
+
+        import quagmire
 
         if len(args) == 1 and args[0] == self._mesh:
             return self._ldata.array

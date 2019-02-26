@@ -21,7 +21,6 @@ import quagmire
 from .function_classes import LazyEvaluation as _LazyEvaluation
 
 
-
 def _make_npmath_op(op, name, lazyFn):
     newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
     newLazyFn.evaluate = lambda *args, **kwargs : op(lazyFn.evaluate(*args, **kwargs))
@@ -68,3 +67,24 @@ def coord(dirn):
         return newLazyFn_xs
     else:
         return newLazyFn_ys
+
+
+def levelset(lazyFn, alpha=0.5, invert=False):
+
+    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+
+    def threshold(*args, **kwargs):
+        if not invert:
+            values = (lazyFn.evaluate(*args, **kwargs) > alpha).astype(float)
+        else:
+            values = (lazyFn.evaluate(*args, **kwargs) < alpha).astype(float)
+
+        return values
+
+    newLazyFn.evaluate = threshold
+    if not invert:
+        newLazyFn.description = "(level({}) > {}".format(lazyFn.description, alpha)
+    else:
+        newLazyFn.description = "(level({}) < {}".format(lazyFn.description, alpha)
+
+    return newLazyFn

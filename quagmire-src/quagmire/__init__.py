@@ -145,6 +145,8 @@ def TopoMesh(DM, *args, **kwargs):
 
     return
 
+
+
 def SurfaceProcessMesh(DM, *args, **kwargs):
     """
     Instantiates a mesh with a height and rainfall field.
@@ -169,9 +171,10 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
     -------
      SurfaceProcessMesh : object
     """
+
     BaseMeshType = type(DM)
     if BaseMeshType in list(known_basemesh_classes.keys()):
-        class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass, _SurfaceProcessMeshClass):
+        class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _SurfaceProcessMeshClass):
             def __init__(self, dm, *args, **kwargs):
                 known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
                 _TopoMeshClass.__init__(self, *args, **kwargs)

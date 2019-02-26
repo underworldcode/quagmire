@@ -85,6 +85,10 @@ def log10(lazyFn):
 def fabs(lazyFn):
     return _make_npmath_op(np.fabs, "FABS", lazyFn)
 
+def sqrt(lazyFn):
+    return _make_npmath_op(np.sqrt, "SQRT", lazyFn)
+
+
 
 # grad
 

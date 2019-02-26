@@ -25,6 +25,7 @@ class LazyEvaluation(object):
            If no mesh is provided then no gradient function can be implemented"""
         self.description = ""
         self._mesh = mesh
+        self.mesh_data = False
         return
 
     def __repr__(self):
@@ -44,12 +45,17 @@ class LazyEvaluation(object):
         that are identically zero ... etc
         """
 
+        import quagmire
+
         def new_fn_x(*args, **kwargs):
             local_array = self.evaluate(self._mesh)
             dx, dy = self._mesh.derivative_grad(local_array, nit=10, tol=1e-8)
 
             if len(args) == 1 and args[0] == self._mesh:
                 return dx
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return self._mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dx, **kwargs)
             else:
                 xi = np.atleast_1d(args[0])
                 yi = np.atleast_1d(args[1])
@@ -62,6 +68,9 @@ class LazyEvaluation(object):
 
             if len(args) == 1 and args[0] == self._mesh:
                 return dy
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return self._mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dy, **kwargs)
             else:
                 xi = np.atleast_1d(args[0])  # .resize(-1,1)
                 yi = np.atleast_1d(args[1])  # .resize(-1,1)
@@ -88,9 +97,6 @@ class LazyEvaluation(object):
     @description.setter
     def description(self, value):
         self._description = "{}".format(value)
-
-    def evaluate(self, *args, **kwargs):
-        return self._value
 
 
     def __mul__(self, other):
@@ -159,9 +165,10 @@ class LazyEvaluation(object):
 
 class parameter(LazyEvaluation):
     """Floating point parameter / coefficient for lazy evaluation of functions"""
-    def __init__(self, value):
+    def __init__(self, value, mesh=None):
         super(parameter, self).__init__()
         self.value = value
+        self._mesh = mesh
         return
 
     def fn_gradient(self, dirn):
@@ -177,7 +184,6 @@ class parameter(LazyEvaluation):
             return px
         else:
             return py
-
 
     def __call__(self, value=None):
         """Set value (X) of this parameter (equivalent to Parameter.value=X)"""

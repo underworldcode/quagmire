@@ -28,10 +28,13 @@ from time import clock
 try: range = xrange
 except: pass
 
+from quagmire import function as fn
+from quagmire.mesh import MeshVariable as _MeshVariable
+from quagmire.function import LazyEvaluation as _LazyEvaluation
 
 class TopoMesh(object):
     def __init__(self, downhill_neighbours=2, *args, **kwargs):
-        self.downhill_neighbours = downhill_neighbours
+
 
         # Initialise cumulative flow vectors
         self.DX0 = self.gvec.duplicate()
@@ -42,77 +45,80 @@ class TopoMesh(object):
         # self.height = self.gvec.duplicate()
         # self.slope = self.gvec.duplicate()
 
-        ## We should replace the existing np arrays with
-        ## this variable, but for now we just use the array
+        # create a variable for the height (data) and fn_height
+        # a context manager to ensure the matrices are updated when h(x,y) changes
 
-        self.heightVariable = self.add_variable(name="height")
-        self.slopeVariable  = self.add_variable(name="slope")
+        self.topography = self.add_variable(name="h(x,y)", locked=True)
+        self.deform_topography = self._height_update_context_manager_generator()
 
-    def update_height(self, height):
+        # There is no topography yet set, so we need to avoid
+        # triggering the matrix rebuilding in the setter of this property
+        self._downhill_neighbours = downhill_neighbours
+
+        # Slope (function)
+        self.slope = fn.math.sqrt(self.topography.fn_gradient(0)**2.0+self.topography.fn_gradient(1)**2.0)
+
+        self._heightVariable = self.topography
+
+
+
+    @property
+    def downhill_neighbours(self):
+        return self._downhill_neighbours
+
+    @downhill_neighbours.setter
+    def downhill_neighbours(self, value):
+        self._downhill_neighbours = int(value)
+        # if the topography is unlocked, don't rebuild anything
+        # as it might break something
+
+        if self.topography._locked == True:
+            self._build_downhill_matrix_iterate()
+
+        return
+
+
+    def _update_height(self):
         """
         Update height field
         """
-
-        height = np.array(height)
-        if height.size != self.npoints:
-            raise IndexError("Incompatible array size, should be {}".format(self.npoints))
-
-        height = self.sync(height)
-
-        t = clock()
-        # self.height = height.copy()
-        self.heightVariable.data = height
-
-
-        # dHdx, dHdy = self.derivative_grad(height)
-        dHdx, dHdy = self.heightVariable.gradient()
-        #self.slope = np.hypot(dHdx, dHdy)
-        self.slopeVariable.data = np.hypot(dHdx, dHdy)
-
-        # Lets send and receive this from the global space
-        # self.slope[:] = self.sync(self.slope)
-
-        self.timings['gradient operation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.rank==0 and self.verbose:
-            print(("{} - Compute slopes {}s".format(self.dm.comm.rank, clock()-t)))
-
 
         t = clock()
         self._build_downhill_matrix_iterate()
         self.timings['downhill matrices'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
 
-        if self.rank==0 and self.verbose:
+        if self.verbose:
             print(("{} - Build downhill matrices {}s".format(self.dm.comm.rank, clock()-t)))
-
-
-    def _update_height_partial(self, height):
-        """
-        Partially update height field for specific purpose of patching topographic low points etc.
-        This allows rebuilding of the Adjacency1,2/Downhill matrix but does not compute gradients or
-        a third descent path.
-        """
-
-        height = np.array(height)
-        if height.size != self.npoints:
-            raise IndexError("Incompatible array size, should be {}".format(self.npoints))
-
-        self.height = self.sync(height)
-        self.heightVariable.data = self.height
-
-
-        t = clock()
-
-        neighbours = self.downhill_neighbours
-        self.downhill_neighbours = 2
-
-        self._build_adjacency_matrix_iterate()
-        if self.rank==0 and self.verbose:
-            print((" - Partial rebuild of downhill matrices {}s".format(clock()-t)))
-
-        # revert to specified n-neighbours
-        self.downhill_neighbours = neighbours
-
         return
+
+    def _height_update_context_manager_generator(self):
+        """Builds a context manager on the current mesh object to control when matrices are to be updated"""
+
+        topomesh = self
+        topographyVariable = self.topography
+
+        class Topomesh_Height_Update_Manager(object):
+            """Manage when changes to the height information trigger a rebuild
+            of the topomesh matrices and other internal data.
+            """
+
+            def __init__(inner_self):
+                inner_self._topomesh = topomesh
+                inner_self._topovar  = topographyVariable
+                return
+
+            def __enter__(inner_self):
+                # unlock
+                inner_self._topovar.unlock()
+                return
+
+            def __exit__(inner_self, *args):
+                inner_self._topomesh._update_height()
+                inner_self._topovar.lock()
+                return
+
+        return Topomesh_Height_Update_Manager
+
 
     def _sort_nodes_by_field(self, height):
 
@@ -154,27 +160,17 @@ class TopoMesh(object):
         return matrix
 
 
-## This is the lowest near node / lowest extended neighbour
-
-# hnear = np.ma.array(mesh.height[mesh.neighbour_cloud], mask=mesh.near_neighbours_mask)
-# low_neighbours = np.argmin(hnear, axis=1)
-#
-# hnear = np.ma.array(mesh.height[mesh.neighbour_cloud], mask=mesh.extended_neighbours_mask)
-# low_eneighbours = np.argmin(hnear, axis=1)
-#
-#
-
     def _build_down_neighbour_arrays(self, nearest=True):
 
         nodes = list(range(0,self.npoints))
         # nheight  = self.height[self.neighbour_cloud]
-        nheight  = self.heightVariable.data[self.neighbour_cloud]
+        nheight  = self._heightVariable.data[self.neighbour_cloud]
 
         nheightidx = np.argsort(nheight, axis=1)
 
         nheightn = nheight.copy()
         # nheightn[~self.near_neighbour_mask] += self.height.max()
-        nheightn[~self.near_neighbour_mask] += self.heightVariable.data.max()
+        nheightn[~self.near_neighbour_mask] += self._heightVariable.data.max()
         nheightnidx = np.argsort(nheightn, axis=1)
 
         ## How many low neighbours are there in each ?
@@ -254,8 +250,7 @@ class TopoMesh(object):
         self._build_adjacency_matrix_iterate()
         weights = np.empty((self.downhill_neighbours, self.npoints))
 
-        # height = self.height
-        height = self.heightVariable.data
+        height = self._heightVariable.data
 
         # Process weights
         for i in range(0, self.downhill_neighbours):
@@ -287,6 +282,8 @@ class TopoMesh(object):
         for i in range(1, self.downhill_neighbours):
             self.downhillMat += downhill_matrices[i]
             downhill_matrices[i].destroy()
+
+        return
 
 
     def build_cumulative_downhill_matrix(self):
@@ -339,7 +336,42 @@ class TopoMesh(object):
         self.sweepDownToOutflowMat = downSweepMat
 
 
-    def cumulative_flow_verbose(self, vector, verbose=False, maximum_its=None, uphill=False):
+
+    def upstream_integral_fn(self, lazyFn):
+        """Upsream integral implemented as an area-weighted upstream summation"""
+
+        import quagmire
+
+        def integral_fn(*args, **kwargs):
+            node_values = lazyFn.evaluate(lazyFn._mesh) * lazyFn._mesh.area
+            node_integral = self.cumulative_flow(node_values)
+
+            if len(args) == 1 and args[0] == lazyFn._mesh:
+                return node_integral
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return lazyFn._mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=node_integral, **kwargs)
+            else:
+                xi = np.atleast_1d(args[0])
+                yi = np.atleast_1d(args[1])
+                i, e = lazyFn._mesh.interpolate(xi, yi, zdata=node_integral, **kwargs)
+                return i
+
+        newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+        newLazyFn.evaluate = integral_fn
+        newLazyFn.description = "UpInt({})dA".format(lazyFn.description)
+
+        return newLazyFn
+
+
+
+    def cumulative_flow(self, vector, *args, **kwargs):
+
+        niter, cumulative_flow_vector = self._cumulative_flow_verbose(vector, **kwargs)
+        return cumulative_flow_vector
+
+
+    def _cumulative_flow_verbose(self, vector, verbose=False, maximum_its=None, uphill=False):
 
         if not maximum_its:
             maximum_its = 1000000000000
@@ -398,14 +430,34 @@ class TopoMesh(object):
             return niter, self.lvec.array.copy()
 
 
-    def cumulative_flow(self, vector):
+    def downhill_smoothing_fn(self, lazyFn, its=1, centre_weight=0.75):
 
-        niter, cumulative_flow_vector = self.cumulative_flow_verbose(vector)
-        return cumulative_flow_vector
+        import quagmire
+
+        def new_fn(*args, **kwargs):
+            local_array = lazyFn.evaluate(self)
+            smoothed = self._downhill_smoothing(local_array, its=its, centre_weight=centre_weight)
+            smoothed = self.sync(smoothed)
+
+            if len(args) == 1 and args[0] == lazyFn._mesh:
+                return smoothed
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=smoothed, **kwargs)
+            else:
+                xi = np.atleast_1d(args[0])  # .resize(-1,1)
+                yi = np.atleast_1d(args[1])  # .resize(-1,1)
+                i, e = self.interpolate(xi, yi, zdata=smoothed, **kwargs)
+                return i
+
+        newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+        newLazyFn.evaluate = new_fn
+        newLazyFn.description = "DnHSmooth({}), i={}, w={}".format(lazyFn.description,  its, centre_weight)
+
+        return newLazyFn
 
 
-
-    def downhill_smoothing(self, data, its, centre_weight=0.75):
+    def _downhill_smoothing(self, data, its, centre_weight=0.75):
 
         downhillMat = self.downhillMat
 
@@ -431,7 +483,34 @@ class TopoMesh(object):
             return self.lvec.array.copy()
 
 
-    def uphill_smoothing(self, data, its, centre_weight=0.75):
+    def uphill_smoothing_fn(self, lazyFn, its=1, centre_weight=0.75):
+
+        import quagmire
+
+        def new_fn(*args, **kwargs):
+            local_array = lazyFn.evaluate(self)
+            smoothed = self._uphill_smoothing(local_array, its=its, centre_weight=centre_weight)
+            smoothed = self.sync(smoothed)
+
+            if len(args) == 1 and args[0] == lazyFn._mesh:
+                return smoothed
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=smoothed, **kwargs)
+            else:
+                xi = np.atleast_1d(args[0])  # .resize(-1,1)
+                yi = np.atleast_1d(args[1])  # .resize(-1,1)
+                i, e = self.interpolate(xi, yi, zdata=smoothed, **kwargs)
+                return i
+
+        newLazyFn = LazyEvaluation(mesh=lazyFn._mesh)
+        newLazyFn.evaluate = new_fn
+        newLazyFn.description = "UpHSmooth({}), i={}, w={}".format(lazyFn.description, )
+
+        return newLazyFn
+
+
+    def _uphill_smoothing(self, data, its, centre_weight=0.75):
 
         downhillMat = self.downhillMat
 
@@ -463,7 +542,37 @@ class TopoMesh(object):
             return self.lvec.array.copy()
 
 
-    def streamwise_smoothing(self, data, its, centre_weight=0.75):
+
+    def streamwise_smoothing_fn(self, lazyFn, its=1, centre_weight=0.75):
+
+        import quagmire
+
+        def new_fn(*args, **kwargs):
+            local_array = lazyFn.evaluate(self)
+            smoothed = self._streamwise_smoothing(local_array, its=its, centre_weight=centre_weight)
+            smoothed = self.sync(smoothed)
+
+            if len(args) == 1 and args[0] == lazyFn._mesh:
+                return smoothed
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=smoothed, **kwargs)
+            else:
+                xi = np.atleast_1d(args[0])  # .resize(-1,1)
+                yi = np.atleast_1d(args[1])  # .resize(-1,1)
+                i, e = self.interpolate(xi, yi, zdata=smoothed, **kwargs)
+                return i
+
+        newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+        newLazyFn.evaluate = new_fn
+        newLazyFn.description = "StmSmooth({}), i={}, w={}".format(lazyFn.description, its, centre_weight)
+
+        return newLazyFn
+
+
+
+
+    def _streamwise_smoothing(self, data, its, centre_weight=0.75):
         """
         A smoothing operator that is limited to the uphill / downhill nodes for each point. It's hard to build
         a conservative smoothing operator this way since "boundaries" occur at irregular internal points associated
@@ -472,9 +581,8 @@ class TopoMesh(object):
         done for each application of the smoothing.
         """
 
-
-        smooth_data_d = self.downhill_smoothing(data, its, centre_weight=centre_weight)
-        smooth_data_u = self.uphill_smoothing(data, its, centre_weight=centre_weight)
+        smooth_data_d = self._downhill_smoothing(data, its, centre_weight=centre_weight)
+        smooth_data_u = self._uphill_smoothing(data, its, centre_weight=centre_weight)
 
         return 0.5*(smooth_data_d + smooth_data_u)
 

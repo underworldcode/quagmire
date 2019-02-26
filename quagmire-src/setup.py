@@ -17,7 +17,7 @@ if __name__ == "__main__":
           author            = "Louis Moresi",
           author_email      = "louis.moresi@unimelb.edu.au",
           url               = "https://github.com/University-of-Melbourne-Geodynamics/quagmire",
-          version           = "0.4.0",
+          version           = "0.5.0",
           description       = "Python surface process framework on highly scalable unstructured meshes",
           long_description  = long_description,
           long_description_content_type='text/markdown',
