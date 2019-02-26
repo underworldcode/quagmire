@@ -19,6 +19,7 @@ flags `config_fc --fcompiler=<compiler name>` when setup.py is run
 - ``python setup.py install``
 
 
+
 ## Dependencies
 
 Running this code requires the following packages to be installed:
@@ -78,6 +79,8 @@ The topics covered in the Notebooks include:
 - Elliptical mesh
 - Mesh refinement (e.g. Lloyd's mesh improvement)
 - Poisson disc sampling
+- Mesh Variables
+- quagmire function interface (requires a base mesh)
 
 **Flow algorithms**
 
@@ -94,3 +97,21 @@ The topics covered in the Notebooks include:
 - Explicit timestepping and numerical stability
 - Landscape equilibrium metrics
 - Basement uplift
+
+
+## Release Notes v0.5.0b
+
+This is the first formal 'release' of the code which 
+
+Summary of changes
+
+ - Introducing quagmire.function which is a collection of lazy-evaluation objects similar to underworld functions
+ - Introducing MeshVariables which wrap PETSc data vectors and provide interoperability with quagmire functions
+ - Providing context manager support for changes to topography that automatically update matrices appropriately
+ - Making all mesh variable data arrays view only except for assignment from a suitably sized numpy array (this is to ensure correct synchronisation of information in parallel).
+ - various @property definitions to handle cases where changes require rebuilding of data structures 
+ - making many mesh methods private and exposing them via functions
+   - upstream integration is a function on the mesh
+   - upstream / downstream smoothing is via a mesh function 
+   - rbf smoothing builds a manager that provides a function interface
+   
