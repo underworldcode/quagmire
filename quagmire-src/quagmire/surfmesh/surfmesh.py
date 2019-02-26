@@ -27,34 +27,82 @@ from time import clock
 try: range = xrange
 except: pass
 
-class SurfMesh(object):
+
+from quagmire import function as fn
+from ..mesh import MeshVariable as _MeshVariable
+from ..topomesh import TopoMesh as _TopoMesh
+
+class SurfMesh(_TopoMesh):
 
     def __init__(self, *args, **kwargs):
-        self.kappa = 1.0 # dummy value
+        super(SurfMesh,self).__init__(*args, **kwargs)
 
-    def update_surface_processes(self, rainfall_pattern, sediment_distribution):
-        rainfall_pattern = np.array(rainfall_pattern)
-        sediment_distribution = np.array(sediment_distribution)
+        # self.kappa = 1.0 # dummy value
 
-        if rainfall_pattern.size != self.npoints or sediment_distribution.size != self.npoints:
-            raise IndexError("Incompatible array size, should be {}".format(self.npoints))
+        ## Variables that are needed by default methods
+
+        # self.rainfall_pattern_Variable = self.add_variable(name="precipitation")
+        # self.sediment_distribution_Variable = self.add_variable(name="sediment")
+
+        # new context manager ...
+        self.deform_topography = self._height_update_context_manager_generator()
+        self.upstream_area     = self.add_variable(name="A(x,y)", locked=True)
+
+    ## Not sure if it is best to inherit this manager and extend it or to
+    ## redefine / over-ride it. Only the exit method has changed.
+
+    def _height_update_context_manager_generator(self):
+        """Builds a context manager on the current object to control when matrices are to be updated"""
+
+        surfmesh = self
+        topographyVariable = self.topography
+
+        class Surfmesh_Height_Update_Manager(object):
+            """Manage when changes to the height information trigger a rebuild
+            of the topomesh matrices and other internal data.
+            """
+
+            def __init__(inner_self):
+                inner_self.surfmesh = surfmesh
+                inner_self._topovar  = topographyVariable
+                return
+
+            def __enter__(inner_self):
+                # unlock
+                inner_self._topovar.unlock()
+                return
+
+            def __exit__(inner_self, *args):
+                inner_self.surfmesh._update_height()
+                inner_self.surfmesh._update_height_for_surface_flows()
+                inner_self._topovar.lock()
+                return
+
+        return Surfmesh_Height_Update_Manager
+
+
+    def _update_height_for_surface_flows(self):
 
         from time import clock
-        self.rainfall_pattern = rainfall_pattern.copy()
-        self.sediment_distribution = sediment_distribution.copy()
 
-        # cumulative flow
         t = clock()
-        self.upstream_area = self.cumulative_flow(self.area) # err - this is number of triangles
+
+        self.upstream_area.unlock()
+        self.upstream_area.data = self.cumulative_flow(self.area)
+        self.upstream_area.lock()
+
         self.timings['Upstream area'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+
         if self.verbose:
-            print((" - Upstream area {}s".format(clock()-t)))
+            print(("{} - Build upstream areas {}s".format(self.dm.comm.rank, clock()-t)))
 
         # Find low points
         self.low_points = self.identify_low_points()
 
         # Find high points
         self.outflow_points = self.identify_outflow_points()
+
+
 
     def low_points_local_flood_fill(self, its=99999, scale=1.0, smoothing_steps=2):
         """
@@ -69,24 +117,24 @@ class SurfMesh(object):
 
         my_low_points = self.identify_low_points()
 
-        fill_height =  (self.height[self.neighbour_cloud[my_low_points,1:7]].mean(axis=1)-self.height[my_low_points])
+        h = self.heightVariable.data
+
+        fill_height =  (h[self.neighbour_cloud[my_low_points,1:7]].mean(axis=1)-h[my_low_points])
 
         new_h = self.uphill_propagation(my_low_points,  fill_height, scale=scale,  its=its, fill=0.0)
         new_h = self.sync(new_h)
 
         smoothed_new_height = self.rbf_smoother(new_h, iterations=smoothing_steps)
-        new_height = np.maximum(0.0, smoothed_new_height) + self.height
+        new_height = np.maximum(0.0, smoothed_new_height) + h
         new_height = self.sync(new_height)
 
-        self._update_height_partial(self.height)
+        self._update_height_partial(new_height)
         if self.rank==0 and self.verbose:
             print("Low point local flood fill ",  clock()-t, " seconds")
 
         return new_height
 
     def low_points_local_patch_fill(self, its=1, smoothing_steps=1):
-
-        from petsc4py import PETSc
 
         t = clock()
         if self.rank==0 and self.verbose:
@@ -95,35 +143,32 @@ class SurfMesh(object):
         for iteration in range(0,its):
             low_points = self.identify_low_points()
 
-            delta_height = np.zeros_like(self.height)
+            self.topography.unlock()
 
-            ## Note, the smoother has a communication barrier so needs to be called even if it has no work to do on this process
+            h = self.topography.data
+            delta_height = np.zeros_like(h)
+
 
             if len(low_points) != 0:
-                delta_height[low_points] =  (self.height[self.neighbour_cloud[low_points,1:5]].mean(axis=1) -
-                                                         self.height[low_points])
+                delta_height[low_points] =  (h[self.neighbour_cloud[low_points,1:5]].mean(axis=1) -
+                                                         h[low_points])
+            ## Note, the smoother has a communication barrier so needs to be called even
+            ## if len(low_points==0) and there is no work to do on this process
+            smoothed_height = self.rbf_smoother(h+delta_height, iterations=smoothing_steps)
 
-
-            # self.sync(delta_height)
-
-            smoothed_height = self.rbf_smoother(self.height+delta_height, iterations=smoothing_steps)
-
-            # self.sync(smoothed_delta_height)
-
-            self.height = np.maximum(smoothed_height, self.height)
-            self.height = self.sync(self.height)
-
-            ## Push this / rebuild for the next loop
-
-            self._update_height_partial(self.height)
-
-        ## Don't leave the mesh in a half-updated state
-        # self.update_height(self.height)
+            self.topography.data = np.maximum(smoothed_height, h)
+            self.topography.sync()
+            self.topography.lock()
+            self._update_height()
 
         if self.rank==0 and self.verbose:
             print("Low point local patch fill ",  clock()-t, " seconds")
 
-        return self.height
+        ## and now we need to rebuild the surface process information
+        self._update_height_for_surface_flows()
+
+        return
+
 
     def low_points_swamp_fill(self, its=1000, saddles=True, ref_height=0.0):
 
@@ -139,7 +184,6 @@ class SurfMesh(object):
 
         my_low_points = self.identify_low_points()
         my_glow_points = self.lgmap_row.apply(my_low_points.astype(PETSc.IntType))
-
 
         t = clock()
         ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
@@ -157,7 +201,7 @@ class SurfMesh(object):
         outer_edges = np.where(~self.bmask)[0]
         edges = np.unique(np.hstack((cedges,outer_edges)))
 
-        height = self.height.copy()
+        height = self.topography.data.copy()
 
         ## In parallel this is all the low points where this process may have a spill-point
         my_catchments = np.unique(ctmt)
@@ -211,7 +255,7 @@ class SurfMesh(object):
 
         global_spill_points = comm.bcast(all_spill_points, root=0)
 
-        height2 = np.zeros_like(self.height) + ref_height
+        height2 = np.zeros_like(height) + ref_height
 
         for i, spill in enumerate(global_spill_points):
             this_catchment = int(spill['c'])
@@ -233,14 +277,21 @@ class SurfMesh(object):
         new_height = np.maximum(height, height2)
         new_height = self.sync(new_height)
 
-        self._update_height_partial(new_height)
+
+        # We only need to update the height not all
+        # surface process information that is associated with it.
+        self.topography.unlock()
+        self.topography.data = new_height
+        self._update_height()
+        self.topography.lock()
+
 
         if self.rank==0 and self.verbose:
             print("Low point swamp fill ",  clock()-t0, " seconds")
 
-
-        return new_height
-
+        ## but now we need to rebuild the surface process information
+        self._update_height_for_surface_flows()
+        return
 
 
     def backfill_points(self, fill_points, heights, its):
@@ -250,7 +301,7 @@ class SurfMesh(object):
         """
 
         if len(fill_points) == 0:
-            return self.height
+            return self.heightVariable.data
 
         new_height = self.lvec.duplicate()
         new_height.setArray(heights)
@@ -282,7 +333,7 @@ class SurfMesh(object):
         local_ID.set(fill+1)
         global_ID.set(fill+1)
 
-        identifier = np.empty_like(self.height)
+        identifier = np.empty_like(self.topography.data)
         identifier.fill(fill+1)
 
         if len(points):
@@ -422,7 +473,7 @@ class SurfMesh(object):
 
     def identify_flat_spots(self):
 
-        smooth_grad1 = self.local_area_smoothing(self.slope, its=1, centre_weight=0.5)
+        smooth_grad1 = self.local_area_smoothing(self.slopeVariable.data, its=1, centre_weight=0.5)
 
         # flat_spot_field = np.where(smooth_grad1 < smooth_grad1.max()/100, 0.0, 1.0)
 
@@ -474,7 +525,7 @@ class SurfMesh(object):
 
         cumulative_flow_rate = cumulative_rain / self.area
 
-        stream_power = self.uphill_smoothing(cumulative_flow_rate * self.slope, smooth_power, centre_weight=centre_weight_u)
+        stream_power = self.uphill_smoothing(cumulative_flow_rate * self.slopeVariable.data, smooth_power, centre_weight=centre_weight_u)
 
         #  predicted erosion rate from stream power * efficiency
         #  maximum sediment that can be transported is limited by the local carrying capacity (assume also prop to stream power)
@@ -539,28 +590,72 @@ class SurfMesh(object):
 
 
 
+    # def landscape_diffusion_critical_slope(self, kappa, critical_slope, fluxBC):
+    #     '''
+    #     Non-linear diffusion to keep slopes at a critical value. Assumes a background
+    #     diffusion rate (can be a vector of length mesh.tri.npoints) and a critical slope value.
+    #
+    #     This term is suitable for the sloughing of sediment from hillslopes.
+    #
+    #     To Do: The critical slope should be a function of the material (sediment, basement etc)
+    #     but currently it is not.
+    #
+    #     To Do: The fluxBC flag is global ... it should apply to the outward normal
+    #     at selected nodes but currently it is set to kill both fluxes at all boundary nodes.
+    #     '''
+    #
+    #     inverse_bmask = np.invert(self.bmask)
+    #
+    #     kappa_eff = kappa / (1.01 - (np.clip(self.slopeVariable.data,0.0,critical_slope) / critical_slope)**2)
+    #     self.kappa = kappa_eff
+    #
+    #     # get minimum timestep across the global mesh
+    #     local_diffusion_timestep = np.array((self.area / kappa_eff).min())
+    #     global_diffusion_timestep = np.array(0.0)
+    #     self.comm.Allreduce([local_diffusion_timestep, MPI.DOUBLE], \
+    #                         [global_diffusion_timestep, MPI.DOUBLE], op=MPI.MIN)
+    #
+    #
+    #     fluxVariable = self.heightVariable.gradient(nit=3, tol=1e-3)
+    #     fluxVariable.data *= kappa_eff.reshape(-1,1)
+    #     if fluxBC:
+    #         fluxVariable.data[inverse_bmask] = 0.0 # outward normal flux, actually
+    #
+    #     diffDz = self.derivative_div(*fluxVariable.data.T, nit=3, tol=1e-3)
+    #     diffDz = self.sync(diffDz)
+    #
+    #     if not fluxBC:
+    #         diffDz[inverse_bmask] = 0.0
+    #
+    #     return diffDz, global_diffusion_timestep
+    #
+
+
     def landscape_diffusion_critical_slope(self, kappa, critical_slope, fluxBC):
         '''
         Non-linear diffusion to keep slopes at a critical value. Assumes a background
         diffusion rate (can be a vector of length mesh.tri.npoints) and a critical slope value.
-
         This term is suitable for the sloughing of sediment from hillslopes.
-
         To Do: The critical slope should be a function of the material (sediment, basement etc)
         but currently it is not.
-
         To Do: The fluxBC flag is global ... it should apply to the outward normal
         at selected nodes but currently it is set to kill both fluxes at all boundary nodes.
         '''
 
         inverse_bmask = np.invert(self.bmask)
 
-        kappa_eff = kappa / (1.01 - (np.clip(self.slope,0.0,critical_slope) / critical_slope)**2)
+        kappa_eff = kappa / (1.01 - (np.clip(self.slopeVariable.data,0.0,critical_slope) / critical_slope)**2)
         self.kappa = kappa_eff
         diff_timestep   =  self.area.min() / kappa_eff.max()
 
+        # get minimum timestep across the global mesh
+        local_diffusion_timestep = np.array((self.area / kappa_eff).min())
+        global_diffusion_timestep = np.array(0.0)
+        self.comm.Allreduce([local_diffusion_timestep, MPI.DOUBLE], \
+                            [global_diffusion_timestep, MPI.DOUBLE], op=MPI.MIN)
 
-        gradZx, gradZy = self.derivative_grad(self.height)
+
+        gradZx, gradZy = self.derivative_grad(self.heightVariable.data)
         gradZx = self.sync(gradZx)
         gradZy = self.sync(gradZy)
         flux_x = kappa_eff * gradZx
@@ -576,7 +671,8 @@ class SurfMesh(object):
         if not fluxBC:
             diffDz[inverse_bmask] = 0.0
 
-        return diffDz, diff_timestep
+        return diffDz, global_diffusion_timestep
+
 
 
     def landscape_evolution_timestep(self, diffusion_rate, erosion_rate, deposition_rate, uplift_rate):
@@ -588,12 +684,12 @@ class SurfMesh(object):
         typical_l = np.sqrt(self.area)
         critical_slope = 50.0
 
-        slope = np.maximum(self.slope, critical_slope)
+        slope = np.maximum(self.slopeVariable.data, critical_slope)
 
         erosion_deposition_rate = deposition_rate - erosion_rate
 
-        erosion_timestep    = (self.slope*typical_l/(erosion_rate + 1e-12)).min()
-        deposition_timestep = (self.slope*typical_l/(deposition_rate + 1e-12)).min()
+        erosion_timestep    = (self.slopeVariable.data*typical_l/(erosion_rate + 1e-12)).min()
+        deposition_timestep = (self.slopeVariable.data*typical_l/(deposition_rate + 1e-12)).min()
         diffusion_timestep  = self.area.min()/np.max(self.kappa)
 
         local_timestep = np.array(min(erosion_timestep, deposition_timestep, diffusion_timestep))
@@ -602,6 +698,7 @@ class SurfMesh(object):
 
         delta_h = timestep * (erosion_deposition_rate - diffusion_rate + uplift_rate)
 
+        # Note this is based on local information, and must be synced
         return delta_h, timestep
 
 

@@ -21,50 +21,32 @@ from mpi4py import MPI
 import sys,petsc4py
 petsc4py.init(sys.argv)
 from petsc4py import PETSc
-comm = MPI.COMM_WORLD
+# comm = MPI.COMM_WORLD
 from time import clock
+from .commonmesh import CommonMesh as _CommonMesh
 
 try: range = xrange
 except: pass
 
+from quagmire import function as fn
+from quagmire.function import LazyEvaluation as _LazyEvaluation
 
-class TriMesh(object):
+
+class TriMesh(_CommonMesh):
     """
     Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
     We recommend having 1) triangle or 2) scipy installed for Delaunay triangulations.
     """
-    def __init__(self, dm, verbose=True,  *args, **kwargs):
+    def __init__(self, dm, verbose=True, *args, **kwargs):
         import stripy
         from scipy.spatial import cKDTree as _cKDTree
 
-        self.timings = dict() # store times
-
-        self.log = PETSc.Log()
-        self.log.begin()
-
-        self.verbose = verbose
-
-        self.dm = dm
-        self.gvec = dm.createGlobalVector()
-        self.lvec = dm.createLocalVector()
-        self.sect = dm.getDefaultSection()
-        self.sizes = self.gvec.getSizes(), self.gvec.getSizes()
-
-        self.rank = comm.rank
-
-        lgmap_r = dm.getLGMap()
-        l2g = lgmap_r.indices.copy()
-        offproc = l2g < 0
-
-        l2g[offproc] = -(l2g[offproc] + 1)
-        lgmap_c = PETSc.LGMap().create(l2g, comm=comm)
-
-        self.lgmap_row = lgmap_r
-        self.lgmap_col = lgmap_c
+        # initialise base mesh class
+        super(TriMesh, self).__init__(dm, verbose)
 
         # Delaunay triangulation
         t = clock()
-        coords = dm.getCoordinatesLocal().array.reshape(-1,2)
+        coords = self.dm.getCoordinatesLocal().array.reshape(-1,2)
 
         minX, minY = coords.min(axis=0)
         maxX, maxY = coords.max(axis=0)
@@ -85,8 +67,13 @@ class TriMesh(object):
             print(("{} - Calculate node weights and area {}s".format(self.dm.comm.rank, clock()-t)))
 
         # Find boundary points
+
         t = clock()
         self.bmask = self.get_boundary()
+        self.mask = self.add_variable(name="Mask")
+        self.mask.data = self.bmask.astype(float)
+        self.mask.lock()
+
         self.timings['find boundaries'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
             print(("{} - Find boundaries {}s".format(self.dm.comm.rank, clock()-t)))
@@ -98,7 +85,6 @@ class TriMesh(object):
         if self.rank==0 and self.verbose:
             print(("{} - cKDTree {}s".format(self.dm.comm.rank, clock()-t)))
 
-
         # Find neighbours
         t = clock()
 
@@ -108,7 +94,6 @@ class TriMesh(object):
         if self.rank==0 and self.verbose:
             print(("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, clock()-t)))
 
-
         # sync smoothing operator
         t = clock()
         self._construct_rbf_weights()
@@ -116,10 +101,17 @@ class TriMesh(object):
         if self.rank==0 and self.verbose:
             print(("{} - Construct rbf weights {}s".format(self.dm.comm.rank, clock()-t)))
 
-
-
         self.root = False
         self.coords = self.tri.points
+        self.data = self.coords
+        self.interpolate = self.tri.interpolate
+
+
+    def add_variable(self, name=None, locked=False):
+
+        from quagmire.mesh import MeshVariable
+        return MeshVariable(name=name, mesh=self, locked=locked)
+
 
 
     def get_local_mesh(self):
@@ -136,51 +128,9 @@ class TriMesh(object):
             simplices of the triangulation
          bmask  : array of bools, shape (n,2)
         """
+
         return self.tri.x, self.tri.y, self.tri.simplices, self.bmask
 
-
-    def get_label(self, label):
-        """
-        Retrieves all points in the DM that is marked with a specific label.
-        e.g. "boundary", "coarse"
-        """
-        pStart, pEnd = self.dm.getDepthStratum(0)
-
-
-        labels = []
-        for i in range(self.dm.getNumLabels()):
-            labels.append(self.dm.getLabelName(i))
-
-        if label not in labels:
-            raise ValueError("There is no {} label in the DM".format(label))
-
-
-        stratSize = self.dm.getStratumSize(label, 1)
-        if stratSize > 0:
-            labelIS = self.dm.getStratumIS(label, 1)
-            pt_range = np.logical_and(labelIS.indices >= pStart, labelIS.indices < pEnd)
-            indices = labelIS.indices[pt_range] - pStart
-        else:
-            indices = np.zeros((0,), dtype=np.int)
-
-        return indices
-
-
-    def set_label(self, label, indices):
-        """
-        Marks local indices in the DM with a label
-        """
-        pStart, pEnd = self.dm.getDepthStratum(0)
-        indices += pStart
-
-        labels = []
-        for i in range(self.dm.getNumLabels()):
-            labels.append(self.dm.getLabelName(i))
-
-        if label not in labels:
-            self.dm.createLabel(label)
-        for ind in indices:
-            self.dm.setLabelValue(label, ind, 1)
 
 
     def calculate_area_weights(self):
@@ -453,192 +403,31 @@ class TriMesh(object):
         return self.lvec.array.copy()
 
 
-    def get_boundary(self, marker="boundary"):
-        """
-        Find the nodes on the boundary from the DM
-        If marker does not exist then the convex hull is used.
-        """
-
-        pStart, pEnd = self.dm.getDepthStratum(0)
-        bmask = np.ones(self.npoints, dtype=bool)
-
-
-        try:
-            boundary_indices = self.get_label(marker)
-
-        except ValueError:
-            self.dm.markBoundaryFaces(marker) # marks line segments
-            boundary_indices = self.tri.convex_hull()
-            for ind in boundary_indices:
-                self.dm.setLabelValue(marker, ind + pStart, 1)
-
-
-        bmask[boundary_indices] = False
-        return bmask
-
-
-    def save_mesh_to_hdf5(self, file):
-        """
-        Saves mesh information stored in the DM to HDF5 file
-        If the file already exists, it is overwritten.
-        """
-        file = str(file)
-        if not file.endswith('.h5'):
-            file += '.h5'
-
-        ViewHDF5 = PETSc.Viewer()
-        ViewHDF5.createHDF5(file, mode='w')
-        ViewHDF5.view(obj=self.dm)
-        ViewHDF5.destroy()
-
-
-    def save_field_to_hdf5(self, file, *args, **kwargs):
-        """
-        Saves data on the mesh to an HDF5 file
-         e.g. height, rainfall, sea level, etc.
-
-        Pass these as arguments or keyword arguments for
-        their names to be saved to the hdf5 file
-        """
-        import os.path
-
-        file = str(file)
-        if not file.endswith('.h5'):
-            file += '.h5'
-
-        # write mesh if it doesn't exist
-        # if not os.path.isfile(file):
-        #     self.save_mesh_to_hdf5(file)
-
-        kwdict = kwargs
-        for i, arg in enumerate(args):
-            key = "arr_{}".format(i)
-            if key in list(kwdict.keys()):
-                raise ValueError("Cannot use un-named variables\
-                                  and keyword: {}".format(key))
-            kwdict[key] = arg
-
-        vec = self.gvec.duplicate()
-        vec = self.dm.createGlobalVec()
-
-        for key in kwdict:
-            val = kwdict[key]
-            try:
-                vec.setArray(val)
-            except:
-                self.lvec.setArray(val)
-                self.dm.localToGlobal(self.lvec, vec)
-
-            vec.setName(key)
-            if self.rank == 0:
-                print("Saving {} to hdf5".format(key))
-
-            ViewHDF5 = PETSc.Viewer()
-            ViewHDF5.createHDF5(file, mode='a')
-            ViewHDF5.view(obj=vec)
-            ViewHDF5.destroy()
-
-        vec.destroy()
-
-
-    def _gather_root(self):
-        """
-        MPI gather operation to root process
-        """
-        self.tozero, self.zvec = PETSc.Scatter.toZero(self.gvec)
-
-
-        # Gather x,y points
-        pts = self.tri.points
-        self.lvec.setArray(pts[:,0])
-        self.dm.localToGlobal(self.lvec, self.gvec)
-        self.tozero.scatter(self.gvec, self.zvec)
-
-        self.root_x = self.zvec.array.copy()
-
-        self.lvec.setArray(pts[:,1])
-        self.dm.localToGlobal(self.lvec, self.gvec)
-        self.tozero.scatter(self.gvec, self.zvec)
-
-        self.root_y = self.zvec.array.copy()
-
-        self.root = True # yes we have gathered everything
-
-
-    def gather_data(self, data):
-        """
-        Gather data on root process
-        """
-
-        # check if we already gathered pts on root
-        if not self.root:
-            self._gather_root()
-
-        self.lvec.setArray(data)
-        self.dm.localToGlobal(self.lvec, self.gvec)
-        self.tozero.scatter(self.gvec, self.zvec)
-
-        return self.zvec.array.copy()
-
-    def scatter_data(self, data):
-        """
-        Scatter data to all processes
-        """
-
-        toAll, zvec = PETSc.Scatter.toAll(self.gvec)
-
-        self.lvec.setArray(data)
-        self.dm.localToGlobal(self.lvec, self.gvec)
-        toAll.scatter(self.gvec, zvec)
-
-        return zvec.array.copy()
-
-    def sync(self, vector):
-        """
-        Synchronise the local domain with the global domain
-        Replaces shadow values in the local domain (non additive)
-        """
-
-        if self.dm.comm.Get_size() == 1:
-            return vector
-        else:
-
-            # Is this the same under 3.10 ?
-
-            self.lvec.setArray(vector)
-            self.dm.localToLocal(self.lvec, self.gvec)
-            self.dm.localToGlobal(self.lvec, self.gvec)
-            self.dm.globalToLocal(self.gvec, self.lvec)
-
-            return self.lvec.array.copy()
-
 
     def _construct_rbf_weights(self, delta=None):
 
-        self.delta  = delta
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
 
-        # delta_x = self.tri.x[self.neighbour_cloud] - self.tri.x.reshape(-1,1)
-        # delta_y = self.tri.y[self.neighbour_cloud] - self.tri.y.reshape(-1,1)
-        #
-        # neighbour_cloud_distances = np.hypot(delta_x, delta_y)
+        self.delta  = delta
+        self.gaussian_dist_w = self._rbf_weights(delta)
+
+        return
+
+    def _rbf_weights(self, delta=None):
 
         neighbour_cloud_distances = self.neighbour_cloud_distances
 
-        if self.delta == None:
-            self.delta = self.neighbour_cloud_distances[:, 1].mean()
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
 
         # Initialise the interpolants
 
         gaussian_dist_w       = np.zeros_like(neighbour_cloud_distances)
-        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/self.delta, 2.0))
+        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/delta, 2.0))
         gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
 
-        # gaussian_dist_w[self.extended_neighbours_mask] = 0.0
-
-        self.gaussian_dist_w = gaussian_dist_w
-
-        return
-
+        return gaussian_dist_w
 
 
     def rbf_smoother(self, vector, iterations=1, delta=None):
@@ -659,10 +448,6 @@ class TriMesh(object):
 
         """
 
-        # Should do some error checking here to ensure the field and point cloud are compatible
-
-        #  lvec  = self.lvec.copy()
-        #  gvec  = self.gvec.copy()
 
         if type(delta) != type(None):
             self._construct_rbf_weights(delta)
@@ -676,3 +461,66 @@ class TriMesh(object):
             vector = self.sync(vector_smoothed)
 
         return vector
+
+
+
+
+    def build_rbf_smoother(self, delta, iterations=1):
+
+        trimesh_self = self
+
+        class _rbf_smoother_object(object):
+
+            def __init__(inner_self, delta, iterations=1):
+
+                if delta == None:
+                    delta = trimesh_self.neighbour_cloud_distances[:, 1].mean()  ## NOT SAFE IN PARALLEL !!!
+
+                inner_self._mesh = trimesh_self
+                inner_self.delta = delta
+                inner_self.iterations = iterations
+                inner_self.gaussian_dist_w = inner_self._mesh._rbf_weights(delta)
+
+                return
+
+
+            def _apply_rbf_on_my_mesh(inner_self, lazyFn, iterations=1):
+                import quagmire
+
+                smooth_node_values = lazyFn.evaluate(inner_self._mesh)
+
+                for i in range(0, iterations):
+                    smooth_node_values = (smooth_node_values[inner_self._mesh.neighbour_cloud[:,:]] * inner_self.gaussian_dist_w[:,:]).sum(axis=1)
+                    smooth_node_values = inner_self._mesh.sync(smooth_node_values)
+
+                return smooth_node_values
+
+
+            def smooth_fn(inner_self, lazyFn, iterations=None):
+
+                if iterations is None:
+                        iterations = inner_self.iterations
+
+                def smoother_fn(*args, **kwargs):
+
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(lazyFn, iterations=iterations)
+
+                    if len(args) == 1 and args[0] == lazyFn._mesh:
+                        return smooth_node_values
+                    elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                        mesh = args[0]
+                        return inner_self._mesh.interpolate(lazyFn._mesh.coords[:,0], lazyFn._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                    else:
+                        xi = np.atleast_1d(args[0])
+                        yi = np.atleast_1d(args[1])
+                        i, e = inner_self._mesh.interpolate(xi, yi, zdata=smooth_node_values, **kwargs)
+                        return i
+
+
+                newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+                newLazyFn.evaluate = smoother_fn
+                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(lazyFn.description, inner_self.delta, iterations)
+
+                return newLazyFn
+
+        return _rbf_smoother_object(delta, iterations)

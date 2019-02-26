@@ -23,40 +23,21 @@ petsc4py.init(sys.argv)
 from petsc4py import PETSc
 # comm = MPI.COMM_WORLD
 from time import clock
+from .commonmesh import CommonMesh as _CommonMesh
 
 try: range = xrange
 except: pass
 
 
-class PixMesh(object):
+class PixMesh(_CommonMesh):
     """
     Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
     """
     def __init__(self, dm, verbose=True, *args, **kwargs):
-        from scipy.spatial import Delaunay
         from scipy.spatial import cKDTree as _cKDTree
 
-        self.timings = dict() # store times
-
-        self.log = PETSc.Log()
-        self.log.begin()
-
-        self.verbose = verbose
-
-        self.dm = dm
-        self.gvec = dm.createGlobalVector()
-        self.lvec = dm.createLocalVector()
-        self.sizes = self.gvec.getSizes(), self.gvec.getSizes()
-
-        lgmap_r = dm.getLGMap()
-        l2g = lgmap_r.indices.copy()
-        offproc = l2g < 0
-
-        l2g[offproc] = -(l2g[offproc] + 1)
-        lgmap_c = PETSc.LGMap().create(l2g, comm=dm.comm)
-
-        self.lgmap_row = lgmap_r
-        self.lgmap_col = lgmap_c
+        # initialise base mesh class
+        super(PixMesh, self).__init__(dm, verbose)
 
 
         (minX, maxX), (minY, maxY) = dm.getBoundingBox()
@@ -86,6 +67,7 @@ class PixMesh(object):
 
         # Get local coordinates
         self.coords = dm.getCoordinatesLocal().array.reshape(-1,2)
+        self.data = self.coords
 
         (minX, maxX), (minY, maxY) = dm.getLocalBoundingBox()
 
@@ -327,40 +309,6 @@ class PixMesh(object):
 
         return bmask
 
-
-    def _gather_root(self):
-        """
-        MPI gather operation to root processor
-        """
-        self.tozero, self.zvec = PETSc.Scatter.toZero(self.gvec)
-        self.nvec = self.dm.createNaturalVector()
-        self.root = True # yes we have gathered everything
-
-
-    def gather_data(self, data):
-        """
-        Gather data on root processor
-        """
-
-        # check if we already gathered pts on root
-        if not self.root:
-            self._gather_root()
-
-        self.lvec.setArray(data)
-        self.dm.localToGlobal(self.lvec, self.gvec)
-        self.dm.globalToNatural(self.gvec, self.nvec)
-        self.tozero.scatter(self.nvec, self.zvec)
-
-        return self.zvec.array.copy()
-
-    def sync(self, vector):
-        """
-        Synchronise the local domain with the global domain
-        """
-        self.lvec.setArray(vector)
-        self.dm.localToGlobal(self.lvec, self.gvec)
-        self.dm.globalToLocal(self.gvec, self.lvec)
-        return self.lvec.array.copy()
 
     def _construct_rbf_weights(self, delta=None):
 
