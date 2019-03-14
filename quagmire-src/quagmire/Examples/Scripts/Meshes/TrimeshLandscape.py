@@ -11,8 +11,10 @@
 
 # import matplotlib.pyplot as plt
 import numpy as np
+# from matplotlib.pyplot import imread
 from scipy.ndimage import imread
 from quagmire import tools as meshtools
+
 # get_ipython().magic('matplotlib inline')
 
 
@@ -22,9 +24,12 @@ from quagmire import tools as meshtools
 
 # In[2]:
 
-dem = imread('../Notebooks/data/port_macquarie.tif', mode='F')
+!pwd
+
+dem = imread('../../data/port_macquarie.tif', mode='F')
 dem = np.fliplr(dem)
 
+dem.shape
 rows, columns = dem.shape
 aspect_ratio = float(columns) / float(rows)
 

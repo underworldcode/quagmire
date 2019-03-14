@@ -1,10 +1,9 @@
 include README.md
+include LICENCE
 include MANIFEST.in
 include COPYING
 include setup.cfg
 include fortran/*
-include __init__.py
 recursive-include quagmire/*.py
-include assets/*
-include tests/*.py
-include Notebooks/*
+# include tests/*.py
+# include Notebooks/*

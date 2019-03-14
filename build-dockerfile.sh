@@ -3,7 +3,7 @@
 # Don't forget to increment the version number if you want to keep the old stuff
 
 FROM_IMG="underworldcode/quagmire-base"
-IMAGENAME=underworldcode/quagmire:0.3
+IMAGENAME=lmoresi/quagmire:0.5
 PROJ_NAME=quagmire
 NB_PORT=8888
 NB_PASSWD=""

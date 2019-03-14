@@ -15,3 +15,9 @@ www/*
 
 quagmire/Examples/data/ETOPO.npz
 quagmire/Examples/data/ETOPO1_Ice_c_geotiff.tif
+
+.jupyter
+.ipython
+.local
+.cache
+.bash_history

@@ -3,7 +3,7 @@
 #################################################
 
 ARG FROMIMG_ARG
-FROM underworldcode/quagmire-base
+FROM ${FROMIMG_ARG}
 
 #################################################
 # Non standard as the files come from the package
@@ -77,4 +77,4 @@ WORKDIR /home/jovyan/
 ENV PATH=$PETSC_BIN:$PATH
 
 # launch notebook
-CMD ["jupyter", "notebook", "--ip='0.0.0.0'", "--NotebookApp.token='' ", "--no-browser"]
+CMD ["jupyter", "lab", "--ip='0.0.0.0'", "--NotebookApp.token='' ", "--no-browser"]
