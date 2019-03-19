@@ -1,12 +1,15 @@
-##~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~##
-##                                                                                   ##
-##  This file forms part of the Quagmire geophysics modelling application.           ##
-##                                                                                   ##
-##  For full license and copyright information, please refer to the LICENSE.md file  ##
-##  located at the project root, or contact the authors.                             ##
-##     (Corresponding Author: Romain Beucher)                                        ##
-##                                                                                   ##
-##~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~##
+##~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~##
+##                                                               ##
+##  This file forms part of the Quagmire geophysics modelling    ##
+##  application.                                                 ##
+##                                                               ##
+##  For full license and copyright information,                  ##
+##  please refer to the LICENSE.md file located at the           ##
+##   project root, or contact the authors.                       ##
+##     (Corresponding Author: Romain Beucher)                    ##
+##                                                               ##
+##                                                               ##
+##~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~##
 
 """
 The scaling module provides units and scaling capabilities.

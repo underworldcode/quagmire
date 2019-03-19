@@ -55,13 +55,13 @@ class _xvfb_runner(object):
             self._xvfb.stop()
 
 import os as _os
+
 # disable collection of data if requested
 if "GLUCIFER_USE_XVFB" in _os.environ:
     from mpi4py import MPI as _MPI
     _comm = _MPI.COMM_WORLD
     if _comm.rank == 0:
         _display = _xvfb_runner()
-
 
 
 known_basemesh_classes = {type(_PETSc.DMDA())   : _PixMesh,\

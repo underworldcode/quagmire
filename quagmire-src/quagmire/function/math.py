@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import numpy as np
+import numpy as _np
 from .function_classes import LazyEvaluation as _LazyEvaluation
 
 ## Functions of a single variable
@@ -31,62 +31,62 @@ def _make_npmath_op(op, name, lazyFn):
 ## Trig
 
 def sin(lazyFn):
-    return _make_npmath_op(np.sin, "SIN", lazyFn)
+    return _make_npmath_op(_np.sin, "SIN", lazyFn)
 
 def arcsin(lazyFn):
-    return _make_npmath_op(np.arcsin, "ARCSIN", lazyFn)
+    return _make_npmath_op(_np.arcsin, "ARCSIN", lazyFn)
 
 def cos(lazyFn):
-    return _make_npmath_op(np.cos, "COS", lazyFn)
+    return _make_npmath_op(_np.cos, "COS", lazyFn)
 
 def arccos(lazyFn):
-    return _make_npmath_op(np.arccos, "ARCCOS", lazyFn)
+    return _make_npmath_op(_np.arccos, "ARCCOS", lazyFn)
 
 def tan(lazyFn):
-    return _make_npmath_op(np.tan, "TAN", lazyFn)
+    return _make_npmath_op(_np.tan, "TAN", lazyFn)
 
 def arctan(lazyFn):
-    return _make_npmath_op(np.arctan, "ARCTAN", lazyFn)
+    return _make_npmath_op(_np.arctan, "ARCTAN", lazyFn)
 
 ## Hyperbolic
 
 def sinh(lazyFn):
-    return _make_npmath_op(np.sinh, "SINH", lazyFn)
+    return _make_npmath_op(_np.sinh, "SINH", lazyFn)
 
 def arcsinh(lazyFn):
-    return _make_npmath_op(np.arcsinh, "ARCSINH", lazyFn)
+    return _make_npmath_op(_np.arcsinh, "ARCSINH", lazyFn)
 
 def cosh(lazyFn):
-    return _make_npmath_op(np.cosh, "COSH", lazyFn)
+    return _make_npmath_op(_np.cosh, "COSH", lazyFn)
 
 def arccosh(lazyFn):
-    return _make_npmath_op(np.arccosh, "ARCCOSH", lazyFn)
+    return _make_npmath_op(_np.arccosh, "ARCCOSH", lazyFn)
 
 def tanh(lazyFn):
-    return _make_npmath_op(np.tanh, "TANH", lazyFn)
+    return _make_npmath_op(_np.tanh, "TANH", lazyFn)
 
 def arctanh(lazyFn):
-    return _make_npmath_op(np.arctanh, "ARCTANH", lazyFn)
+    return _make_npmath_op(_np.arctanh, "ARCTANH", lazyFn)
 
 
 ## exponentiation
 
 def exp(lazyFn):
-    return _make_npmath_op(np.exp, "EXP", lazyFn)
+    return _make_npmath_op(_np.exp, "EXP", lazyFn)
 
 def log(lazyFn):
-    return _make_npmath_op(np.log, "LOG", lazyFn)
+    return _make_npmath_op(_np.log, "LOG", lazyFn)
 
 def log10(lazyFn):
-    return _make_npmath_op(np.log10, "LOG10", lazyFn)
+    return _make_npmath_op(_np.log10, "LOG10", lazyFn)
 
 # misc
 
 def fabs(lazyFn):
-    return _make_npmath_op(np.fabs, "FABS", lazyFn)
+    return _make_npmath_op(_np.fabs, "FABS", lazyFn)
 
 def sqrt(lazyFn):
-    return _make_npmath_op(np.sqrt, "SQRT", lazyFn)
+    return _make_npmath_op(_np.sqrt, "SQRT", lazyFn)
 
 
 

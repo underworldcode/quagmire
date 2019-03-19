@@ -41,6 +41,8 @@ class TopoMesh(object):
         self.DX1 = self.gvec.duplicate()
         self.dDX = self.gvec.duplicate()
 
+        self.downhillMat = None
+
         # Initialise mesh fields
         # self.height = self.gvec.duplicate()
         # self.slope = self.gvec.duplicate()
@@ -57,6 +59,8 @@ class TopoMesh(object):
 
         # Slope (function)
         self.slope = fn.math.sqrt(self.topography.fn_gradient(0)**2.0+self.topography.fn_gradient(1)**2.0)
+
+
 
         self._heightVariable = self.topography
 
@@ -364,8 +368,8 @@ class TopoMesh(object):
         return newLazyFn
 
 
-
     def cumulative_flow(self, vector, *args, **kwargs):
+
 
         niter, cumulative_flow_vector = self._cumulative_flow_verbose(vector, **kwargs)
         return cumulative_flow_vector
@@ -375,6 +379,13 @@ class TopoMesh(object):
 
         if not maximum_its:
             maximum_its = 1000000000000
+
+        # This is what happens if the mesh topography has never been set
+        if not self.downhillMat:
+            print("No downhill matrix exists ")
+            temp_vec = self.lvec.array.copy()
+            temp_vec = 0.0
+            return 0, temp_vec
 
 
         # downhillMat2 = self.downhillMat * self.downhillMat
