@@ -23,6 +23,7 @@ from .surfmesh import SurfMesh as _SurfaceProcessMeshClass
 from . import documentation
 from . import tools
 from . import function
+from . import scaling
 
 try:
     import lavavu

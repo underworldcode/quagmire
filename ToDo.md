@@ -1,14 +1,30 @@
 ## TO DO
 
+### Docker environments
 
-Dockerfile:  needs mpirun in the path
-Dockerfile:  needs to have the proper token stuff for Jupyter
-Dockerfile:  add the help script etc.
+ - [x] Dockerfile:  needs mpirun in the path
+ - [x] Dockerfile:  needs to have the proper token stuff for Jupyter
+ - [ ] Dockerfile:  add the help script etc.
+ - [ ] Separate binder version
 
+### MeshVariable implementation:
 
-MeshVariable: add print function to output array value (DONE) __str__ and __repr__
-MeshVariable: add gradient and interpolation / evaluate methods (DONE)
+ - [x] MeshVariable: add print function to output array value `__str__` and `__repr__`
+ - [x] MeshVariable: add gradient and interpolation / evaluate methods (DONE)
+ - [x] mesh.add_variable ... cf underworld
 
-mesh.add_variable ... cf underworld
+### Meshing
+ - [ ] Pixmesh: add an interpolate method.
 
-Pixmesh: add an interpolate method.
+### Scaling
+
+  - [ ] Integrate scaling into MeshVariable view / getter
+
+### Equation solvers
+
+  - Explicit
+    - [ ] Diffusion
+    - [ ] Erosion-deposition
+
+  - Semi-implicit (?)
+  

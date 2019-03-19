@@ -23,7 +23,7 @@ if __name__ == "__main__":
           long_description_content_type='text/markdown',
           ext_modules       = [ext],
           packages          = ['quagmire', 'quagmire.tools', 'quagmire.function', 'quagmire.mesh', 'quagmire.topomesh', 'quagmire.surfmesh'],
-          install_requires = ['numpy', 'stripy'],
+          install_requires  = ['numpy', 'stripy'],
           package_data      = {'quagmire': ['Examples/Notebooks/data',
                                             # 'Examples/Notebooks/IdealisedExamples/*.ipynb',
                                             # 'Examples/Notebooks/LandscapeEvolution/*.ipynb',

@@ -53,6 +53,21 @@ class MeshVariable(_LazyEvaluation):
         self._ldata.setName(name)
         return
 
+    def copy(self, name=None, locked=None):
+
+        if name is None:
+            name = self._name+"_copy"
+
+        if locked is None:
+            locked = self._locked
+
+        new_mesh_variable = MeshVariable(name=name, locked=False)
+        new_mesh_variable.data = self.data
+
+        if locked:
+            new_mesh_variable.lock()
+
+        return
 
     def lock(self):
         self._locked = True
