@@ -13,12 +13,10 @@ The Surface Processes class inherits from the Topography class, which in turn in
 Numpy and a fortran compiler, preferably [gfortran](https://gcc.gnu.org/wiki/GFortran), are required to install Quagmire.
 
 - ``python setup.py build``
-   - If you change the fortran compiler, you may have to add the 
+   - If you change the fortran compiler, you may have to add the
 flags `config_fc --fcompiler=<compiler name>` when setup.py is run
 (see docs for [numpy.distutils](http://docs.scipy.org/doc/numpy-dev/f2py/distutils.html)).
 - ``python setup.py install``
-
-
 
 ## Dependencies
 
@@ -32,6 +30,7 @@ Running this code requires the following packages to be installed:
 - [stripy](https://github.com/University-of-Melbourne-Geodynamics/stripy)
 - [h5py](http://docs.h5py.org/en/latest/mpi.html#building-against-parallel-hdf5) (optional - for saving parallel data)
 - Matplotlib (optional - for visualisation)
+- lavavu (optional - for visualisation)
 
 ### PETSc installation
 
@@ -98,10 +97,13 @@ The topics covered in the Notebooks include:
 - Landscape equilibrium metrics
 - Basement uplift
 
+## Credits
+
+The primary authors of the code are Ben Mather, Louis Moresi and Romain Beucher. We take collective responsibility for creating and maintaining the code. Here and there in the source code we mention who originated the code or modified it in order to help direct questions.
 
 ## Release Notes v0.5.0b
 
-This is the first formal 'release' of the code which 
+This is the first formal 'release' of the code which
 
 Summary of changes
 
@@ -109,9 +111,8 @@ Summary of changes
  - Introducing MeshVariables which wrap PETSc data vectors and provide interoperability with quagmire functions
  - Providing context manager support for changes to topography that automatically update matrices appropriately
  - Making all mesh variable data arrays view only except for assignment from a suitably sized numpy array (this is to ensure correct synchronisation of information in parallel).
- - various @property definitions to handle cases where changes require rebuilding of data structures 
+ - various @property definitions to handle cases where changes require rebuilding of data structures
  - making many mesh methods private and exposing them via functions
    - upstream integration is a function on the mesh
-   - upstream / downstream smoothing is via a mesh function 
+   - upstream / downstream smoothing is via a mesh function
    - rbf smoothing builds a manager that provides a function interface
-   

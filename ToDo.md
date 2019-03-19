@@ -19,6 +19,8 @@
 ### Scaling
 
   - [ ] Integrate scaling into MeshVariable view / getter
+  - [ ] Integrate scaling into meshes
+  - [ ] Save / Load ? Scaling dictionary ?
 
 ### Equation solvers
 
@@ -27,4 +29,3 @@
     - [ ] Erosion-deposition
 
   - Semi-implicit (?)
-  
