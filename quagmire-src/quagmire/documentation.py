@@ -25,7 +25,7 @@ def install_documentation(path="./Quagmire-Notebooks"):
     """Install the example notebooks for quagmire in the given location
 
     WARNING: If the path exists, the Notebook files will be written into the path
-    and will overwrite any existing files with which they collide. The default
+    and will overwrite any older, existing files with which they collide. The default
     path ("./Quagmire-Notebooks") is chosen to make collision less likely / problematic
 
     The documentation for quagmire is in the form of jupyter notebooks.
@@ -43,10 +43,10 @@ def install_documentation(path="./Quagmire-Notebooks"):
 
     """
 
-    ## Question - overwrite or not ? shutils fails if directory exists.
+    ## Question
 
     Notebooks_Path = _pkg_resources.resource_filename('quagmire', os.path.join("Examples", 'Notebooks'))
 
-    ct = _dir_util.copy_tree(Notebooks_Path, path, preserve_mode=1, preserve_times=1, preserve_symlinks=1, update=0, verbose=1, dry_run=0)
+    ct = _dir_util.copy_tree(Notebooks_Path, path, preserve_mode=1, preserve_times=1, preserve_symlinks=1, update=1, verbose=1, dry_run=0)
 
     return

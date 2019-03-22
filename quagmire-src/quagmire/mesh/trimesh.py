@@ -48,10 +48,10 @@ class TriMesh(_CommonMesh):
         t = clock()
         coords = self.dm.getCoordinatesLocal().array.reshape(-1,2)
 
-        minX, minY = coords.min(axis=0)
-        maxX, maxY = coords.max(axis=0)
-        length_scale = np.sqrt((maxX - minX)*(maxY - minY)/coords.shape[0])
-        coords += np.random.random(coords.shape) * 0.0001 * length_scale # This should be aware of the point spacing (small perturbation)
+        # minX, minY = coords.min(axis=0)
+        # maxX, maxY = coords.max(axis=0)
+        # length_scale = np.sqrt((maxX - minX)*(maxY - minY)/coords.shape[0])
+        # # coords += np.random.random(coords.shape) * 0.0001 * length_scale # This should be aware of the point spacing (small perturbation)
 
         self.tri = stripy.Triangulation(coords[:,0], coords[:,1], permute=True)
         self.npoints = self.tri.npoints
