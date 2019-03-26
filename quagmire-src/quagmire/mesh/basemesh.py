@@ -61,13 +61,13 @@ class MeshVariable(_LazyEvaluation):
         if locked is None:
             locked = self._locked
 
-        new_mesh_variable = MeshVariable(name=name, locked=False)
+        new_mesh_variable = MeshVariable(name=name, mesh=self._mesh, locked=False)
         new_mesh_variable.data = self.data
 
         if locked:
             new_mesh_variable.lock()
 
-        return
+        return new_mesh_variable
 
     def lock(self):
         self._locked = True
@@ -242,6 +242,61 @@ class MeshVariable(_LazyEvaluation):
         dx, dy = self._mesh.derivative_grad(self._ldata.array, nit, tol)
 
         return dx, dy
+
+
+    def gradient_patch(self):
+        """
+        Compute values of the derivatives of PHI in the x, y directions at the nodal points.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Parameters
+        ----------
+         PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+
+        Returns
+        -------
+         PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+         PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
+        """
+
+        def bf_gradient_node(node):
+
+            xx = self.coords[node,0]
+            yy = self.coords[node,1]
+
+            from scipy.optimize import curve_fit
+
+            def linear_fit_2D(X, a, b, c):
+                # (1+x) * (1+y) etc
+                x,y = X
+                fit = a + b * x + c * y
+                return fit
+
+            location = np.array([xx,yy]).T
+
+            ## Just try near neighbours ?
+            stencil_size=mesh.near_neighbours[node]
+
+
+            d, patch_points = self.cKDTree.query(location, k=stencil_size)
+            x,y = self.coords[patch_points].T
+            data = temperature.evaluate(x, y)
+            popt, pcov = curve_fit(linear_fit_2D, (x,y), data)
+            ddx = popt[1]
+            ddy = popt[2]
+
+            return(ddx, ddy)
+
+
+        dx = np.empty(self.npoints)
+
+        dx, dy = self._mesh.derivative_grad(self._ldata.array, nit, tol)
+
+        return dx, dy
+
 
 
     def interpolate(self, xi, yi, err=False, **kwargs):

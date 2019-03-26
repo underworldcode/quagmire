@@ -2,6 +2,8 @@
 *.pyc
 
 *checkpoint.ipynb
+.ipynb_checkpoints/*
+*.ipynb_checkpoints*
 
 *.mp4
 *.h5

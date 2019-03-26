@@ -5,7 +5,7 @@
  - [x] Dockerfile:  needs mpirun in the path
  - [x] Dockerfile:  needs to have the proper token stuff for Jupyter
  - [ ] Dockerfile:  add the help script etc.
- - [ ] Separate binder version
+ - [x] Separate binder version (branch)
 
 ### MeshVariable implementation:
 
@@ -13,7 +13,14 @@
  - [x] MeshVariable: add gradient and interpolation / evaluate methods (DONE)
  - [x] mesh.add_variable ... cf underworld
 
+
+### Functions
+
+ - [ ] eliminate need for mesh in parameter functions
+ - [ ] expose DM labels as functions / meshVariables
+
 ### Meshing
+
  - [ ] Pixmesh: add an interpolate method.
 
 ### Scaling
@@ -25,7 +32,10 @@
 ### Equation solvers
 
   - Explicit
-    - [ ] Diffusion
-    - [ ] Erosion-deposition
+    - [x] Diffusion
+      - [x] Linear diffusivity
+      - [ ] Non-linear diffusivity
+      - [ ] Timestep for non-linear case (meaning of provided step ?)
+      - [ ] Semi-implicit (?)
 
-  - Semi-implicit (?)
+    - [ ] Erosion-deposition

@@ -88,3 +88,58 @@ def levelset(lazyFn, alpha=0.5, invert=False):
         newLazyFn.description = "(level({}) < {}".format(lazyFn.description, alpha)
 
     return newLazyFn
+
+
+def maskNaN(lazyFn, invert=False):
+
+    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+
+    def threshold(*args, **kwargs):
+        if invert:
+            values = _np.isnan(lazyFn.evaluate(*args, **kwargs)).astype(float)
+        else:
+            values = _np.logical_not(_np.isnan(lazyFn.evaluate(*args, **kwargs))).astype(float)
+
+        return values
+
+    newLazyFn.evaluate = threshold
+    if invert:
+        newLazyFn.description = "isNaN({})".format(lazyFn.description)
+    else:
+        newLazyFn.description = "notNan({})".format(lazyFn.description)
+
+    return newLazyFn
+
+
+def replaceNan(lazyFn1, lazyFn2):
+
+    def replaceNan_nodebynode(*args, **kwargs):
+
+        values1     = lazyFn1.evaluate(*args, **kwargs)
+        values2     = lazyFn2.evaluate(*args, **kwargs)  # Note where we evaluate !
+        mask_values = _np.isnan(*args, **kwargs)
+        replaced_values  = _np.where(mask_values, values2, values1)
+        return replaced_values
+
+    newLazyFn = _LazyEvaluation(mesh=lazyFn1._mesh)
+    newLazyFn.evaluate = replaceNan_nodebynode
+    newLazyFn.description = "Nan([{}]<-[{}])".format(lazyFn1.description, lazyFn2.description)
+
+    return newLazyFn
+
+
+def where(maskFn, lazyFn1, lazyFn2):
+
+    def mask_nodebynode(*args, **kwargs):
+        values1     = lazyFn1.evaluate(*args, **kwargs)
+        values2     = lazyFn2.evaluate(*args, **kwargs)
+        mask_values = maskFn.evaluate(*args, **kwargs)
+
+        replaced_values  = _np.where(mask_values < 0.5, values1, values2)
+        return replaced_values
+
+    newLazyFn = _LazyEvaluation(mesh=lazyFn1._mesh)
+    newLazyFn.evaluate = mask_nodebynode
+    newLazyFn.description = "where({}: [{}]<-[{}])".format(maskFn.description, lazyFn1.description, lazyFn2.description)
+
+    return newLazyFn

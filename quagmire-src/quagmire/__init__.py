@@ -24,6 +24,7 @@ from . import documentation
 from . import tools
 from . import function
 from . import scaling
+from . import equation_systems
 
 try:
     import lavavu

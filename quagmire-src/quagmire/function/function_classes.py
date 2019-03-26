@@ -17,6 +17,7 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import numpy as np
+import quagmire
 
 
 class LazyEvaluation(object):
@@ -165,10 +166,10 @@ class LazyEvaluation(object):
 
 class parameter(LazyEvaluation):
     """Floating point parameter / coefficient for lazy evaluation of functions"""
-    def __init__(self, value, mesh=None):
+
+    def __init__(self, value):
         super(parameter, self).__init__()
         self.value = value
-        self._mesh = mesh
         return
 
     def fn_gradient(self, dirn):
@@ -204,4 +205,13 @@ class parameter(LazyEvaluation):
         self.description = "{}".format(self._value)
 
     def evaluate(self, *args, **kwargs):
-        return self._value
+
+        if len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            mesh = args[0]
+            return self.value * np.ones(mesh.npoints)
+
+        else:
+            xi = np.atleast_1d(args[0])
+            yi = np.atleast_1d(args[1])
+
+            return self.value * np.ones_like(xi)
