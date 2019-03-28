@@ -5,6 +5,8 @@
 .ipynb_checkpoints/*
 *.ipynb_checkpoints*
 
+Paper-Joss
+
 *.mp4
 *.h5
 build/*
