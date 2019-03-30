@@ -151,7 +151,7 @@ class DiffusionEquation(object):
 
 
 
-    def time_integration(self, timestep, steps=1, Delta_t=None):
+    def time_integration(self, timestep, steps=1, Delta_t=None, feedback=None):
 
         from quagmire import function as fn
 
@@ -179,5 +179,10 @@ class DiffusionEquation(object):
             self.phi.data = phi0.data +  timestep * dPhi_dt_fn.evaluate(self._mesh)
 
             elapsed_time += timestep
+
+            if feedback is not None and step%feedback == 0 or step == steps:
+                print("{:05d} - t = {:.3g}".format(step, elapsed_time))
+
+
 
         return steps, elapsed_time
