@@ -101,6 +101,18 @@ The topics covered in the Notebooks include:
 
 The primary authors of the code are Ben Mather, Louis Moresi and Romain Beucher. We take collective responsibility for creating and maintaining the code. Here and there in the source code we mention who originated the code or modified it in order to help direct questions.
 
+
+## Release Notes v0.6.0b
+
+Adding some functionality to help match underworld and quagmire in their usage patterns:
+
+  - Equation systems - diffusion added as a template
+  - Add the scaling module
+  -
+
+
+
+
 ## Release Notes v0.5.0b
 
 This is the first formal 'release' of the code which

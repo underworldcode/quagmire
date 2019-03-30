@@ -35,7 +35,7 @@ class LazyEvaluation(object):
     def evaluate(self, *args, **kwargs):
         raise(NotImplementedError)
 
-    def fn_gradient(self, dirn):
+    def fn_gradient(self, dirn, mesh=None):
         """
         The generic mechanism for obtaining the gradient of a lazy variable is
         to evaluate the values on the mesh at the time in question and use the mesh gradient
@@ -48,40 +48,50 @@ class LazyEvaluation(object):
 
         import quagmire
 
-        def new_fn_x(*args, **kwargs):
-            local_array = self.evaluate(self._mesh)
-            dx, dy = self._mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+        if self._mesh is None and mesh is None:
+            raise RuntimeError("fn_gradient is a numerical differentiation routine based on derivatives of a fitted spline function on a mesh. The function {} has no associated mesh. To obtain *numerical* derivatives of this function, you can provide a mesh to the gradient function. The usual reason for this error is that your function is not based upon mesh variables and can, perhaps, be differentiated without resort to interpolating splines. ".format(self.__repr__()))
 
-            if len(args) == 1 and args[0] == self._mesh:
+
+        elif self._mesh is not None:
+            diff_mesh = self._mesh
+        else:
+            diff_mesh = mesh
+
+        def new_fn_x(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dx, dy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] == diff_mesh:
                 return dx
+
             elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
                 mesh = args[0]
-                return self._mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dx, **kwargs)
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dx, **kwargs)
             else:
                 xi = np.atleast_1d(args[0])
                 yi = np.atleast_1d(args[1])
-                i, e = self._mesh.interpolate(xi, yi, zdata=dx, **kwargs)
+                i, e = diff_mesh.interpolate(xi, yi, zdata=dx, **kwargs)
                 return i
 
         def new_fn_y(*args, **kwargs):
-            local_array = self.evaluate(self._mesh)
-            dx, dy = self._mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            local_array = self.evaluate(diff_mesh)
+            dx, dy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
 
-            if len(args) == 1 and args[0] == self._mesh:
+            if len(args) == 1 and args[0] == diff_mesh:
                 return dy
             elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
                 mesh = args[0]
-                return self._mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dy, **kwargs)
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dy, **kwargs)
             else:
                 xi = np.atleast_1d(args[0])  # .resize(-1,1)
                 yi = np.atleast_1d(args[1])  # .resize(-1,1)
-                i, e = self._mesh.interpolate(xi, yi, zdata=dy, **kwargs)
+                i, e = diff_mesh.interpolate(xi, yi, zdata=dy, **kwargs)
                 return i
 
-        newLazyFn_dx = LazyEvaluation(mesh=self._mesh)
+        newLazyFn_dx = LazyEvaluation(mesh=diff_mesh)
         newLazyFn_dx.evaluate = new_fn_x
         newLazyFn_dx.description = "d({})/dX".format(self.description)
-        newLazyFn_dy = LazyEvaluation(mesh=self._mesh)
+        newLazyFn_dy = LazyEvaluation(mesh=diff_mesh)
         newLazyFn_dy.evaluate = new_fn_y
         newLazyFn_dy.description = "d({})/dY".format(self.description)
 
@@ -206,7 +216,8 @@ class parameter(LazyEvaluation):
 
     def evaluate(self, *args, **kwargs):
 
-        if len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+        if len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh,
+           quagmire.mesh.pixmesh.PixMesh) ):
             mesh = args[0]
             return self.value * np.ones(mesh.npoints)
 
