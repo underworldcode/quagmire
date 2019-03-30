@@ -41,3 +41,10 @@
       - [ ] Semi-implicit (?)
 
     - [ ] Erosion-deposition
+
+
+### Theory Paper
+
+  - [ ] Write something !
+  - [ ] Notebooks for each figure / figure component (extract from Examples)
+  - [ ] Bibliography
