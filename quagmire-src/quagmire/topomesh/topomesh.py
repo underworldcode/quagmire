@@ -34,9 +34,9 @@ class TopoMesh(object):
         self.downhill_neighbours = downhill_neighbours
 
         # Initialise cumulative flow vectors
-        self.DX0 = self.gvec.duplicate()
-        self.DX1 = self.gvec.duplicate()
-        self.dDX = self.gvec.duplicate()
+        self._DX0 = self.gvec.duplicate()
+        self._DX1 = self.gvec.duplicate()
+        self._dDX = self.gvec.duplicate()
 
         # Initialise mesh fields
         # self.height = self.gvec.duplicate()
@@ -52,16 +52,11 @@ class TopoMesh(object):
         """
         Update height field
         """
-
-        height = np.array(height)
-        if height.size != self.npoints:
-            raise IndexError("Incompatible array size, should be {}".format(self.npoints))
-
-        height = self.sync(height)
+        self.heightVariable.data = height
+        self.heightVariable.sync()
 
         t = clock()
         # self.height = height.copy()
-        self.heightVariable.data = height
 
 
         # dHdx, dHdy = self.derivative_grad(height)
@@ -91,14 +86,8 @@ class TopoMesh(object):
         This allows rebuilding of the Adjacency1,2/Downhill matrix but does not compute gradients or
         a third descent path.
         """
-
-        height = np.array(height)
-        if height.size != self.npoints:
-            raise IndexError("Incompatible array size, should be {}".format(self.npoints))
-
-        self.height = self.sync(height)
-        self.heightVariable.data = self.height
-
+        self.heightVariable.data = height
+        self.heightVariable.sync()
 
         t = clock()
 
@@ -308,8 +297,9 @@ class TopoMesh(object):
         downHillaccuMat = self.downhillMat.copy()
         accuM           = self.downhillMat.copy()   # work matrix
 
-        DX1 = self.gvec.duplicate()
-        DX0 = self.gvec.duplicate()
+        DX0 = self._DX0
+        DX1 = self._DX1
+        dDX = self._dDX
         DX0.set(1.0)
 
         err = np.array([True])
@@ -354,9 +344,9 @@ class TopoMesh(object):
         else:
             downhillMat = self.downhillMat
 
-        DX0 = self.DX0
-        DX1 = self.DX1
-        dDX = self.dDX
+        DX0 = self._DX0
+        DX1 = self._DX1
+        dDX = self._dDX
 
         self.lvec.setArray(vector)
         self.dm.localToGlobal(self.lvec, DX0, addv=PETSc.InsertMode.INSERT_VALUES)

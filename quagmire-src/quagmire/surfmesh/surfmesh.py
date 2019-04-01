@@ -36,27 +36,21 @@ class SurfMesh(object):
 
         self.rainfall_pattern_Variable = self.add_variable(name="precipitation")
         self.sediment_distribution_Variable = self.add_variable(name="sediment")
+        self.upstream_area_Variable = self.add_variable(name="upstream_area")
 
 
     def update_surface_processes(self, rainfall_pattern, sediment_distribution):
-        rainfall_pattern = np.array(rainfall_pattern)
-        sediment_distribution = np.array(sediment_distribution)
-
-        if rainfall_pattern.size != self.npoints or sediment_distribution.size != self.npoints:
-            raise IndexError("Incompatible array size, should be {}".format(self.npoints))
 
         from time import clock
-        #self.rainfall_pattern = rainfall_pattern.copy()
-        #self.sediment_distribution = sediment_distribution.copy()
 
         self.rainfall_pattern_Variable.data = rainfall_pattern
-        self.sediment_distribution_Variable = sediment_distribution
+        self.sediment_distribution_Variable.data = sediment_distribution
 
         # cumulative flow
         t = clock()
-        self.upstream_area = self.cumulative_flow(self.area) # err - this is number of triangles
+        self.upstream_area_Variable.data = self.cumulative_flow(self.area)
         self.timings['Upstream area'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.dm.comm.rank==0 and self.verbose:
             print((" - Upstream area {}s".format(clock()-t)))
 
         # Find low points
@@ -90,7 +84,7 @@ class SurfMesh(object):
         new_height = self.sync(new_height)
 
         self._update_height_partial(new_height)
-        if self.rank==0 and self.verbose:
+        if self.dm.comm.rank==0 and self.verbose:
             print("Low point local flood fill ",  clock()-t, " seconds")
 
         return new_height
@@ -99,7 +93,7 @@ class SurfMesh(object):
 
         from petsc4py import PETSc
         t = clock()
-        if self.rank==0 and self.verbose:
+        if self.dm.comm.rank==0 and self.verbose:
             print("Low point local patch fill")
 
         for iteration in range(0,its):
@@ -133,7 +127,7 @@ class SurfMesh(object):
         ## Don't leave the mesh in a half-updated state
         # self.update_height(self.height)
 
-        if self.rank==0 and self.verbose:
+        if self.dm.comm.rank==0 and self.verbose:
             print("Low point local patch fill ",  clock()-t, " seconds")
 
         return self.height
@@ -161,7 +155,7 @@ class SurfMesh(object):
         t = clock()
         ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
 
-        if self.rank==0:
+        if self.dm.comm.rank==0 and self.verbose:
             print("Build low point catchments - ", clock() - t, " seconds")
 
         if saddles:  # Find saddle points on the catchment edge
@@ -199,7 +193,7 @@ class SurfMesh(object):
         s, indices = np.unique(spills['c'], return_index=True)
         spill_points = spills[indices]
 
-        if self.rank == 0:
+        if self.dm.comm.rank==0:
             print(rank, " Sort spills - ", clock() - t)
 
         # Gather lists to process 0, stack and remove duplicates
@@ -207,10 +201,10 @@ class SurfMesh(object):
         t = clock()
         list_of_spills = comm.gather(spill_points,   root=0)
 
-        if rank == 0:
+        if self.dm.comm.rank==0:
             print(rank, " Gather spill data - ", clock() - t)
 
-        if self.rank == 0:
+        if self.dm.comm.rank==0:
             t = clock()
 
             all_spills = np.hstack(list_of_spills)
@@ -252,7 +246,7 @@ class SurfMesh(object):
 
         self._update_height_partial(new_height)
 
-        if self.rank==0 and self.verbose:
+        if self.dm.comm.rank==0 and self.verbose:
             print("Low point swamp fill ",  clock()-t0, " seconds")
 
 
@@ -336,7 +330,7 @@ class SurfMesh(object):
 
         # Note, the -1 is used to identify out of bounds values
 
-        if self.rank == 0:
+        if self.dm.comm.rank==0 and self.verbose:
             print(p, " iterations, time = ", clock() - t0)
 
         return identifier - 1
@@ -611,16 +605,16 @@ class SurfMesh(object):
 
         kappa_eff = kappa / (1.01 - (np.clip(self.slopeVariable.data,0.0,critical_slope) / critical_slope)**2)
         self.kappa = kappa_eff
-        diff_timestep   =  self.area.min() / kappa_eff.max()
+        # diff_timestep   =  self.area.min() / kappa_eff.max()
 
         # get minimum timestep across the global mesh
         local_diffusion_timestep = np.array((self.area / kappa_eff).min())
-        global_diffusion_timestep = np.array(0.0)
+        global_diffusion_timestep = np.array(1e24)
         self.comm.Allreduce([local_diffusion_timestep, MPI.DOUBLE], \
                             [global_diffusion_timestep, MPI.DOUBLE], op=MPI.MIN)
 
 
-        gradZx, gradZy = self.derivative_grad(self.heightVariable.data)
+        gradZx, gradZy = self.heightVariable.gradient()
         gradZx = self.sync(gradZx)
         gradZy = self.sync(gradZy)
         flux_x = kappa_eff * gradZx

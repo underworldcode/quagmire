@@ -16,6 +16,7 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 
 from .mesh import PixMesh as _PixMesh
 from .mesh import TriMesh as _TriMesh
+from .mesh import sTriMesh as _sTriMesh
 from petsc4py import PETSc as _PETSc
 from .topomesh import TopoMesh as _TopoMeshClass
 from .surfmesh import SurfMesh as _SurfaceProcessMeshClass
