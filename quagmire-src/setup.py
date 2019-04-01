@@ -17,12 +17,13 @@ if __name__ == "__main__":
           author            = "Louis Moresi",
           author_email      = "louis.moresi@unimelb.edu.au",
           url               = "https://github.com/University-of-Melbourne-Geodynamics/quagmire",
-          version           = "0.4.0",
+          version           = "0.6.0",
           description       = "Python surface process framework on highly scalable unstructured meshes",
           long_description  = long_description,
           long_description_content_type='text/markdown',
           ext_modules       = [ext],
-          packages          = ['quagmire', 'quagmire.tools', 'quagmire.function', 'quagmire.mesh', 'quagmire.topomesh', 'quagmire.surfmesh'],
+          packages          = ['quagmire', 'quagmire.tools', 'quagmire.equation_systems', 'quagmire.function', 'quagmire.scaling', 'quagmire.mesh', 'quagmire.topomesh', 'quagmire.surfmesh'],
+          install_requires  = ['numpy', 'stripy'],
           package_data      = {'quagmire': ['Examples/Notebooks/data',
                                             # 'Examples/Notebooks/IdealisedExamples/*.ipynb',
                                             # 'Examples/Notebooks/LandscapeEvolution/*.ipynb',
@@ -39,5 +40,6 @@ if __name__ == "__main__":
                                'Programming Language :: Python :: 3.3',
                                'Programming Language :: Python :: 3.4',
                                'Programming Language :: Python :: 3.5',
-                               'Programming Language :: Python :: 3.6']
+                               'Programming Language :: Python :: 3.6',
+                               'Programming Language :: Python :: 3.7s',]
           )

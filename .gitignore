@@ -2,6 +2,11 @@
 *.pyc
 
 *checkpoint.ipynb
+.ipynb_checkpoints/*
+*.ipynb_checkpoints*
+
+Paper-Theory
+Paper-JOSS
 
 *.mp4
 *.h5
@@ -10,8 +15,17 @@ egg-info.*
 *.xmf
 
 www/*
+*/build/*
+*/dist/*
+*/quagmire.egg-info/*
 
 ## These should be downloaded if required
 
 quagmire/Examples/data/ETOPO.npz
 quagmire/Examples/data/ETOPO1_Ice_c_geotiff.tif
+
+.jupyter
+.ipython
+.local
+.cache
+.bash_history

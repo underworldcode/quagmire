@@ -27,37 +27,84 @@ from time import clock
 try: range = xrange
 except: pass
 
-class SurfMesh(object):
+
+from quagmire import function as fn
+from ..mesh import MeshVariable as _MeshVariable
+from ..topomesh import TopoMesh as _TopoMesh
+
+class SurfMesh(_TopoMesh):
 
     def __init__(self, *args, **kwargs):
-        self.kappa = 1.0 # dummy value
+        super(SurfMesh,self).__init__(*args, **kwargs)
+
+        # self.kappa = 1.0 # dummy value
 
         ## Variables that are needed by default methods
 
-        self.rainfall_pattern_Variable = self.add_variable(name="precipitation")
-        self.sediment_distribution_Variable = self.add_variable(name="sediment")
-        self.upstream_area_Variable = self.add_variable(name="upstream_area")
+        # self.rainfall_pattern_Variable = self.add_variable(name="precipitation")
+        # self.sediment_distribution_Variable = self.add_variable(name="sediment")
+
+        # new context manager ...
+        self.deform_topography = self._height_update_context_manager_generator()
+        self.upstream_area     = self.add_variable(name="A(x,y)", locked=True)
+
+    ## Not sure if it is best to inherit this manager and extend it or to
+    ## redefine / over-ride it. Only the exit method has changed.
+
+    def _height_update_context_manager_generator(self):
+        """Builds a context manager on the current object to control when matrices are to be updated"""
+
+        surfmesh = self
+        topographyVariable = self.topography
+
+        class Surfmesh_Height_Update_Manager(object):
+            """Manage when changes to the height information trigger a rebuild
+            of the topomesh matrices and other internal data.
+            """
+
+            def __init__(inner_self):
+                inner_self.surfmesh = surfmesh
+                inner_self._topovar  = topographyVariable
+                return
+
+            def __enter__(inner_self):
+                # unlock
+                inner_self._topovar.unlock()
+                return
+
+            def __exit__(inner_self, *args):
+                inner_self.surfmesh._update_height()
+                inner_self.surfmesh._update_height_for_surface_flows()
+                inner_self._topovar.lock()
+                return
+
+        return Surfmesh_Height_Update_Manager
 
 
-    def update_surface_processes(self, rainfall_pattern, sediment_distribution):
+    def _update_height_for_surface_flows(self):
 
         from time import clock
+        #self.rainfall_pattern = rainfall_pattern.copy()
+        #self.sediment_distribution = sediment_distribution.copy()
 
-        self.rainfall_pattern_Variable.data = rainfall_pattern
-        self.sediment_distribution_Variable.data = sediment_distribution
-
-        # cumulative flow
         t = clock()
-        self.upstream_area_Variable.data = self.cumulative_flow(self.area)
+
+        self.upstream_area.unlock()
+        self.upstream_area.data = self.cumulative_flow(self.area)
+        self.upstream_area.lock()
+
         self.timings['Upstream area'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.dm.comm.rank==0 and self.verbose:
-            print((" - Upstream area {}s".format(clock()-t)))
+
+        if self.verbose:
+            print(("{} - Build upstream areas {}s".format(self.dm.comm.rank, clock()-t)))
 
         # Find low points
         self.low_points = self.identify_low_points()
 
         # Find high points
         self.outflow_points = self.identify_outflow_points()
+
+
 
     def low_points_local_flood_fill(self, its=99999, scale=1.0, smoothing_steps=2):
         """
@@ -84,7 +131,7 @@ class SurfMesh(object):
         new_height = self.sync(new_height)
 
         self._update_height_partial(new_height)
-        if self.dm.comm.rank==0 and self.verbose:
+        if self.rank==0 and self.verbose:
             print("Low point local flood fill ",  clock()-t, " seconds")
 
         return new_height
@@ -93,14 +140,15 @@ class SurfMesh(object):
 
         from petsc4py import PETSc
         t = clock()
-        if self.dm.comm.rank==0 and self.verbose:
+        if self.rank==0 and self.verbose:
             print("Low point local patch fill")
 
         for iteration in range(0,its):
             low_points = self.identify_low_points()
 
-            h = self.heightVariable.data
+            self.topography.unlock()
 
+            h = self.topography.data
             delta_height = np.zeros_like(h)
 
             ## Note, the smoother has a communication barrier so needs to be called even if it has no work to do on this process
@@ -108,33 +156,23 @@ class SurfMesh(object):
             if len(low_points) != 0:
                 delta_height[low_points] =  (h[self.neighbour_cloud[low_points,1:5]].mean(axis=1) -
                                                          h[low_points])
-
+            ## Note, the smoother has a communication barrier so needs to be called even
+            ## if len(low_points==0) and there is no work to do on this process
             smoothed_height = self.rbf_smoother(h+delta_height, iterations=smoothing_steps)
 
-            self.heightVariable.data = np.maximum(smoothed_height, h)
-            ## ?? what does this sync do with the shadows
-            self.heightVariable.data = self.sync(self.heightVariable.data)
-            # Should be equivalent to:
-            # self.heightVariable.sync()
+            self.topography.data = np.maximum(smoothed_height, h)
+            self.topography.sync()
+            self.topography.lock()
+            self._update_height()
 
-            ## Push this / rebuild for the next loop
-
-            # Keep this alive while we test the variable implementation
-            self.height = self.heightVariable.data
-
-            self._update_height_partial(self.heightVariable.data)
-
-        ## Don't leave the mesh in a half-updated state
-        # self.update_height(self.height)
-
-        if self.dm.comm.rank==0 and self.verbose:
+        if self.rank==0 and self.verbose:
             print("Low point local patch fill ",  clock()-t, " seconds")
 
-        return self.height
+        ## and now we need to rebuild the surface process information
+        self._update_height_for_surface_flows()
 
-    ## These would be better if they did not modify the height but
-    ## that would be expensive because the partial update is needed
-    ## in the calculations and so we would have to restore the height.
+        return
+
 
     def low_points_swamp_fill(self, its=1000, saddles=True, ref_height=0.0):
 
@@ -155,7 +193,7 @@ class SurfMesh(object):
         t = clock()
         ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
 
-        if self.dm.comm.rank==0 and self.verbose:
+        if self.rank==0:
             print("Build low point catchments - ", clock() - t, " seconds")
 
         if saddles:  # Find saddle points on the catchment edge
@@ -168,7 +206,7 @@ class SurfMesh(object):
         outer_edges = np.where(~self.bmask)[0]
         edges = np.unique(np.hstack((cedges,outer_edges)))
 
-        height = self.heightVariable.data.copy()
+        height = self.topography.data.copy()
 
         ## In parallel this is all the low points where this process may have a spill-point
         my_catchments = np.unique(ctmt)
@@ -193,7 +231,7 @@ class SurfMesh(object):
         s, indices = np.unique(spills['c'], return_index=True)
         spill_points = spills[indices]
 
-        if self.dm.comm.rank==0:
+        if self.rank == 0:
             print(rank, " Sort spills - ", clock() - t)
 
         # Gather lists to process 0, stack and remove duplicates
@@ -201,10 +239,10 @@ class SurfMesh(object):
         t = clock()
         list_of_spills = comm.gather(spill_points,   root=0)
 
-        if self.dm.comm.rank==0:
+        if rank == 0:
             print(rank, " Gather spill data - ", clock() - t)
 
-        if self.dm.comm.rank==0:
+        if self.rank == 0:
             t = clock()
 
             all_spills = np.hstack(list_of_spills)
@@ -244,13 +282,21 @@ class SurfMesh(object):
         new_height = np.maximum(height, height2)
         new_height = self.sync(new_height)
 
-        self._update_height_partial(new_height)
 
-        if self.dm.comm.rank==0 and self.verbose:
+        # We only need to update the height not all
+        # surface process information that is associated with it.
+        self.topography.unlock()
+        self.topography.data = new_height
+        self._update_height()
+        self.topography.lock()
+
+
+        if self.rank==0 and self.verbose:
             print("Low point swamp fill ",  clock()-t0, " seconds")
 
-
-        return new_height
+        ## but now we need to rebuild the surface process information
+        self._update_height_for_surface_flows()
+        return
 
 
     def backfill_points(self, fill_points, heights, its):
@@ -292,7 +338,7 @@ class SurfMesh(object):
         local_ID.set(fill+1)
         global_ID.set(fill+1)
 
-        identifier = np.empty_like(self.heightVariable.data)
+        identifier = np.empty_like(self.topography.data)
         identifier.fill(fill+1)
 
         if len(points):
@@ -330,7 +376,7 @@ class SurfMesh(object):
 
         # Note, the -1 is used to identify out of bounds values
 
-        if self.dm.comm.rank==0 and self.verbose:
+        if self.rank == 0:
             print(p, " iterations, time = ", clock() - t0)
 
         return identifier - 1
@@ -614,7 +660,7 @@ class SurfMesh(object):
                             [global_diffusion_timestep, MPI.DOUBLE], op=MPI.MIN)
 
 
-        gradZx, gradZy = self.heightVariable.gradient()
+        gradZx, gradZy = self.derivative_grad(self.topography.data)
         gradZx = self.sync(gradZx)
         gradZy = self.sync(gradZy)
         flux_x = kappa_eff * gradZx

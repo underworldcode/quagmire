@@ -24,6 +24,8 @@ from .surfmesh import SurfMesh as _SurfaceProcessMeshClass
 from . import documentation
 from . import tools
 from . import function
+from . import scaling
+from . import equation_systems
 
 try:
     import lavavu
@@ -55,13 +57,13 @@ class _xvfb_runner(object):
             self._xvfb.stop()
 
 import os as _os
+
 # disable collection of data if requested
 if "GLUCIFER_USE_XVFB" in _os.environ:
     from mpi4py import MPI as _MPI
     _comm = _MPI.COMM_WORLD
     if _comm.rank == 0:
         _display = _xvfb_runner()
-
 
 
 known_basemesh_classes = {type(_PETSc.DMDA())   : _PixMesh,\
@@ -146,6 +148,8 @@ def TopoMesh(DM, *args, **kwargs):
 
     return
 
+
+
 def SurfaceProcessMesh(DM, *args, **kwargs):
     """
     Instantiates a mesh with a height and rainfall field.
@@ -170,9 +174,10 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
     -------
      SurfaceProcessMesh : object
     """
+
     BaseMeshType = type(DM)
     if BaseMeshType in list(known_basemesh_classes.keys()):
-        class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass, _SurfaceProcessMeshClass):
+        class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _SurfaceProcessMeshClass):
             def __init__(self, dm, *args, **kwargs):
                 known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
                 _TopoMeshClass.__init__(self, *args, **kwargs)

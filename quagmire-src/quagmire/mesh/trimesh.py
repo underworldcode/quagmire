@@ -28,6 +28,9 @@ from .commonmesh import CommonMesh as _CommonMesh
 try: range = xrange
 except: pass
 
+from quagmire import function as fn
+from quagmire.function import LazyEvaluation as _LazyEvaluation
+
 
 class TriMesh(_CommonMesh):
     """
@@ -45,10 +48,10 @@ class TriMesh(_CommonMesh):
         t = clock()
         coords = self.dm.getCoordinatesLocal().array.reshape(-1,2)
 
-        minX, minY = coords.min(axis=0)
-        maxX, maxY = coords.max(axis=0)
-        length_scale = np.sqrt((maxX - minX)*(maxY - minY)/coords.shape[0])
-        coords += np.random.random(coords.shape) * 0.0001 * length_scale # This should be aware of the point spacing (small perturbation)
+        # minX, minY = coords.min(axis=0)
+        # maxX, maxY = coords.max(axis=0)
+        # length_scale = np.sqrt((maxX - minX)*(maxY - minY)/coords.shape[0])
+        # # coords += np.random.random(coords.shape) * 0.0001 * length_scale # This should be aware of the point spacing (small perturbation)
 
         self.tri = stripy.Triangulation(coords[:,0], coords[:,1], permute=True)
         self.npoints = self.tri.npoints
@@ -64,8 +67,13 @@ class TriMesh(_CommonMesh):
             print(("{} - Calculate node weights and area {}s".format(self.dm.comm.rank, clock()-t)))
 
         # Find boundary points
+
         t = clock()
         self.bmask = self.get_boundary()
+        self.mask = self.add_variable(name="Mask")
+        self.mask.data = self.bmask.astype(float)
+        self.mask.lock()
+
         self.timings['find boundaries'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
             print(("{} - Find boundaries {}s".format(self.dm.comm.rank, clock()-t)))
@@ -97,6 +105,12 @@ class TriMesh(_CommonMesh):
         self.coords = self.tri.points
         self.data = self.coords
         self.interpolate = self.tri.interpolate
+
+
+    def add_variable(self, name=None, locked=False):
+
+        from quagmire.mesh import MeshVariable
+        return MeshVariable(name=name, mesh=self, locked=locked)
 
 
 
@@ -392,30 +406,28 @@ class TriMesh(_CommonMesh):
 
     def _construct_rbf_weights(self, delta=None):
 
-        self.delta  = delta
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
 
-        # delta_x = self.tri.x[self.neighbour_cloud] - self.tri.x.reshape(-1,1)
-        # delta_y = self.tri.y[self.neighbour_cloud] - self.tri.y.reshape(-1,1)
-        #
-        # neighbour_cloud_distances = np.hypot(delta_x, delta_y)
+        self.delta  = delta
+        self.gaussian_dist_w = self._rbf_weights(delta)
+
+        return
+
+    def _rbf_weights(self, delta=None):
 
         neighbour_cloud_distances = self.neighbour_cloud_distances
 
-        if self.delta == None:
-            self.delta = self.neighbour_cloud_distances[:, 1].mean()
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
 
         # Initialise the interpolants
 
         gaussian_dist_w       = np.zeros_like(neighbour_cloud_distances)
-        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/self.delta, 2.0))
+        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/delta, 2.0))
         gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
 
-        # gaussian_dist_w[self.extended_neighbours_mask] = 0.0
-
-        self.gaussian_dist_w = gaussian_dist_w
-
-        return
-
+        return gaussian_dist_w
 
 
     def rbf_smoother(self, vector, iterations=1, delta=None):
@@ -436,10 +448,6 @@ class TriMesh(_CommonMesh):
 
         """
 
-        # Should do some error checking here to ensure the field and point cloud are compatible
-
-        #  lvec  = self.lvec.copy()
-        #  gvec  = self.gvec.copy()
 
         if type(delta) != type(None):
             self._construct_rbf_weights(delta)
@@ -453,3 +461,66 @@ class TriMesh(_CommonMesh):
             vector = self.sync(vector_smoothed)
 
         return vector
+
+
+
+
+    def build_rbf_smoother(self, delta, iterations=1):
+
+        trimesh_self = self
+
+        class _rbf_smoother_object(object):
+
+            def __init__(inner_self, delta, iterations=1):
+
+                if delta == None:
+                    delta = trimesh_self.neighbour_cloud_distances[:, 1].mean()  ## NOT SAFE IN PARALLEL !!!
+
+                inner_self._mesh = trimesh_self
+                inner_self.delta = delta
+                inner_self.iterations = iterations
+                inner_self.gaussian_dist_w = inner_self._mesh._rbf_weights(delta)
+
+                return
+
+
+            def _apply_rbf_on_my_mesh(inner_self, lazyFn, iterations=1):
+                import quagmire
+
+                smooth_node_values = lazyFn.evaluate(inner_self._mesh)
+
+                for i in range(0, iterations):
+                    smooth_node_values = (smooth_node_values[inner_self._mesh.neighbour_cloud[:,:]] * inner_self.gaussian_dist_w[:,:]).sum(axis=1)
+                    smooth_node_values = inner_self._mesh.sync(smooth_node_values)
+
+                return smooth_node_values
+
+
+            def smooth_fn(inner_self, lazyFn, iterations=None):
+
+                if iterations is None:
+                        iterations = inner_self.iterations
+
+                def smoother_fn(*args, **kwargs):
+
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(lazyFn, iterations=iterations)
+
+                    if len(args) == 1 and args[0] == lazyFn._mesh:
+                        return smooth_node_values
+                    elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                        mesh = args[0]
+                        return inner_self._mesh.interpolate(lazyFn._mesh.coords[:,0], lazyFn._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                    else:
+                        xi = np.atleast_1d(args[0])
+                        yi = np.atleast_1d(args[1])
+                        i, e = inner_self._mesh.interpolate(xi, yi, zdata=smooth_node_values, **kwargs)
+                        return i
+
+
+                newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+                newLazyFn.evaluate = smoother_fn
+                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(lazyFn.description, inner_self.delta, iterations)
+
+                return newLazyFn
+
+        return _rbf_smoother_object(delta, iterations)

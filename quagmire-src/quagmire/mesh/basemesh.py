@@ -25,9 +25,9 @@ except: pass
 from ..function import LazyEvaluation as _LazyEvaluation
 
 
+
 class MeshVariable(_LazyEvaluation):
-    """
-    The MeshVariable class generates a variable supported on the mesh.
+    """The MeshVariable class generates a variable supported on the mesh.
 
     To set / read nodal values, use the numpy interface via the 'data' property.
 
@@ -38,26 +38,49 @@ class MeshVariable(_LazyEvaluation):
      mesh : quagmire mesh object
         The supporting mesh for the variable
     """
-    def __init__(self, name=None, mesh=None):
+    def __init__(self, name=None, mesh=None, locked=False):
         super(MeshVariable, self).__init__()
 
         self._mesh = mesh
         self._dm = mesh.dm
         self._name = str(name)
         self.description = self._name
+        self._locked = locked
+        self.mesh_data = True
 
         # mesh variable vector
         self._ldata = self._dm.createLocalVector()
         self._ldata.setName(name)
         return
 
+    def copy(self, name=None, locked=None):
+
+        if name is None:
+            name = self._name+"_copy"
+
+        if locked is None:
+            locked = self._locked
+
+        new_mesh_variable = MeshVariable(name=name, mesh=self._mesh, locked=False)
+        new_mesh_variable.data = self.data
+
+        if locked:
+            new_mesh_variable.lock()
+
+        return new_mesh_variable
+
+    def lock(self):
+        self._locked = True
+
+    def unlock(self):
+        self._locked = False
 
 ## This is a redundancy - @property definition is nuked by the @ .getter
 ## LM: See this: https://stackoverflow.com/questions/51244348/use-of-propertys-getter-in-python
 
 ## Don't sync on get / set as this prevents doing a series of computations on the array and
 ## doing the sync when finished. I can also imagine this going wrong if sync nukes values
-## in the shadow zone unexpectedly.
+## in the shadow zone unexpectedly. Also get is called for any indexing operation ...  ugh !
 
     @property
     def data(self):
@@ -65,21 +88,45 @@ class MeshVariable(_LazyEvaluation):
 
     @data.getter
     def data(self):
-        return self._ldata.array
+        # This step is necessary because the numpy array is writeable
+        # through to the petsc vector and this cannot be blocked.
+        # Access to the numpy array will not automatically be sync'd and this
+        # would also be a way to circumvent access to locked arrays - where such
+        # locking is intended to ensure we update dependent data when the variable is
+        # updated
+
+# if self._locked:
+        view = self._ldata.array[:]
+        view.setflags(write=False)
+        return view
+
+#        else:
+#            return self._ldata.array
 
     @data.setter
     def data(self, val):
+        if self._locked:
+            import quagmire
+            if quagmire.mpi_rank == 0:
+                print("quagmire.MeshVariable: {} - is locked".format(self.description))
+            return
+
         if type(val) is float:
-            self._ldata.set(val)
+                self._ldata.set(val)
         else:
             from petsc4py import PETSc
             self._ldata.setArray(val)
+
+
 
     ## For printing and other introspection we actually want to look through to the
     ## meshVariable's own description
 
     def __repr__(self):
-        return "quagmire.MeshVariable: {}".format(self.description)
+        if self._locked:
+            return "quagmire.MeshVariable: {} - RO".format(self.description)
+        else:
+            return "quagmire.MeshVariable: {} - RW".format(self.description)
 
 
     def getGlobalVector(self, gdata):
@@ -197,6 +244,61 @@ class MeshVariable(_LazyEvaluation):
         return dx, dy
 
 
+    def gradient_patch(self):
+        """
+        Compute values of the derivatives of PHI in the x, y directions at the nodal points.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Parameters
+        ----------
+         PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+
+        Returns
+        -------
+         PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+         PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
+        """
+
+        def bf_gradient_node(node):
+
+            xx = self.coords[node,0]
+            yy = self.coords[node,1]
+
+            from scipy.optimize import curve_fit
+
+            def linear_fit_2D(X, a, b, c):
+                # (1+x) * (1+y) etc
+                x,y = X
+                fit = a + b * x + c * y
+                return fit
+
+            location = np.array([xx,yy]).T
+
+            ## Just try near neighbours ?
+            stencil_size=mesh.near_neighbours[node]
+
+
+            d, patch_points = self.cKDTree.query(location, k=stencil_size)
+            x,y = self.coords[patch_points].T
+            data = temperature.evaluate(x, y)
+            popt, pcov = curve_fit(linear_fit_2D, (x,y), data)
+            ddx = popt[1]
+            ddy = popt[2]
+
+            return(ddx, ddy)
+
+
+        dx = np.empty(self.npoints)
+
+        dx, dy = self._mesh.derivative_grad(self._ldata.array, nit, tol)
+
+        return dx, dy
+
+
+
     def interpolate(self, xi, yi, err=False, **kwargs):
         ## pass through for the mesh's interpolate method
         import numpy as np
@@ -218,6 +320,8 @@ class MeshVariable(_LazyEvaluation):
         """ If the argument is a mesh, return the
             values at the nodes. In all other cases call the interpolate
             method """
+
+        import quagmire
 
         if len(args) == 1 and args[0] == self._mesh:
             return self._ldata.array

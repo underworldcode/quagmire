@@ -1,5 +1,5 @@
 """
-Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher
+Copyright 2016-2019 Louis Moresi, Ben Mather, Romain Beucher
 
 This file is part of Quagmire.
 
@@ -16,4 +16,4 @@ You should have received a copy of the GNU Lesser General Public License
 along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .surfmesh import SurfMesh
+from .diffusion import DiffusionEquation
