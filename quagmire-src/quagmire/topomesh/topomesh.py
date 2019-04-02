@@ -37,9 +37,9 @@ class TopoMesh(object):
 
 
         # Initialise cumulative flow vectors
-        self.DX0 = self.gvec.duplicate()
-        self.DX1 = self.gvec.duplicate()
-        self.dDX = self.gvec.duplicate()
+        self._DX0 = self.gvec.duplicate()
+        self._DX1 = self.gvec.duplicate()
+        self._dDX = self.gvec.duplicate()
 
         self.downhillMat = None
 
@@ -61,10 +61,10 @@ class TopoMesh(object):
         self.slope = fn.math.sqrt(self.topography.fn_gradient(0)**2.0+self.topography.fn_gradient(1)**2.0)
 
 
-
         self._heightVariable = self.topography
 
 
+        
 
     @property
     def downhill_neighbours(self):
@@ -91,7 +91,7 @@ class TopoMesh(object):
         self._build_downhill_matrix_iterate()
         self.timings['downhill matrices'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
 
-        if self.verbose:
+        if self.rank==0 and self.verbose:
             print(("{} - Build downhill matrices {}s".format(self.dm.comm.rank, clock()-t)))
         return
 
@@ -123,6 +123,14 @@ class TopoMesh(object):
 
         return Topomesh_Height_Update_Manager
 
+        self._build_adjacency_matrix_iterate()
+        if self.rank==0 and self.verbose:
+            print((" - Partial rebuild of downhill matrices {}s".format(clock()-t)))
+
+        # revert to specified n-neighbours
+        self.downhill_neighbours = neighbours
+
+        return
 
     def _sort_nodes_by_field(self, height):
 
@@ -163,6 +171,16 @@ class TopoMesh(object):
 
         return matrix
 
+
+## This is the lowest near node / lowest extended neighbour
+
+# hnear = np.ma.array(mesh.height[mesh.neighbour_cloud], mask=mesh.near_neighbours_mask)
+# low_neighbours = np.argmin(hnear, axis=1)
+#
+# hnear = np.ma.array(mesh.height[mesh.neighbour_cloud], mask=mesh.extended_neighbours_mask)
+# low_eneighbours = np.argmin(hnear, axis=1)
+#
+#
 
     def _build_down_neighbour_arrays(self, nearest=True):
 
@@ -309,8 +327,9 @@ class TopoMesh(object):
         downHillaccuMat = self.downhillMat.copy()
         accuM           = self.downhillMat.copy()   # work matrix
 
-        DX1 = self.gvec.duplicate()
-        DX0 = self.gvec.duplicate()
+        DX0 = self._DX0
+        DX1 = self._DX1
+        dDX = self._dDX
         DX0.set(1.0)
 
         err = np.array([True])
@@ -398,9 +417,9 @@ class TopoMesh(object):
         else:
             downhillMat = self.downhillMat
 
-        DX0 = self.DX0
-        DX1 = self.DX1
-        dDX = self.dDX
+        DX0 = self._DX0
+        DX1 = self._DX1
+        dDX = self._dDX
 
         self.lvec.setArray(vector)
         self.dm.localToGlobal(self.lvec, DX0, addv=PETSc.InsertMode.INSERT_VALUES)

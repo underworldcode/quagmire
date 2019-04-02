@@ -84,6 +84,8 @@ class SurfMesh(_TopoMesh):
     def _update_height_for_surface_flows(self):
 
         from time import clock
+        #self.rainfall_pattern = rainfall_pattern.copy()
+        #self.sediment_distribution = sediment_distribution.copy()
 
         t = clock()
 
@@ -136,6 +138,7 @@ class SurfMesh(_TopoMesh):
 
     def low_points_local_patch_fill(self, its=1, smoothing_steps=1):
 
+        from petsc4py import PETSc
         t = clock()
         if self.rank==0 and self.verbose:
             print("Low point local patch fill")
@@ -148,6 +151,7 @@ class SurfMesh(_TopoMesh):
             h = self.topography.data
             delta_height = np.zeros_like(h)
 
+            ## Note, the smoother has a communication barrier so needs to be called even if it has no work to do on this process
 
             if len(low_points) != 0:
                 delta_height[low_points] =  (h[self.neighbour_cloud[low_points,1:5]].mean(axis=1) -
@@ -184,6 +188,7 @@ class SurfMesh(_TopoMesh):
 
         my_low_points = self.identify_low_points()
         my_glow_points = self.lgmap_row.apply(my_low_points.astype(PETSc.IntType))
+
 
         t = clock()
         ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
@@ -646,16 +651,16 @@ class SurfMesh(_TopoMesh):
 
         kappa_eff = kappa / (1.01 - (np.clip(self.slopeVariable.data,0.0,critical_slope) / critical_slope)**2)
         self.kappa = kappa_eff
-        diff_timestep   =  self.area.min() / kappa_eff.max()
+        # diff_timestep   =  self.area.min() / kappa_eff.max()
 
         # get minimum timestep across the global mesh
         local_diffusion_timestep = np.array((self.area / kappa_eff).min())
-        global_diffusion_timestep = np.array(0.0)
+        global_diffusion_timestep = np.array(1e24)
         self.comm.Allreduce([local_diffusion_timestep, MPI.DOUBLE], \
                             [global_diffusion_timestep, MPI.DOUBLE], op=MPI.MIN)
 
 
-        gradZx, gradZy = self.derivative_grad(self.heightVariable.data)
+        gradZx, gradZy = self.derivative_grad(self.topography.data)
         gradZx = self.sync(gradZx)
         gradZy = self.sync(gradZy)
         flux_x = kappa_eff * gradZx
