@@ -73,6 +73,7 @@ class LazyEvaluation(object):
         elif self._mesh is not None:
             diff_mesh = self._mesh
         else:
+            quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
             diff_mesh = mesh
 
         def new_fn_x(*args, **kwargs):
@@ -82,7 +83,7 @@ class LazyEvaluation(object):
             if len(args) == 1 and args[0] == diff_mesh:
                 return dx
 
-            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dx, **kwargs)
             else:
@@ -97,7 +98,7 @@ class LazyEvaluation(object):
 
             if len(args) == 1 and args[0] == diff_mesh:
                 return dy
-            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dy, **kwargs)
             else:
@@ -245,8 +246,7 @@ class parameter(LazyEvaluation):
 
     def evaluate(self, *args, **kwargs):
 
-        if len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh,
-           quagmire.mesh.pixmesh.PixMesh) ):
+        if len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
             mesh = args[0]
             return self.value * np.ones(mesh.npoints)
 

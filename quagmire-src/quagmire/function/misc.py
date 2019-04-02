@@ -39,7 +39,7 @@ def coord(dirn):
             coords at the nodes. In all other cases pass through the
             coordinates given """
 
-        if len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+        if len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
             mesh = args[0]
             return mesh.coords[:,0]
         else:
@@ -50,7 +50,7 @@ def coord(dirn):
             coords at the nodes. In all other cases pass through the
             coordinates given """
 
-        if len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+        if len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
             mesh = args[0]
             return mesh.coords[:,1]
         else:

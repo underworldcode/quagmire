@@ -64,7 +64,7 @@ class TopoMesh(object):
         self._heightVariable = self.topography
 
 
-        
+
 
     @property
     def downhill_neighbours(self):
@@ -359,7 +359,6 @@ class TopoMesh(object):
         self.sweepDownToOutflowMat = downSweepMat
 
 
-
     def upstream_integral_fn(self, lazyFn):
         """Upsream integral implemented as an area-weighted upstream summation"""
 
@@ -371,7 +370,7 @@ class TopoMesh(object):
 
             if len(args) == 1 and args[0] == lazyFn._mesh:
                 return node_integral
-            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return lazyFn._mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=node_integral, **kwargs)
             else:
@@ -472,7 +471,8 @@ class TopoMesh(object):
 
             if len(args) == 1 and args[0] == lazyFn._mesh:
                 return smoothed
-            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+
                 mesh = args[0]
                 return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=smoothed, **kwargs)
             else:
@@ -527,7 +527,7 @@ class TopoMesh(object):
 
             if len(args) == 1 and args[0] == lazyFn._mesh:
                 return smoothed
-            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=smoothed, **kwargs)
             else:
@@ -589,7 +589,7 @@ class TopoMesh(object):
 
             if len(args) == 1 and args[0] == lazyFn._mesh:
                 return smoothed
-            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=smoothed, **kwargs)
             else:
