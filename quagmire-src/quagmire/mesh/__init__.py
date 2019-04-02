@@ -20,3 +20,14 @@ from .trimesh import TriMesh
 from .pixmesh import PixMesh
 from .basemesh import MeshVariable
 from .basemesh import VectorMeshVariable
+
+def check_object_is_a_q_mesh(mesh_object):
+    """Is this object a quagmire LazyEvaluation function ?"""
+
+    return isinstance(mesh_object, (TriMesh, PixMesh))
+
+def check_object_is_a_q_mesh_and_raise(mesh_object):
+    """If this object is not a quagmire LazyEvaluation function then everything must die !"""
+
+    if not check_object_is_a_q_mesh(mesh_object):
+        raise RuntimeError("Expecting a quagmire.mesh object")

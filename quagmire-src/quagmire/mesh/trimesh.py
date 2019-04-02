@@ -37,12 +37,30 @@ class TriMesh(_CommonMesh):
     Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
     We recommend having 1) triangle or 2) scipy installed for Delaunay triangulations.
     """
+
+    ## This is a count of all the instances of the class that are launched
+    ## so that we have a way to name / identify them
+
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        TriMesh.__count += 1
+        return TriMesh.__count
+
+    @property
+    def id(self):
+        return self.__id
+
+
     def __init__(self, dm, verbose=True, *args, **kwargs):
         import stripy
         from scipy.spatial import cKDTree as _cKDTree
 
         # initialise base mesh class
         super(TriMesh, self).__init__(dm, verbose)
+
+        self.__id = "trimesh_{}".format(self._count())
 
         # Delaunay triangulation
         t = clock()

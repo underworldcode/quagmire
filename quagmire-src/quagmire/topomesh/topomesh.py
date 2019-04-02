@@ -364,6 +364,7 @@ class TopoMesh(object):
         newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
         newLazyFn.evaluate = integral_fn
         newLazyFn.description = "UpInt({})dA".format(lazyFn.description)
+        newLazyFn.dependency_list += lazyFn.dependency_list
 
         return newLazyFn
 
@@ -464,6 +465,8 @@ class TopoMesh(object):
         newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
         newLazyFn.evaluate = new_fn
         newLazyFn.description = "DnHSmooth({}), i={}, w={}".format(lazyFn.description,  its, centre_weight)
+        newLazyFn.dependency_list += lazyFn.dependency_list
+
 
         return newLazyFn
 
@@ -517,6 +520,8 @@ class TopoMesh(object):
         newLazyFn = LazyEvaluation(mesh=lazyFn._mesh)
         newLazyFn.evaluate = new_fn
         newLazyFn.description = "UpHSmooth({}), i={}, w={}".format(lazyFn.description, )
+        newLazyFn.dependency_list += lazyFn.dependency_list
+
 
         return newLazyFn
 
@@ -577,6 +582,8 @@ class TopoMesh(object):
         newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
         newLazyFn.evaluate = new_fn
         newLazyFn.description = "StmSmooth({}), i={}, w={}".format(lazyFn.description, its, centre_weight)
+        newLazyFn.dependency_list += lazyFn.dependency_list
+
 
         return newLazyFn
 

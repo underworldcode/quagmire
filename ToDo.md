@@ -18,6 +18,7 @@
 
  - [x] eliminate need for mesh in parameter functions (0.6)
  - [ ] expose DM labels as functions / meshVariables
+ - [ ] dependency tracking (useful for non-linearity detection in solvers)
 
 ### Meshing
 
@@ -41,3 +42,6 @@
       - [ ] Semi-implicit (?)
 
     - [ ] Erosion-deposition
+
+
+### Testing
