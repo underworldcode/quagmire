@@ -61,7 +61,11 @@ class TriMesh(_CommonMesh):
 
         # Calculate weigths and pointwise area
         t = clock()
-        self.calculate_area_weights()
+        self.area, self.weight = self.calculate_area_weights()
+        self.pointwise_area = self.add_variable(name="area")
+        self.pointwise_area.data = self.area
+        self.pointwise_area.lock()
+        
         self.timings['area weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
             print(("{} - Calculate node weights and area {}s".format(self.dm.comm.rank, clock()-t)))
@@ -71,7 +75,7 @@ class TriMesh(_CommonMesh):
         t = clock()
         self.bmask = self.get_boundary()
         self.mask = self.add_variable(name="Mask")
-        self.mask.data = self.bmask.astype(float)
+        self.mask.data = self.bmask.astype(PETSc.ScalarType)
         self.mask.lock()
 
         self.timings['find boundaries'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
@@ -140,9 +144,9 @@ class TriMesh(_CommonMesh):
 
         from quagmire._fortran import ntriw
 
-        self.area, self.weight = ntriw(self.tri.x, self.tri.y, self.tri.simplices.T+1)
+        area, weight = ntriw(self.tri.x, self.tri.y, self.tri.simplices.T+1)
 
-        return
+        return area, weight
 
 
     def node_neighbours(self, point):
