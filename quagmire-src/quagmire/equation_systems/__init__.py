@@ -17,3 +17,4 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from .diffusion import DiffusionEquation
+from .erosion_deposition import ErosionDepositionEquation
