@@ -109,6 +109,7 @@ class LazyEvaluation(object):
     def description(self, value):
         self._description = "{}".format(value)
 
+## Arithmetic operations
 
     def __mul__(self, other):
         mesh = self._mesh
@@ -159,6 +160,40 @@ class LazyEvaluation(object):
         newLazyFn.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
         newLazyFn.description = "({})**({})".format(self.description, exponent.description)
         return newLazyFn
+
+## Arithmethic operations, in-place
+
+    def __imul__(self, other):
+        self.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
+        self.description = "({})*({})".format(self.description, other.description)
+        return
+
+    def __iadd__(self, other):
+        self.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
+        self.description = "({})+({})".format(self.description, other.description)
+        return
+
+    def __itruediv__(self, other):
+        self.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) / other.evaluate(*args, **kwargs)
+        self.description = "({})/({})".format(self.description, other.description)
+        return
+
+    def __isub__(self, other):
+        self.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
+        self.description = "({})-({})".format(self.description, other.description)
+        return
+
+    def __ineg__(self):
+        self.evaluate = lambda *args, **kwargs : -1.0 * self.evaluate(*args, **kwargs)
+        self.description = "-({})".format(self.description)
+        return
+
+    def __ipow__(self, exponent):
+        if isinstance(exponent, (float, int)):
+            exponent = parameter(float(exponent))
+        self.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
+        self.description = "({})**({})".format(self.description, exponent.description)
+        return
 
 
 ## need a fn.coord to extract (x or y) ??
