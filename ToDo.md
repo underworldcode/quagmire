@@ -18,10 +18,13 @@
 
  - [x] eliminate need for mesh in parameter functions (0.6)
  - [ ] expose DM labels as functions / meshVariables
+ - [x] dependency tracking (useful for non-linearity detection in solvers) (0.7)
+ - [x] human-readable naming for fns (meshes / solvers too) (0.7)
 
 ### Meshing
 
  - [ ] Pixmesh: add an interpolate method.
+ - [ ] Spherical meshing framework (0.7)
 
 ### Scaling
 
@@ -41,3 +44,6 @@
       - [ ] Semi-implicit (?)
 
     - [ ] Erosion-deposition
+
+
+### Testing

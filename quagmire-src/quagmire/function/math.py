@@ -26,6 +26,7 @@ def _make_npmath_op(op, name, lazyFn):
     newLazyFn.evaluate = lambda *args, **kwargs : op(lazyFn.evaluate(*args, **kwargs))
     newLazyFn.gradient = lambda *args, **kwargs : op(lazyFn.gradient(*args, **kwargs))
     newLazyFn.description = "{}({})".format(name,lazyFn.description)
+    newLazyFn.dependency_list = lazyFn.dependency_list
     return newLazyFn
 
 ## Trig
@@ -104,6 +105,8 @@ def div(lazyFn_x, lazyFn_y):
     fn_dy = lazyFn_y.fn_gradient(1)
     newLazyFn.evaluate = lambda *args, **kwargs : fn_dx.evaluate(*args, **kwargs) + fn_dy.evaluate(*args, **kwargs)
     newLazyFn.description = "d({})/dX + d({})/dY".format(lazyFn_x.description, lazyFn_y.description)
+
+    newLazyFn.dependency_list = lazyFn.dependency_list
     return newLazyFn
 
 def curl(lazyFn_x, lazyFn_y):
@@ -113,6 +116,8 @@ def curl(lazyFn_x, lazyFn_y):
     fn_dvxdy = lazyFn_x.fn_gradient(1)
     newLazyFn.evaluate = lambda *args, **kwargs : fn_dvydx.evaluate(*args, **kwargs) - fn_dvxdy.evaluate(*args, **kwargs)
     newLazyFn.description = "d({})/dX - d({})/dY".format(lazyFn_y.description, lazyFn_x.description)
+    newLazyFn.dependency_list = lazyFn.dependency_list
+
     return newLazyFn
 
 

@@ -31,12 +31,26 @@ except: pass
 
 class sTriMesh(_CommonMesh):
 
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        sTriMesh.__count += 1
+        return sTriMesh.__count
+
+    @property
+    def id(self):
+        return self.__id
+
     def __init__(self, dm, verbose=True, *args, **kwargs):
         import stripy
         from scipy.spatial import cKDTree as _cKDTree
 
         # initialise base mesh class
         super(sTriMesh, self).__init__(dm, verbose)
+
+        self.__id = "strimesh_{}".format(self._count())
+
 
         # Delaunay triangulation
         t = clock()

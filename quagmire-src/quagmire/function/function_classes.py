@@ -21,12 +21,30 @@ import quagmire
 
 
 class LazyEvaluation(object):
+
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        LazyEvaluation.__count += 1
+        return LazyEvaluation.__count
+
+    @property
+    def id(self):
+        return self.__id
+
+
     def __init__(self, mesh=None):
         """Lazy evaluation of mesh variables / parameters
            If no mesh is provided then no gradient function can be implemented"""
+
+        self.__id = "q_fn_{}".format(self._count())
+
         self.description = ""
         self._mesh = mesh
         self.mesh_data = False
+        self.dependency_list = [self.id]
+
         return
 
     def __repr__(self):
@@ -55,6 +73,7 @@ class LazyEvaluation(object):
         elif self._mesh is not None:
             diff_mesh = self._mesh
         else:
+            quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
             diff_mesh = mesh
 
         def new_fn_x(*args, **kwargs):
@@ -64,7 +83,7 @@ class LazyEvaluation(object):
             if len(args) == 1 and args[0] == diff_mesh:
                 return dx
 
-            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dx, **kwargs)
             else:
@@ -79,7 +98,7 @@ class LazyEvaluation(object):
 
             if len(args) == 1 and args[0] == diff_mesh:
                 return dy
-            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dy, **kwargs)
             else:
@@ -118,6 +137,7 @@ class LazyEvaluation(object):
         newLazyFn = LazyEvaluation(mesh=mesh)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})*({})".format(self.description, other.description)
+        newLazyFn.dependency_list += self.dependency_list + other.dependency_list
         return newLazyFn
 
     def __add__(self, other):
@@ -127,6 +147,8 @@ class LazyEvaluation(object):
         newLazyFn = LazyEvaluation(mesh=mesh)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})+({})".format(self.description, other.description)
+        newLazyFn.dependency_list += self.dependency_list + other.dependency_list
+
         return newLazyFn
 
     def __truediv__(self, other):
@@ -136,6 +158,8 @@ class LazyEvaluation(object):
         newLazyFn = LazyEvaluation(mesh=mesh)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) / other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})/({})".format(self.description, other.description)
+        newLazyFn.dependency_list += self.dependency_list + other.dependency_list
+
         return newLazyFn
 
     def __sub__(self, other):
@@ -145,12 +169,16 @@ class LazyEvaluation(object):
         newLazyFn = LazyEvaluation(mesh=mesh)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})-({})".format(self.description, other.description)
+        newLazyFn.dependency_list += self.dependency_list + other.dependency_list
+
         return newLazyFn
 
     def __neg__(self):
         newLazyFn = LazyEvaluation(mesh=self._mesh)
         newLazyFn.evaluate = lambda *args, **kwargs : -1.0 * self.evaluate(*args, **kwargs)
         newLazyFn.description = "-({})".format(self.description)
+        newLazyFn.dependency_list += self.dependency_list
+
         return newLazyFn
 
     def __pow__(self, exponent):
@@ -159,6 +187,8 @@ class LazyEvaluation(object):
         newLazyFn = LazyEvaluation(mesh=self._mesh)
         newLazyFn.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
         newLazyFn.description = "({})**({})".format(self.description, exponent.description)
+        newLazyFn.dependency_list += self.dependency_list + exponent.dependency_list
+
         return newLazyFn
 
 ## Arithmethic operations, in-place
@@ -251,8 +281,7 @@ class parameter(LazyEvaluation):
 
     def evaluate(self, *args, **kwargs):
 
-        if len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh,
-           quagmire.mesh.pixmesh.PixMesh) ):
+        if len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
             mesh = args[0]
             return self.value * np.ones(mesh.npoints)
 

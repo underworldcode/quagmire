@@ -64,7 +64,7 @@ class TopoMesh(object):
         self._heightVariable = self.topography
 
 
-        
+
 
     @property
     def downhill_neighbours(self):
@@ -359,7 +359,6 @@ class TopoMesh(object):
         self.sweepDownToOutflowMat = downSweepMat
 
 
-
     def upstream_integral_fn(self, lazyFn):
         """Upsream integral implemented as an area-weighted upstream summation"""
 
@@ -371,7 +370,7 @@ class TopoMesh(object):
 
             if len(args) == 1 and args[0] == lazyFn._mesh:
                 return node_integral
-            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return lazyFn._mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=node_integral, **kwargs)
             else:
@@ -383,6 +382,7 @@ class TopoMesh(object):
         newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
         newLazyFn.evaluate = integral_fn
         newLazyFn.description = "UpInt({})dA".format(lazyFn.description)
+        newLazyFn.dependency_list += lazyFn.dependency_list
 
         return newLazyFn
 
@@ -471,7 +471,8 @@ class TopoMesh(object):
 
             if len(args) == 1 and args[0] == lazyFn._mesh:
                 return smoothed
-            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+
                 mesh = args[0]
                 return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=smoothed, **kwargs)
             else:
@@ -483,6 +484,8 @@ class TopoMesh(object):
         newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
         newLazyFn.evaluate = new_fn
         newLazyFn.description = "DnHSmooth({}), i={}, w={}".format(lazyFn.description,  its, centre_weight)
+        newLazyFn.dependency_list += lazyFn.dependency_list
+
 
         return newLazyFn
 
@@ -524,7 +527,7 @@ class TopoMesh(object):
 
             if len(args) == 1 and args[0] == lazyFn._mesh:
                 return smoothed
-            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=smoothed, **kwargs)
             else:
@@ -536,6 +539,8 @@ class TopoMesh(object):
         newLazyFn = LazyEvaluation(mesh=lazyFn._mesh)
         newLazyFn.evaluate = new_fn
         newLazyFn.description = "UpHSmooth({}), i={}, w={}".format(lazyFn.description, )
+        newLazyFn.dependency_list += lazyFn.dependency_list
+
 
         return newLazyFn
 
@@ -584,7 +589,7 @@ class TopoMesh(object):
 
             if len(args) == 1 and args[0] == lazyFn._mesh:
                 return smoothed
-            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=smoothed, **kwargs)
             else:
@@ -596,6 +601,8 @@ class TopoMesh(object):
         newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
         newLazyFn.evaluate = new_fn
         newLazyFn.description = "StmSmooth({}), i={}, w={}".format(lazyFn.description, its, centre_weight)
+        newLazyFn.dependency_list += lazyFn.dependency_list
+
 
         return newLazyFn
 

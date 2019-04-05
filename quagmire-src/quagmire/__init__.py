@@ -96,8 +96,33 @@ def FlatMesh(DM, *args, **kwargs):
     if BaseMeshType in list(known_basemesh_classes.keys()):
 
         class FlatMeshClass(known_basemesh_classes[BaseMeshType]):
+
+            __count = 0
+
+            @classmethod
+            def _count(cls):
+                FlatMeshClass.__count += 1
+                return FlatMeshClass.__count
+
+            @property
+            def id(self):
+                return self.__id
+
             def __init__(self, dm, *args, **kwargs):
+
+                # I can't see how to do this automatically
+                # but it does seem useful to have the ID reflect the
+                # mesh type (perhaps)
+
+                if isinstance(self, _TriMesh):
+                    self.__id = "trimesh_{}".format(self._count())
+                elif isinstance(self, _PixMesh):
+                    self.__id = "pixmesh_{}".format(self._count())
+                else:
+                    self.__id = "flatmesh_{}".format(self._count())
+
                 known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
+
                 # super(FlatMeshClass, self).__init__(dm, *args, **kwargs)
 
         return FlatMeshClass(DM, *args, **kwargs)

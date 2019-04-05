@@ -17,6 +17,9 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
+from quagmire import function as _fn
+
+
 import numpy as np
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
@@ -36,9 +39,6 @@ class DiffusionEquation(object):
         DiffusionEquation.__count += 1
         return DiffusionEquation.__count
 
-    def __init__(self):
-        self.__id = self._count()
-
     @property
     def id(self):
         return self.__id
@@ -51,19 +51,27 @@ class DiffusionEquation(object):
                  neumann_y_mask=None,
                  non_linear=False ):
 
-        self.__id = self._count()
-
-        # These should become properties ...
-
-
+        self.__id = "diffusion_solver_{}".format(self._count())
         self.mesh = mesh
-        self.diffusivity = diffusivity_fn
-        self.neumann_x_mask = neumann_x_mask
-        self.neumann_y_mask = neumann_y_mask
-        self.dirichlet_mask = dirichlet_mask
-        self.non_linear = non_linear
 
-        # This one can be generated and regenerated if mesh changes
+        # These we initialise to None first of all
+        self._diffusivity = None
+        self._neumann_x_mask = None
+        self._neumann_y_mask = None
+        self._dirichlet_mask = None
+        self._non_linear = False
+
+        if diffusivity_fn is not None:
+            self.diffusivity = diffusivity_fn
+
+        if neumann_x_mask is not None:
+            self.neumann_x_mask = neumann_x_mask
+
+        if neumann_y_mask is not None:
+            self.neumann_y_mask = neumann_y_mask
+
+        if dirichlet_mask is not None:
+            self.dirichlet_mask = dirichlet_mask
 
 
     @property
@@ -87,8 +95,12 @@ class DiffusionEquation(object):
 
     @diffusivity.setter
     def diffusivity(self, fn_object):
-        # Should verify it is a function
         self._diffusivity = fn_object
+
+        if _fn.check_dependency(self._diffusivity, self._phi):
+            # Set the flag directly, bypassing .setter checks
+            self._non_linear = True
+
         return
 
     @property
@@ -97,7 +109,7 @@ class DiffusionEquation(object):
 
     @neumann_x_mask.setter
     def neumann_x_mask(self, fn_object):
-        # Should verify it is a function
+        _fn.check_object_is_a_q_function_and_raise(fn_object)
         self._neumann_x_mask = fn_object
         return
 
@@ -107,7 +119,7 @@ class DiffusionEquation(object):
 
     @neumann_y_mask.setter
     def neumann_y_mask(self, fn_object):
-        # Should verify it is a function
+        _fn.check_object_is_a_q_function_and_raise(fn_object)
         self._neumann_y_mask = fn_object
         return
 
@@ -117,7 +129,7 @@ class DiffusionEquation(object):
 
     @dirichlet_mask.setter
     def dirichlet_mask(self, fn_object):
-        # Should verify it is a function
+        _fn.check_object_is_a_q_function_and_raise(fn_object)
         self._dirichlet_mask = fn_object
         return
 
@@ -127,13 +139,19 @@ class DiffusionEquation(object):
 
     @non_linear.setter
     def non_linear(self, bool_object):
-        # Should verify it is a function
+        # Warn if non-linearity exists
+        # This flag is set whenever the diffusivity function is changed
+        # and will need to be over-ridden each time.
         self._non_linear = bool_object
+        if _fn.check_dependency(self._diffusivity, self._phi):
+            print("Over-riding non-linear solver path despite diffusivity being non-linear")
+
         return
 
 
 
     def verify(self):
+        """Verify solver is ready for launch"""
 
         # Check to see we have provided everything in the correct form
 
@@ -143,7 +161,7 @@ class DiffusionEquation(object):
 
     def diffusion_timestep(self):
 
-        local_diff_timestep = (0.5 * self._mesh.area / self._diffusivity.evaluate(self._mesh)).min()
+        local_diff_timestep = (self._mesh.area / self._diffusivity.evaluate(self._mesh)).min()
 
         # synchronise ...
 
@@ -166,6 +184,10 @@ class DiffusionEquation(object):
         elapsed_time = 0.0
 
         for step in range(0, int(steps)):
+
+            ## Non-linear loop will need to go here
+            ## and update timestep somehow.
+
 
             dx_fn, dy_fn = fn.math.grad(self.phi)
             kappa_dx_fn  = fn.misc.where(self.neumann_x_mask,

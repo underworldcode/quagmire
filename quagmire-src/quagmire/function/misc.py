@@ -26,6 +26,8 @@ def _make_npmath_op(op, name, lazyFn):
     newLazyFn.evaluate = lambda *args, **kwargs : op(lazyFn.evaluate(*args, **kwargs))
     newLazyFn.gradient = lambda *args, **kwargs : op(lazyFn.gradient(*args, **kwargs))
     newLazyFn.description = "{}({})".format(name,lazyFn.description)
+    newLazyFn.dependency_list = lazyFn.dependency_list
+
     return newLazyFn
 
 ## Trig
@@ -37,7 +39,7 @@ def coord(dirn):
             coords at the nodes. In all other cases pass through the
             coordinates given """
 
-        if len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+        if len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
             mesh = args[0]
             return mesh.coords[:,0]
         else:
@@ -48,7 +50,7 @@ def coord(dirn):
             coords at the nodes. In all other cases pass through the
             coordinates given """
 
-        if len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+        if len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
             mesh = args[0]
             return mesh.coords[:,1]
         else:
@@ -82,6 +84,7 @@ def levelset(lazyFn, alpha=0.5, invert=False):
         return values
 
     newLazyFn.evaluate = threshold
+    newLazyFn.dependency_list = lazyFn.dependency_list
     if not invert:
         newLazyFn.description = "(level({}) > {}".format(lazyFn.description, alpha)
     else:
@@ -103,6 +106,8 @@ def maskNaN(lazyFn, invert=False):
         return values
 
     newLazyFn.evaluate = threshold
+    newLazyFn.dependency_list = lazyFn.dependency_list
+
     if invert:
         newLazyFn.description = "isNaN({})".format(lazyFn.description)
     else:
@@ -124,6 +129,7 @@ def replaceNan(lazyFn1, lazyFn2):
     newLazyFn = _LazyEvaluation(mesh=lazyFn1._mesh)
     newLazyFn.evaluate = replaceNan_nodebynode
     newLazyFn.description = "Nan([{}]<-[{}])".format(lazyFn1.description, lazyFn2.description)
+    newLazyFn.dependency_list = lazyFn1.dependency_list + lazyFn2.dependency_list
 
     return newLazyFn
 
@@ -141,5 +147,7 @@ def where(maskFn, lazyFn1, lazyFn2):
     newLazyFn = _LazyEvaluation(mesh=lazyFn1._mesh)
     newLazyFn.evaluate = mask_nodebynode
     newLazyFn.description = "where({}: [{}]<-[{}])".format(maskFn.description, lazyFn1.description, lazyFn2.description)
+    newLazyFn.dependency_list = maskFn.dependency_list +     lazyFn1.dependency_list + lazyFn2.dependency_list
+
 
     return newLazyFn
