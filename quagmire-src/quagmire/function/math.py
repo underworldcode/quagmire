@@ -100,23 +100,27 @@ def grad(lazyFn):
 
 def div(lazyFn_x, lazyFn_y):
     """Lazy evaluation of divergence operator on a 2D vector field"""
-    newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh) # should check the meshes match etc
+    if lazyFn_x._mesh.id != lazyFn_y._mesh.id:
+        raise ValueError("Both meshes must be identical")
+    newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
     fn_dx = lazyFn_x.fn_gradient(0)
     fn_dy = lazyFn_y.fn_gradient(1)
     newLazyFn.evaluate = lambda *args, **kwargs : fn_dx.evaluate(*args, **kwargs) + fn_dy.evaluate(*args, **kwargs)
     newLazyFn.description = "d({})/dX + d({})/dY".format(lazyFn_x.description, lazyFn_y.description)
 
-    newLazyFn.dependency_list = lazyFn.dependency_list
+    newLazyFn.dependency_list = lazyFn_x.dependency_list
     return newLazyFn
 
 def curl(lazyFn_x, lazyFn_y):
     """Lazy evaluation of curl operator on a 2D vector field"""
-    newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)  # should check the meshes match etc
+    if lazyFn_x._mesh.id != lazyFn_y._mesh.id:
+        raise ValueError("Both meshes must be identical")
+    newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
     fn_dvydx = lazyFn_y.fn_gradient(0)
     fn_dvxdy = lazyFn_x.fn_gradient(1)
     newLazyFn.evaluate = lambda *args, **kwargs : fn_dvydx.evaluate(*args, **kwargs) - fn_dvxdy.evaluate(*args, **kwargs)
     newLazyFn.description = "d({})/dX - d({})/dY".format(lazyFn_y.description, lazyFn_x.description)
-    newLazyFn.dependency_list = lazyFn.dependency_list
+    newLazyFn.dependency_list = lazyFn_x.dependency_list
 
     return newLazyFn
 

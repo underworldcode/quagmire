@@ -196,26 +196,25 @@ class LazyEvaluation(object):
     def __imul__(self, other):
         self.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
         self.description = "({})*({})".format(self.description, other.description)
+        self.dependency_list += other.dependency_list
         return
 
     def __iadd__(self, other):
         self.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
         self.description = "({})+({})".format(self.description, other.description)
+        self.dependency_list += other.dependency_list
         return
 
     def __itruediv__(self, other):
         self.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) / other.evaluate(*args, **kwargs)
         self.description = "({})/({})".format(self.description, other.description)
+        self.dependency_list += other.dependency_list
         return
 
     def __isub__(self, other):
         self.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
         self.description = "({})-({})".format(self.description, other.description)
-        return
-
-    def __ineg__(self):
-        self.evaluate = lambda *args, **kwargs : -1.0 * self.evaluate(*args, **kwargs)
-        self.description = "-({})".format(self.description)
+        self.dependency_list += other.dependency_list
         return
 
     def __ipow__(self, exponent):
@@ -223,6 +222,7 @@ class LazyEvaluation(object):
             exponent = parameter(float(exponent))
         self.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
         self.description = "({})**({})".format(self.description, exponent.description)
+        self.dependency_list += exponent.dependency_list
         return
 
 
