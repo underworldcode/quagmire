@@ -47,3 +47,15 @@
 
 
 ### Testing
+
+  - [x] Example notebooks with reasonable coverage - all passing
+  - [ ] Unit test scripts (serial)
+  - [ ] Unit test scripts (parallel)
+
+
+### Visualisation
+
+  - [x] lavavu examples (0.3)
+  - [ ] lavavu parallel wrappers (cf gLucifer)
+  - [ ] lavavu mesh variable wrappers (cf gLucifer)
+  - [ ] lavavu + shapely for maps (?)

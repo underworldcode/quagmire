@@ -129,7 +129,7 @@ def replaceNan(lazyFn1, lazyFn2):
     newLazyFn = _LazyEvaluation(mesh=lazyFn1._mesh)
     newLazyFn.evaluate = replaceNan_nodebynode
     newLazyFn.description = "Nan([{}]<-[{}])".format(lazyFn1.description, lazyFn2.description)
-    newLazyFn.dependency_list = lazyFn1.dependency_list + lazyFn2.dependency_list
+    newLazyFn.dependency_list = lazyFn1.dependency_list | lazyFn2.dependency_list
 
     return newLazyFn
 
@@ -147,7 +147,7 @@ def where(maskFn, lazyFn1, lazyFn2):
     newLazyFn = _LazyEvaluation(mesh=lazyFn1._mesh)
     newLazyFn.evaluate = mask_nodebynode
     newLazyFn.description = "where({}: [{}]<-[{}])".format(maskFn.description, lazyFn1.description, lazyFn2.description)
-    newLazyFn.dependency_list = maskFn.dependency_list +     lazyFn1.dependency_list + lazyFn2.dependency_list
+    newLazyFn.dependency_list = maskFn.dependency_list |     lazyFn1.dependency_list | lazyFn2.dependency_list
 
 
     return newLazyFn

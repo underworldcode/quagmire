@@ -106,7 +106,7 @@ def div(lazyFn_x, lazyFn_y):
     newLazyFn.evaluate = lambda *args, **kwargs : fn_dx.evaluate(*args, **kwargs) + fn_dy.evaluate(*args, **kwargs)
     newLazyFn.description = "d({})/dX + d({})/dY".format(lazyFn_x.description, lazyFn_y.description)
 
-    newLazyFn.dependency_list = lazyFn.dependency_list
+    newLazyFn.dependency_list = lazyFn_x.dependency_list
     return newLazyFn
 
 def curl(lazyFn_x, lazyFn_y):
@@ -116,7 +116,7 @@ def curl(lazyFn_x, lazyFn_y):
     fn_dvxdy = lazyFn_x.fn_gradient(1)
     newLazyFn.evaluate = lambda *args, **kwargs : fn_dvydx.evaluate(*args, **kwargs) - fn_dvxdy.evaluate(*args, **kwargs)
     newLazyFn.description = "d({})/dX - d({})/dY".format(lazyFn_y.description, lazyFn_x.description)
-    newLazyFn.dependency_list = lazyFn.dependency_list
+    newLazyFn.dependency_list = lazyFn_y.dependency_list
 
     return newLazyFn
 

@@ -43,7 +43,7 @@ class LazyEvaluation(object):
         self.description = ""
         self._mesh = mesh
         self.mesh_data = False
-        self.dependency_list = [self.id]
+        self.dependency_list = set([self.id])
 
         return
 
@@ -136,7 +136,7 @@ class LazyEvaluation(object):
         newLazyFn = LazyEvaluation(mesh=mesh)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})*({})".format(self.description, other.description)
-        newLazyFn.dependency_list += self.dependency_list + other.dependency_list
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
         return newLazyFn
 
     def __add__(self, other):
@@ -146,7 +146,7 @@ class LazyEvaluation(object):
         newLazyFn = LazyEvaluation(mesh=mesh)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})+({})".format(self.description, other.description)
-        newLazyFn.dependency_list += self.dependency_list + other.dependency_list
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
 
         return newLazyFn
 
@@ -157,7 +157,7 @@ class LazyEvaluation(object):
         newLazyFn = LazyEvaluation(mesh=mesh)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) / other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})/({})".format(self.description, other.description)
-        newLazyFn.dependency_list += self.dependency_list + other.dependency_list
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
 
         return newLazyFn
 
@@ -168,7 +168,7 @@ class LazyEvaluation(object):
         newLazyFn = LazyEvaluation(mesh=mesh)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})-({})".format(self.description, other.description)
-        newLazyFn.dependency_list += self.dependency_list + other.dependency_list
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
 
         return newLazyFn
 
@@ -176,7 +176,7 @@ class LazyEvaluation(object):
         newLazyFn = LazyEvaluation(mesh=self._mesh)
         newLazyFn.evaluate = lambda *args, **kwargs : -1.0 * self.evaluate(*args, **kwargs)
         newLazyFn.description = "-({})".format(self.description)
-        newLazyFn.dependency_list += self.dependency_list
+        newLazyFn.dependency_list |= self.dependency_list
 
         return newLazyFn
 
@@ -186,7 +186,7 @@ class LazyEvaluation(object):
         newLazyFn = LazyEvaluation(mesh=self._mesh)
         newLazyFn.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
         newLazyFn.description = "({})**({})".format(self.description, exponent.description)
-        newLazyFn.dependency_list += self.dependency_list + exponent.dependency_list
+        newLazyFn.dependency_list |= self.dependency_list + exponent.dependency_list
 
         return newLazyFn
 
