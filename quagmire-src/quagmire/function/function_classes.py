@@ -128,6 +128,7 @@ class LazyEvaluation(object):
     def description(self, value):
         self._description = "{}".format(value)
 
+## Arithmetic operations
 
     def __mul__(self, other):
         mesh = self._mesh
@@ -189,6 +190,40 @@ class LazyEvaluation(object):
         newLazyFn.dependency_list |= self.dependency_list + exponent.dependency_list
 
         return newLazyFn
+
+## Arithmethic operations, in-place
+
+    def __imul__(self, other):
+        self.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
+        self.description = "({})*({})".format(self.description, other.description)
+        self.dependency_list += other.dependency_list
+        return
+
+    def __iadd__(self, other):
+        self.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
+        self.description = "({})+({})".format(self.description, other.description)
+        self.dependency_list += other.dependency_list
+        return
+
+    def __itruediv__(self, other):
+        self.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) / other.evaluate(*args, **kwargs)
+        self.description = "({})/({})".format(self.description, other.description)
+        self.dependency_list += other.dependency_list
+        return
+
+    def __isub__(self, other):
+        self.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
+        self.description = "({})-({})".format(self.description, other.description)
+        self.dependency_list += other.dependency_list
+        return
+
+    def __ipow__(self, exponent):
+        if isinstance(exponent, (float, int)):
+            exponent = parameter(float(exponent))
+        self.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
+        self.description = "({})**({})".format(self.description, exponent.description)
+        self.dependency_list += exponent.dependency_list
+        return
 
 
 ## need a fn.coord to extract (x or y) ??

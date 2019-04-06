@@ -21,6 +21,8 @@ from quagmire import function as _fn
 
 
 import numpy as np
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
 
 # To do ... an interface for (iteratively) dealing with
 # boundaries with normals that are not aligned to the coordinates
@@ -163,9 +165,11 @@ class DiffusionEquation(object):
 
         # synchronise ...
 
-        global_diff_timestep = local_diff_timestep
+        local_diff_timestep = np.array(local_diff_timestep)
+        global_diff_timestep = np.array(0.0)
+        comm.Allreduce([local_diff_timestep, MPI.DOUBLE], [global_diff_timestep, MPI.DOUBLE], op=MPI.MIN)
 
-        return local_diff_timestep
+        return global_diff_timestep
 
 
 
