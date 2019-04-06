@@ -187,7 +187,7 @@ class LazyEvaluation(object):
         newLazyFn = LazyEvaluation(mesh=self._mesh)
         newLazyFn.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
         newLazyFn.description = "({})**({})".format(self.description, exponent.description)
-        newLazyFn.dependency_list |= self.dependency_list + exponent.dependency_list
+        newLazyFn.dependency_list |= self.dependency_list | exponent.dependency_list
 
         return newLazyFn
 
