@@ -20,6 +20,7 @@
  - [ ] expose DM labels as functions / meshVariables
  - [x] dependency tracking (useful for non-linearity detection in solvers) (0.7)
  - [x] human-readable naming for fns (meshes / solvers too) (0.7)
+ - [ ] store values at each evaluate statement to reuse (?)
 
 ### Meshing
 
@@ -33,6 +34,13 @@
   - [ ] Integrate scaling into meshes
   - [ ] Save / Load ? Scaling dictionary ?
 
+
+### Input / output
+
+ - [x] Save xmf files for Paraview (0.7)
+ - [ ] Save xmf time series (0.7)
+ - [ ] Save / load project file (`.quag` ?) (0.7)
+
 ### Equation solvers
 
   - Explicit
@@ -42,8 +50,11 @@
       - [ ] Non-linear diffusivity
       - [ ] Timestep for non-linear case (meaning of provided step ?)
       - [ ] Semi-implicit (?)
-
-    - [ ] Erosion-deposition
+    - [ ] Erosion-deposition (0.7)
+      - [ ] Erosion / deposition governing equations + example (0.7)
+      - [ ] Linear, constant erodability (0.7)
+      - [ ] Spatially verying erodability (0.7)
+    - [ ] Integrated erosion-deposition-diffusion time stepping
 
 
 ### Testing
