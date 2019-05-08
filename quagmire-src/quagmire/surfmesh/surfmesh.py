@@ -119,7 +119,8 @@ class SurfMesh(_TopoMesh):
 
         my_low_points = self.identify_low_points()
 
-        h = self.heightVariable.data
+        self.topography.unlock()
+        h = self.topography.data
 
         fill_height =  (h[self.neighbour_cloud[my_low_points,1:7]].mean(axis=1)-h[my_low_points])
 
@@ -127,14 +128,17 @@ class SurfMesh(_TopoMesh):
         new_h = self.sync(new_h)
 
         smoothed_new_height = self.rbf_smoother(new_h, iterations=smoothing_steps)
-        new_height = np.maximum(0.0, smoothed_new_height) + h
-        new_height = self.sync(new_height)
+        self.topography.data = np.maximum(0.0, smoothed_new_height) + h
+        self.topography.sync()
+        self.topography.lock()
+        self._update_height()
 
-        self._update_height_partial(new_height)
         if self.rank==0 and self.verbose:
             print("Low point local flood fill ",  clock()-t, " seconds")
 
-        return new_height
+        self._update_height_for_surface_flows()
+
+        return
 
     def low_points_local_patch_fill(self, its=1, smoothing_steps=1):
 
@@ -193,7 +197,7 @@ class SurfMesh(_TopoMesh):
         t = clock()
         ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
 
-        if self.rank==0:
+        if self.rank==0 and self.verbose:
             print("Build low point catchments - ", clock() - t, " seconds")
 
         if saddles:  # Find saddle points on the catchment edge
@@ -231,16 +235,16 @@ class SurfMesh(_TopoMesh):
         s, indices = np.unique(spills['c'], return_index=True)
         spill_points = spills[indices]
 
-        if self.rank == 0:
-            print(rank, " Sort spills - ", clock() - t)
+        if self.rank == 0 and self.verbose:
+            print(self.rank, " Sort spills - ", clock() - t)
 
         # Gather lists to process 0, stack and remove duplicates
 
         t = clock()
         list_of_spills = comm.gather(spill_points,   root=0)
 
-        if rank == 0:
-            print(rank, " Gather spill data - ", clock() - t)
+        if self.rank == 0 and self.verbose:
+            print(self.rank, " Gather spill data - ", clock() - t)
 
         if self.rank == 0:
             t = clock()
@@ -250,7 +254,8 @@ class SurfMesh(_TopoMesh):
             s, indices = np.unique(all_spills['c'], return_index=True)
             all_spill_points = all_spills[indices]
 
-            print(rank, " Sort all spills - ", clock() - t)
+            if self.verbose:
+                print(rank, " Sort all spills - ", clock() - t)
 
         else:
             all_spill_points = None
@@ -376,7 +381,7 @@ class SurfMesh(_TopoMesh):
 
         # Note, the -1 is used to identify out of bounds values
 
-        if self.rank == 0:
+        if self.rank == 0 and self.verbose:
             print(p, " iterations, time = ", clock() - t0)
 
         return identifier - 1
