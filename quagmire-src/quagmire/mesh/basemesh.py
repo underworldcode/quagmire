@@ -157,7 +157,7 @@ class MeshVariable(_LazyEvaluation):
 
         return
 
-    def save(self, filename=None):
+    def save(self, filename=None, append=False):
         """
         Save the MeshVariable to disk.
         Parameters
@@ -165,15 +165,23 @@ class MeshVariable(_LazyEvaluation):
          filename : str (optional)
             The name of the output file. Relative or absolute paths may be
             used, but all directories must exist.
+         append   : bool (default is False)
+            Append to existing file if it exists
+
         Notes
         -----
          This method must be called collectively by all processes.
         """
         from petsc4py import PETSc
+        import os
 
         vname = self._ldata.getName()
         if type(filename) == type(None):
             filename = vname + '.h5'
+
+        mode = "w"
+        if append and os.path.exists(filename):
+            mode = "a"
 
         # need a global vector
         gdata = self._dm.getGlobalVec()
@@ -181,7 +189,7 @@ class MeshVariable(_LazyEvaluation):
         self._dm.localToGlobal(self._ldata, gdata)
 
         ViewHDF5 = PETSc.Viewer()
-        ViewHDF5.createHDF5(filename, mode='w')
+        ViewHDF5.createHDF5(filename, mode=mode)
         ViewHDF5(gdata)
         ViewHDF5.destroy()
 
@@ -354,6 +362,13 @@ class MeshVariable(_LazyEvaluation):
         gdata = self._dm.getGlobalVec()
         self._dm.localToGlobal(self._ldata, gdata)
         return gdata.sum()
+
+    def mean(self):
+        """ Calculate the mean value """
+        gdata = self._dm.getGlobalVec()
+        size = gdata.getSize()
+        self._dm.localToGlobal(self._ldata, gdata)
+        return gdata.sum()/size
 
 
 class VectorMeshVariable(MeshVariable):
