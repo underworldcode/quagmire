@@ -158,6 +158,21 @@ class DiffusionEquation(object):
         return
 
 
+    def diffusion_rate_fn(self, lazyFn):
+        ## !! create stand alone function
+
+        dx_fn, dy_fn = fn.math.grad(lazyFn)
+        kappa_dx_fn  = fn.misc.where(self.neumann_x_mask,
+                                     self.diffusivity  * dx_fn,
+                                     fn.parameter(0.0))
+        kappa_dy_fn  = fn.misc.where(self.neumann_y_mask,
+                                     self.diffusivity  * dy_fn,
+                                     fn.parameter(0.0))
+
+        dPhi_dt_fn   = fn.misc.where(self.dirichlet_mask, fn.math.div(kappa_dx_fn, kappa_dy_fn), fn.parameter(0.0))
+
+        return dPhi_dt_fn
+
 
     def diffusion_timestep(self):
 
@@ -188,16 +203,7 @@ class DiffusionEquation(object):
             ## Non-linear loop will need to go here
             ## and update timestep somehow.
 
-
-            dx_fn, dy_fn = fn.math.grad(self.phi)
-            kappa_dx_fn  = fn.misc.where(self.neumann_x_mask,
-                                         self.diffusivity  * dx_fn,
-                                         fn.parameter(0.0))
-            kappa_dy_fn  = fn.misc.where(self.neumann_y_mask,
-                                         self.diffusivity  * dy_fn,
-                                         fn.parameter(0.0))
-
-            dPhi_dt_fn   = fn.misc.where(self.dirichlet_mask, fn.math.div(kappa_dx_fn, kappa_dy_fn), fn.parameter(0.0))
+            dPhi_dt_fn   = self.diffusion_rate_fn(self.phi)
 
 
             phi0 = self.phi.copy()

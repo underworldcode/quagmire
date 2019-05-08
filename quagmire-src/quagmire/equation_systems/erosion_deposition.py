@@ -71,17 +71,17 @@ class ErosionDepositionEquation(object):
     @mesh.setter
     def mesh(self, meshobject):
         self._mesh = meshobject
-        self._sp   = meshobject.add_variable(name="qs_{}".format(self.id))
-        self._ed   = meshobject.add_variable(name="ed_{}".format(self.id))
+        self._erosion_rate   = meshobject.add_variable(name="qs_{}".format(self.id))
+        self._deposition_rate   = meshobject.add_variable(name="ed_{}".format(self.id))
         return
 
     @property
-    def stream_power(self):
-        return self._sp
+    def erostion_rate(self):
+        return self._erosion_rate
     # No setter for this ... it is defined via the mesh.setter
     @property
-    def erosion_deposition(self):
-        return self._ed
+    def deposition_rate(self):
+        return self._deposition_rate
     # No setter for this ... it is defined via the mesh.setter
 
     @property
@@ -114,6 +114,18 @@ class ErosionDepositionEquation(object):
         self._n = fn_object
         return
 
+    @property
+    def erosion_deposition_fn(self):
+        return self._erosion_deposition_fn
+
+    @erosion_deposition_fn.setter
+    def erosion_deposition_fn(self, fn_object):
+        if hasattr(self, fn_object):
+            self._erosion_deposition_fn = fn_object
+        else:
+            raise ValueError("Choose a valid erosion-deposition function")
+    
+
     def verify(self):
 
         # Check to see we have provided everything in the correct form
@@ -121,7 +133,7 @@ class ErosionDepositionEquation(object):
         return
 
 
-    def stream_power_law(self):
+    def stream_power_fn(self):
         """
         Compute the stream power
 
@@ -135,52 +147,44 @@ class ErosionDepositionEquation(object):
         upstream_precipitation_integral_fn = self._mesh.upstream_integral_fn(rainfall_fn)
 
         # create stream power function
-        stream_power_fn = upstream_precipitation_integral_fn**m * self._mesh.slope**n * self._mesh.mask
-
-        self.stream_power.data = stream_power_fn.evaluate(self._mesh)
-        return self.stream_power
+        stream_power_law_fn = upstream_precipitation_integral_fn**m * self._mesh.slope**n * self._mesh.mask
+        return stream_power_law_fn
 
 
-    def erosion_deposition_model_1(self, efficiency):
+## Built-in erosion / deposition functions
+
+    def fn_local_equilibrium(self, efficiency):
         """
         Local equilibrium model
         """
-        rainfall_fn = self._rainfall
-        m = self._m
-        n = self._n
-
-        # integrate upstream rainfall
-        upstream_precipitation_integral_fn = self._mesh.upstream_integral_fn(rainfall_fn)
-
-        # create stream power function
-        stream_power_fn = upstream_precipitation_integral_fn**m * self._mesh.slope**n * self._mesh.mask
-
-        # we always want to store stream power (?)
-        # self.stream_power.data = stream_power_fn.evaluate(self._mesh)
-
-
-
-
-
-
-
-        stream_power = self.stream_power_law()
-
+        
+        stream_power_fn = self.stream_power_fn()
         erosion_rate_fn = efficiency*stream_power
 
-        full_capacity_sediment_load = stream_power
+        # store erosion rate
+        erosion_rate = self._erosion_rate
+        erosion_rate.unlock()
+        erosion_rate.data = erosion_rate_fn.evaluate(self._mesh)
+        erosion_rate.lock()
+
+        # store deposition rate
+        deposition_rate = self._deposition_rate
+        deposition_rate.unlock()
+        deposition_rate.data = self._mesh.upstream_integral_fn(erosion_rate)
+        deposition_rate.lock()
+
+        # erosion_deposition_fn = deposition_rate - erosion_rate
+        return erosion_rate.data, deposition_rate.data
 
 
-
-        return
-
-    def erosion_deposition_model_2(self):
+    def erosion_deposition_saltation_length(self):
         """
         Saltation length
         """
         return
 
-    def erosion_deposition_model_3(self, efficiency, alpha):
+
+    def erosion_deposition_transport_limited_flow(self, efficiency, alpha):
         """
         Transport-limited
         """
@@ -206,30 +210,53 @@ class ErosionDepositionEquation(object):
 
         deposition_rate_fn = upstream_precipitation_rate_fn / (alpha * upstream_eroded_material_rate_fn)
 
+        erosion_rate = self._erosion_rate
+        erosion_rate.unlock()
+        erosion_rate.data = erosion_rate_fn.evaluate(self._mesh)
+        erosion_rate.lock()
 
-        dHdt_fn = -erosion_rate_fn + deposition_rate_fn
+        deposition_rate = self._deposition_rate
+        deposition_rate.unlock()
+        deposition_rate.data = deposition_rate_fn.evaluate(self._mesh)
+        deposition_rate.lock()
 
-        self.erosion_deposition.data = dHdt_fn.evaluate(self._mesh)
-        return
+        return erosion_rate, deposition_rate
 
 
-    def diffusion_timestep(self):
+    def erosion_deposition_timestep(self):
 
-        local_diff_timestep = (0.5 * self._mesh.area / self._diffusivity.evaluate(self._mesh)).min()
+        from quagmire import function as fn
 
-        # synchronise ...
+        # mesh variables
+        erosion_rate = self._erosion_rate
+        deposition_rate = self._deposition_rate
+        slope = self._mesh.slope
 
-        local_diff_timestep = np.array(local_diff_timestep)
-        global_diff_timestep = np.array(0.0)
-        comm.Allreduce([local_diff_timestep, MPI.DOUBLE], [global_diff_timestep, MPI.DOUBLE], op=MPI.MIN)
+        # protect against dividing by zero
+        min_slope = fn.parameter(1e-3)
+        min_depo  = fn.parameter(1e-6)
+        typical_l = fn.math.sqrt(self._mesh.pointwise_area)
 
-        return global_diff_timestep
+        erosion_timestep    = ((slope + min_slope) * typical_l / (erosion_rate + min_depo))
+        deposition_timestep = ((slope + min_slope) * typical_l / (deposition_rate + min_depo))
+
+        dt_erosion_local     = (erosion_timestep.evaluate(self._mesh)).min()
+        dt_deposition_local  = (deposition_timestep.evaluate(self._mesh)).min()
+        dt_erosion_global    = np.array(1e12)
+        dt_deposition_global = np.array(1e12)
+
+        comm.Allreduce([dt_erosion_local, MPI.DOUBLE], [dt_erosion_global, MPI.DOUBLE], op=MPI.MIN)
+        comm.Allreduce([dt_deposition_local, MPI.DOUBLE], [dt_deposition_global, MPI.DOUBLE], op=MPI.MIN)
+
+        return min(dt_erosion_global, dt_deposition_global)
 
 
 
     def time_integration(self, timestep, steps=1, Delta_t=None, feedback=None):
 
         from quagmire import function as fn
+
+        topography = self._mesh.topography
 
         if Delta_t is not None:
             steps = Delta_t // timestep
@@ -239,20 +266,23 @@ class ErosionDepositionEquation(object):
 
         for step in range(0, int(steps)):
 
-            dx_fn, dy_fn = fn.math.grad(self.phi)
-            kappa_dx_fn  = fn.misc.where(self.neumann_x_mask,
-                                         self.diffusivity  * dx_fn,
-                                         fn.parameter(0.0))
-            kappa_dy_fn  = fn.misc.where(self.neumann_y_mask,
-                                         self.diffusivity  * dy_fn,
-                                         fn.parameter(0.0))
+            # deal with local drainage
+            # mesh.low_points_local_flood_fill()
 
-            dPhi_dt_fn   = fn.misc.where(self.dirichlet_mask, fn.math.div(kappa_dx_fn, kappa_dy_fn), fn.parameter(0.0))
+            erosion_rate, deposition_rate = self.erosion_deposition_local_equilibrium()
 
+            # half timestep
+            topography0 = topography.copy()
+            topography.unlock()
+            topography.data = topography.data + 0.5*timestep*(deposition_rate - erosion_rate)
+            topography.lock()
 
-            phi0 = self.phi.copy()
-            self.phi.data = self.phi.data  +  0.5 * timestep * dPhi_dt_fn.evaluate(self._mesh)
-            self.phi.data = phi0.data +  timestep * dPhi_dt_fn.evaluate(self._mesh)
+            # full timestep
+            erosion_rate, deposition_rate = self.erosion_deposition_local_equilibrium()
+
+            with self._mesh.deform_topography():
+                # rebuild downhill matrix structure
+                topography.data = topography0.data + timestep*(deposition_rate - erosion_rate)
 
             elapsed_time += timestep
 
