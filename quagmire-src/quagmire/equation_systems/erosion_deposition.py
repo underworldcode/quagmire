@@ -21,7 +21,7 @@ import numpy as np
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
 
-from .. import function as fn
+from quagmire.function import LazyEvaluation as _LazyEvaluation
 
 # To do ... an interface for (iteratively) dealing with
 # boundaries with normals that are not aligned to the coordinates
@@ -153,28 +153,60 @@ class ErosionDepositionEquation(object):
 
 ## Built-in erosion / deposition functions
 
-    def fn_local_equilibrium(self, efficiency):
+    def erosion_deposition_local_equilibrium(self, efficiency):
         """
         Local equilibrium model
         """
-        
-        stream_power_fn = self.stream_power_fn()
-        erosion_rate_fn = efficiency*stream_power
 
-        # store erosion rate
+        stream_power_fn = self.stream_power_fn()
+        erosion_rate_fn = efficiency*stream_power_fn
+
+        # store erosion rate so we do not have to evaluate it
+        # again to compute the deposition rate
         erosion_rate = self._erosion_rate
         erosion_rate.unlock()
         erosion_rate.data = erosion_rate_fn.evaluate(self._mesh)
         erosion_rate.lock()
 
-        # store deposition rate
+        deposition_rate_fn = self._mesh.upstream_integral_fn(erosion_rate)
+
+        # might as well store deposition rate too
         deposition_rate = self._deposition_rate
         deposition_rate.unlock()
-        deposition_rate.data = self._mesh.upstream_integral_fn(erosion_rate)
+        deposition_rate.data = deposition_rate_fn.evaluate(self._mesh)
         deposition_rate.lock()
 
         # erosion_deposition_fn = deposition_rate - erosion_rate
         return erosion_rate.data, deposition_rate.data
+
+
+    def fn_local_equilibrium(self, efficiency):
+
+        import quagmire
+
+        def new_fn(*args, **kwargs):
+            
+            erosion_rate, deposition_rate = self.erosion_deposition_local_equilibrium(efficiency)
+            dHdt = deposition_rate - erosion_rate
+            # dHdt = self._mesh.sync(dHdt)
+
+            if len(args) == 1 and args[0] == self._mesh:
+                return dHdt
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+                mesh = args[0]
+                return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dHdt, **kwargs)
+            else:
+                xi = np.atleast_1d(args[0])  # .resize(-1,1)
+                yi = np.atleast_1d(args[1])  # .resize(-1,1)
+                i, e = self.interpolate(xi, yi, zdata=dHdt, **kwargs)
+                return i
+
+        newLazyFn = _LazyEvaluation(mesh=self._mesh)
+        newLazyFn.evaluate = new_fn
+        newLazyFn.description = "dH/dt"
+        newLazyFn.dependency_list = set([self.erosion_rate, self.deposition_rate])
+
+        return newLazyFn
 
 
     def erosion_deposition_saltation_length(self):

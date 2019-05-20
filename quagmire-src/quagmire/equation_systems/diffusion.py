@@ -161,6 +161,8 @@ class DiffusionEquation(object):
     def diffusion_rate_fn(self, lazyFn):
         ## !! create stand alone function
 
+        from quagmire import function as fn
+
         dx_fn, dy_fn = fn.math.grad(lazyFn)
         kappa_dx_fn  = fn.misc.where(self.neumann_x_mask,
                                      self.diffusivity  * dx_fn,
