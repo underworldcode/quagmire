@@ -370,6 +370,16 @@ class MeshVariable(_LazyEvaluation):
         self._dm.localToGlobal(self._ldata, gdata)
         return gdata.sum()/size
 
+    def std(self):
+        """ Calculate the standard deviation """
+        from math import sqrt
+        gdata = self._dm.getGlobalVec()
+        size = gdata.getSize()
+        self._dm.localToGlobal(self._ldata, gdata)
+        mu = gdata.sum()/size
+        gdata -= mu
+        return sqrt((gdata.sum())**2) / size
+
 
 class VectorMeshVariable(MeshVariable):
     """

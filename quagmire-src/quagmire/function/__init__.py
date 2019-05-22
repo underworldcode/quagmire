@@ -1,6 +1,7 @@
 from .function_classes import *
 from . import math
 from . import misc
+from . import stats
 
 
 def check_dependency(this_fn, that_fn):
@@ -18,3 +19,8 @@ def check_object_is_a_q_function_and_raise(fn_object):
 
     if not isinstance(fn_object, LazyEvaluation):
         raise RuntimeError("Expecting a quagmire.function object")
+
+def check_object_is_a_mesh_variable(fn_object):
+	""" Is this object a quagmire MeshVariable or VectorMeshVariable ?"""
+
+	return fn_object.mesh_data
