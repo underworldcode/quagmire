@@ -2,7 +2,7 @@
 #  Short docker file to distribute some notebooks
 #################################################
 
-ARG FROMIMG_ARG
+ARG FROMIMG_ARG=underworldcode/quagmire-base:3.10.2
 FROM ${FROMIMG_ARG}
 
 #################################################
@@ -12,7 +12,7 @@ USER root
 RUN useradd -ms /bin/bash jovyan
 
 ### DEPENDENCIES
-RUN python3 -m pip install --upgrade --no-cache-dir stripy pyvirtualdisplay
+RUN python3 -m pip install --upgrade --no-cache-dir stripy lavavu pyvirtualdisplay
 
 ### Quagmire - Notebooks
 
@@ -41,11 +41,11 @@ USER jovyan
 ## build-dockerfile.sh
 
 ARG IMAGENAME_ARG
-ARG PROJ_NAME_ARG
-ARG NB_PORT_ARG
-ARG NB_PASSWD_ARG
-ARG NB_DIR_ARG
-ARG START_NB_ARG
+ARG PROJ_NAME_ARG=quagmire
+ARG NB_PORT_ARG=8888
+ARG NB_PASSWD_ARG=""
+ARG NB_DIR_ARG="Notebooks"
+ARG START_NB_ARG="0-StartHere.ipynb"
 
 # The args need to go into the environment so they
 # can be picked up by commands/templates (defined previously)
