@@ -1,9 +1,10 @@
 include README.md
-include LICENCE
 include MANIFEST.in
 include COPYING
+include COPYING.LESSER
 include setup.cfg
 include fortran/*
-recursive-include quagmire/*.py
-# include tests/*.py
-# include Notebooks/*
+recursive-include quagmire/ *.py
+include quagmire/Examples/Tutorial/*.ipynb
+include quagmire/Examples/WorkedExamples/*.ipynb
+include quagmire/Examples/0-StartHere.ipynb
