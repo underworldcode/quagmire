@@ -200,6 +200,7 @@ def create_DMPlex_from_hdf5(file):
     dm = PETSc.DMPlex().createFromFile(file)
 
     # define one DoF on the nodes
+    dm.setNumFields(1)
     origSect = dm.createSection(1, [1,0,0])
     origSect.setFieldName(0, "points")
     origSect.setUp()
@@ -237,6 +238,7 @@ def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
 
     pStart, pEnd = dm.getChart()
 
+    dm.setNumFields(1)
     origSect = dm.createSection(1, [1,0,0])
     origSect.setFieldName(0, "points")
     origSect.setUp()
@@ -325,6 +327,7 @@ def create_DMPlex(x, y, simplices, boundary_vertices=None):
         dm.setLabelValue("coarse", pt, 1)
 
     # define one DoF on the nodes
+    dm.setNumFields(1)
     origSect = dm.createSection(1, [1,0,0])
     origSect.setFieldName(0, "points")
     origSect.setUp()
@@ -369,6 +372,7 @@ def refine_DM(dm, refinement_steps=1):
     for i in range(0, refinement_steps):
         dm = dm.refine()
 
+    dm.setNumFields(1)
     origSect = dm.createSection(1, [1,0,0]) # define one DoF on the nodes
     origSect.setFieldName(0, "points")
     origSect.setUp()
