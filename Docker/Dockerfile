@@ -2,7 +2,7 @@
 #  Short docker file to distribute some notebooks
 #################################################
 
-ARG FROMIMG_ARG=underworldcode/base:petsc4py-3.11.2
+ARG FROMIMG_ARG=underworldcode/petsc4py:3.11.2-slim
 FROM ${FROMIMG_ARG}
 
 #################################################
@@ -11,7 +11,13 @@ FROM ${FROMIMG_ARG}
 USER root
 
 ### DEPENDENCIES
-RUN python3 -m pip install --upgrade --no-cache-dir jupyter stripy lavavu pyvirtualdisplay
+RUN python3 -m pip install --upgrade --no-cache-dir \
+	jupyter \
+	stripy \
+	lavavu \
+	pyvirtualdisplay \
+	pytest \
+	webdav
 
 
 # Add examples
@@ -72,15 +78,11 @@ RUN chown -R jovyan:jovyan $NB_WORK
 ### Quagmire - Notebooks
 
 ENV MODULE_DIR="quagmire-src"
-ADD --chown=jovyan:jovyan $MODULE_DIR $MODULE_DIR
-RUN cd $MODULE_DIR && python3 -m pip install --no-deps --upgrade . && \
-    mv quagmire/Examples/data $NB_WORK/data && \
-    mv quagmire/Examples/Notebooks $NB_WORK/Notebooks && \
-    mv quagmire/Examples/Scripts $NB_WORK/Scripts && \
-    mv quagmire/Examples/Images $NB_WORK/Images && \
-    mv quagmire/Examples/0-StartHere.ipynb $NB_WORK && \
+ADD --chown=jovyan:jovyan . / $MODULE_DIR/
+RUN cd $MODULE_DIR && python3 -m pip install --no-deps --no-cache-dir --upgrade . && \
     cd .. && rm -rf $MODULE_DIR
 
+RUN ipython3 -c 'import quagmire; quagmire.documentation.install_documentation(path="/home/jovyan/")'
 
 
 # Trust all notebooks

@@ -38,10 +38,8 @@ if __name__ == "__main__":
                                             'Examples/Notebooks/*.ipynb',
                                             'Examples/Notebooks/WorkedExamples/*.ipynb',  ## Leave out Unsupported
                                             'Examples/Notebooks/Tutorial/*.ipynb',
-                                            'Examples/Scripts/IdealisedExamples',
-                                            'Examples/Scripts/LandscapeEvolution',
-                                            'Examples/Scripts/LandscapePreprocessing',    ## Leave out Unsupported
-                                            'Examples/Scripts/Scripts/*.py']},
+                                            'Examples/Scripts/Meshes/*.py',
+                                            'Examples/Scripts/LandscapePreprocessing/*.py']},
           classifiers       = ['Programming Language :: Python :: 2',
                                'Programming Language :: Python :: 2.7',
                                'Programming Language :: Python :: 3',
