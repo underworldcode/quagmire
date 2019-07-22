@@ -11,7 +11,7 @@ def test_scipy_import():
 def test_mpi4py_import():
 	from mpi4py import MPI
 	comm = MPI.COMM_WORLD
-	assert comm.rank is int, "mpi4py is not configured properly"
+	assert comm.rank >= 0, "mpi4py is not configured properly"
 
 def test_h5py_import():
 	import h5py
@@ -38,6 +38,7 @@ def test_quagmire_modules():
 	from quagmire import FlatMesh
 	from quagmire import TopoMesh
 	from quagmire import SurfaceProcessMesh
+	from quagmire import _fortran
 
 def test_jupyter_available():
     from subprocess import check_output
