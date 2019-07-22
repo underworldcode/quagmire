@@ -110,7 +110,7 @@ subaerial = m1s >= 0.0
 
 # In[75]:
 
-DM = meshtools.create_DMPlex_from_points(x1s, y1s, submarine, refinement_steps=3)
+DM = meshtools.create_DMPlex_from_points(x1s, y1s, submarine, refinement_levels=3)
 mesh = quagmire.SurfaceProcessMesh(DM, verbose=True)
 
 

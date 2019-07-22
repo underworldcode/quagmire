@@ -9,7 +9,6 @@
 
 # import matplotlib.pyplot as plt
 import numpy as np
-from scipy.ndimage import imread
 from quagmire import tools as meshtools
 from petsc4py import PETSc
 from mpi4py import MPI
@@ -33,7 +32,7 @@ x1, y1, bmask1 = meshtools.poisson_elliptical_mesh(minX, maxX, minY, maxY, 0.1, 
 
 # In[41]:
 
-DM = meshtools.create_DMPlex_from_points(x1, y1, bmask1, refinement_steps=2)
+DM = meshtools.create_DMPlex_from_points(x1, y1, bmask1, refinement_levels=2)
 mesh = SurfaceProcessMesh(DM)  ## cloud array etc can surely be done better ...
 
 print(mesh.dm.comm.rank, "Number of nodes - ", mesh.npoints)

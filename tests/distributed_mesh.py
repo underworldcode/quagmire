@@ -11,7 +11,7 @@ minY, maxY = -5., 5.
 spacing = 0.05
 
 ptsx, ptsy, bmask = meshtools.poisson_elliptical_mesh(minX, maxX, minY, maxY, spacing, 500)
-dm = meshtools.create_DMPlex_from_points(ptsx, ptsy, bmask, refinement_steps=1)
+dm = meshtools.create_DMPlex_from_points(ptsx, ptsy, bmask, refinement_levels=1)
 
 mesh = FlatMesh(dm)
 

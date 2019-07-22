@@ -87,7 +87,7 @@ meshheights = ndimage.map_coordinates(dem, coords.T, order=3, mode='nearest')
 
 
 
-dm = meshtools.create_DMPlex_from_points(x, y, bmask, refinement_steps=2)
+dm = meshtools.create_DMPlex_from_points(x, y, bmask, refinement_levels=2)
 mesh = SurfaceProcessMesh(dm)
 
 # Triangulation reorders points

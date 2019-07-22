@@ -25,7 +25,7 @@ try: range = xrange
 except: pass
 
 
-def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
+def create_DMPlex_from_points(x, y, bmask=None, refinement_levels=0):
     """
     Triangulates x,y coordinates on rank 0 and creates a PETSc DMPlex object
     from the cells and vertices to distribute among processors.
@@ -40,7 +40,7 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
         boundary mask where points along the boundary
         equal False, and the interior equal True
         if bmask=None (default) then the convex hull of points is used
-     refinement_steps : int
+     refinement_levels : int
         number of iterations to refine the mesh (default: 0)
 
     Returns
@@ -89,7 +89,7 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_steps=0):
         boundary_indices = np.nonzero(~bmask)[0]
         boundary_vertices = points_to_edges(tri, boundary_indices)
 
-    return create_DMPlex(tri.x, tri.y, tri.simplices, boundary_vertices)
+    return create_DMPlex(tri.x, tri.y, tri.simplices, boundary_vertices, refinement_levels)
 
 
 
@@ -274,7 +274,7 @@ def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     return dm
 
 
-def create_DMPlex(x, y, simplices, boundary_vertices=None):
+def create_DMPlex(x, y, simplices, boundary_vertices=None, refinement_levels=0):
     """
     Create a PETSc DMPlex object on root processor
     and distribute to other processors
@@ -341,6 +341,9 @@ def create_DMPlex(x, y, simplices, boundary_vertices=None):
         newSect, newVec = dm.distributeField(sf, origSect, origVec)
         dm.setDefaultSection(newSect)
 
+    # parallel mesh refinement
+    dm = refine_DM(dm, refinement_levels)
+
     return dm
 
 
@@ -362,14 +365,14 @@ def save_DM_to_hdf5(dm, file):
     return
 
 
-def refine_DM(dm, refinement_steps=1):
+def refine_DM(dm, refinement_levels=1):
     """
     Refine DM a specified number of refinement steps
     For each step, the midpoint of every line segment is added
     to the DM.
     """
 
-    for i in range(0, refinement_steps):
+    for i in range(0, refinement_levels):
         dm = dm.refine()
 
     dm.setNumFields(1)

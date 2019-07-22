@@ -12,7 +12,7 @@
 # import matplotlib.pyplot as plt
 import numpy as np
 # from matplotlib.pyplot import imread
-from scipy.ndimage import imread
+import imageio
 from quagmire import tools as meshtools
 
 # get_ipython().magic('matplotlib inline')
@@ -26,7 +26,7 @@ from quagmire import tools as meshtools
 
 !pwd
 
-dem = imread('../../data/port_macquarie.tif', mode='F')
+dem = imageio.imread('../../data/port_macquarie.tif')
 dem = np.fliplr(dem)
 
 dem.shape
@@ -130,7 +130,7 @@ from quagmire import FlatMesh
 from quagmire import TopoMesh # all routines we need are within this class
 from quagmire import SurfaceProcessMesh
 
-dm = meshtools.create_DMPlex_from_points(x, y, bmask, refinement_steps=2)
+dm = meshtools.create_DMPlex_from_points(x, y, bmask, refinement_levels=2)
 
 print("gLPoints: ", dm.getCoordinates().array.shape[0]/2)
 print(" LPoints: ", dm.getCoordinatesLocal().array.shape[0]/2)

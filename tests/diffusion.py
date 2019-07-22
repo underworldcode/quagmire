@@ -104,7 +104,7 @@ dx, dy = 0.1, 0.1
 
 x, y, bmask = meshtools.square_mesh(minX, maxX, minY, maxY, dx, dy, 10000, 100)
 x, y = meshtools.lloyd_mesh_improvement(x, y, bmask, iterations=3)
-dm = meshtools.create_DMPlex_from_points(x, y, bmask, refinement_steps=0)
+dm = meshtools.create_DMPlex_from_points(x, y, bmask, refinement_levels=0)
 
 ode = Diffusion(dm)
 f = ode.gvec.duplicate()

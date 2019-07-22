@@ -24,7 +24,7 @@ x = np.hstack([x, 1.1*x[inverse_bmask]])
 y = np.hstack([y, 1.1*y[inverse_bmask]])
 bmask = np.hstack([bmask, bmask[inverse_bmask]])
 
-dm = meshtools.create_DMPlex_from_points(x,y,bmask, refinement_steps=refine)
+dm = meshtools.create_DMPlex_from_points(x,y,bmask, refinement_levels=refine)
 
 mesh = FlatMesh(dm)
 mesh.save_mesh_to_hdf5('coarse_mesh.h5')

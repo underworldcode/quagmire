@@ -174,7 +174,7 @@ if not (PETSc.COMM_WORLD.rank == 0 or PETSc.COMM_WORLD.size == 1):
     y1 = None
     bmask = None
 
-DM = meshtools.create_DMPlex_from_points(x1, y1, bmask, refinement_steps=3)
+DM = meshtools.create_DMPlex_from_points(x1, y1, bmask, refinement_levels=3)
 
 del x1, y1, bmask
 

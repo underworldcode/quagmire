@@ -17,7 +17,7 @@ minX, maxX = -5., 5.
 minY, maxY = -5., 5.
 
 x, y, bmask = meshtools.elliptical_mesh(minX, maxX, minY, maxY, 0.01, 0.01, 100000, 500)
-DM = meshtools.create_DMPlex_from_points(x, y, bmask, refinement_steps=1)
+DM = meshtools.create_DMPlex_from_points(x, y, bmask, refinement_levels=1)
 
 mesh = SurfaceProcessMesh(DM)
 x, y, simplices, bmask = mesh.get_local_mesh()
