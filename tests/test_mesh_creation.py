@@ -65,13 +65,13 @@ def test_DMPlex_creation_from_box():
 def test_DMDA_creation():
     minX, maxX = -5., 5.
     minY, maxY = -5., 5.
-    resX, resY = 10, 10
-    DM = meshtools.create_DMDA(minX, maxX, minY, maxY, resX, resY)
+    Nx, Ny = 10, 10
+    DM = meshtools.create_DMDA(minX, maxX, minY, maxY, Nx, Ny)
     coords = DM.getCoordinatesLocal().array.reshape(-1,2)
 
     # create expected grid coordinates
-    xcoords = np.arange(minX, maxX+resX, resX)
-    ycoords = np.arange(minY, maxY+resY, resY)
+    xcoords = np.linspace(minX, maxX, Nx)
+    ycoords = np.linspace(minY, maxY, Ny)
     xq, yq = np.meshgrid(xcoords, ycoords)
     coords0 = np.column_stack([xq.ravel(), yq.ravel()])
 
