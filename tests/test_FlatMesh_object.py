@@ -34,8 +34,8 @@ def test_smoothing(load_triangulated_mesh_DM):
     mesh = FlatMesh(load_triangulated_mesh_DM)
 
     noise = np.random.rand(mesh.npoints)
-    smooth_noise = mesh.local_area_smoothing(noise.data, its=1)
-    smoother_noise = mesh.local_area_smoothing(noise.data, its=2)
+    smooth_noise = mesh.local_area_smoothing(noise, its=1)
+    smoother_noise = mesh.local_area_smoothing(noise, its=2)
 
     err_msg = "Smoothing random noise using RBF is not working"
     assert np.std(noise) > np.std(smooth_noise) > np.std(smoother_noise), err_msg

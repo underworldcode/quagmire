@@ -82,12 +82,16 @@ def test_DMDA_creation():
 
 def test_mesh_improvement(load_triangulated_mesh):
     from quagmire import FlatMesh
+    from quagmire.tools import lloyd_mesh_improvement
 
-    x = load_triangulated_mesh['x']
-    y = load_triangulated_mesh['y']
-    simplices = load_triangulated_mesh['simplices']
+    x = np.array([0., 0., 1., 1.])
+    y = np.array([0., 1., 0., 1.])
 
-    DM = meshtools.create_DMPlex(x, y, simplices)
+    x = np.hstack([x, 0.5*np.random.random(size=100)])
+    y = np.hstack([y, 0.5*np.random.random(size=100)])
+
+
+    DM = meshtools.create_DMPlex_from_points(x, y)
     mesh = FlatMesh(DM)
 
     bmask = mesh.bmask.copy()
@@ -95,12 +99,21 @@ def test_mesh_improvement(load_triangulated_mesh):
     # perturb with Lloyd's mesh improvement algorithm
     x1, y1 = lloyd_mesh_improvement(x, y, bmask, 3)
     DM1 = meshtools.create_DMPlex_from_points(x1, y1)
-    mesh1 = FlatMesh(DM)
+    mesh1 = FlatMesh(DM1)
 
     mesh_equant = mesh.neighbour_cloud_distances.mean(axis=1) / ( np.sqrt(mesh.area))
     mesh1_equant = mesh1.neighbour_cloud_distances.mean(axis=1) / ( np.sqrt(mesh1.area))
 
-    assert np.std(mesh_equant1) < np.std(mesh_equant), "Mesh points are not more evenly spaced than previously"
+    mask_bbox = np.ones(mesh.npoints, dtype=bool)
+    mask_bbox[x1 < x.min()] = False
+    mask_bbox[x1 > x.max()] = False
+    mask_bbox[y1 < y.min()] = False
+    mask_bbox[y1 > y.max()] = False
+
+    mesh_equant = mesh_equant[mask_bbox]
+    mesh1_equant = mesh1_equant[mask_bbox]
+
+    assert np.std(mesh1_equant) < np.std(mesh_equant), "Mesh points are not more evenly spaced than previously"
 
 
 def test_mesh_save_to_hdf5(load_triangulated_mesh):
