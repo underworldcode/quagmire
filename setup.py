@@ -4,7 +4,7 @@ from os import path
 import io
 
 ext = Extension(name    = 'quagmire._fortran',
-                sources = ['fortran/quagmire.pyf','fortran/trimesh.f90'])
+                sources = ['src/quagmire.pyf','src/trimesh.f90'])
 
 
 this_directory = path.abspath(path.dirname(__file__))

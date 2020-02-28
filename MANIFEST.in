@@ -3,8 +3,8 @@ include MANIFEST.in
 include COPYING
 include COPYING.LESSER
 include setup.cfg
-include fortran/*
+include src/*
 recursive-include quagmire/ *.py
-include quagmire/Examples/Tutorial/*.ipynb
-include quagmire/Examples/WorkedExamples/*.ipynb
+include quagmire/Examples/Notebooks/Tutorial/*.ipynb
+include quagmire/Examples/Notebooks/WorkedExamples/*.ipynb
 include quagmire/Examples/0-StartHere.ipynb

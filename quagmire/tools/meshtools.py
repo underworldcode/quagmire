@@ -251,7 +251,6 @@ def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
         newSect, newVec = dm.distributeField(sf, origSect, origVec)
         dm.setDefaultSection(newSect)
 
-    dm.stratify()
     return dm
 
 
@@ -381,7 +380,6 @@ def refine_DM(dm, refinement_levels=1):
     origSect.setUp()
     dm.setDefaultSection(origSect)
 
-    dm.stratify()
     return dm
 
 
