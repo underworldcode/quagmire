@@ -40,7 +40,7 @@ jobs:
         conda activate base
         python -m pip install --upgrade pip
         conda install -c conda-forge pint
-        conda install -c conda-forge petsc4py petsc 
+        conda install -c conda-forge petsc4py petsc mpi4py h5py
         conda install numpy scipy sympy
         pip install stripy
         #
