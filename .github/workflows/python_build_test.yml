@@ -29,10 +29,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        conda install petsc4py petsc 
-        conda install sympy
         conda install pint
-        pip install pint
+        conda install -c conda-forge petsc4py petsc 
+        conda install sympy
         pip install stripy
         #
 
