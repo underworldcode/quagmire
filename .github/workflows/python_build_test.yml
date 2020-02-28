@@ -25,11 +25,10 @@ jobs:
         # rm ~/miniconda.sh 
         # /opt/conda/bin/conda clean -tipsy 
         # ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh 
+
         echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc 
         echo "conda activate base" >> ~/.bashrc
-        # echo "INIT"
-        # conda init bash
-
+  
     - name: check bash
       run: |
         cat ~/.bashrc   
@@ -37,17 +36,14 @@ jobs:
 
     - name: Install dependencies
       run: |
-        echo `which python`
         source /opt/conda/etc/profile.d/conda.sh
         conda activate base
-        echo `which python`
         python -m pip install --upgrade pip
         conda install -c conda-forge pint
         conda install -c conda-forge petsc4py petsc 
         conda install numpy scipy sympy
         pip install stripy
         #
-
 
     # - name: Lint with flake8
     #   run: |
@@ -61,9 +57,15 @@ jobs:
 
     - name: Install (self)
       run: |
+        source /opt/conda/etc/profile.d/conda.sh
+        conda activate base
+
         pip install -e . 
         # 
     - name: Test with pytest
       run: |
+        source /opt/conda/etc/profile.d/conda.sh
+        conda activate base
+
         conda install pytest
         pytest
