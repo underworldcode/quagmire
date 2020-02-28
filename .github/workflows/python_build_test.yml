@@ -20,9 +20,10 @@ jobs:
         /bin/bash ~/miniconda.sh -b -p /opt/conda 
         echo `which conda`
         # rm ~/miniconda.sh 
-        # /opt/conda/bin/conda clean -tipsy 
+        /opt/conda/bin/conda clean -tipsy 
         # ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh 
         # echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc 
+        conda init bash
         conda activate base
 
     - name: Install dependencies
