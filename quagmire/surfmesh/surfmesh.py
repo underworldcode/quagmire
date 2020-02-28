@@ -22,7 +22,7 @@ import sys,petsc4py
 petsc4py.init(sys.argv)
 from petsc4py import PETSc
 # comm = MPI.COMM_WORLD
-from time import clock
+from time import perf_counter
 
 try: range = xrange
 except: pass
@@ -87,16 +87,16 @@ class SurfMesh(_TopoMesh):
         #self.rainfall_pattern = rainfall_pattern.copy()
         #self.sediment_distribution = sediment_distribution.copy()
 
-        t = clock()
+        t = perf_counter()
 
         self.upstream_area.unlock()
         self.upstream_area.data = self.cumulative_flow(self.area)
         self.upstream_area.lock()
 
-        self.timings['Upstream area'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['Upstream area'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
 
         if self.verbose:
-            print(("{} - Build upstream areas {}s".format(self.dm.comm.rank, clock()-t)))
+            print(("{} - Build upstream areas {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
         # Find low points
         self.low_points = self.identify_low_points()
@@ -113,7 +113,7 @@ class SurfMesh(_TopoMesh):
           - scale
         """
 
-        t = clock()
+        t = perf_counter()
         if self.rank==0 and self.verbose:
             print("Low point local flood fill")
 
@@ -134,7 +134,7 @@ class SurfMesh(_TopoMesh):
         self._update_height()
 
         if self.rank==0 and self.verbose:
-            print("Low point local flood fill ",  clock()-t, " seconds")
+            print("Low point local flood fill ",  perf_counter()-t, " seconds")
 
         self._update_height_for_surface_flows()
 
@@ -143,7 +143,7 @@ class SurfMesh(_TopoMesh):
     def low_points_local_patch_fill(self, its=1, smoothing_steps=1):
 
         from petsc4py import PETSc
-        t = clock()
+        t = perf_counter()
         if self.rank==0 and self.verbose:
             print("Low point local patch fill")
 
@@ -170,7 +170,7 @@ class SurfMesh(_TopoMesh):
             self._update_height()
 
         if self.rank==0 and self.verbose:
-            print("Low point local patch fill ",  clock()-t, " seconds")
+            print("Low point local patch fill ",  perf_counter()-t, " seconds")
 
         ## and now we need to rebuild the surface process information
         self._update_height_for_surface_flows()
@@ -188,17 +188,17 @@ class SurfMesh(_TopoMesh):
         size = comm.Get_size()
         rank = comm.Get_rank()
 
-        t0 = clock()
+        t0 = perf_counter()
 
         my_low_points = self.identify_low_points()
         my_glow_points = self.lgmap_row.apply(my_low_points.astype(PETSc.IntType))
 
 
-        t = clock()
+        t = perf_counter()
         ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
 
         if self.rank==0 and self.verbose:
-            print("Build low point catchments - ", clock() - t, " seconds")
+            print("Build low point catchments - ", perf_counter() - t, " seconds")
 
         if saddles:  # Find saddle points on the catchment edge
             cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
@@ -229,25 +229,25 @@ class SurfMesh(_TopoMesh):
                 spills['y'][ii] = self.coords[spill,1]
                 ii += 1
 
-        t = clock()
+        t = perf_counter()
 
         spills.sort(axis=0)  # Sorts by catchment then height ...
         s, indices = np.unique(spills['c'], return_index=True)
         spill_points = spills[indices]
 
         if self.rank == 0 and self.verbose:
-            print(self.rank, " Sort spills - ", clock() - t)
+            print(self.rank, " Sort spills - ", perf_counter() - t)
 
         # Gather lists to process 0, stack and remove duplicates
 
-        t = clock()
+        t = perf_counter()
         list_of_spills = comm.gather(spill_points,   root=0)
 
         if self.rank == 0 and self.verbose:
-            print(self.rank, " Gather spill data - ", clock() - t)
+            print(self.rank, " Gather spill data - ", perf_counter() - t)
 
         if self.rank == 0:
-            t = clock()
+            t = perf_counter()
 
             all_spills = np.hstack(list_of_spills)
             all_spills.sort(axis=0) # Sorts by catchment then height ...
@@ -255,7 +255,7 @@ class SurfMesh(_TopoMesh):
             all_spill_points = all_spills[indices]
 
             if self.verbose:
-                print(rank, " Sort all spills - ", clock() - t)
+                print(rank, " Sort all spills - ", perf_counter() - t)
 
         else:
             all_spill_points = None
@@ -297,7 +297,7 @@ class SurfMesh(_TopoMesh):
 
 
         if self.rank==0 and self.verbose:
-            print("Low point swamp fill ",  clock()-t0, " seconds")
+            print("Low point swamp fill ",  perf_counter()-t0, " seconds")
 
         ## but now we need to rebuild the surface process information
         self._update_height_for_surface_flows()
@@ -335,7 +335,7 @@ class SurfMesh(_TopoMesh):
 
     def uphill_propagation(self, points, values, scale=1.0, its=1000, fill=-1):
 
-        t0 = clock()
+        t0 = perf_counter()
 
         local_ID = self.lvec.copy()
         global_ID = self.gvec.copy()
@@ -382,7 +382,7 @@ class SurfMesh(_TopoMesh):
         # Note, the -1 is used to identify out of bounds values
 
         if self.rank == 0 and self.verbose:
-            print(p, " iterations, time = ", clock() - t0)
+            print(p, " iterations, time = ", perf_counter() - t0)
 
         return identifier - 1
 

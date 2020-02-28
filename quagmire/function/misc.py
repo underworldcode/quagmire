@@ -25,7 +25,7 @@ def _make_npmath_op(op, name, lazyFn):
     newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
     newLazyFn.evaluate = lambda *args, **kwargs : op(lazyFn.evaluate(*args, **kwargs))
     newLazyFn.gradient = lambda *args, **kwargs : op(lazyFn.gradient(*args, **kwargs))
-    newLazyFn.description = "{}({})".format(name,lazyFn.description)
+    newLazyFn.description = "{}({})".format(name, lazyFn.description)
     newLazyFn.dependency_list = lazyFn.dependency_list
 
     return newLazyFn

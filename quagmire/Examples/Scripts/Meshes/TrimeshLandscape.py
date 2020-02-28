@@ -5,7 +5,11 @@
 #
 # Quality meshes are important for producing reliable solution in surface process modelling. For any given node in an unstructured mesh, its neighbours should be spaced more or less at an equal radius. For this we turn to Poisson disc sampling using an efficient $O(N)$ [algorithm](http://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf).
 #
-# The premise of this algorithm is to ensure that points are tightly packed together, but no closer than a specified minimum distance. This distance can be uniform across the entire domain, or alternatively a 2D numpy array of radius lengths can be used to bunch and relax the spacing of nodes.
+# The premise of this algorithm is to ensure that points are tightly packed together,
+# but no closer than a specified minimum distance. This distance can be uniform across
+# the entire domain, or alternatively a 2D numpy array of radius lengths can be used
+# to bunch and relax the spacing of nodes.
+
 
 # In[1]:
 

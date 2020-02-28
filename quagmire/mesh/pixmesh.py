@@ -22,7 +22,7 @@ import sys,petsc4py
 petsc4py.init(sys.argv)
 from petsc4py import PETSc
 # comm = MPI.COMM_WORLD
-from time import clock
+from time import perf_counter
 from .commonmesh import CommonMesh as _CommonMesh
 
 try: range = xrange
@@ -78,51 +78,51 @@ class PixMesh(_CommonMesh):
 
 
         # Find neighbours
-        t = clock()
+        t = perf_counter()
         self.construct_neighbours()
-        self.timings['construct neighbours'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['construct neighbours'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print((" - Construct neighbour array {}s".format(clock()-t)))
+            print((" - Construct neighbour array {}s".format(perf_counter()-t)))
 
         # cKDTree
-        t = clock()
+        t = perf_counter()
         self.cKDTree = _cKDTree(self.coords)
-        self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['cKDTree'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print((" - cKDTree {}s".format(clock()-t)))
+            print((" - cKDTree {}s".format(perf_counter()-t)))
 
 
         # Find boundary points
-        t = clock()
+        t = perf_counter()
         self.bmask = self.get_boundary()
-        self.timings['find boundaries'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['find boundaries'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print((" - Find boundaries {}s".format(clock()-t)))
+            print((" - Find boundaries {}s".format(perf_counter()-t)))
 
 
         # Build smoothing operator
-        t = clock()
+        t = perf_counter()
         self._build_smoothing_matrix()
-        self.timings['smoothing matrix'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['smoothing matrix'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print((" - Build smoothing matrix {}s".format(clock()-t)))
+            print((" - Build smoothing matrix {}s".format(perf_counter()-t)))
 
 
 
         # Find neighbours
-        t = clock()
+        t = perf_counter()
         self.construct_neighbour_cloud()
-        self.timings['construct neighbour cloud'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['construct neighbour cloud'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print((" - Construct neighbour cloud array {}s".format(clock()-t)))
+            print((" - Construct neighbour cloud array {}s".format(perf_counter()-t)))
 
 
         # RBF smoothing operator
-        t = clock()
+        t = perf_counter()
         self._construct_rbf_weights()
-        self.timings['construct rbf weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['construct rbf weights'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.verbose:
-            print((" - Construct rbf weights {}s".format(clock()-t)))
+            print((" - Construct rbf weights {}s".format(perf_counter()-t)))
 
 
 

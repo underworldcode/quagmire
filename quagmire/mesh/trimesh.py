@@ -22,7 +22,7 @@ import sys,petsc4py
 petsc4py.init(sys.argv)
 from petsc4py import PETSc
 # comm = MPI.COMM_WORLD
-from time import clock
+from time import perf_counter
 from .commonmesh import CommonMesh as _CommonMesh
 
 try: range = xrange
@@ -63,7 +63,7 @@ class TriMesh(_CommonMesh):
         self.__id = "trimesh_{}".format(self._count())
 
         # Delaunay triangulation
-        t = clock()
+        t = perf_counter()
         coords = self.dm.getCoordinatesLocal().array.reshape(-1,2)
 
         # minX, minY = coords.min(axis=0)
@@ -73,55 +73,55 @@ class TriMesh(_CommonMesh):
 
         self.tri = stripy.Triangulation(coords[:,0], coords[:,1], permute=True)
         self.npoints = self.tri.npoints
-        self.timings['triangulation'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['triangulation'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
-            print(("{} - Delaunay triangulation {}s".format(self.dm.comm.rank, clock()-t)))
+            print(("{} - Delaunay triangulation {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
         # Calculate weigths and pointwise area
-        t = clock()
+        t = perf_counter()
         self.area, self.weight = self.calculate_area_weights()
         self.pointwise_area = self.add_variable(name="area")
         self.pointwise_area.data = self.area
         self.pointwise_area.lock()
         
-        self.timings['area weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['area weights'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
-            print(("{} - Calculate node weights and area {}s".format(self.dm.comm.rank, clock()-t)))
+            print(("{} - Calculate node weights and area {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
         # Find boundary points
 
-        t = clock()
+        t = perf_counter()
         self.bmask = self.get_boundary()
         self.mask = self.add_variable(name="Mask")
         self.mask.data = self.bmask.astype(PETSc.ScalarType)
         self.mask.lock()
 
-        self.timings['find boundaries'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['find boundaries'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
-            print(("{} - Find boundaries {}s".format(self.dm.comm.rank, clock()-t)))
+            print(("{} - Find boundaries {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
         # cKDTree
-        t = clock()
+        t = perf_counter()
         self.cKDTree = _cKDTree(self.tri.points, balanced_tree=False)
-        self.timings['cKDTree'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['cKDTree'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
-            print(("{} - cKDTree {}s".format(self.dm.comm.rank, clock()-t)))
+            print(("{} - cKDTree {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
         # Find neighbours
-        t = clock()
+        t = perf_counter()
 
         self.construct_neighbour_cloud()
 
-        self.timings['construct neighbour cloud'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['construct neighbour cloud'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
-            print(("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, clock()-t)))
+            print(("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
         # sync smoothing operator
-        t = clock()
+        t = perf_counter()
         self._construct_rbf_weights()
-        self.timings['construct rbf weights'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['construct rbf weights'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
-            print(("{} - Construct rbf weights {}s".format(self.dm.comm.rank, clock()-t)))
+            print(("{} - Construct rbf weights {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
         self.root = False
         self.coords = self.tri.points
@@ -315,7 +315,7 @@ class TriMesh(_CommonMesh):
 
         ii =  np.argsort( dist, axis=1)
 
-        t = clock()
+        t = perf_counter()
 
         ## Surely there is some np.argsort trick here to avoid the for loop ???
 
@@ -338,7 +338,7 @@ class TriMesh(_CommonMesh):
         self.near_neighbours_mask = mask
 
         if self.rank == 0:
-            print((" - Array sort {}s".format(clock()-t)))
+            print((" - Array sort {}s".format(perf_counter()-t)))
 
 
     def construct_neighbour_cloud(self, size=25):

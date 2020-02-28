@@ -22,7 +22,7 @@ import sys,petsc4py
 petsc4py.init(sys.argv)
 from petsc4py import PETSc
 # comm = MPI.COMM_WORLD
-from time import clock
+from time import perf_counter
 
 try: range = xrange
 except: pass

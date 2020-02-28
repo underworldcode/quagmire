@@ -23,7 +23,7 @@ import sys,petsc4py
 petsc4py.init(sys.argv)
 from petsc4py import PETSc
 # comm = MPI.COMM_WORLD
-from time import clock
+from time import perf_counter
 
 try: range = xrange
 except: pass
@@ -65,7 +65,6 @@ class TopoMesh(object):
 
 
 
-
     @property
     def downhill_neighbours(self):
         return self._downhill_neighbours
@@ -87,12 +86,12 @@ class TopoMesh(object):
         Update height field
         """
 
-        t = clock()
+        t = perf_counter()
         self._build_downhill_matrix_iterate()
-        self.timings['downhill matrices'] = [clock()-t, self.log.getCPUTime(), self.log.getFlops()]
+        self.timings['downhill matrices'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
 
         if self.rank==0 and self.verbose:
-            print(("{} - Build downhill matrices {}s".format(self.dm.comm.rank, clock()-t)))
+            print(("{} - Build downhill matrices {}s".format(self.dm.comm.rank, perf_counter()-t)))
         return
 
     def _height_update_context_manager_generator(self):
@@ -125,7 +124,7 @@ class TopoMesh(object):
 
         self._build_adjacency_matrix_iterate()
         if self.rank==0 and self.verbose:
-            print((" - Partial rebuild of downhill matrices {}s".format(clock()-t)))
+            print((" - Partial rebuild of downhill matrices {}s".format(perf_counter()-t)))
 
         # revert to specified n-neighbours
         self.downhill_neighbours = neighbours

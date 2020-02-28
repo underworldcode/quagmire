@@ -32,62 +32,81 @@ def _make_npmath_op(op, name, lazyFn):
 ## Trig
 
 def sin(lazyFn):
-    return _make_npmath_op(_np.sin, "SIN", lazyFn)
+    return _make_npmath_op(_np.sin, "sin", lazyFn)
+
+def asin(lazyFn):
+    return _make_npmath_op(_np.arcsin, "asin", lazyFn)
 
 def arcsin(lazyFn):
-    return _make_npmath_op(_np.arcsin, "ARCSIN", lazyFn)
+    return _make_npmath_op(_np.arcsin, "arcsin", lazyFn)
 
 def cos(lazyFn):
-    return _make_npmath_op(_np.cos, "COS", lazyFn)
+    return _make_npmath_op(_np.cos, "cos", lazyFn)
+
+def acos(lazyFn):
+    return _make_npmath_op(_np.arccos, "acos", lazyFn)
 
 def arccos(lazyFn):
-    return _make_npmath_op(_np.arccos, "ARCCOS", lazyFn)
+    return _make_npmath_op(_np.arccos, "arccos", lazyFn)
 
 def tan(lazyFn):
-    return _make_npmath_op(_np.tan, "TAN", lazyFn)
+    return _make_npmath_op(_np.tan, "tan", lazyFn)
+
+def atan(lazyFn):
+    return _make_npmath_op(_np.arctan, "atan", lazyFn)
 
 def arctan(lazyFn):
-    return _make_npmath_op(_np.arctan, "ARCTAN", lazyFn)
+    return _make_npmath_op(_np.arctan, "arctan", lazyFn)
+
 
 ## Hyperbolic
 
 def sinh(lazyFn):
-    return _make_npmath_op(_np.sinh, "SINH", lazyFn)
+    return _make_npmath_op(_np.sinh, "sinh", lazyFn)
+
+def asinh(lazyFn):
+    return _make_npmath_op(_np.arcsinh, "asinh", lazyFn)
 
 def arcsinh(lazyFn):
-    return _make_npmath_op(_np.arcsinh, "ARCSINH", lazyFn)
+    return _make_npmath_op(_np.arcsinh, "arcsinh", lazyFn)
 
 def cosh(lazyFn):
-    return _make_npmath_op(_np.cosh, "COSH", lazyFn)
+    return _make_npmath_op(_np.cosh, "cosh", lazyFn)
+
+def acosh(lazyFn):
+    return _make_npmath_op(_np.arccosh, "acosh", lazyFn)
 
 def arccosh(lazyFn):
-    return _make_npmath_op(_np.arccosh, "ARCCOSH", lazyFn)
+    return _make_npmath_op(_np.arccosh, "arccosh", lazyFn)
 
 def tanh(lazyFn):
-    return _make_npmath_op(_np.tanh, "TANH", lazyFn)
+    return _make_npmath_op(_np.tanh, "tanh", lazyFn)
+
+def atanh(lazyFn):
+    return _make_npmath_op(_np.arctanh, "atanh", lazyFn)
 
 def arctanh(lazyFn):
-    return _make_npmath_op(_np.arctanh, "ARCTANH", lazyFn)
+    return _make_npmath_op(_np.arctanh, "arctanh", lazyFn)
 
 
 ## exponentiation
 
 def exp(lazyFn):
-    return _make_npmath_op(_np.exp, "EXP", lazyFn)
+    return _make_npmath_op(_np.exp, "exp", lazyFn)
 
 def log(lazyFn):
-    return _make_npmath_op(_np.log, "LOG", lazyFn)
+    return _make_npmath_op(_np.log, "log", lazyFn)
 
 def log10(lazyFn):
-    return _make_npmath_op(_np.log10, "LOG10", lazyFn)
+    return _make_npmath_op(_np.log10, "log10", lazyFn)
 
 # misc
 
 def fabs(lazyFn):
-    return _make_npmath_op(_np.fabs, "FABS", lazyFn)
+    return _make_npmath_op(_np.fabs, "fabs", lazyFn)
 
 def sqrt(lazyFn):
-    return _make_npmath_op(_np.sqrt, "SQRT", lazyFn)
+    return _make_npmath_op(_np.sqrt, "sqrt", lazyFn)
 
 
 
@@ -106,9 +125,9 @@ def div(lazyFn_x, lazyFn_y):
     fn_dx = lazyFn_x.fn_gradient(0)
     fn_dy = lazyFn_y.fn_gradient(1)
     newLazyFn.evaluate = lambda *args, **kwargs : fn_dx.evaluate(*args, **kwargs) + fn_dy.evaluate(*args, **kwargs)
-    newLazyFn.description = "d({})/dX + d({})/dY".format(lazyFn_x.description, lazyFn_y.description)
+    newLazyFn.description = "diff({},X) + diff({},Y)".format(lazyFn_x.description, lazyFn_y.description)
+    newLazyFn.dependency_list = lazyFn_x.dependency_list | lazyFn_y.dependency_list
 
-    newLazyFn.dependency_list = lazyFn_x.dependency_list
     return newLazyFn
 
 def curl(lazyFn_x, lazyFn_y):
@@ -119,7 +138,7 @@ def curl(lazyFn_x, lazyFn_y):
     fn_dvydx = lazyFn_y.fn_gradient(0)
     fn_dvxdy = lazyFn_x.fn_gradient(1)
     newLazyFn.evaluate = lambda *args, **kwargs : fn_dvydx.evaluate(*args, **kwargs) - fn_dvxdy.evaluate(*args, **kwargs)
-    newLazyFn.description = "d({})/dX - d({})/dY".format(lazyFn_y.description, lazyFn_x.description)
+    newLazyFn.description = "diff({},X) - diff({},Y)".format(lazyFn_y.description, lazyFn_x.description)
     newLazyFn.dependency_list = lazyFn_x.dependency_list | lazyFn_y.dependency_list
 
     return newLazyFn
