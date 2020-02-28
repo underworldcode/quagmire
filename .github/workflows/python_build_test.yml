@@ -27,11 +27,13 @@ jobs:
         conda init bash
         echo "INIT - complete"
         echo `which python`
+        echo $SHELL
 
     - name: Install dependencies
       run: |
-        conda activate base
         echo `which python`
+        source /opt/conda/etc/profile.d/conda.sh
+        conda activate base
         python -m pip install --upgrade pip
         conda install -c conda-forge pint
         conda install -c conda-forge petsc4py petsc 
