@@ -21,13 +21,11 @@ jobs:
         echo `which conda`
         # rm ~/miniconda.sh 
         # /opt/conda/bin/conda clean -tipsy 
-        # ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh 
-        # echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc 
+        ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh 
+        echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc 
         echo "INIT"
         conda init bash
-        echo "INIT - complete"
-        echo `which python`
-        echo $SHELL
+
 
     - name: Install dependencies
       run: |
