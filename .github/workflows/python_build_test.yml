@@ -13,25 +13,28 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.7
-    - name: Install binary packages
+    - name: Install gfortran
       run: |
         sudo apt-get install -y gfortran 
+
+    - name: Install ~/miniconda.sh
+      run: |
         wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh 
         /bin/bash ~/miniconda.sh -b -p /opt/conda 
         echo `which conda`
         # rm ~/miniconda.sh 
         # /opt/conda/bin/conda clean -tipsy 
-        ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh 
+        # ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh 
         echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc 
         echo "INIT"
         conda init bash
-
 
     - name: Install dependencies
       run: |
         echo `which python`
         source /opt/conda/etc/profile.d/conda.sh
         conda activate base
+        echo `which python`
         python -m pip install --upgrade pip
         conda install -c conda-forge pint
         conda install -c conda-forge petsc4py petsc 
