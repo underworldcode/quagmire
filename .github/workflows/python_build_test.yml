@@ -16,7 +16,7 @@ jobs:
     - name: Install binary packages
       run: |
         sudo apt-get install -y gfortran 
-        wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-4.5.11-Linux-x86_64.sh -O ~/miniconda.sh 
+        wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh 
         /bin/bash ~/miniconda.sh -b -p /opt/conda 
         echo `which conda`
         # rm ~/miniconda.sh 
@@ -30,7 +30,7 @@ jobs:
         python -m pip install --upgrade pip
         conda install -c conda-forge pint
         conda install -c conda-forge petsc4py petsc 
-        conda install sympy
+        conda install numpy scipy sympy
         pip install stripy
         #
 
