@@ -26,8 +26,14 @@ jobs:
         # /opt/conda/bin/conda clean -tipsy 
         # ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh 
         echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc 
+        echo "conda activate base" >> ~/.bashrc
         echo "INIT"
         conda init bash
+
+    - name: check bash
+      run: |
+        cat ~/.bashrc   
+
 
     - name: Install dependencies
       run: |
@@ -42,15 +48,17 @@ jobs:
         pip install stripy
         #
 
-    - name: Lint with flake8
-      run: |
-        source /opt/conda/etc/profile.d/conda.sh
-        conda activate base
-        conda install flake8
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    # - name: Lint with flake8
+    #   run: |
+    #     source /opt/conda/etc/profile.d/conda.sh
+    #     conda activate base
+    #     conda install flake8
+    #     # stop the build if there are Python syntax errors or undefined names
+    #     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+    #     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+    #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
     - name: Install (self)
       run: |
         pip install -e . 
