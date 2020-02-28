@@ -13,24 +13,24 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.7
-    - name: Install gfortran
+    - name: Install binary packages
       run: |
-        sudo apt-get install -y gfortran
-        #
+        sudo apt-get install -y gfortran 
+ 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install numpy 
-        pip install scipy 
-        pip install sympy
-        pip install Cython
+        pip install conda
+        conda install petsc4py petsc 
+        conda install sympy
+        conda install pint
         pip install pint
         pip install stripy
         #
 
     - name: Lint with flake8
       run: |
-        pip install flake8
+        conda install flake8
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
@@ -41,5 +41,5 @@ jobs:
         # 
     - name: Test with pytest
       run: |
-        pip install pytest
+        conda install pytest
         pytest
