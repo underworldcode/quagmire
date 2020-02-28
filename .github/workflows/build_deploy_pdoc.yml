@@ -2,7 +2,7 @@ name: Deploy docs to gh-pages
 
 on:
   push:
-    branches: [dev, master]
+    branches: [master]
 
 jobs:
   deploy:
@@ -19,6 +19,9 @@ jobs:
       - name: Install gfortran 
         run: |
           sudo apt-get install -y gfortran
+
+      - name: Install petsc 
+        run:  echo ""
          
         # The numpy etc are needed because we install stripy for litho1pt0 build for documentation
       - name: Install dependencies
