@@ -23,7 +23,7 @@ jobs:
         # /opt/conda/bin/conda clean -tipsy 
         # ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh 
         # echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc 
-        # echo "conda activate base" >> ~/.bashrc
+        conda activate base
 
     - name: Install dependencies
       run: |
