@@ -21,11 +21,12 @@
  - [x] dependency tracking (useful for non-linearity detection in solvers) (0.7)
  - [x] human-readable naming for fns (meshes / solvers too) (0.7)
  - [ ] store values at each evaluate statement to reuse (?)
+ - [ ] Sympy integration (for differentiation !)
 
 ### Meshing
 
  - [ ] Pixmesh: add an interpolate method.
- - [ ] Spherical meshing framework (0.7)
+ - [ ] Spherical meshing framework (0.8)
 
 ### Scaling
 
@@ -34,12 +35,12 @@
   - [ ] Integrate scaling into meshes
   - [ ] Save / Load ? Scaling dictionary ?
 
-
 ### Input / output
 
  - [x] Save xmf files for Paraview (0.7)
  - [ ] Save xmf time series (0.7)
  - [ ] Save / load project file (`.quag` ?) (0.7)
+ - [ ] Check if hdf5 is a valid viewer for PETSc (should not crash completely)
 
 ### Equation solvers
 

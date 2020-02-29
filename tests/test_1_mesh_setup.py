@@ -9,7 +9,6 @@ DM = None
 
 ## First of all test the "pixmesh"
 
-
 def test_DMDA():
     from quagmire.tools import meshtools
 
