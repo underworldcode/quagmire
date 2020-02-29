@@ -22,23 +22,21 @@ jobs:
         wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh 
         /bin/bash ~/miniconda.sh -b -p /opt/conda 
 
+# This would be in bashrc in a standard conda installation but we need to do it manually each time
+#  source /opt/conda/etc/profile.d/conda.sh
+#   conda activate base
 
     - name: Install dependencies 
       run: |
-        
-      # This would be in bashrc in a standard conda installation but we need to do it manually each time
-
         source /opt/conda/etc/profile.d/conda.sh
         conda activate base
-
         python -m pip install --upgrade pip
         conda install -c conda-forge pint
         conda install -c conda-forge petsc4py petsc mpi4py h5py
         conda install numpy scipy sympy
         conda install pytest
-
         pip install stripy
-        #
+        
 
     # ERRORS here from petsc4py
     # - name: Lint with flake8
