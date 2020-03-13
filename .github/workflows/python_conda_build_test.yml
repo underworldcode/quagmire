@@ -14,11 +14,11 @@ jobs:
         os: [ 'macos-latest', 'ubuntu-latest' ]
         python-version: [ '2.7' , '3.7' ]
       
-        exclude: 
-        - os: ubuntu-latest
-          python-version: '2.7'
-        - os: macos-latest
-          python-version: '2.7'
+        # exclude: 
+        # - os: ubuntu-latest
+        #   python-version: '2.7'
+        # - os: macos-latest
+        #   python-version: '2.7'
 
     steps:
 
