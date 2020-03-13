@@ -1,5 +1,13 @@
 from setuptools import setup, find_packages
 from numpy.distutils.core import setup, Extension
+
+try: 
+    from distutils.command import bdist_conda
+except ImportError:
+    pass
+
+
+
 from os import path
 import io
 
@@ -30,8 +38,7 @@ if __name__ == "__main__":
                                'quagmire.mesh',
                                'quagmire.topomesh',
                                'quagmire.surfmesh'],
-          install_requires  = ['numpy', 'stripy'],
-          python_requires   = '>=2.7, >=3.5',
+          install_requires  = ['numpy>=1.16.0', 'scipy>=1.0.0', 'stripy>=1.2'],
           package_data      = {'quagmire': ['Examples/Notebooks/data',
                                             'Examples/Notebooks/*.ipynb',
                                             'Examples/Notebooks/WorkedExamples/*.ipynb',  ## Leave out Unsupported
