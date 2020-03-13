@@ -1,3 +1,4 @@
+## Workflow to build dependencies with conda / install locally with pip
 name: conda + pip
 
 on: 
