@@ -97,9 +97,6 @@ def qderiv(A,B):
 
     return np.float(1.0)
 
-
-
-
 A = MeshVar("A")(X,Y)
 B = sympy.diff(A,X)
 

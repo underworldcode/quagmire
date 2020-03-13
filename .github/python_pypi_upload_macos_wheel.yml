@@ -1,0 +1,51 @@
+name: PYPI wheels macos
+
+on: 
+  release:
+    types: [created, edited]
+
+
+jobs:
+  deploy_to_pypi:
+    name: ${{matrix.os}} build and deploy on pypi (${{ matrix.python-version }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'macos-latest']
+        python-version: ['2.7', '3.7', '3.8']
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: goanpeca/setup-miniconda@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Conda info
+        shell: bash -l {0}
+        run: conda info
+
+      - name: Install dependencies with conda
+        shell: bash -l {0}
+        run: |
+          conda install pip 
+          conda install -c conda-forge compilers numpy scipy sympy
+          conda install -c conda-forge petsc4py petsc mpi4py h5py
+          conda install -c conda-forge pint 
+          conda install -c underworldcode stripy 
+          conda install pytest
+    
+      - name: Build the wheel
+        shell: bash -l {0}
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+  
+        run: |
+          pip install setuptools wheel twine
+          pip install delocate
+
+          python setup.py bdist_wheel 
+          delocate-wheel -d -w fixed_wheels dist/*whl
+          twine upload fixed_wheels/*whl  --skip-existing
