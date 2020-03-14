@@ -3,9 +3,12 @@ name: conda -c underworldcode
 on: 
   release:
     types: [created, edited]
-  # push:
-  #   branches:
-  #     - dev
+  push:
+    branches:
+      - dev
+
+# Limited to ubuntu and macos because of petsc / petsc4py
+# py27 seems problematic in stripy builds
 
 jobs:
   catch_and_release: 
@@ -15,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [  'ubuntu-latest', 'macos-latest']
-        python-version: ['2.7', '3.7', '3.8']
+        python-version: [ '3.7']
 
     steps:
       - uses: actions/checkout@v2
@@ -49,7 +52,7 @@ jobs:
           # Conda version
 
           anaconda logout
-          printf Y | anaconda login --username $ANACONDA_USERNAME --password $ANACONDA_PASSWORD --hostname stripy-virtual-${{ matrix.os}}-${{ matrix.python-version }}
+          printf Y | anaconda login --username $ANACONDA_USERNAME --password $ANACONDA_PASSWORD --hostname quagy-virtual-${{ matrix.os}}-${{ matrix.python-version }}
           python setup.py bdist_conda   # this will upload to lmoresi in the first instance ... 
           anaconda upload -u underworldcode --skip-existing /usr/share/miniconda/envs/test/conda-bld/*/*.tar.bz2 
           anaconda logout
@@ -67,7 +70,7 @@ jobs:
           # Conda version
 
           anaconda logout
-          printf Y | anaconda login --username $ANACONDA_USERNAME --password $ANACONDA_PASSWORD --hostname stripy-virtual-${{ matrix.os}}-${{ matrix.python-version }}
+          printf Y | anaconda login --username $ANACONDA_USERNAME --password $ANACONDA_PASSWORD --hostname quagy-virtual-${{ matrix.os}}-${{ matrix.python-version }}
           python setup.py bdist_conda   # this will upload to lmoresi in the first instance ... 
           anaconda upload -u underworldcode --skip-existing /usr/local/miniconda/envs/test/conda-bld/*/*.tar.bz2 
           anaconda logout
