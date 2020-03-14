@@ -32,13 +32,15 @@ jobs:
       - name: Install dependencies with conda
         shell: bash -l {0}
         run: |
-          conda install pip 
+          conda install conda-build anaconda-client 
           conda install -c conda-forge compilers numpy scipy sympy
           conda install -c conda-forge petsc4py petsc mpi4py h5py
           conda install -c conda-forge pint 
           conda install -c underworldcode stripy 
           conda install pytest
-          conda install conda-build anaconda-client 
+
+          conda config --add channels underworldcode
+
 
       - name: Reinvent the wheel / upload (UBUNTU)
         if: matrix.os == 'ubuntu-latest' 
