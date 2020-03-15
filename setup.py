@@ -38,7 +38,7 @@ if __name__ == "__main__":
                                'quagmire.mesh',
                                'quagmire.topomesh',
                                'quagmire.surfmesh'],
-          install_requires  = ['numpy>=1.16.0', 'scipy>=1.0.0', 'stripy>=1.2'],
+          install_requires  = ['numpy>=1.16.0', 'scipy>=1.0.0', 'stripy>=1.2', 'petsc4py', 'mpi4py', 'h5py', 'pint'],
           package_data      = {'quagmire': ['Examples/Notebooks/data',
                                             'Examples/Notebooks/*.ipynb',
                                             'Examples/Notebooks/WorkedExamples/*.ipynb',  ## Leave out Unsupported
