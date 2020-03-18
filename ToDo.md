@@ -7,12 +7,16 @@
  - [ ] Dockerfile:  add the help script etc.
  - [x] Separate binder version (branch) (0.6)
 
+### CI /CD
+ - [x] Github actions for testing, deployment / docs
+ - [ ] PyPi wheels
+ - [x] Conda wheels
+
 ### MeshVariable implementation:
 
  - [x] MeshVariable: add print function to output array value `__str__` and `__repr__` (0.5)
  - [x] MeshVariable: add gradient and interpolation / evaluate methods (0.5)
  - [x] mesh.add_variable ... cf underworld (0.5)
-
 
 ### Functions
 
@@ -21,7 +25,7 @@
  - [x] dependency tracking (useful for non-linearity detection in solvers) (0.7)
  - [x] human-readable naming for fns (meshes / solvers too) (0.7)
  - [ ] store values at each evaluate statement to reuse (?)
- - [ ] Sympy integration (for differentiation !)
+ - [ ] Sympy integration (for differentiation !) (for 1.x)
 
 ### Meshing
 
