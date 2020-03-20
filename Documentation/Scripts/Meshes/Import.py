@@ -1,4 +1,4 @@
-# Just a quick check to see that all the relevant packages WORKDIR
+# Just a quick check to see that all the relevant packages work
 
 
 # %% define function to import and report "path"
