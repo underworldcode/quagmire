@@ -25,7 +25,7 @@ if __name__ == "__main__":
           author            = "Ben Mather",
           author_email      = "ben.mather@sydney.edu.au",
           url               = "https://github.com/underworldcode/quagmire",
-          version           = "0.7.0",
+          version           = "0.8.0",
           description       = "Python surface process framework on highly scalable unstructured meshes",
           long_description  = long_description,
           long_description_content_type='text/markdown',
