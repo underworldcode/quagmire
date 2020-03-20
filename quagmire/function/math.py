@@ -144,7 +144,7 @@ def curl(lazyFn_x, lazyFn_y):
     return newLazyFn
 
 
-## These are not defined yet
+## These are not defined yet (LM)
 
 # hypot(x1, x2, /[, out, where, casting, …])	Given the “legs” of a right triangle, return its hypotenuse.
 # arctan2(x1, x2, /[, out, where, casting, …])	Element-wise arc tangent of x1/x2 choosing the quadrant correctly.
