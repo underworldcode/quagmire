@@ -483,7 +483,8 @@ class SurfMesh(_TopoMesh):
 
     def identify_flat_spots(self):
 
-        smooth_grad1 = self.local_area_smoothing(self.slopeVariable.data, its=1, centre_weight=0.5)
+        slope = self.slope.evaluate(self.slope._mesh)
+        smooth_grad1 = self.local_area_smoothing(slope, its=1, centre_weight=0.5)
 
         # flat_spot_field = np.where(smooth_grad1 < smooth_grad1.max()/100, 0.0, 1.0)
 

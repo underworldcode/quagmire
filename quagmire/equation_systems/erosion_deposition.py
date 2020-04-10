@@ -213,7 +213,7 @@ class ErosionDepositionEquation(object):
         """
         Saltation length
         """
-        return
+        raise NotImplementedError("Check back again soon!")
 
 
     def erosion_deposition_transport_limited_flow(self, efficiency, alpha):
