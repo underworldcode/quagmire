@@ -66,13 +66,14 @@ if "GLUCIFER_USE_XVFB" in _os.environ:
         _display = _xvfb_runner()
 
 
-known_basemesh_classes = {type(_PETSc.DMDA())   : _PixMesh,\
-                          type(_PETSc.DMPlex()) : _TriMesh}
+known_basemesh_classes = {"PixMesh"  : _PixMesh, \
+                          "TriMesh"  : _TriMesh, \
+                          "sTriMesh" : _sTriMesh}
 
 
 def FlatMesh(DM, *args, **kwargs):
     """
-    Instantiates a 2-D mesh using TriMesh or PixMesh objects.
+    Instantiates a mesh using TriMesh, sTriMesh or PixMesh objects.
 
     This object contains methods for the following operations:
      - calculating derivatives
@@ -91,9 +92,10 @@ def FlatMesh(DM, *args, **kwargs):
      FlatMesh : object
     """
 
-    BaseMeshType = type(DM)
+    # get DM label name
+    BaseMeshType = DM.getLabelName(0)
 
-    if BaseMeshType in list(known_basemesh_classes.keys()):
+    if BaseMeshType in known_basemesh_classes:
 
         class FlatMeshClass(known_basemesh_classes[BaseMeshType]):
 
@@ -157,8 +159,9 @@ def TopoMesh(DM, *args, **kwargs):
      TopoMesh : object
     """
 
-    BaseMeshType = type(DM)
-    if BaseMeshType in list(known_basemesh_classes.keys()):
+    BaseMeshType = DM.getLabelName(0)
+
+    if BaseMeshType in known_basemesh_classes:
         class TopoMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
             def __init__(self, dm, *args, **kwargs):
                 known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
@@ -200,8 +203,9 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
      SurfaceProcessMesh : object
     """
 
-    BaseMeshType = type(DM)
-    if BaseMeshType in list(known_basemesh_classes.keys()):
+    BaseMeshType = DM.getLabelName(0)
+
+    if BaseMeshType in known_basemesh_classes:
         class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _SurfaceProcessMeshClass):
             def __init__(self, dm, *args, **kwargs):
                 known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)

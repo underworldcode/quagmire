@@ -25,6 +25,28 @@ try: range = xrange
 except: pass
 
 
+def points_to_edges(tri, boundary):
+    """
+    Finds the edges connecting two boundary points
+    """
+    i1 = np.sort([tri.simplices[:,0], tri.simplices[:,1]], axis=0)
+    i2 = np.sort([tri.simplices[:,0], tri.simplices[:,2]], axis=0)
+    i3 = np.sort([tri.simplices[:,1], tri.simplices[:,2]], axis=0)
+
+    a = np.hstack([i1, i2, i3]).T
+
+    # find unique rows in numpy array
+    edges = np.unique(a, axis=0)
+
+    # label where boundary nodes are
+    ix = np.in1d(edges.ravel(), boundary).reshape(edges.shape)
+    boundary2 = ix.sum(axis=1)
+
+    # both points are boundary points that share the line segment
+    boundary_edges = edges[boundary2==2]
+    return boundary_edges
+
+
 def create_DMPlex_from_points(x, y, bmask=None, refinement_levels=0):
     """
     Triangulates x,y coordinates on rank 0 and creates a PETSc DMPlex object
@@ -58,38 +80,62 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_levels=0):
     """
     from stripy import Triangulation
 
-    def points_to_edges(tri, boundary):
-        """
-        Finds the edges connecting any combination of points in boundary
-        """
-        i1 = np.sort([tri.simplices[:,0], tri.simplices[:,1]], axis=0)
-        i2 = np.sort([tri.simplices[:,0], tri.simplices[:,2]], axis=0)
-        i3 = np.sort([tri.simplices[:,1], tri.simplices[:,2]], axis=0)
-
-        a = np.hstack([i1, i2, i3]).T
-
-        # find unique rows in numpy array
-        # <http://stackoverflow.com/questions/16970982/find-unique-rows-in-numpy-array>
-
-        b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
-        edges = np.unique(b).view(a.dtype).reshape(-1, a.shape[1])
-
-        ix = np.in1d(edges.ravel(), boundary).reshape(edges.shape)
-        boundary2 = ix.sum(axis=1)
-        # both points are boundary points that share the line segment
-        boundary_edges = edges[boundary2==2]
-        return boundary_edges
-
     tri = Triangulation(x,y, permute=True)
 
-    if type(bmask) == type(None):
+    if bmask is None:
+        # cannot compute convex hull,
+        # so give this to create_DMPlex function to mark boundary faces
+        boundary_vertices = None
+    else:
+        boundary_indices = np.nonzero(~bmask)[0]
+        boundary_vertices = points_to_edges(tri, boundary_indices)
+
+    return _create_DMPlex(tri.points, tri.simplices, boundary_vertices, refinement_levels)
+
+
+def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_levels=0):
+    """
+    Triangulates lon,lat coordinates on rank 0 and creates a PETSc DMPlex object
+    from the cells and vertices to distribute among processors.
+
+    Parameters
+    ----------
+     lons : array of floats, shape (n,)
+        longitudinal coordinates in radians
+     lats : array of floats, shape (n,)
+        latitudinal coordinates in radians
+     bmask : array of bools, shape (n,)
+        boundary mask where points along the boundary
+        equal False, and the interior equal True
+        if bmask=None (default) then the convex hull of points is used
+     refinement_levels : int
+        number of iterations to refine the mesh (default: 0)
+
+    Returns
+    -------
+     DM : object
+        PETSc DMPlex object
+
+    Notes
+    -----
+     lons and lats are shuffled on input to aid triangulation efficiency
+
+     Refinement adds the midpoints of every line segment to the DM.
+     Boundary markers are automatically updated with each iteration.
+
+    """
+    from stripy import sTriangulation
+
+    tri = sTriangulation(lons, lats, permute=True)
+
+    if bmask is None:
         hull = tri.convex_hull()
         boundary_vertices = np.column_stack([hull, np.hstack([hull[1:], hull[0]])])
     else:
         boundary_indices = np.nonzero(~bmask)[0]
         boundary_vertices = points_to_edges(tri, boundary_indices)
 
-    return create_DMPlex(tri.x, tri.y, tri.simplices, boundary_vertices, refinement_levels)
+    return _create_DMPlex(tri.points, tri.simplices, boundary_vertices, refinement_levels)
 
 
 
@@ -270,18 +316,18 @@ def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     dim = 2
     dm = PETSc.DMDA().create(dim, sizes=(resX, resY), stencil_width=1)
     dm.setUniformCoordinates(minX, maxX, minY, maxY)
+    dm.createLabel("PixMesh")
     return dm
 
 
-def create_DMPlex(x, y, simplices, boundary_vertices=None, refinement_levels=0):
+def _create_DMPlex(points, simplices, boundary_vertices=None, refinement_levels=0):
     """
     Create a PETSc DMPlex object on root processor
     and distribute to other processors
 
     Parameters
     ----------
-     x : array of floats, shape (n,) x coordinates
-     y : array of floats, shape (n,) y coordinates
+     points : array of floats, shape (n,dim) coordinates
      simplices : connectivity of the mesh
      boundary_vertices : array of ints, shape(l,2)
         (optional) boundary edges
@@ -292,20 +338,25 @@ def create_DMPlex(x, y, simplices, boundary_vertices=None, refinement_levels=0):
     """
     from petsc4py import PETSc
 
+    ndim = np.shape(points)[1]
+    mesh_type = {2: "TriMesh", 3: "sTriMesh"}
 
     if comm.rank == 0:
-        coords = np.column_stack([x,y])
+        coords = np.array(points, dtype=np.float)
         cells  = simplices.astype(PETSc.IntType)
     else:
-        coords = np.zeros((0,2), dtype=np.float)
+        coords = np.zeros((0,ndim), dtype=np.float)
         cells  = np.zeros((0,3), dtype=PETSc.IntType)
 
     dim = 2
     dm = PETSc.DMPlex().createFromCellList(dim, cells, coords)
 
     # create labels
+    # these can be accessed with dm.getLabelName(i) where i=0,1,2
+    # and the last label added is the 0-th index.
     dm.createLabel("boundary")
     dm.createLabel("coarse")
+    dm.createLabel(mesh_type[ndim])
 
     ## label boundary
     if boundary_vertices is None:
@@ -344,6 +395,54 @@ def create_DMPlex(x, y, simplices, boundary_vertices=None, refinement_levels=0):
     dm = refine_DM(dm, refinement_levels)
 
     return dm
+
+
+def create_DMPlex(x, y, simplices, boundary_vertices=None, refinement_levels=0):
+    """
+    Create a PETSc DMPlex object on root processor
+    and distribute to other processors
+
+    Parameters
+    ----------
+     x : array of floats shape (n,)
+        x coordinates
+     y : array of floats shape (n,)
+        y coordinates
+     simplices : connectivity of the mesh
+     boundary_vertices : array of ints, shape(l,2)
+        (optional) boundary edges
+
+    Returns
+    -------
+     DM : PETSc DMPlex object
+    """
+    points = np.c_[x,y]
+    return _create_DMPlex(points, simplices, boundary_vertices, refinement_levels)
+
+
+def create_spherical_DMPlex(lons, lats, simplices, boundary_vertices=None, refinement_levels=0):
+    """
+    Create a PETSc DMPlex object on root processor
+    and distribute to other processors
+
+    Parameters
+    ----------
+     lons : array of floats shape (n,)
+        longitudinal coordinates
+     lats : array of floats shape (n,)
+        latitudinal coordinates
+     simplices : connectivity of the mesh
+     boundary_vertices : array of ints, shape(l,2)
+        (optional) boundary edges
+
+    Returns
+    -------
+     DM : PETSc DMPlex object
+    """
+    from stripy.spherical import lonlat2xyz
+    x,y,z = lonlat2xyz(lons, lats)
+    points = np.c_[x,y,z]
+    return _create_DMPlex(points, simplices, boundary_vertices, refinement_levels)
 
 
 def save_DM_to_hdf5(dm, file):
@@ -403,7 +502,7 @@ def lloyd_mesh_improvement(x, y, bmask, iterations):
     from scipy.spatial import Voronoi  as __Voronoi
 
 
-    points = np.column_stack((x,y))
+    points = np.c_[x,y]
 
     for i in range(0,iterations):
         vor = __Voronoi(points)
