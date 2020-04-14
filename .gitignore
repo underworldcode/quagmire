@@ -37,6 +37,8 @@ quagmire/Examples/data/ETOPO1_Ice_c_geotiff.tif
 /.spyproject/
 /fortran/
 
+
+/quagmire/_fortran.cpython-37m-darwin.so.dSYM
 /quagmire/Examples/Scripts/control.html
 /quagmire/_fortran.cpython-37m-darwin.so
 /quagmire/_fortran.cpython-38-darwin.so
@@ -49,3 +51,4 @@ Notebooks/.local
 
 __pycache__
 
+src/_fortranmodule.c
