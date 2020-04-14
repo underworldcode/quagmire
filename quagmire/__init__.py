@@ -71,6 +71,27 @@ known_basemesh_classes = {"PixMesh"  : _PixMesh, \
                           "sTriMesh" : _sTriMesh}
 
 
+def _get_label(DM):
+    """
+    Retrieves all points in the DM that is marked with a specific label.
+    e.g. "boundary", "coarse"
+    """
+
+    n = DM.getNumLabels()
+    success = False
+
+    for i in range(n):
+        label = DM.getLabelName(i)
+        if label in known_basemesh_classes:
+            success = True
+            break
+
+    if not success:
+        raise NameError("Cannot identify mesh type. DM is not valid.")
+
+    return label
+
+
 def FlatMesh(DM, *args, **kwargs):
     """
     Instantiates a mesh using TriMesh, sTriMesh or PixMesh objects.
@@ -93,7 +114,7 @@ def FlatMesh(DM, *args, **kwargs):
     """
 
     # get DM label name
-    BaseMeshType = DM.getLabelName(0)
+    BaseMeshType = _get_label(DM)
 
     if BaseMeshType in known_basemesh_classes:
 
@@ -159,7 +180,7 @@ def TopoMesh(DM, *args, **kwargs):
      TopoMesh : object
     """
 
-    BaseMeshType = DM.getLabelName(0)
+    BaseMeshType = _get_label(DM)
 
     if BaseMeshType in known_basemesh_classes:
         class TopoMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
@@ -203,7 +224,7 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
      SurfaceProcessMesh : object
     """
 
-    BaseMeshType = DM.getLabelName(0)
+    BaseMeshType = _get_label(DM)
 
     if BaseMeshType in known_basemesh_classes:
         class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _SurfaceProcessMeshClass):

@@ -12,13 +12,7 @@ from quagmire.mesh import MeshVariable
 from quagmire import function as fn
 import numpy as np
 
-minX, maxX = -5.0, 5.0
-minY, maxY = -5.0, 5.0,
-dx, dy = 0.02, 0.02
-
-x,y, bound = meshtools.generate_elliptical_points(minX, maxX, minY, maxY, dx, dy, 60000, 300)
-DM = meshtools.create_DMPlex_from_points(x, y, bmask=bound)
-mesh = FlatMesh(DM, downhill_neighbours=2)
+from conftest import load_triangulated_mesh_DM
 
 def test_parameters():
 
@@ -59,9 +53,9 @@ def test_fn_description():
 
     return
 
-def test_fn_mesh_variables():
+def test_fn_mesh_variables(load_triangulated_mesh_DM):
 
-    global mesh
+    mesh = FlatMesh(load_triangulated_mesh_DM, down_neighbours=2)
 
     height = mesh.add_variable(name="h(X,Y)")
     height.data = np.ones(mesh.npoints)

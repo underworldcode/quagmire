@@ -150,7 +150,7 @@ def test_mesh_load_from_hdf5():
         print("This error means that PETSc was not installed with hdf5")
     
     else:
-         mesh = FlatMesh(DM)
-         assert mesh.npoints > 0, "mesh could not be successfully loaded"
+        mesh = FlatMesh(DM)
+        assert mesh.npoints > 0, "mesh could not be successfully loaded"
 
  
