@@ -14,6 +14,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+For structured data on a regular grid.
+"""
+
 import numpy as np
 from mpi4py import MPI
 import sys,petsc4py

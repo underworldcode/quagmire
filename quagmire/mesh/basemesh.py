@@ -14,6 +14,13 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Create mesh variables that interface with functions
+
+Initialise a `MeshVariable` for scalar fields or `VectorMeshVariable` for vectors
+on the mesh. These inherit the `quagmire.function` classes that exploit lazy evaluation.
+"""
+
 try: range = xrange
 except: pass
 
@@ -25,15 +32,16 @@ from ..function import LazyEvaluation as _LazyEvaluation
 
 
 class MeshVariable(_LazyEvaluation):
-    """The MeshVariable class generates a variable supported on the mesh.
+    """
+    The MeshVariable class generates a variable supported on the mesh.
 
-    To set / read nodal values, use the numpy interface via the 'data' property.
+    To set/read nodal values, use the numpy interface via the 'self.data' property.
 
     Parameters
     ----------
-     name : str
+    name : str
         Assign the MeshVariable a unique identifier
-     mesh : quagmire mesh object
+    mesh : quagmire mesh object
         The supporting mesh for the variable
     """
     def __init__(self, name=None, mesh=None, locked=False):
@@ -383,16 +391,18 @@ class VectorMeshVariable(MeshVariable):
     """
     The VectorMeshVariable class generates a vector variable supported on the mesh.
 
-    To set / read nodal values, use the numpy interface via the 'data' property.
+    To set/read nodal values, use the numpy interface via the 'self.data' property.
+
     Parameters
     ----------
-     name : str
+    name : str
         Assign the MeshVariable a unique identifier
-     mesh : quagmire mesh object
+    mesh : quagmire mesh object
         The supporting mesh for the variable
+
     Notes
     -----
-     This class inherits several methods from the MeshVariable class.
+    This class inherits several methods from the `MeshVariable` class.
     """
     def __init__(self, name, mesh):
         self._mesh = mesh
