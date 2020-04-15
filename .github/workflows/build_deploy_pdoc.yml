@@ -20,7 +20,11 @@ jobs:
           conda install -c conda-forge petsc4py petsc mpi4py h5py
           conda install -c conda-forge pint 
           conda install -c underworldcode stripy
-          conda install -c conda-forge pdoc3
+
+      - name: Install pdoc3
+        shell: bash -l {0}
+        run: |
+          pip install pdoc3
 
       - name: Install (self)
         shell: bash -l {0}
