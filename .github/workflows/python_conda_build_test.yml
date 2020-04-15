@@ -23,8 +23,9 @@ jobs:
     steps:
 
       - uses: actions/checkout@v2
-      - uses: goanpeca/setup-miniconda@v1
+      - uses: goanpeca/setup-miniconda
         with:
+          auto-update-conda: true
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies with conda
