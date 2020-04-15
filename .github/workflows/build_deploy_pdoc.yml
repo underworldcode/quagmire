@@ -31,7 +31,7 @@ jobs:
       - name: Build docs with pdoc
         run: |
           mkdir -p docs
-          pdoc --config latex_math=True --html -o docs --force quagmire 
+          pdoc3 --config latex_math=True --html -o docs --force quagmire 
 
       # Note deploy key needs the ----BEGIN ... KEY---- lines too
       - name: Deploy docs to gh-pages
