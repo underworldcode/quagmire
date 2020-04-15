@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.5" />
+<meta name="generator" content="pdoc 0.8.0" />
 <title>quagmire.tools.meshtools API documentation</title>
-<meta name="description" content="Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …" />
+<meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
-<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
-<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
 </head>
@@ -21,40 +21,25 @@
 <h1 class="title">Module <code>quagmire.tools.meshtools</code></h1>
 </header>
 <section id="section-intro">
-<p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher</p>
-<p>This file is part of Quagmire.</p>
-<p>Quagmire is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or any later version.</p>
-<p>Quagmire is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the
-GNU Lesser General Public License for more details.</p>
-<p>You should have received a copy of the GNU Lesser General Public License
-along with Quagmire.
-If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;
-Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher
-
-This file is part of Quagmire.
-
-Quagmire is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or any later version.
-
-Quagmire is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
-&#34;&#34;&#34;
+<pre><code class="python"># Copyright 2016-2020 Louis Moresi, Ben Mather, Romain Beucher
+# 
+# This file is part of Quagmire.
+# 
+# Quagmire is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or any later version.
+# 
+# Quagmire is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 
 import numpy as np
 
@@ -687,8 +672,8 @@ def generate_elliptical_points(minX, maxX, minY, maxY, spacingX, spacingY, sampl
 <span>def <span class="ident">create_DMDA</span></span>(<span>minX, maxX, minY, maxY, resX, resY)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Create a PETSc DMDA object from the bounding box of the regularly-
-spaced grid.</p></section>
+<div class="desc"><p>Create a PETSc DMDA object from the bounding box of the regularly-
+spaced grid.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -717,7 +702,7 @@ spaced grid.</p></section>
 <span>def <span class="ident">create_DMPlex</span></span>(<span>x, y, simplices, boundary_vertices=None, refinement_levels=0)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Create a PETSc DMPlex object on root processor
+<div class="desc"><p>Create a PETSc DMPlex object on root processor
 and distribute to other processors</p>
 <h2 id="parameters">Parameters</h2>
 <p>x : array of floats shape (n,)
@@ -728,7 +713,7 @@ simplices : connectivity of the mesh
 boundary_vertices : array of ints, shape(l,2)
 (optional) boundary edges</p>
 <h2 id="returns">Returns</h2>
-<p>DM : PETSc DMPlex object</p></section>
+<p>DM : PETSc DMPlex object</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -760,8 +745,8 @@ boundary_vertices : array of ints, shape(l,2)
 <span>def <span class="ident">create_DMPlex_from_box</span></span>(<span>minX, maxX, minY, maxY, resX, resY, refinement=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Create a box and fill with triangles up to a specified refinement
-- This only works if PETSc was configured with triangle</p></section>
+<div class="desc"><p>Create a box and fill with triangles up to a specified refinement
+- This only works if PETSc was configured with triangle</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -807,7 +792,7 @@ boundary_vertices : array of ints, shape(l,2)
 <span>def <span class="ident">create_DMPlex_from_hdf5</span></span>(<span>file)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Creates a DMPlex object from an HDF5 file.
+<div class="desc"><p>Creates a DMPlex object from an HDF5 file.
 This is useful for rebuilding a mesh that is saved from a
 previous simulation.</p>
 <h2 id="parameters">Parameters</h2>
@@ -817,7 +802,7 @@ point to the location of hdf5 file</p>
 <p>DM : object
 PETSc DMPlex object</p>
 <h2 id="notes">Notes</h2>
-<p>This function requires petsc4py &gt;= 3.8</p></section>
+<p>This function requires petsc4py &gt;= 3.8</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -872,7 +857,7 @@ PETSc DMPlex object</p>
 <span>def <span class="ident">create_DMPlex_from_points</span></span>(<span>x, y, bmask=None, refinement_levels=0)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Triangulates x,y coordinates on rank 0 and creates a PETSc DMPlex object
+<div class="desc"><p>Triangulates x,y coordinates on rank 0 and creates a PETSc DMPlex object
 from the cells and vertices to distribute among processors.</p>
 <h2 id="parameters">Parameters</h2>
 <p>x : array of floats, shape (n,)
@@ -891,7 +876,7 @@ PETSc DMPlex object</p>
 <h2 id="notes">Notes</h2>
 <p>x and y are shuffled on input to aid triangulation efficiency</p>
 <p>Refinement adds the midpoints of every line segment to the DM.
-Boundary markers are automatically updated with each iteration.</p></section>
+Boundary markers are automatically updated with each iteration.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -946,7 +931,7 @@ Boundary markers are automatically updated with each iteration.</p></section>
 <span>def <span class="ident">create_DMPlex_from_spherical_points</span></span>(<span>lons, lats, bmask=None, refinement_levels=0)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Triangulates lon,lat coordinates on rank 0 and creates a PETSc DMPlex object
+<div class="desc"><p>Triangulates lon,lat coordinates on rank 0 and creates a PETSc DMPlex object
 from the cells and vertices to distribute among processors.</p>
 <h2 id="parameters">Parameters</h2>
 <p>lons : array of floats, shape (n,)
@@ -965,7 +950,7 @@ PETSc DMPlex object</p>
 <h2 id="notes">Notes</h2>
 <p>lons and lats are shuffled on input to aid triangulation efficiency</p>
 <p>Refinement adds the midpoints of every line segment to the DM.
-Boundary markers are automatically updated with each iteration.</p></section>
+Boundary markers are automatically updated with each iteration.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1019,7 +1004,7 @@ Boundary markers are automatically updated with each iteration.</p></section>
 <span>def <span class="ident">create_spherical_DMPlex</span></span>(<span>lons, lats, simplices, boundary_vertices=None, refinement_levels=0)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Create a PETSc DMPlex object on root processor
+<div class="desc"><p>Create a PETSc DMPlex object on root processor
 and distribute to other processors</p>
 <h2 id="parameters">Parameters</h2>
 <p>lons : array of floats shape (n,)
@@ -1030,7 +1015,7 @@ simplices : connectivity of the mesh
 boundary_vertices : array of ints, shape(l,2)
 (optional) boundary edges</p>
 <h2 id="returns">Returns</h2>
-<p>DM : PETSc DMPlex object</p></section>
+<p>DM : PETSc DMPlex object</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1064,7 +1049,7 @@ boundary_vertices : array of ints, shape(l,2)
 <span>def <span class="ident">elliptical_mesh</span></span>(<span>minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0, refinement_levels=0)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Generate an elliptical mesh using stripy</p></section>
+<div class="desc"><p>Generate an elliptical mesh using stripy</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1086,7 +1071,7 @@ boundary_vertices : array of ints, shape(l,2)
 <span>def <span class="ident">generate_elliptical_points</span></span>(<span>minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1137,7 +1122,7 @@ boundary_vertices : array of ints, shape(l,2)
 <span>def <span class="ident">generate_square_points</span></span>(<span>minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1191,7 +1176,7 @@ boundary_vertices : array of ints, shape(l,2)
 <span>def <span class="ident">get_boundary_points</span></span>(<span>dm)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1220,14 +1205,14 @@ boundary_vertices : array of ints, shape(l,2)
 <span>def <span class="ident">lloyd_mesh_improvement</span></span>(<span>x, y, bmask, iterations)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Applies Lloyd's algorithm of iterated voronoi construction
+<div class="desc"><p>Applies Lloyd's algorithm of iterated voronoi construction
 to improve the mesh point locations (assumes no current triangulation)</p>
 <p>(e.g. see <a href="http://en.wikipedia.org/wiki/Lloyd's_algorithm">http://en.wikipedia.org/wiki/Lloyd's_algorithm</a> )</p>
 <p>This can be very slow for anything but a small mesh.</p>
 <p>We do not move boundary points, but some issues can arise near
 boundaries if the initial mesh is poorly constructed with non-boundary points
 very close to the boundary such that the centroid of the cell falls outside the boundary.</p>
-<p>Caveat emptor !</p></section>
+<p>Caveat emptor !</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1275,7 +1260,7 @@ very close to the boundary such that the centroid of the cell falls outside the 
 <span>def <span class="ident">points_to_edges</span></span>(<span>tri, boundary)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Finds the edges connecting two boundary points</p></section>
+<div class="desc"><p>Finds the edges connecting two boundary points</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1306,9 +1291,9 @@ very close to the boundary such that the centroid of the cell falls outside the 
 <span>def <span class="ident">refine_DM</span></span>(<span>dm, refinement_levels=1)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Refine DM a specified number of refinement steps
+<div class="desc"><p>Refine DM a specified number of refinement steps
 For each step, the midpoint of every line segment is added
-to the DM.</p></section>
+to the DM.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1336,8 +1321,8 @@ to the DM.</p></section>
 <span>def <span class="ident">save_DM_to_hdf5</span></span>(<span>dm, file)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Saves mesh information stored in the DM to HDF5 file
-If the file already exists, it is overwritten.</p></section>
+<div class="desc"><p>Saves mesh information stored in the DM to HDF5 file
+If the file already exists, it is overwritten.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1364,9 +1349,9 @@ If the file already exists, it is overwritten.</p></section>
 <span>def <span class="ident">set_DMPlex_boundary_points</span></span>(<span>dm)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Finds the points that join the edges that have been
+<div class="desc"><p>Finds the points that join the edges that have been
 marked as "boundary" faces in the DAG then sets them
-as boundaries.</p></section>
+as boundaries.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1403,7 +1388,7 @@ as boundaries.</p></section>
 <span>def <span class="ident">set_DMPlex_boundary_points_and_edges</span></span>(<span>dm, boundary_vertices)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Label boundary points and edges</p></section>
+<div class="desc"><p>Label boundary points and edges</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1443,7 +1428,7 @@ as boundaries.</p></section>
 <span>def <span class="ident">square_mesh</span></span>(<span>minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0, refinement_levels=0)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Generate a square mesh using stripy</p></section>
+<div class="desc"><p>Generate a square mesh using stripy</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1503,7 +1488,7 @@ as boundaries.</p></section>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.0</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>

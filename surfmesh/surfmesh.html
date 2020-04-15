@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.5" />
+<meta name="generator" content="pdoc 0.8.0" />
 <title>quagmire.surfmesh.surfmesh API documentation</title>
-<meta name="description" content="Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …" />
+<meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
-<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
-<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
 </head>
@@ -21,40 +21,25 @@
 <h1 class="title">Module <code>quagmire.surfmesh.surfmesh</code></h1>
 </header>
 <section id="section-intro">
-<p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher</p>
-<p>This file is part of Quagmire.</p>
-<p>Quagmire is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or any later version.</p>
-<p>Quagmire is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the
-GNU Lesser General Public License for more details.</p>
-<p>You should have received a copy of the GNU Lesser General Public License
-along with Quagmire.
-If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;
-Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher
-
-This file is part of Quagmire.
-
-Quagmire is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or any later version.
-
-Quagmire is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
-&#34;&#34;&#34;
+<pre><code class="python"># Copyright 2016-2020 Louis Moresi, Ben Mather, Romain Beucher
+# 
+# This file is part of Quagmire.
+# 
+# Quagmire is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or any later version.
+# 
+# Quagmire is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 
 import numpy as np
 from mpi4py import MPI
@@ -856,7 +841,7 @@ class SurfMesh(_TopoMesh):
 <span>(</span><span>*args, **kwargs)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1640,8 +1625,8 @@ class SurfMesh(_TopoMesh):
 <span>def <span class="ident">backfill_points</span></span>(<span>self, fill_points, heights, its)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Handles <em>selected</em> low points by backfilling height array.
-This can be used to block a stream path, for example, or to locate lakes</p></section>
+<div class="desc"><p>Handles <em>selected</em> low points by backfilling height array.
+This can be used to block a stream path, for example, or to locate lakes</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1680,7 +1665,7 @@ This can be used to block a stream path, for example, or to locate lakes</p></se
 <span>def <span class="ident">identify_flat_spots</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1701,9 +1686,9 @@ This can be used to block a stream path, for example, or to locate lakes</p></se
 <span>def <span class="ident">identify_global_low_points</span></span>(<span>self, global_array=False)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Identify if the mesh as a whole has (internal) local minima and return an array of local lows in global
+<div class="desc"><p>Identify if the mesh as a whole has (internal) local minima and return an array of local lows in global
 index format.</p>
-<p>If global_array is True, then lows for the whole mesh are returned</p></section>
+<p>If global_array is True, then lows for the whole mesh are returned</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1769,7 +1754,7 @@ index format.</p>
 <span>def <span class="ident">identify_low_points</span></span>(<span>self, include_shadows=False)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Identify if the mesh has (internal) local minima and return an array of node indices</p></section>
+<div class="desc"><p>Identify if the mesh has (internal) local minima and return an array of node indices</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1797,7 +1782,7 @@ index format.</p>
 <span>def <span class="ident">identify_outflow_points</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Identify the (boundary) outflow points and return an array of (local) node indices</p></section>
+<div class="desc"><p>Identify the (boundary) outflow points and return an array of (local) node indices</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1824,13 +1809,13 @@ index format.</p>
 <span>def <span class="ident">landscape_diffusion_critical_slope</span></span>(<span>self, kappa, critical_slope, fluxBC)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Non-linear diffusion to keep slopes at a critical value. Assumes a background
+<div class="desc"><p>Non-linear diffusion to keep slopes at a critical value. Assumes a background
 diffusion rate (can be a vector of length mesh.tri.npoints) and a critical slope value.
 This term is suitable for the sloughing of sediment from hillslopes.
 To Do: The critical slope should be a function of the material (sediment, basement etc)
 but currently it is not.
 To Do: The fluxBC flag is global &hellip; it should apply to the outward normal
-at selected nodes but currently it is set to kill both fluxes at all boundary nodes.</p></section>
+at selected nodes but currently it is set to kill both fluxes at all boundary nodes.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1882,7 +1867,7 @@ at selected nodes but currently it is set to kill both fluxes at all boundary no
 <span>def <span class="ident">landscape_evolution_timestep</span></span>(<span>self, diffusion_rate, erosion_rate, deposition_rate, uplift_rate)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Calculate the change in topography for one timestep</p></section>
+<div class="desc"><p>Calculate the change in topography for one timestep</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1918,9 +1903,9 @@ at selected nodes but currently it is set to kill both fluxes at all boundary no
 <span>def <span class="ident">low_points_local_flood_fill</span></span>(<span>self, its=99999, scale=1.0, smoothing_steps=2)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Fill low points with a local flooding algorithm.
+<div class="desc"><p>Fill low points with a local flooding algorithm.
 - its is the number of uphill propagation steps
-- scale</p></section>
+- scale</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1964,7 +1949,7 @@ at selected nodes but currently it is set to kill both fluxes at all boundary no
 <span>def <span class="ident">low_points_local_patch_fill</span></span>(<span>self, its=1, smoothing_steps=1)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2011,7 +1996,7 @@ at selected nodes but currently it is set to kill both fluxes at all boundary no
 <span>def <span class="ident">low_points_swamp_fill</span></span>(<span>self, its=1000, saddles=True, ref_height=0.0)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2146,7 +2131,7 @@ at selected nodes but currently it is set to kill both fluxes at all boundary no
 <span>def <span class="ident">stream_power_erosion_deposition_rate_local</span></span>(<span>self, stream_power, efficiency=0.01, smoothOperator=None, smoothPowerIts=1, smoothDepoIts=1, smoothLowIts=3)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Function of the SurfaceProcessMesh which computes stream-power erosion and deposition rates
+<div class="desc"><p>Function of the SurfaceProcessMesh which computes stream-power erosion and deposition rates
 from a given rainfall pattern (self.rainfall_pattern).</p>
 <p>In this model we assume a the carrying capacity of the stream is related to the stream power and so is the
 erosion rate. The two are related to one another in this particular case by a single contant (everywhere on the mesh)
@@ -2167,7 +2152,7 @@ smoothPowerIts=1
 smoothDepoIts=1
 : Use smoothing function (smoothOperator) n times on deposition rate
 smoothLowIts=1
-: Use smoothing function (smoothOperator) n times on low point patches</p></section>
+: Use smoothing function (smoothOperator) n times on low point patches</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2263,7 +2248,7 @@ smoothLowIts=1
 <span>def <span class="ident">stream_power_erosion_deposition_rate_old</span></span>(<span>self, efficiency=0.01, smooth_power=3, smooth_low_points=2, smooth_erosion_rate=2, smooth_deposition_rate=2, smooth_operator=None, centre_weight_u=0.5, centre_weight=0.5)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Function of the SurfaceProcessMesh which computes stream-power erosion and deposition rates
+<div class="desc"><p>Function of the SurfaceProcessMesh which computes stream-power erosion and deposition rates
 from a given rainfall pattern (self.rainfall_pattern).</p>
 <p>In this model we assume a the carrying capacity of the stream is related to the stream power and so is the
 erosion rate. The two are related to one another in this particular case by a single contant (everywhere on the mesh)
@@ -2283,7 +2268,7 @@ smooth_low_points=3
 : upstream smoothing of the deposition at low points (number of cycles of smoothing)
 smooth_erosion_rate=0
 : upstream / downstream smoothing of the computed erosion rate (number of cycles of smoothing)
-smooth_deposition_rate=0 : upstream / downstream smoothing of the computed erosion rate (number of cycles of smoothing)</p></section>
+smooth_deposition_rate=0 : upstream / downstream smoothing of the computed erosion rate (number of cycles of smoothing)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2399,7 +2384,7 @@ smooth_deposition_rate=0 : upstream / downstream smoothing of the computed erosi
 <span>def <span class="ident">uphill_propagation</span></span>(<span>self, points, values, scale=1.0, its=1000, fill=-1)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2510,7 +2495,7 @@ smooth_deposition_rate=0 : upstream / downstream smoothing of the computed erosi
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.0</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>
