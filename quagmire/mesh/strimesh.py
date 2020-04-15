@@ -28,6 +28,9 @@ from .commonmesh import CommonMesh as _CommonMesh
 try: range = xrange
 except: pass
 
+from quagmire import function as fn
+from quagmire.function import LazyEvaluation as _LazyEvaluation
+
 
 class sTriMesh(_CommonMesh):
 
@@ -62,9 +65,10 @@ class sTriMesh(_CommonMesh):
         # coords += np.random.random(coords.shape) * 0.0001 * length_scale # This should be aware of the point spacing (small perturbation)
 
         # r = np.sqrt(coords[:,0]**2 + coords[:,1]**2 + coords[:,2]**2) # should just equal 1
-        r = 1.0
-        lons = np.arctan2(coords[:,1], coords[:,0])
-        lats = np.arcsin(coords[:,2]/r)
+        # r = 1.0
+        # lons = np.arctan2(coords[:,1], coords[:,0])
+        # lats = np.arcsin(coords[:,2]/r)
+        lons, lats = stripy.spherical.xyz2lonlat(coords[:,0], coords[:,1], coords[:,2])
 
         self.tri = stripy.sTriangulation(lons, lats)
         self.npoints = self.tri.npoints
