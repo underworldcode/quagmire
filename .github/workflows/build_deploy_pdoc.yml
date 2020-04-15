@@ -1,8 +1,7 @@
 name: Deploy docs to gh-pages
 
 on:
-  push:
-    branches: [master]
+  push
 
 jobs:
   deploy:
@@ -11,37 +10,34 @@ jobs:
       - uses: actions/checkout@v2
   
       - name: Set up Python
-        uses: actions/setup-python@v1
+      - uses: actions/checkout@v2
+      - uses: goanpeca/setup-miniconda@v1
         with:
-          python-version: '3.x'    
+          python-version: '3.x'
 
-        # This is needed because we install stripy for litho1pt0 build for documentation
-      - name: Install gfortran 
+      - name: Install dependencies with conda
+        shell: bash -l {0}
         run: |
-          sudo apt-get install -y gfortran
+          conda install pip 
+          conda install -c conda-forge compilers numpy scipy sympy
+          conda install -c conda-forge petsc4py petsc mpi4py h5py
+          conda install -c conda-forge pint 
+          conda install -c underworldcode stripy
+          conda install -c pdoc3
 
-      - name: Install petsc 
-        run:  echo ""
-         
-        # The numpy etc are needed because we install stripy for litho1pt0 build for documentation
-      - name: Install dependencies
+      - name: Install (self)
+        shell: bash -l {0}
         run: |
-          python -m pip install --upgrade pip
-          pip install numpy 
-          pip install scipy 
-          pip install Cython
-          pip install sympy
-          pip install pint
-          pip install stripy
-          pip install pdoc3
+          python --version 
+          pip install -e .
    
       - name: Build docs with pdoc
-        run: | 
+        run: |
           mkdir -p docs
           pdoc --config latex_math=True --html -o docs --force quagmire 
 
       # Note deploy key needs the ----BEGIN ... KEY---- lines too
-      - name: Deploy
+      - name: Deploy docs to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.GH_PAGES_DEPLOY_PR_KEY }}
