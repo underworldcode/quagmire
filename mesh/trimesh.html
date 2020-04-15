@@ -1,0 +1,1739 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.5" />
+<title>quagmire.mesh.trimesh API documentation</title>
+<meta name="description" content="Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>quagmire.mesh.trimesh</code></h1>
+</header>
+<section id="section-intro">
+<p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher</p>
+<p>This file is part of Quagmire.</p>
+<p>Quagmire is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or any later version.</p>
+<p>Quagmire is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the
+GNU Lesser General Public License for more details.</p>
+<p>You should have received a copy of the GNU Lesser General Public License
+along with Quagmire.
+If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher
+
+This file is part of Quagmire.
+
+Quagmire is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or any later version.
+
+Quagmire is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+&#34;&#34;&#34;
+
+import numpy as np
+from mpi4py import MPI
+import sys,petsc4py
+petsc4py.init(sys.argv)
+from petsc4py import PETSc
+# comm = MPI.COMM_WORLD
+from time import perf_counter
+from .commonmesh import CommonMesh as _CommonMesh
+
+try: range = xrange
+except: pass
+
+from quagmire import function as fn
+from quagmire.function import LazyEvaluation as _LazyEvaluation
+
+
+class TriMesh(_CommonMesh):
+    &#34;&#34;&#34;
+    Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
+    We recommend having 1) triangle or 2) scipy installed for Delaunay triangulations.
+    &#34;&#34;&#34;
+
+    ## This is a count of all the instances of the class that are launched
+    ## so that we have a way to name / identify them
+
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        TriMesh.__count += 1
+        return TriMesh.__count
+
+    @property
+    def id(self):
+        return self.__id
+
+
+    def __init__(self, dm, verbose=True, *args, **kwargs):
+        import stripy
+        from scipy.spatial import cKDTree as _cKDTree
+
+        # initialise base mesh class
+        super(TriMesh, self).__init__(dm, verbose)
+
+        self.__id = &#34;trimesh_{}&#34;.format(self._count())
+
+        # Delaunay triangulation
+        t = perf_counter()
+        coords = self.dm.getCoordinatesLocal().array.reshape(-1,2)
+
+        # minX, minY = coords.min(axis=0)
+        # maxX, maxY = coords.max(axis=0)
+        # length_scale = np.sqrt((maxX - minX)*(maxY - minY)/coords.shape[0])
+        # # coords += np.random.random(coords.shape) * 0.0001 * length_scale # This should be aware of the point spacing (small perturbation)
+
+        self.tri = stripy.Triangulation(coords[:,0], coords[:,1], permute=True)
+        self.npoints = self.tri.npoints
+        self.timings[&#39;triangulation&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank==0 and self.verbose:
+            print((&#34;{} - Delaunay triangulation {}s&#34;.format(self.dm.comm.rank, perf_counter()-t)))
+
+        # Calculate weigths and pointwise area
+        t = perf_counter()
+        self.area, self.weight = self.calculate_area_weights()
+        self.pointwise_area = self.add_variable(name=&#34;area&#34;)
+        self.pointwise_area.data = self.area
+        self.pointwise_area.lock()
+        
+        self.timings[&#39;area weights&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank==0 and self.verbose:
+            print((&#34;{} - Calculate node weights and area {}s&#34;.format(self.dm.comm.rank, perf_counter()-t)))
+
+        # Find boundary points
+
+        t = perf_counter()
+        self.bmask = self.get_boundary()
+        self.mask = self.add_variable(name=&#34;Mask&#34;)
+        self.mask.data = self.bmask.astype(PETSc.ScalarType)
+        self.mask.lock()
+
+        self.timings[&#39;find boundaries&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank==0 and self.verbose:
+            print((&#34;{} - Find boundaries {}s&#34;.format(self.dm.comm.rank, perf_counter()-t)))
+
+        # cKDTree
+        t = perf_counter()
+        self.cKDTree = _cKDTree(self.tri.points, balanced_tree=False)
+        self.timings[&#39;cKDTree&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank==0 and self.verbose:
+            print((&#34;{} - cKDTree {}s&#34;.format(self.dm.comm.rank, perf_counter()-t)))
+
+        # Find neighbours
+        t = perf_counter()
+
+        self.construct_neighbour_cloud()
+
+        self.timings[&#39;construct neighbour cloud&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank==0 and self.verbose:
+            print((&#34;{} - Construct neighbour cloud array {}s&#34;.format(self.dm.comm.rank, perf_counter()-t)))
+
+        # sync smoothing operator
+        t = perf_counter()
+        self._construct_rbf_weights()
+        self.timings[&#39;construct rbf weights&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank==0 and self.verbose:
+            print((&#34;{} - Construct rbf weights {}s&#34;.format(self.dm.comm.rank, perf_counter()-t)))
+
+        self.root = False
+        self.coords = self.tri.points
+        self.data = self.coords
+        self.interpolate = self.tri.interpolate
+
+
+    def add_variable(self, name=None, locked=False):
+
+        from quagmire.mesh import MeshVariable
+        return MeshVariable(name=name, mesh=self, locked=locked)
+
+
+
+    def get_local_mesh(self):
+        &#34;&#34;&#34;
+        Retrieves the local mesh information
+
+        Returns
+        -------
+         x : array of floats, shape (n,)
+            x coordinates
+         y : array of floats, shape (n,)
+            y coordinates
+         simplices : array of ints, shape (ntri, 3)
+            simplices of the triangulation
+         bmask  : array of bools, shape (n,2)
+        &#34;&#34;&#34;
+
+        return self.tri.x, self.tri.y, self.tri.simplices, self.bmask
+
+
+
+    def calculate_area_weights(self):
+        &#34;&#34;&#34;
+        Calculate weigths and pointwise area
+        &#34;&#34;&#34;
+
+        from quagmire._fortran import ntriw
+
+        area, weight = ntriw(self.tri.x, self.tri.y, self.tri.simplices.T+1)
+
+        return area, weight
+
+
+    def node_neighbours(self, point):
+        &#34;&#34;&#34;
+        Returns a list of neighbour nodes for a given point in the delaunay triangulation
+        &#34;&#34;&#34;
+
+        return self.vertex_neighbour_vertices[1][self.vertex_neighbour_vertices[0][point]:self.vertex_neighbour_vertices[0][point+1]]
+
+
+    def derivative_grad(self, PHI, nit=10, tol=1e-8):
+        &#34;&#34;&#34;
+        Compute derivatives of PHI in the x, y directions.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Arguments
+        ---------
+         PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+         nit : int optional (default: 10)
+            number of iterations to reach convergence
+         tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+
+        Returns
+        -------
+         PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+         PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
+        &#34;&#34;&#34;
+        return self.tri.gradient(PHI, nit, tol)
+
+
+    def derivative_div(self, PHIx, PHIy, **kwargs):
+        &#34;&#34;&#34;
+        Compute second order derivative from flux fields PHIx, PHIy
+        We evaluate the gradient on these fields using the derivative-grad method.
+
+        Arguments
+        ---------
+         PHIx : ndarray of floats, shape (n,)
+            array of first partial derivatives in x direction
+         PHIy : ndarray of floats, shape (n,)
+            array of first partial derivatives in y direction
+         kwargs : optional keyword-argument specifiers
+            keyword arguments to be passed onto derivative_grad
+            e.g. nit=5, tol=1e-3
+
+        Returns
+        -------
+         del2PHI : ndarray of floats, shape (n,)
+            second derivative of PHI
+        &#34;&#34;&#34;
+        u_xx, u_xy = self.derivative_grad(PHIx, **kwargs)
+        u_yx, u_yy = self.derivative_grad(PHIy, **kwargs)
+
+        return u_xx + u_yy
+
+
+    def get_edge_lengths(self):
+        &#34;&#34;&#34;
+        Find all edges in a triangluation and their lengths
+        &#34;&#34;&#34;
+        points = self.tri.points
+
+        i1 = np.sort([self.tri.simplices[:,0], self.tri.simplices[:,1]], axis=0)
+        i2 = np.sort([self.tri.simplices[:,0], self.tri.simplices[:,2]], axis=0)
+        i3 = np.sort([self.tri.simplices[:,1], self.tri.simplices[:,2]], axis=0)
+
+        a = np.hstack([i1, i2, i3]).T
+
+        # find unique rows in numpy array
+        # &lt;http://stackoverflow.com/questions/16970982/find-unique-rows-in-numpy-array&gt;
+        b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
+        edges = np.unique(b).view(a.dtype).reshape(-1, a.shape[1])
+
+        edge_lengths = np.linalg.norm(points[edges[:,0]] - points[edges[:,1]], axis=1)
+
+        self.edges = edges
+        self.edge_lengths = edge_lengths
+
+
+    def construct_neighbours(self):
+        &#34;&#34;&#34;
+        Find neighbours from edges and store as CSR coordinates.
+
+        This allows you to directly ask the neighbours for a given node a la Qhull,
+        or efficiently construct a sparse matrix (PETSc/SciPy)
+        &#34;&#34;&#34;
+
+        row = np.hstack([self.edges[:,0], self.edges[:,1]])
+        col = np.hstack([self.edges[:,1], self.edges[:,0]])
+        val = np.hstack([self.edge_lengths, self.edge_lengths])
+
+        # sort by row
+        sort = row.argsort()
+        row = row[sort].astype(PETSc.IntType)
+        col = col[sort].astype(PETSc.IntType)
+        val = val[sort]
+
+        nnz = np.bincount(row) # number of nonzeros
+        indptr = np.insert(np.cumsum(nnz),0,0)
+
+        self.vertex_neighbours = nnz.astype(PETSc.IntType)
+        self.vertex_neighbour_vertices = indptr, col
+        self.vertex_neighbour_distance = val
+
+        # We may not need this, but constuct anyway for now!
+        neighbours = [[]]*self.npoints
+        closed_neighbours = [[]]*self.npoints
+
+        for i in range(indptr.size-1):
+            start, end = indptr[i], indptr[i+1]
+            neighbours[i] = np.array(col[start:end])
+            closed_neighbours[i] = np.hstack([i, neighbours[i]])
+
+        self.neighbour_list = np.array(neighbours)
+        self.neighbour_array = np.array(closed_neighbours)
+
+
+    def construct_extended_neighbour_cloud(self):
+        &#34;&#34;&#34;
+        Find extended node neighbours
+        &#34;&#34;&#34;
+        from quagmire._fortran import ncloud
+
+        # nnz_max = np.bincount(self.tri.simplices.ravel()).max()
+
+        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
+        self.near_neighbours = neighbours
+
+
+        nnz_max = self.near_neighbours.max()
+
+        cloud = ncloud(self.tri.simplices.T + 1, self.npoints, nnz_max)
+        cloud -= 1 # convert to C numbering
+        cloud_mask = cloud==-1
+        cloud_masked = np.ma.array(cloud, mask=cloud_mask)
+
+        self.extended_neighbours = np.count_nonzero(~cloud_mask, axis=1)
+        self.extended_neighbours_mask = cloud_mask
+
+        dx = self.tri.points[cloud_masked,0] - self.tri.points[:,0].reshape(-1,1)
+        dy = self.tri.points[cloud_masked,1] - self.tri.points[:,1].reshape(-1,1)
+        dist = np.hypot(dx,dy)
+        dist[cloud_mask] = 1.0e50
+
+        ii =  np.argsort( dist, axis=1)
+
+        t = perf_counter()
+
+        ## Surely there is some np.argsort trick here to avoid the for loop ???
+
+        neighbour_cloud = np.ones_like(cloud, dtype=np.int )
+        neighbour_cloud_distances = np.empty_like(dist)
+
+        for node in range(0, self.npoints):
+            neighbour_cloud[node, :] = cloud[node, ii[node,:]]
+            neighbour_cloud_distances[node, :] = dist[node, ii[node,:]]
+
+        # The same mask should be applicable to the sorted array
+
+        self.neighbour_cloud = np.ma.array( neighbour_cloud, mask = cloud_mask)
+        self.neighbour_cloud_distances = np.ma.array( neighbour_cloud_distances, mask = cloud_mask)
+
+        # Create a mask that can pick the natural neighbours only
+
+        ind = np.indices(self.neighbour_cloud.shape)[1]
+        mask = ind &gt; self.near_neighbours.reshape(-1,1)
+        self.near_neighbours_mask = mask
+
+        if self.rank == 0:
+            print((&#34; - Array sort {}s&#34;.format(perf_counter()-t)))
+
+
+    def construct_neighbour_cloud(self, size=25):
+        &#34;&#34;&#34;
+        Find neighbours from distance cKDTree.
+
+        &#34;&#34;&#34;
+
+        nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
+
+        self.neighbour_cloud = nncloud
+        self.neighbour_cloud_distances = nndist
+
+        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
+        self.near_neighbours = neighbours + 2
+        self.extended_neighbours = np.empty_like(neighbours).fill(size)
+
+        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+        for node in range(0,self.npoints):
+            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+
+        return
+
+
+    def _build_smoothing_matrix(self):
+
+        indptr, indices = self.vertex_neighbour_vertices
+        weight  = 1.0/self.weight
+        nweight = weight[indices]
+
+        lgmask = self.lgmap_row.indices &gt;= 0
+
+
+        nnz = self.vertex_neighbours[lgmask] + 1
+
+        # smoothMat = self.dm.createMatrix()
+        # smoothMat.setOption(smoothMat.Option.NEW_NONZERO_LOCATIONS, False)
+        smoothMat = PETSc.Mat().create(comm=comm)
+        smoothMat.setType(&#39;aij&#39;)
+        smoothMat.setSizes(self.sizes)
+        smoothMat.setLGMap(self.lgmap_row, self.lgmap_col)
+        smoothMat.setFromOptions()
+        smoothMat.setPreallocationNNZ(nnz)
+
+        # read in data
+        smoothMat.setValuesLocalCSR(indptr.astype(PETSc.IntType), indices.astype(PETSc.IntType), nweight)
+        self.lvec.setArray(weight)
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        smoothMat.setDiagonal(self.gvec)
+
+        smoothMat.assemblyBegin()
+        smoothMat.assemblyEnd()
+
+        self.localSmoothMat = smoothMat
+
+
+    def local_area_smoothing(self, data, its=1, centre_weight=0.75):
+
+        smooth_data = data.copy()
+        smooth_data_old = data.copy()
+
+        for i in range(0, its):
+            smooth_data_old[:] = smooth_data
+            smooth_data = centre_weight*smooth_data_old + \
+                          (1.0 - centre_weight)*self.rbf_smoother(smooth_data)
+            smooth_data[:] = self.sync(smooth_data)
+
+        return smooth_data
+
+
+    def local_area_smoothing_old(self, data, its=1, centre_weight=0.75):
+
+        self.lvec.setArray(data)
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        smooth_data = self.gvec.copy()
+
+        for i in range(0, its):
+            self.localSmoothMat.mult(smooth_data, self.gvec)
+            smooth_data = centre_weight*smooth_data + (1.0 - centre_weight)*self.gvec
+
+        self.dm.globalToLocal(smooth_data, self.lvec)
+
+        return self.lvec.array.copy()
+
+
+
+    def _construct_rbf_weights(self, delta=None):
+
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
+
+        self.delta  = delta
+        self.gaussian_dist_w = self._rbf_weights(delta)
+
+        return
+
+    def _rbf_weights(self, delta=None):
+
+        neighbour_cloud_distances = self.neighbour_cloud_distances
+
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
+
+        # Initialise the interpolants
+
+        gaussian_dist_w       = np.zeros_like(neighbour_cloud_distances)
+        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/delta, 2.0))
+        gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
+
+        return gaussian_dist_w
+
+
+    def rbf_smoother(self, vector, iterations=1, delta=None):
+        &#34;&#34;&#34;
+        Smoothing using a radial-basis function smoothing kernel
+
+        Arguments
+        ---------
+         vector     : field vector shape (n,)
+         iterations : int, number of iterations to smooth vector
+         delta      : distance weights to apply the the Gaussian
+                    : interpolants
+
+        Returns
+        -------
+         smooth_vec : smoothed version of input vector
+             shape (n,)
+
+        &#34;&#34;&#34;
+
+
+        if type(delta) != type(None):
+            self._construct_rbf_weights(delta)
+
+        vector = self.sync(vector)
+
+        for i in range(0, iterations):
+            # print self.dm.comm.rank, &#34;: RBF &#34;,vector.max(), vector.min()
+
+            vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+            vector = self.sync(vector_smoothed)
+
+        return vector
+
+
+
+
+    def build_rbf_smoother(self, delta, iterations=1):
+
+        trimesh_self = self
+
+        class _rbf_smoother_object(object):
+
+            def __init__(inner_self, delta, iterations=1):
+
+                if delta == None:
+                    delta = trimesh_self.neighbour_cloud_distances[:, 1].mean()  ## NOT SAFE IN PARALLEL !!!
+
+                inner_self._mesh = trimesh_self
+                inner_self.delta = delta
+                inner_self.iterations = iterations
+                inner_self.gaussian_dist_w = inner_self._mesh._rbf_weights(delta)
+
+                return
+
+
+            def _apply_rbf_on_my_mesh(inner_self, lazyFn, iterations=1):
+                import quagmire
+
+                smooth_node_values = lazyFn.evaluate(inner_self._mesh)
+
+                for i in range(0, iterations):
+                    smooth_node_values = (smooth_node_values[inner_self._mesh.neighbour_cloud[:,:]] * inner_self.gaussian_dist_w[:,:]).sum(axis=1)
+                    smooth_node_values = inner_self._mesh.sync(smooth_node_values)
+
+                return smooth_node_values
+
+
+            def smooth_fn(inner_self, lazyFn, iterations=None):
+
+                if iterations is None:
+                        iterations = inner_self.iterations
+
+                def smoother_fn(*args, **kwargs):
+
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(lazyFn, iterations=iterations)
+
+                    if len(args) == 1 and args[0] == lazyFn._mesh:
+                        return smooth_node_values
+                    elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                        mesh = args[0]
+                        return inner_self._mesh.interpolate(lazyFn._mesh.coords[:,0], lazyFn._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                    else:
+                        xi = np.atleast_1d(args[0])
+                        yi = np.atleast_1d(args[1])
+                        i, e = inner_self._mesh.interpolate(xi, yi, zdata=smooth_node_values, **kwargs)
+                        return i
+
+
+                newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+                newLazyFn.evaluate = smoother_fn
+                newLazyFn.description = &#34;RBFsmooth({}, d={}, i={})&#34;.format(lazyFn.description, inner_self.delta, iterations)
+
+                return newLazyFn
+
+        return _rbf_smoother_object(delta, iterations)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="quagmire.mesh.trimesh.TriMesh"><code class="flex name class">
+<span>class <span class="ident">TriMesh</span></span>
+<span>(</span><span>dm, verbose=True, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
+We recommend having 1) triangle or 2) scipy installed for Delaunay triangulations.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TriMesh(_CommonMesh):
+    &#34;&#34;&#34;
+    Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
+    We recommend having 1) triangle or 2) scipy installed for Delaunay triangulations.
+    &#34;&#34;&#34;
+
+    ## This is a count of all the instances of the class that are launched
+    ## so that we have a way to name / identify them
+
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        TriMesh.__count += 1
+        return TriMesh.__count
+
+    @property
+    def id(self):
+        return self.__id
+
+
+    def __init__(self, dm, verbose=True, *args, **kwargs):
+        import stripy
+        from scipy.spatial import cKDTree as _cKDTree
+
+        # initialise base mesh class
+        super(TriMesh, self).__init__(dm, verbose)
+
+        self.__id = &#34;trimesh_{}&#34;.format(self._count())
+
+        # Delaunay triangulation
+        t = perf_counter()
+        coords = self.dm.getCoordinatesLocal().array.reshape(-1,2)
+
+        # minX, minY = coords.min(axis=0)
+        # maxX, maxY = coords.max(axis=0)
+        # length_scale = np.sqrt((maxX - minX)*(maxY - minY)/coords.shape[0])
+        # # coords += np.random.random(coords.shape) * 0.0001 * length_scale # This should be aware of the point spacing (small perturbation)
+
+        self.tri = stripy.Triangulation(coords[:,0], coords[:,1], permute=True)
+        self.npoints = self.tri.npoints
+        self.timings[&#39;triangulation&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank==0 and self.verbose:
+            print((&#34;{} - Delaunay triangulation {}s&#34;.format(self.dm.comm.rank, perf_counter()-t)))
+
+        # Calculate weigths and pointwise area
+        t = perf_counter()
+        self.area, self.weight = self.calculate_area_weights()
+        self.pointwise_area = self.add_variable(name=&#34;area&#34;)
+        self.pointwise_area.data = self.area
+        self.pointwise_area.lock()
+        
+        self.timings[&#39;area weights&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank==0 and self.verbose:
+            print((&#34;{} - Calculate node weights and area {}s&#34;.format(self.dm.comm.rank, perf_counter()-t)))
+
+        # Find boundary points
+
+        t = perf_counter()
+        self.bmask = self.get_boundary()
+        self.mask = self.add_variable(name=&#34;Mask&#34;)
+        self.mask.data = self.bmask.astype(PETSc.ScalarType)
+        self.mask.lock()
+
+        self.timings[&#39;find boundaries&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank==0 and self.verbose:
+            print((&#34;{} - Find boundaries {}s&#34;.format(self.dm.comm.rank, perf_counter()-t)))
+
+        # cKDTree
+        t = perf_counter()
+        self.cKDTree = _cKDTree(self.tri.points, balanced_tree=False)
+        self.timings[&#39;cKDTree&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank==0 and self.verbose:
+            print((&#34;{} - cKDTree {}s&#34;.format(self.dm.comm.rank, perf_counter()-t)))
+
+        # Find neighbours
+        t = perf_counter()
+
+        self.construct_neighbour_cloud()
+
+        self.timings[&#39;construct neighbour cloud&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank==0 and self.verbose:
+            print((&#34;{} - Construct neighbour cloud array {}s&#34;.format(self.dm.comm.rank, perf_counter()-t)))
+
+        # sync smoothing operator
+        t = perf_counter()
+        self._construct_rbf_weights()
+        self.timings[&#39;construct rbf weights&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank==0 and self.verbose:
+            print((&#34;{} - Construct rbf weights {}s&#34;.format(self.dm.comm.rank, perf_counter()-t)))
+
+        self.root = False
+        self.coords = self.tri.points
+        self.data = self.coords
+        self.interpolate = self.tri.interpolate
+
+
+    def add_variable(self, name=None, locked=False):
+
+        from quagmire.mesh import MeshVariable
+        return MeshVariable(name=name, mesh=self, locked=locked)
+
+
+
+    def get_local_mesh(self):
+        &#34;&#34;&#34;
+        Retrieves the local mesh information
+
+        Returns
+        -------
+         x : array of floats, shape (n,)
+            x coordinates
+         y : array of floats, shape (n,)
+            y coordinates
+         simplices : array of ints, shape (ntri, 3)
+            simplices of the triangulation
+         bmask  : array of bools, shape (n,2)
+        &#34;&#34;&#34;
+
+        return self.tri.x, self.tri.y, self.tri.simplices, self.bmask
+
+
+
+    def calculate_area_weights(self):
+        &#34;&#34;&#34;
+        Calculate weigths and pointwise area
+        &#34;&#34;&#34;
+
+        from quagmire._fortran import ntriw
+
+        area, weight = ntriw(self.tri.x, self.tri.y, self.tri.simplices.T+1)
+
+        return area, weight
+
+
+    def node_neighbours(self, point):
+        &#34;&#34;&#34;
+        Returns a list of neighbour nodes for a given point in the delaunay triangulation
+        &#34;&#34;&#34;
+
+        return self.vertex_neighbour_vertices[1][self.vertex_neighbour_vertices[0][point]:self.vertex_neighbour_vertices[0][point+1]]
+
+
+    def derivative_grad(self, PHI, nit=10, tol=1e-8):
+        &#34;&#34;&#34;
+        Compute derivatives of PHI in the x, y directions.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Arguments
+        ---------
+         PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+         nit : int optional (default: 10)
+            number of iterations to reach convergence
+         tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+
+        Returns
+        -------
+         PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+         PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
+        &#34;&#34;&#34;
+        return self.tri.gradient(PHI, nit, tol)
+
+
+    def derivative_div(self, PHIx, PHIy, **kwargs):
+        &#34;&#34;&#34;
+        Compute second order derivative from flux fields PHIx, PHIy
+        We evaluate the gradient on these fields using the derivative-grad method.
+
+        Arguments
+        ---------
+         PHIx : ndarray of floats, shape (n,)
+            array of first partial derivatives in x direction
+         PHIy : ndarray of floats, shape (n,)
+            array of first partial derivatives in y direction
+         kwargs : optional keyword-argument specifiers
+            keyword arguments to be passed onto derivative_grad
+            e.g. nit=5, tol=1e-3
+
+        Returns
+        -------
+         del2PHI : ndarray of floats, shape (n,)
+            second derivative of PHI
+        &#34;&#34;&#34;
+        u_xx, u_xy = self.derivative_grad(PHIx, **kwargs)
+        u_yx, u_yy = self.derivative_grad(PHIy, **kwargs)
+
+        return u_xx + u_yy
+
+
+    def get_edge_lengths(self):
+        &#34;&#34;&#34;
+        Find all edges in a triangluation and their lengths
+        &#34;&#34;&#34;
+        points = self.tri.points
+
+        i1 = np.sort([self.tri.simplices[:,0], self.tri.simplices[:,1]], axis=0)
+        i2 = np.sort([self.tri.simplices[:,0], self.tri.simplices[:,2]], axis=0)
+        i3 = np.sort([self.tri.simplices[:,1], self.tri.simplices[:,2]], axis=0)
+
+        a = np.hstack([i1, i2, i3]).T
+
+        # find unique rows in numpy array
+        # &lt;http://stackoverflow.com/questions/16970982/find-unique-rows-in-numpy-array&gt;
+        b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
+        edges = np.unique(b).view(a.dtype).reshape(-1, a.shape[1])
+
+        edge_lengths = np.linalg.norm(points[edges[:,0]] - points[edges[:,1]], axis=1)
+
+        self.edges = edges
+        self.edge_lengths = edge_lengths
+
+
+    def construct_neighbours(self):
+        &#34;&#34;&#34;
+        Find neighbours from edges and store as CSR coordinates.
+
+        This allows you to directly ask the neighbours for a given node a la Qhull,
+        or efficiently construct a sparse matrix (PETSc/SciPy)
+        &#34;&#34;&#34;
+
+        row = np.hstack([self.edges[:,0], self.edges[:,1]])
+        col = np.hstack([self.edges[:,1], self.edges[:,0]])
+        val = np.hstack([self.edge_lengths, self.edge_lengths])
+
+        # sort by row
+        sort = row.argsort()
+        row = row[sort].astype(PETSc.IntType)
+        col = col[sort].astype(PETSc.IntType)
+        val = val[sort]
+
+        nnz = np.bincount(row) # number of nonzeros
+        indptr = np.insert(np.cumsum(nnz),0,0)
+
+        self.vertex_neighbours = nnz.astype(PETSc.IntType)
+        self.vertex_neighbour_vertices = indptr, col
+        self.vertex_neighbour_distance = val
+
+        # We may not need this, but constuct anyway for now!
+        neighbours = [[]]*self.npoints
+        closed_neighbours = [[]]*self.npoints
+
+        for i in range(indptr.size-1):
+            start, end = indptr[i], indptr[i+1]
+            neighbours[i] = np.array(col[start:end])
+            closed_neighbours[i] = np.hstack([i, neighbours[i]])
+
+        self.neighbour_list = np.array(neighbours)
+        self.neighbour_array = np.array(closed_neighbours)
+
+
+    def construct_extended_neighbour_cloud(self):
+        &#34;&#34;&#34;
+        Find extended node neighbours
+        &#34;&#34;&#34;
+        from quagmire._fortran import ncloud
+
+        # nnz_max = np.bincount(self.tri.simplices.ravel()).max()
+
+        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
+        self.near_neighbours = neighbours
+
+
+        nnz_max = self.near_neighbours.max()
+
+        cloud = ncloud(self.tri.simplices.T + 1, self.npoints, nnz_max)
+        cloud -= 1 # convert to C numbering
+        cloud_mask = cloud==-1
+        cloud_masked = np.ma.array(cloud, mask=cloud_mask)
+
+        self.extended_neighbours = np.count_nonzero(~cloud_mask, axis=1)
+        self.extended_neighbours_mask = cloud_mask
+
+        dx = self.tri.points[cloud_masked,0] - self.tri.points[:,0].reshape(-1,1)
+        dy = self.tri.points[cloud_masked,1] - self.tri.points[:,1].reshape(-1,1)
+        dist = np.hypot(dx,dy)
+        dist[cloud_mask] = 1.0e50
+
+        ii =  np.argsort( dist, axis=1)
+
+        t = perf_counter()
+
+        ## Surely there is some np.argsort trick here to avoid the for loop ???
+
+        neighbour_cloud = np.ones_like(cloud, dtype=np.int )
+        neighbour_cloud_distances = np.empty_like(dist)
+
+        for node in range(0, self.npoints):
+            neighbour_cloud[node, :] = cloud[node, ii[node,:]]
+            neighbour_cloud_distances[node, :] = dist[node, ii[node,:]]
+
+        # The same mask should be applicable to the sorted array
+
+        self.neighbour_cloud = np.ma.array( neighbour_cloud, mask = cloud_mask)
+        self.neighbour_cloud_distances = np.ma.array( neighbour_cloud_distances, mask = cloud_mask)
+
+        # Create a mask that can pick the natural neighbours only
+
+        ind = np.indices(self.neighbour_cloud.shape)[1]
+        mask = ind &gt; self.near_neighbours.reshape(-1,1)
+        self.near_neighbours_mask = mask
+
+        if self.rank == 0:
+            print((&#34; - Array sort {}s&#34;.format(perf_counter()-t)))
+
+
+    def construct_neighbour_cloud(self, size=25):
+        &#34;&#34;&#34;
+        Find neighbours from distance cKDTree.
+
+        &#34;&#34;&#34;
+
+        nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
+
+        self.neighbour_cloud = nncloud
+        self.neighbour_cloud_distances = nndist
+
+        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
+        self.near_neighbours = neighbours + 2
+        self.extended_neighbours = np.empty_like(neighbours).fill(size)
+
+        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+        for node in range(0,self.npoints):
+            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+
+        return
+
+
+    def _build_smoothing_matrix(self):
+
+        indptr, indices = self.vertex_neighbour_vertices
+        weight  = 1.0/self.weight
+        nweight = weight[indices]
+
+        lgmask = self.lgmap_row.indices &gt;= 0
+
+
+        nnz = self.vertex_neighbours[lgmask] + 1
+
+        # smoothMat = self.dm.createMatrix()
+        # smoothMat.setOption(smoothMat.Option.NEW_NONZERO_LOCATIONS, False)
+        smoothMat = PETSc.Mat().create(comm=comm)
+        smoothMat.setType(&#39;aij&#39;)
+        smoothMat.setSizes(self.sizes)
+        smoothMat.setLGMap(self.lgmap_row, self.lgmap_col)
+        smoothMat.setFromOptions()
+        smoothMat.setPreallocationNNZ(nnz)
+
+        # read in data
+        smoothMat.setValuesLocalCSR(indptr.astype(PETSc.IntType), indices.astype(PETSc.IntType), nweight)
+        self.lvec.setArray(weight)
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        smoothMat.setDiagonal(self.gvec)
+
+        smoothMat.assemblyBegin()
+        smoothMat.assemblyEnd()
+
+        self.localSmoothMat = smoothMat
+
+
+    def local_area_smoothing(self, data, its=1, centre_weight=0.75):
+
+        smooth_data = data.copy()
+        smooth_data_old = data.copy()
+
+        for i in range(0, its):
+            smooth_data_old[:] = smooth_data
+            smooth_data = centre_weight*smooth_data_old + \
+                          (1.0 - centre_weight)*self.rbf_smoother(smooth_data)
+            smooth_data[:] = self.sync(smooth_data)
+
+        return smooth_data
+
+
+    def local_area_smoothing_old(self, data, its=1, centre_weight=0.75):
+
+        self.lvec.setArray(data)
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        smooth_data = self.gvec.copy()
+
+        for i in range(0, its):
+            self.localSmoothMat.mult(smooth_data, self.gvec)
+            smooth_data = centre_weight*smooth_data + (1.0 - centre_weight)*self.gvec
+
+        self.dm.globalToLocal(smooth_data, self.lvec)
+
+        return self.lvec.array.copy()
+
+
+
+    def _construct_rbf_weights(self, delta=None):
+
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
+
+        self.delta  = delta
+        self.gaussian_dist_w = self._rbf_weights(delta)
+
+        return
+
+    def _rbf_weights(self, delta=None):
+
+        neighbour_cloud_distances = self.neighbour_cloud_distances
+
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
+
+        # Initialise the interpolants
+
+        gaussian_dist_w       = np.zeros_like(neighbour_cloud_distances)
+        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/delta, 2.0))
+        gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
+
+        return gaussian_dist_w
+
+
+    def rbf_smoother(self, vector, iterations=1, delta=None):
+        &#34;&#34;&#34;
+        Smoothing using a radial-basis function smoothing kernel
+
+        Arguments
+        ---------
+         vector     : field vector shape (n,)
+         iterations : int, number of iterations to smooth vector
+         delta      : distance weights to apply the the Gaussian
+                    : interpolants
+
+        Returns
+        -------
+         smooth_vec : smoothed version of input vector
+             shape (n,)
+
+        &#34;&#34;&#34;
+
+
+        if type(delta) != type(None):
+            self._construct_rbf_weights(delta)
+
+        vector = self.sync(vector)
+
+        for i in range(0, iterations):
+            # print self.dm.comm.rank, &#34;: RBF &#34;,vector.max(), vector.min()
+
+            vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+            vector = self.sync(vector_smoothed)
+
+        return vector
+
+
+
+
+    def build_rbf_smoother(self, delta, iterations=1):
+
+        trimesh_self = self
+
+        class _rbf_smoother_object(object):
+
+            def __init__(inner_self, delta, iterations=1):
+
+                if delta == None:
+                    delta = trimesh_self.neighbour_cloud_distances[:, 1].mean()  ## NOT SAFE IN PARALLEL !!!
+
+                inner_self._mesh = trimesh_self
+                inner_self.delta = delta
+                inner_self.iterations = iterations
+                inner_self.gaussian_dist_w = inner_self._mesh._rbf_weights(delta)
+
+                return
+
+
+            def _apply_rbf_on_my_mesh(inner_self, lazyFn, iterations=1):
+                import quagmire
+
+                smooth_node_values = lazyFn.evaluate(inner_self._mesh)
+
+                for i in range(0, iterations):
+                    smooth_node_values = (smooth_node_values[inner_self._mesh.neighbour_cloud[:,:]] * inner_self.gaussian_dist_w[:,:]).sum(axis=1)
+                    smooth_node_values = inner_self._mesh.sync(smooth_node_values)
+
+                return smooth_node_values
+
+
+            def smooth_fn(inner_self, lazyFn, iterations=None):
+
+                if iterations is None:
+                        iterations = inner_self.iterations
+
+                def smoother_fn(*args, **kwargs):
+
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(lazyFn, iterations=iterations)
+
+                    if len(args) == 1 and args[0] == lazyFn._mesh:
+                        return smooth_node_values
+                    elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                        mesh = args[0]
+                        return inner_self._mesh.interpolate(lazyFn._mesh.coords[:,0], lazyFn._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                    else:
+                        xi = np.atleast_1d(args[0])
+                        yi = np.atleast_1d(args[1])
+                        i, e = inner_self._mesh.interpolate(xi, yi, zdata=smooth_node_values, **kwargs)
+                        return i
+
+
+                newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+                newLazyFn.evaluate = smoother_fn
+                newLazyFn.description = &#34;RBFsmooth({}, d={}, i={})&#34;.format(lazyFn.description, inner_self.delta, iterations)
+
+                return newLazyFn
+
+        return _rbf_smoother_object(delta, iterations)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="quagmire.mesh.commonmesh.CommonMesh" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh">CommonMesh</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="quagmire.mesh.trimesh.TriMesh.id"><code class="name">var <span class="ident">id</span></code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def id(self):
+    return self.__id</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="quagmire.mesh.trimesh.TriMesh.add_variable"><code class="name flex">
+<span>def <span class="ident">add_variable</span></span>(<span>self, name=None, locked=False)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_variable(self, name=None, locked=False):
+
+    from quagmire.mesh import MeshVariable
+    return MeshVariable(name=name, mesh=self, locked=locked)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.trimesh.TriMesh.build_rbf_smoother"><code class="name flex">
+<span>def <span class="ident">build_rbf_smoother</span></span>(<span>self, delta, iterations=1)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_rbf_smoother(self, delta, iterations=1):
+
+    trimesh_self = self
+
+    class _rbf_smoother_object(object):
+
+        def __init__(inner_self, delta, iterations=1):
+
+            if delta == None:
+                delta = trimesh_self.neighbour_cloud_distances[:, 1].mean()  ## NOT SAFE IN PARALLEL !!!
+
+            inner_self._mesh = trimesh_self
+            inner_self.delta = delta
+            inner_self.iterations = iterations
+            inner_self.gaussian_dist_w = inner_self._mesh._rbf_weights(delta)
+
+            return
+
+
+        def _apply_rbf_on_my_mesh(inner_self, lazyFn, iterations=1):
+            import quagmire
+
+            smooth_node_values = lazyFn.evaluate(inner_self._mesh)
+
+            for i in range(0, iterations):
+                smooth_node_values = (smooth_node_values[inner_self._mesh.neighbour_cloud[:,:]] * inner_self.gaussian_dist_w[:,:]).sum(axis=1)
+                smooth_node_values = inner_self._mesh.sync(smooth_node_values)
+
+            return smooth_node_values
+
+
+        def smooth_fn(inner_self, lazyFn, iterations=None):
+
+            if iterations is None:
+                    iterations = inner_self.iterations
+
+            def smoother_fn(*args, **kwargs):
+
+                smooth_node_values = inner_self._apply_rbf_on_my_mesh(lazyFn, iterations=iterations)
+
+                if len(args) == 1 and args[0] == lazyFn._mesh:
+                    return smooth_node_values
+                elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                    mesh = args[0]
+                    return inner_self._mesh.interpolate(lazyFn._mesh.coords[:,0], lazyFn._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                else:
+                    xi = np.atleast_1d(args[0])
+                    yi = np.atleast_1d(args[1])
+                    i, e = inner_self._mesh.interpolate(xi, yi, zdata=smooth_node_values, **kwargs)
+                    return i
+
+
+            newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+            newLazyFn.evaluate = smoother_fn
+            newLazyFn.description = &#34;RBFsmooth({}, d={}, i={})&#34;.format(lazyFn.description, inner_self.delta, iterations)
+
+            return newLazyFn
+
+    return _rbf_smoother_object(delta, iterations)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.trimesh.TriMesh.calculate_area_weights"><code class="name flex">
+<span>def <span class="ident">calculate_area_weights</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Calculate weigths and pointwise area</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calculate_area_weights(self):
+    &#34;&#34;&#34;
+    Calculate weigths and pointwise area
+    &#34;&#34;&#34;
+
+    from quagmire._fortran import ntriw
+
+    area, weight = ntriw(self.tri.x, self.tri.y, self.tri.simplices.T+1)
+
+    return area, weight</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.trimesh.TriMesh.construct_extended_neighbour_cloud"><code class="name flex">
+<span>def <span class="ident">construct_extended_neighbour_cloud</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Find extended node neighbours</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def construct_extended_neighbour_cloud(self):
+    &#34;&#34;&#34;
+    Find extended node neighbours
+    &#34;&#34;&#34;
+    from quagmire._fortran import ncloud
+
+    # nnz_max = np.bincount(self.tri.simplices.ravel()).max()
+
+    unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
+    self.near_neighbours = neighbours
+
+
+    nnz_max = self.near_neighbours.max()
+
+    cloud = ncloud(self.tri.simplices.T + 1, self.npoints, nnz_max)
+    cloud -= 1 # convert to C numbering
+    cloud_mask = cloud==-1
+    cloud_masked = np.ma.array(cloud, mask=cloud_mask)
+
+    self.extended_neighbours = np.count_nonzero(~cloud_mask, axis=1)
+    self.extended_neighbours_mask = cloud_mask
+
+    dx = self.tri.points[cloud_masked,0] - self.tri.points[:,0].reshape(-1,1)
+    dy = self.tri.points[cloud_masked,1] - self.tri.points[:,1].reshape(-1,1)
+    dist = np.hypot(dx,dy)
+    dist[cloud_mask] = 1.0e50
+
+    ii =  np.argsort( dist, axis=1)
+
+    t = perf_counter()
+
+    ## Surely there is some np.argsort trick here to avoid the for loop ???
+
+    neighbour_cloud = np.ones_like(cloud, dtype=np.int )
+    neighbour_cloud_distances = np.empty_like(dist)
+
+    for node in range(0, self.npoints):
+        neighbour_cloud[node, :] = cloud[node, ii[node,:]]
+        neighbour_cloud_distances[node, :] = dist[node, ii[node,:]]
+
+    # The same mask should be applicable to the sorted array
+
+    self.neighbour_cloud = np.ma.array( neighbour_cloud, mask = cloud_mask)
+    self.neighbour_cloud_distances = np.ma.array( neighbour_cloud_distances, mask = cloud_mask)
+
+    # Create a mask that can pick the natural neighbours only
+
+    ind = np.indices(self.neighbour_cloud.shape)[1]
+    mask = ind &gt; self.near_neighbours.reshape(-1,1)
+    self.near_neighbours_mask = mask
+
+    if self.rank == 0:
+        print((&#34; - Array sort {}s&#34;.format(perf_counter()-t)))</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.trimesh.TriMesh.construct_neighbour_cloud"><code class="name flex">
+<span>def <span class="ident">construct_neighbour_cloud</span></span>(<span>self, size=25)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Find neighbours from distance cKDTree.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def construct_neighbour_cloud(self, size=25):
+    &#34;&#34;&#34;
+    Find neighbours from distance cKDTree.
+
+    &#34;&#34;&#34;
+
+    nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
+
+    self.neighbour_cloud = nncloud
+    self.neighbour_cloud_distances = nndist
+
+    unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
+    self.near_neighbours = neighbours + 2
+    self.extended_neighbours = np.empty_like(neighbours).fill(size)
+
+    self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+    for node in range(0,self.npoints):
+        self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.trimesh.TriMesh.construct_neighbours"><code class="name flex">
+<span>def <span class="ident">construct_neighbours</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Find neighbours from edges and store as CSR coordinates.</p>
+<p>This allows you to directly ask the neighbours for a given node a la Qhull,
+or efficiently construct a sparse matrix (PETSc/SciPy)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def construct_neighbours(self):
+    &#34;&#34;&#34;
+    Find neighbours from edges and store as CSR coordinates.
+
+    This allows you to directly ask the neighbours for a given node a la Qhull,
+    or efficiently construct a sparse matrix (PETSc/SciPy)
+    &#34;&#34;&#34;
+
+    row = np.hstack([self.edges[:,0], self.edges[:,1]])
+    col = np.hstack([self.edges[:,1], self.edges[:,0]])
+    val = np.hstack([self.edge_lengths, self.edge_lengths])
+
+    # sort by row
+    sort = row.argsort()
+    row = row[sort].astype(PETSc.IntType)
+    col = col[sort].astype(PETSc.IntType)
+    val = val[sort]
+
+    nnz = np.bincount(row) # number of nonzeros
+    indptr = np.insert(np.cumsum(nnz),0,0)
+
+    self.vertex_neighbours = nnz.astype(PETSc.IntType)
+    self.vertex_neighbour_vertices = indptr, col
+    self.vertex_neighbour_distance = val
+
+    # We may not need this, but constuct anyway for now!
+    neighbours = [[]]*self.npoints
+    closed_neighbours = [[]]*self.npoints
+
+    for i in range(indptr.size-1):
+        start, end = indptr[i], indptr[i+1]
+        neighbours[i] = np.array(col[start:end])
+        closed_neighbours[i] = np.hstack([i, neighbours[i]])
+
+    self.neighbour_list = np.array(neighbours)
+    self.neighbour_array = np.array(closed_neighbours)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.trimesh.TriMesh.derivative_div"><code class="name flex">
+<span>def <span class="ident">derivative_div</span></span>(<span>self, PHIx, PHIy, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute second order derivative from flux fields PHIx, PHIy
+We evaluate the gradient on these fields using the derivative-grad method.</p>
+<h2 id="arguments">Arguments</h2>
+<p>PHIx : ndarray of floats, shape (n,)
+array of first partial derivatives in x direction
+PHIy : ndarray of floats, shape (n,)
+array of first partial derivatives in y direction
+kwargs : optional keyword-argument specifiers
+keyword arguments to be passed onto derivative_grad
+e.g. nit=5, tol=1e-3</p>
+<h2 id="returns">Returns</h2>
+<p>del2PHI : ndarray of floats, shape (n,)
+second derivative of PHI</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivative_div(self, PHIx, PHIy, **kwargs):
+    &#34;&#34;&#34;
+    Compute second order derivative from flux fields PHIx, PHIy
+    We evaluate the gradient on these fields using the derivative-grad method.
+
+    Arguments
+    ---------
+     PHIx : ndarray of floats, shape (n,)
+        array of first partial derivatives in x direction
+     PHIy : ndarray of floats, shape (n,)
+        array of first partial derivatives in y direction
+     kwargs : optional keyword-argument specifiers
+        keyword arguments to be passed onto derivative_grad
+        e.g. nit=5, tol=1e-3
+
+    Returns
+    -------
+     del2PHI : ndarray of floats, shape (n,)
+        second derivative of PHI
+    &#34;&#34;&#34;
+    u_xx, u_xy = self.derivative_grad(PHIx, **kwargs)
+    u_yx, u_yy = self.derivative_grad(PHIy, **kwargs)
+
+    return u_xx + u_yy</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.trimesh.TriMesh.derivative_grad"><code class="name flex">
+<span>def <span class="ident">derivative_grad</span></span>(<span>self, PHI, nit=10, tol=1e-08)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Compute derivatives of PHI in the x, y directions.
+This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.</p>
+<h2 id="arguments">Arguments</h2>
+<p>PHI : ndarray of floats, shape (n,)
+compute the derivative of this array
+nit : int optional (default: 10)
+number of iterations to reach convergence
+tol : float optional (default: 1e-8)
+convergence is reached when this tolerance is met</p>
+<h2 id="returns">Returns</h2>
+<p>PHIx : ndarray of floats, shape(n,)
+first partial derivative of PHI in x direction
+PHIy : ndarray of floats, shape(n,)
+first partial derivative of PHI in y direction</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivative_grad(self, PHI, nit=10, tol=1e-8):
+    &#34;&#34;&#34;
+    Compute derivatives of PHI in the x, y directions.
+    This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+    Arguments
+    ---------
+     PHI : ndarray of floats, shape (n,)
+        compute the derivative of this array
+     nit : int optional (default: 10)
+        number of iterations to reach convergence
+     tol : float optional (default: 1e-8)
+        convergence is reached when this tolerance is met
+
+    Returns
+    -------
+     PHIx : ndarray of floats, shape(n,)
+        first partial derivative of PHI in x direction
+     PHIy : ndarray of floats, shape(n,)
+        first partial derivative of PHI in y direction
+    &#34;&#34;&#34;
+    return self.tri.gradient(PHI, nit, tol)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.trimesh.TriMesh.get_edge_lengths"><code class="name flex">
+<span>def <span class="ident">get_edge_lengths</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Find all edges in a triangluation and their lengths</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_edge_lengths(self):
+    &#34;&#34;&#34;
+    Find all edges in a triangluation and their lengths
+    &#34;&#34;&#34;
+    points = self.tri.points
+
+    i1 = np.sort([self.tri.simplices[:,0], self.tri.simplices[:,1]], axis=0)
+    i2 = np.sort([self.tri.simplices[:,0], self.tri.simplices[:,2]], axis=0)
+    i3 = np.sort([self.tri.simplices[:,1], self.tri.simplices[:,2]], axis=0)
+
+    a = np.hstack([i1, i2, i3]).T
+
+    # find unique rows in numpy array
+    # &lt;http://stackoverflow.com/questions/16970982/find-unique-rows-in-numpy-array&gt;
+    b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
+    edges = np.unique(b).view(a.dtype).reshape(-1, a.shape[1])
+
+    edge_lengths = np.linalg.norm(points[edges[:,0]] - points[edges[:,1]], axis=1)
+
+    self.edges = edges
+    self.edge_lengths = edge_lengths</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.trimesh.TriMesh.get_local_mesh"><code class="name flex">
+<span>def <span class="ident">get_local_mesh</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Retrieves the local mesh information</p>
+<h2 id="returns">Returns</h2>
+<p>x : array of floats, shape (n,)
+x coordinates
+y : array of floats, shape (n,)
+y coordinates
+simplices : array of ints, shape (ntri, 3)
+simplices of the triangulation
+bmask
+: array of bools, shape (n,2)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_local_mesh(self):
+    &#34;&#34;&#34;
+    Retrieves the local mesh information
+
+    Returns
+    -------
+     x : array of floats, shape (n,)
+        x coordinates
+     y : array of floats, shape (n,)
+        y coordinates
+     simplices : array of ints, shape (ntri, 3)
+        simplices of the triangulation
+     bmask  : array of bools, shape (n,2)
+    &#34;&#34;&#34;
+
+    return self.tri.x, self.tri.y, self.tri.simplices, self.bmask</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.trimesh.TriMesh.local_area_smoothing"><code class="name flex">
+<span>def <span class="ident">local_area_smoothing</span></span>(<span>self, data, its=1, centre_weight=0.75)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def local_area_smoothing(self, data, its=1, centre_weight=0.75):
+
+    smooth_data = data.copy()
+    smooth_data_old = data.copy()
+
+    for i in range(0, its):
+        smooth_data_old[:] = smooth_data
+        smooth_data = centre_weight*smooth_data_old + \
+                      (1.0 - centre_weight)*self.rbf_smoother(smooth_data)
+        smooth_data[:] = self.sync(smooth_data)
+
+    return smooth_data</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.trimesh.TriMesh.local_area_smoothing_old"><code class="name flex">
+<span>def <span class="ident">local_area_smoothing_old</span></span>(<span>self, data, its=1, centre_weight=0.75)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def local_area_smoothing_old(self, data, its=1, centre_weight=0.75):
+
+    self.lvec.setArray(data)
+    self.dm.localToGlobal(self.lvec, self.gvec)
+    smooth_data = self.gvec.copy()
+
+    for i in range(0, its):
+        self.localSmoothMat.mult(smooth_data, self.gvec)
+        smooth_data = centre_weight*smooth_data + (1.0 - centre_weight)*self.gvec
+
+    self.dm.globalToLocal(smooth_data, self.lvec)
+
+    return self.lvec.array.copy()</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.trimesh.TriMesh.node_neighbours"><code class="name flex">
+<span>def <span class="ident">node_neighbours</span></span>(<span>self, point)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Returns a list of neighbour nodes for a given point in the delaunay triangulation</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def node_neighbours(self, point):
+    &#34;&#34;&#34;
+    Returns a list of neighbour nodes for a given point in the delaunay triangulation
+    &#34;&#34;&#34;
+
+    return self.vertex_neighbour_vertices[1][self.vertex_neighbour_vertices[0][point]:self.vertex_neighbour_vertices[0][point+1]]</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.trimesh.TriMesh.rbf_smoother"><code class="name flex">
+<span>def <span class="ident">rbf_smoother</span></span>(<span>self, vector, iterations=1, delta=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Smoothing using a radial-basis function smoothing kernel</p>
+<h2 id="arguments">Arguments</h2>
+<p>vector
+: field vector shape (n,)
+iterations : int, number of iterations to smooth vector
+delta
+: distance weights to apply the the Gaussian
+: interpolants</p>
+<h2 id="returns">Returns</h2>
+<p>smooth_vec : smoothed version of input vector
+shape (n,)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rbf_smoother(self, vector, iterations=1, delta=None):
+    &#34;&#34;&#34;
+    Smoothing using a radial-basis function smoothing kernel
+
+    Arguments
+    ---------
+     vector     : field vector shape (n,)
+     iterations : int, number of iterations to smooth vector
+     delta      : distance weights to apply the the Gaussian
+                : interpolants
+
+    Returns
+    -------
+     smooth_vec : smoothed version of input vector
+         shape (n,)
+
+    &#34;&#34;&#34;
+
+
+    if type(delta) != type(None):
+        self._construct_rbf_weights(delta)
+
+    vector = self.sync(vector)
+
+    for i in range(0, iterations):
+        # print self.dm.comm.rank, &#34;: RBF &#34;,vector.max(), vector.min()
+
+        vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+        vector = self.sync(vector_smoothed)
+
+    return vector</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="quagmire.mesh.commonmesh.CommonMesh" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh">CommonMesh</a></b></code>:
+<ul class="hlist">
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.gather_data" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.gather_data">gather_data</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.get_boundary" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.get_boundary">get_boundary</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.get_label" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.get_label">get_label</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.save_field_to_hdf5" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.save_field_to_hdf5">save_field_to_hdf5</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.save_mesh_to_hdf5" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.save_mesh_to_hdf5">save_mesh_to_hdf5</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.scatter_data" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.scatter_data">scatter_data</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.set_label" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.set_label">set_label</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.sync" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.sync">sync</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="quagmire.mesh" href="index.html">quagmire.mesh</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="quagmire.mesh.trimesh.TriMesh" href="#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code></h4>
+<ul class="">
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.add_variable" href="#quagmire.mesh.trimesh.TriMesh.add_variable">add_variable</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.build_rbf_smoother" href="#quagmire.mesh.trimesh.TriMesh.build_rbf_smoother">build_rbf_smoother</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.calculate_area_weights" href="#quagmire.mesh.trimesh.TriMesh.calculate_area_weights">calculate_area_weights</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.construct_extended_neighbour_cloud" href="#quagmire.mesh.trimesh.TriMesh.construct_extended_neighbour_cloud">construct_extended_neighbour_cloud</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.construct_neighbour_cloud" href="#quagmire.mesh.trimesh.TriMesh.construct_neighbour_cloud">construct_neighbour_cloud</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.construct_neighbours" href="#quagmire.mesh.trimesh.TriMesh.construct_neighbours">construct_neighbours</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.derivative_div" href="#quagmire.mesh.trimesh.TriMesh.derivative_div">derivative_div</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.derivative_grad" href="#quagmire.mesh.trimesh.TriMesh.derivative_grad">derivative_grad</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.get_edge_lengths" href="#quagmire.mesh.trimesh.TriMesh.get_edge_lengths">get_edge_lengths</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.get_local_mesh" href="#quagmire.mesh.trimesh.TriMesh.get_local_mesh">get_local_mesh</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.id" href="#quagmire.mesh.trimesh.TriMesh.id">id</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.local_area_smoothing" href="#quagmire.mesh.trimesh.TriMesh.local_area_smoothing">local_area_smoothing</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.local_area_smoothing_old" href="#quagmire.mesh.trimesh.TriMesh.local_area_smoothing_old">local_area_smoothing_old</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.node_neighbours" href="#quagmire.mesh.trimesh.TriMesh.node_neighbours">node_neighbours</a></code></li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.rbf_smoother" href="#quagmire.mesh.trimesh.TriMesh.rbf_smoother">rbf_smoother</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

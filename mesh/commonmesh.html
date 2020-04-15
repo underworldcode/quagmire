@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.5" />
+<title>quagmire.mesh.commonmesh API documentation</title>
+<meta name="description" content="Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>quagmire.mesh.commonmesh</code></h1>
+</header>
+<section id="section-intro">
+<p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher</p>
+<p>This file is part of Quagmire.</p>
+<p>Quagmire is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or any later version.</p>
+<p>Quagmire is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the
+GNU Lesser General Public License for more details.</p>
+<p>You should have received a copy of the GNU Lesser General Public License
+along with Quagmire.
+If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher
+
+This file is part of Quagmire.
+
+Quagmire is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or any later version.
+
+Quagmire is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+&#34;&#34;&#34;
+
+import numpy as np
+from mpi4py import MPI
+import sys,petsc4py
+petsc4py.init(sys.argv)
+from petsc4py import PETSc
+# comm = MPI.COMM_WORLD
+from time import perf_counter
+
+try: range = xrange
+except: pass
+
+
+class CommonMesh(object):
+
+    def __init__(self, dm, verbose=True,  *args, **kwargs):
+
+        self.timings = dict() # store times
+
+        self.log = PETSc.Log()
+        self.log.begin()
+
+        self.verbose = verbose
+
+        self.dm = dm
+        self.gvec = dm.createGlobalVector()
+        self.lvec = dm.createLocalVector()
+        self.sect = dm.getDefaultSection()
+        self.sizes = self.gvec.getSizes(), self.gvec.getSizes()
+
+        self.comm = self.dm.comm
+        self.rank = self.dm.comm.rank
+
+        lgmap_r = dm.getLGMap()
+        l2g = lgmap_r.indices.copy()
+        offproc = l2g &lt; 0
+
+        l2g[offproc] = -(l2g[offproc] + 1)
+        lgmap_c = PETSc.LGMap().create(l2g, comm=self.dm.comm)
+
+        self.lgmap_row = lgmap_r
+        self.lgmap_col = lgmap_c
+
+
+        return
+
+    def add_variable(self, name=None):
+
+        from .basemesh import MeshVariable
+
+        variable = MeshVariable(name=name, mesh=self)
+
+        return variable
+
+    def get_label(self, label):
+        &#34;&#34;&#34;
+        Retrieves all points in the DM that is marked with a specific label.
+        e.g. &#34;boundary&#34;, &#34;coarse&#34;
+        &#34;&#34;&#34;
+        pStart, pEnd = self.dm.getDepthStratum(0)
+
+
+        labels = []
+        for i in range(self.dm.getNumLabels()):
+            labels.append(self.dm.getLabelName(i))
+
+        if label not in labels:
+            raise ValueError(&#34;There is no {} label in the DM&#34;.format(label))
+
+
+        stratSize = self.dm.getStratumSize(label, 1)
+        if stratSize &gt; 0:
+            labelIS = self.dm.getStratumIS(label, 1)
+            pt_range = np.logical_and(labelIS.indices &gt;= pStart, labelIS.indices &lt; pEnd)
+            indices = labelIS.indices[pt_range] - pStart
+        else:
+            indices = np.zeros((0,), dtype=np.int)
+
+        return indices
+
+
+
+    def set_label(self, label, indices):
+        &#34;&#34;&#34;
+        Marks local indices in the DM with a label
+        &#34;&#34;&#34;
+        pStart, pEnd = self.dm.getDepthStratum(0)
+        indices += pStart
+
+        labels = []
+        for i in range(self.dm.getNumLabels()):
+            labels.append(self.dm.getLabelName(i))
+
+        if label not in labels:
+            self.dm.createLabel(label)
+        for ind in indices:
+            self.dm.setLabelValue(label, ind, 1)
+        return
+
+
+    def get_boundary(self, marker=&#34;boundary&#34;):
+        &#34;&#34;&#34;
+        Find the nodes on the boundary from the DM
+        If marker does not exist then the convex hull is used.
+        &#34;&#34;&#34;
+
+        pStart, pEnd = self.dm.getDepthStratum(0)
+        bmask = np.ones(self.npoints, dtype=bool)
+
+
+        try:
+            boundary_indices = self.get_label(marker)
+
+        except ValueError:
+            self.dm.markBoundaryFaces(marker) # marks line segments
+            boundary_indices = self.tri.convex_hull()
+            for ind in boundary_indices:
+                self.dm.setLabelValue(marker, ind + pStart, 1)
+
+
+        bmask[boundary_indices] = False
+        return bmask
+
+
+
+    def save_mesh_to_hdf5(self, file):
+        &#34;&#34;&#34;
+        Saves mesh information stored in the DM to HDF5 file
+        If the file already exists, it is overwritten.
+        &#34;&#34;&#34;
+        file = str(file)
+        if not file.endswith(&#39;.h5&#39;):
+            file += &#39;.h5&#39;
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(file, mode=&#39;w&#39;)
+        ViewHDF5.view(obj=self.dm)
+        ViewHDF5.destroy()
+
+
+    def save_field_to_hdf5(self, file, *args, **kwargs):
+        &#34;&#34;&#34;
+        Saves data on the mesh to an HDF5 file
+         e.g. height, rainfall, sea level, etc.
+
+        Pass these as arguments or keyword arguments for
+        their names to be saved to the hdf5 file
+        &#34;&#34;&#34;
+        import os.path
+
+        file = str(file)
+        if not file.endswith(&#39;.h5&#39;):
+            file += &#39;.h5&#39;
+
+        # write mesh if it doesn&#39;t exist
+        # if not os.path.isfile(file):
+        #     self.save_mesh_to_hdf5(file)
+
+        kwdict = kwargs
+        for i, arg in enumerate(args):
+            key = &#34;arr_{}&#34;.format(i)
+            if key in list(kwdict.keys()):
+                raise ValueError(&#34;Cannot use un-named variables\
+                                  and keyword: {}&#34;.format(key))
+            kwdict[key] = arg
+
+        vec = self.gvec.duplicate()
+        vec = self.dm.createGlobalVec()
+
+        if os.path.isfile(file):
+            mode = &#34;a&#34;
+        else:
+            mode = &#34;w&#34;
+
+
+        for key in kwdict:
+            val = kwdict[key]
+            try:
+                vec.setArray(val)
+            except:
+                self.lvec.setArray(val)
+                self.dm.localToGlobal(self.lvec, vec)
+
+            vec.setName(key)
+            if self.rank == 0 and self.verbose:
+                print(&#34;Saving {} to hdf5&#34;.format(key))
+
+            ViewHDF5 = PETSc.Viewer()
+            ViewHDF5.createHDF5(file, mode=mode)
+            ViewHDF5.view(obj=vec)
+            ViewHDF5.destroy()
+            mode = &#34;a&#34;
+
+        vec.destroy()
+
+
+    def _gather_root(self):
+        &#34;&#34;&#34;
+        MPI gather operation to root process
+        &#34;&#34;&#34;
+        self.tozero, self.zvec = PETSc.Scatter.toZero(self.gvec)
+
+
+        # Gather x,y points
+        pts = self.tri.points
+        self.lvec.setArray(pts[:,0])
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        self.tozero.scatter(self.gvec, self.zvec)
+
+        self.root_x = self.zvec.array.copy()
+
+        self.lvec.setArray(pts[:,1])
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        self.tozero.scatter(self.gvec, self.zvec)
+
+        self.root_y = self.zvec.array.copy()
+
+        self.root = True # yes we have gathered everything
+
+
+    def gather_data(self, data):
+        &#34;&#34;&#34;
+        Gather data on root process
+        &#34;&#34;&#34;
+
+        # check if we already gathered pts on root
+        if not self.root:
+            self._gather_root()
+
+        self.lvec.setArray(data)
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        self.tozero.scatter(self.gvec, self.zvec)
+
+        return self.zvec.array.copy()
+
+    def scatter_data(self, data):
+        &#34;&#34;&#34;
+        Scatter data to all processes
+        &#34;&#34;&#34;
+
+        toAll, zvec = PETSc.Scatter.toAll(self.gvec)
+
+        self.lvec.setArray(data)
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        toAll.scatter(self.gvec, zvec)
+
+        return zvec.array.copy()
+
+    def sync(self, vector):
+        &#34;&#34;&#34;
+        Synchronise the local domain with the global domain
+        &#34;&#34;&#34;
+
+        if self.dm.comm.Get_size() == 1:
+            return vector
+        else:
+
+            # Is this the same under 3.10 ?
+
+            self.lvec.setArray(vector)
+            # self.dm.localToLocal(self.lvec, self.gvec)
+            self.dm.localToGlobal(self.lvec, self.gvec)
+            self.dm.globalToLocal(self.gvec, self.lvec)
+
+            return self.lvec.array.copy()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="quagmire.mesh.commonmesh.CommonMesh"><code class="flex name class">
+<span>class <span class="ident">CommonMesh</span></span>
+<span>(</span><span>dm, verbose=True, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CommonMesh(object):
+
+    def __init__(self, dm, verbose=True,  *args, **kwargs):
+
+        self.timings = dict() # store times
+
+        self.log = PETSc.Log()
+        self.log.begin()
+
+        self.verbose = verbose
+
+        self.dm = dm
+        self.gvec = dm.createGlobalVector()
+        self.lvec = dm.createLocalVector()
+        self.sect = dm.getDefaultSection()
+        self.sizes = self.gvec.getSizes(), self.gvec.getSizes()
+
+        self.comm = self.dm.comm
+        self.rank = self.dm.comm.rank
+
+        lgmap_r = dm.getLGMap()
+        l2g = lgmap_r.indices.copy()
+        offproc = l2g &lt; 0
+
+        l2g[offproc] = -(l2g[offproc] + 1)
+        lgmap_c = PETSc.LGMap().create(l2g, comm=self.dm.comm)
+
+        self.lgmap_row = lgmap_r
+        self.lgmap_col = lgmap_c
+
+
+        return
+
+    def add_variable(self, name=None):
+
+        from .basemesh import MeshVariable
+
+        variable = MeshVariable(name=name, mesh=self)
+
+        return variable
+
+    def get_label(self, label):
+        &#34;&#34;&#34;
+        Retrieves all points in the DM that is marked with a specific label.
+        e.g. &#34;boundary&#34;, &#34;coarse&#34;
+        &#34;&#34;&#34;
+        pStart, pEnd = self.dm.getDepthStratum(0)
+
+
+        labels = []
+        for i in range(self.dm.getNumLabels()):
+            labels.append(self.dm.getLabelName(i))
+
+        if label not in labels:
+            raise ValueError(&#34;There is no {} label in the DM&#34;.format(label))
+
+
+        stratSize = self.dm.getStratumSize(label, 1)
+        if stratSize &gt; 0:
+            labelIS = self.dm.getStratumIS(label, 1)
+            pt_range = np.logical_and(labelIS.indices &gt;= pStart, labelIS.indices &lt; pEnd)
+            indices = labelIS.indices[pt_range] - pStart
+        else:
+            indices = np.zeros((0,), dtype=np.int)
+
+        return indices
+
+
+
+    def set_label(self, label, indices):
+        &#34;&#34;&#34;
+        Marks local indices in the DM with a label
+        &#34;&#34;&#34;
+        pStart, pEnd = self.dm.getDepthStratum(0)
+        indices += pStart
+
+        labels = []
+        for i in range(self.dm.getNumLabels()):
+            labels.append(self.dm.getLabelName(i))
+
+        if label not in labels:
+            self.dm.createLabel(label)
+        for ind in indices:
+            self.dm.setLabelValue(label, ind, 1)
+        return
+
+
+    def get_boundary(self, marker=&#34;boundary&#34;):
+        &#34;&#34;&#34;
+        Find the nodes on the boundary from the DM
+        If marker does not exist then the convex hull is used.
+        &#34;&#34;&#34;
+
+        pStart, pEnd = self.dm.getDepthStratum(0)
+        bmask = np.ones(self.npoints, dtype=bool)
+
+
+        try:
+            boundary_indices = self.get_label(marker)
+
+        except ValueError:
+            self.dm.markBoundaryFaces(marker) # marks line segments
+            boundary_indices = self.tri.convex_hull()
+            for ind in boundary_indices:
+                self.dm.setLabelValue(marker, ind + pStart, 1)
+
+
+        bmask[boundary_indices] = False
+        return bmask
+
+
+
+    def save_mesh_to_hdf5(self, file):
+        &#34;&#34;&#34;
+        Saves mesh information stored in the DM to HDF5 file
+        If the file already exists, it is overwritten.
+        &#34;&#34;&#34;
+        file = str(file)
+        if not file.endswith(&#39;.h5&#39;):
+            file += &#39;.h5&#39;
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(file, mode=&#39;w&#39;)
+        ViewHDF5.view(obj=self.dm)
+        ViewHDF5.destroy()
+
+
+    def save_field_to_hdf5(self, file, *args, **kwargs):
+        &#34;&#34;&#34;
+        Saves data on the mesh to an HDF5 file
+         e.g. height, rainfall, sea level, etc.
+
+        Pass these as arguments or keyword arguments for
+        their names to be saved to the hdf5 file
+        &#34;&#34;&#34;
+        import os.path
+
+        file = str(file)
+        if not file.endswith(&#39;.h5&#39;):
+            file += &#39;.h5&#39;
+
+        # write mesh if it doesn&#39;t exist
+        # if not os.path.isfile(file):
+        #     self.save_mesh_to_hdf5(file)
+
+        kwdict = kwargs
+        for i, arg in enumerate(args):
+            key = &#34;arr_{}&#34;.format(i)
+            if key in list(kwdict.keys()):
+                raise ValueError(&#34;Cannot use un-named variables\
+                                  and keyword: {}&#34;.format(key))
+            kwdict[key] = arg
+
+        vec = self.gvec.duplicate()
+        vec = self.dm.createGlobalVec()
+
+        if os.path.isfile(file):
+            mode = &#34;a&#34;
+        else:
+            mode = &#34;w&#34;
+
+
+        for key in kwdict:
+            val = kwdict[key]
+            try:
+                vec.setArray(val)
+            except:
+                self.lvec.setArray(val)
+                self.dm.localToGlobal(self.lvec, vec)
+
+            vec.setName(key)
+            if self.rank == 0 and self.verbose:
+                print(&#34;Saving {} to hdf5&#34;.format(key))
+
+            ViewHDF5 = PETSc.Viewer()
+            ViewHDF5.createHDF5(file, mode=mode)
+            ViewHDF5.view(obj=vec)
+            ViewHDF5.destroy()
+            mode = &#34;a&#34;
+
+        vec.destroy()
+
+
+    def _gather_root(self):
+        &#34;&#34;&#34;
+        MPI gather operation to root process
+        &#34;&#34;&#34;
+        self.tozero, self.zvec = PETSc.Scatter.toZero(self.gvec)
+
+
+        # Gather x,y points
+        pts = self.tri.points
+        self.lvec.setArray(pts[:,0])
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        self.tozero.scatter(self.gvec, self.zvec)
+
+        self.root_x = self.zvec.array.copy()
+
+        self.lvec.setArray(pts[:,1])
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        self.tozero.scatter(self.gvec, self.zvec)
+
+        self.root_y = self.zvec.array.copy()
+
+        self.root = True # yes we have gathered everything
+
+
+    def gather_data(self, data):
+        &#34;&#34;&#34;
+        Gather data on root process
+        &#34;&#34;&#34;
+
+        # check if we already gathered pts on root
+        if not self.root:
+            self._gather_root()
+
+        self.lvec.setArray(data)
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        self.tozero.scatter(self.gvec, self.zvec)
+
+        return self.zvec.array.copy()
+
+    def scatter_data(self, data):
+        &#34;&#34;&#34;
+        Scatter data to all processes
+        &#34;&#34;&#34;
+
+        toAll, zvec = PETSc.Scatter.toAll(self.gvec)
+
+        self.lvec.setArray(data)
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        toAll.scatter(self.gvec, zvec)
+
+        return zvec.array.copy()
+
+    def sync(self, vector):
+        &#34;&#34;&#34;
+        Synchronise the local domain with the global domain
+        &#34;&#34;&#34;
+
+        if self.dm.comm.Get_size() == 1:
+            return vector
+        else:
+
+            # Is this the same under 3.10 ?
+
+            self.lvec.setArray(vector)
+            # self.dm.localToLocal(self.lvec, self.gvec)
+            self.dm.localToGlobal(self.lvec, self.gvec)
+            self.dm.globalToLocal(self.gvec, self.lvec)
+
+            return self.lvec.array.copy()</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="quagmire.mesh.pixmesh.PixMesh" href="pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></li>
+<li><a title="quagmire.mesh.strimesh.sTriMesh" href="strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></li>
+<li><a title="quagmire.mesh.trimesh.TriMesh" href="trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="quagmire.mesh.commonmesh.CommonMesh.add_variable"><code class="name flex">
+<span>def <span class="ident">add_variable</span></span>(<span>self, name=None)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_variable(self, name=None):
+
+    from .basemesh import MeshVariable
+
+    variable = MeshVariable(name=name, mesh=self)
+
+    return variable</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.commonmesh.CommonMesh.gather_data"><code class="name flex">
+<span>def <span class="ident">gather_data</span></span>(<span>self, data)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Gather data on root process</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gather_data(self, data):
+    &#34;&#34;&#34;
+    Gather data on root process
+    &#34;&#34;&#34;
+
+    # check if we already gathered pts on root
+    if not self.root:
+        self._gather_root()
+
+    self.lvec.setArray(data)
+    self.dm.localToGlobal(self.lvec, self.gvec)
+    self.tozero.scatter(self.gvec, self.zvec)
+
+    return self.zvec.array.copy()</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.commonmesh.CommonMesh.get_boundary"><code class="name flex">
+<span>def <span class="ident">get_boundary</span></span>(<span>self, marker='boundary')</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Find the nodes on the boundary from the DM
+If marker does not exist then the convex hull is used.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_boundary(self, marker=&#34;boundary&#34;):
+    &#34;&#34;&#34;
+    Find the nodes on the boundary from the DM
+    If marker does not exist then the convex hull is used.
+    &#34;&#34;&#34;
+
+    pStart, pEnd = self.dm.getDepthStratum(0)
+    bmask = np.ones(self.npoints, dtype=bool)
+
+
+    try:
+        boundary_indices = self.get_label(marker)
+
+    except ValueError:
+        self.dm.markBoundaryFaces(marker) # marks line segments
+        boundary_indices = self.tri.convex_hull()
+        for ind in boundary_indices:
+            self.dm.setLabelValue(marker, ind + pStart, 1)
+
+
+    bmask[boundary_indices] = False
+    return bmask</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.commonmesh.CommonMesh.get_label"><code class="name flex">
+<span>def <span class="ident">get_label</span></span>(<span>self, label)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Retrieves all points in the DM that is marked with a specific label.
+e.g. "boundary", "coarse"</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_label(self, label):
+    &#34;&#34;&#34;
+    Retrieves all points in the DM that is marked with a specific label.
+    e.g. &#34;boundary&#34;, &#34;coarse&#34;
+    &#34;&#34;&#34;
+    pStart, pEnd = self.dm.getDepthStratum(0)
+
+
+    labels = []
+    for i in range(self.dm.getNumLabels()):
+        labels.append(self.dm.getLabelName(i))
+
+    if label not in labels:
+        raise ValueError(&#34;There is no {} label in the DM&#34;.format(label))
+
+
+    stratSize = self.dm.getStratumSize(label, 1)
+    if stratSize &gt; 0:
+        labelIS = self.dm.getStratumIS(label, 1)
+        pt_range = np.logical_and(labelIS.indices &gt;= pStart, labelIS.indices &lt; pEnd)
+        indices = labelIS.indices[pt_range] - pStart
+    else:
+        indices = np.zeros((0,), dtype=np.int)
+
+    return indices</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.commonmesh.CommonMesh.save_field_to_hdf5"><code class="name flex">
+<span>def <span class="ident">save_field_to_hdf5</span></span>(<span>self, file, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Saves data on the mesh to an HDF5 file
+e.g. height, rainfall, sea level, etc.</p>
+<p>Pass these as arguments or keyword arguments for
+their names to be saved to the hdf5 file</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_field_to_hdf5(self, file, *args, **kwargs):
+    &#34;&#34;&#34;
+    Saves data on the mesh to an HDF5 file
+     e.g. height, rainfall, sea level, etc.
+
+    Pass these as arguments or keyword arguments for
+    their names to be saved to the hdf5 file
+    &#34;&#34;&#34;
+    import os.path
+
+    file = str(file)
+    if not file.endswith(&#39;.h5&#39;):
+        file += &#39;.h5&#39;
+
+    # write mesh if it doesn&#39;t exist
+    # if not os.path.isfile(file):
+    #     self.save_mesh_to_hdf5(file)
+
+    kwdict = kwargs
+    for i, arg in enumerate(args):
+        key = &#34;arr_{}&#34;.format(i)
+        if key in list(kwdict.keys()):
+            raise ValueError(&#34;Cannot use un-named variables\
+                              and keyword: {}&#34;.format(key))
+        kwdict[key] = arg
+
+    vec = self.gvec.duplicate()
+    vec = self.dm.createGlobalVec()
+
+    if os.path.isfile(file):
+        mode = &#34;a&#34;
+    else:
+        mode = &#34;w&#34;
+
+
+    for key in kwdict:
+        val = kwdict[key]
+        try:
+            vec.setArray(val)
+        except:
+            self.lvec.setArray(val)
+            self.dm.localToGlobal(self.lvec, vec)
+
+        vec.setName(key)
+        if self.rank == 0 and self.verbose:
+            print(&#34;Saving {} to hdf5&#34;.format(key))
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(file, mode=mode)
+        ViewHDF5.view(obj=vec)
+        ViewHDF5.destroy()
+        mode = &#34;a&#34;
+
+    vec.destroy()</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.commonmesh.CommonMesh.save_mesh_to_hdf5"><code class="name flex">
+<span>def <span class="ident">save_mesh_to_hdf5</span></span>(<span>self, file)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Saves mesh information stored in the DM to HDF5 file
+If the file already exists, it is overwritten.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_mesh_to_hdf5(self, file):
+    &#34;&#34;&#34;
+    Saves mesh information stored in the DM to HDF5 file
+    If the file already exists, it is overwritten.
+    &#34;&#34;&#34;
+    file = str(file)
+    if not file.endswith(&#39;.h5&#39;):
+        file += &#39;.h5&#39;
+
+    ViewHDF5 = PETSc.Viewer()
+    ViewHDF5.createHDF5(file, mode=&#39;w&#39;)
+    ViewHDF5.view(obj=self.dm)
+    ViewHDF5.destroy()</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.commonmesh.CommonMesh.scatter_data"><code class="name flex">
+<span>def <span class="ident">scatter_data</span></span>(<span>self, data)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Scatter data to all processes</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def scatter_data(self, data):
+    &#34;&#34;&#34;
+    Scatter data to all processes
+    &#34;&#34;&#34;
+
+    toAll, zvec = PETSc.Scatter.toAll(self.gvec)
+
+    self.lvec.setArray(data)
+    self.dm.localToGlobal(self.lvec, self.gvec)
+    toAll.scatter(self.gvec, zvec)
+
+    return zvec.array.copy()</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.commonmesh.CommonMesh.set_label"><code class="name flex">
+<span>def <span class="ident">set_label</span></span>(<span>self, label, indices)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Marks local indices in the DM with a label</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_label(self, label, indices):
+    &#34;&#34;&#34;
+    Marks local indices in the DM with a label
+    &#34;&#34;&#34;
+    pStart, pEnd = self.dm.getDepthStratum(0)
+    indices += pStart
+
+    labels = []
+    for i in range(self.dm.getNumLabels()):
+        labels.append(self.dm.getLabelName(i))
+
+    if label not in labels:
+        self.dm.createLabel(label)
+    for ind in indices:
+        self.dm.setLabelValue(label, ind, 1)
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.commonmesh.CommonMesh.sync"><code class="name flex">
+<span>def <span class="ident">sync</span></span>(<span>self, vector)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Synchronise the local domain with the global domain</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sync(self, vector):
+    &#34;&#34;&#34;
+    Synchronise the local domain with the global domain
+    &#34;&#34;&#34;
+
+    if self.dm.comm.Get_size() == 1:
+        return vector
+    else:
+
+        # Is this the same under 3.10 ?
+
+        self.lvec.setArray(vector)
+        # self.dm.localToLocal(self.lvec, self.gvec)
+        self.dm.localToGlobal(self.lvec, self.gvec)
+        self.dm.globalToLocal(self.gvec, self.lvec)
+
+        return self.lvec.array.copy()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="quagmire.mesh" href="index.html">quagmire.mesh</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="quagmire.mesh.commonmesh.CommonMesh" href="#quagmire.mesh.commonmesh.CommonMesh">CommonMesh</a></code></h4>
+<ul class="two-column">
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.add_variable" href="#quagmire.mesh.commonmesh.CommonMesh.add_variable">add_variable</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.gather_data" href="#quagmire.mesh.commonmesh.CommonMesh.gather_data">gather_data</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.get_boundary" href="#quagmire.mesh.commonmesh.CommonMesh.get_boundary">get_boundary</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.get_label" href="#quagmire.mesh.commonmesh.CommonMesh.get_label">get_label</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.save_field_to_hdf5" href="#quagmire.mesh.commonmesh.CommonMesh.save_field_to_hdf5">save_field_to_hdf5</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.save_mesh_to_hdf5" href="#quagmire.mesh.commonmesh.CommonMesh.save_mesh_to_hdf5">save_mesh_to_hdf5</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.scatter_data" href="#quagmire.mesh.commonmesh.CommonMesh.scatter_data">scatter_data</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.set_label" href="#quagmire.mesh.commonmesh.CommonMesh.set_label">set_label</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.sync" href="#quagmire.mesh.commonmesh.CommonMesh.sync">sync</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
