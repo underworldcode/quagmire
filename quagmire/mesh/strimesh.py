@@ -141,14 +141,31 @@ class sTriMesh(_CommonMesh):
         return self.tri.lons, self.tri.lats, self.tri.simplices, self.bmask
 
 
-    def calculate_area_weights(self):
+    def calculate_area_weights(self, r1=6384.4e3, r2=6352.8e3):
         """
-        Calculate weigths and pointwise area
+        Calculate pointwise weights and area
+
+        Parameters
+        ----------
+        r1 : float
+            radius of the sphere at the equator
+        r2 : float
+            radius of the sphere at the poles
+
+        Notes
+        -----
+        This calls a fortran 90 routine which computes the weight and area
+        for each point in the mesh.
+
+        The area is calculated using a Lambert azimuthal equal-area projection
+        https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection
+        where the geocentric radius uses the radius of the sphere at the
+        equator and the poles (defaults to Earth values: 6384.4km and 6352.8km)
         """
 
-        from quagmire._fortran import ntriw
+        from quagmire._fortran import ntriw_s
 
-        self.area, self.weight = ntriw(self.tri.lons, self.tri.lats, self.tri.simplices.T+1)
+        self.area, self.weight = ntriw_s(self.tri.lons, self.tri.lats, self.tri.simplices.T+1, r1, r2)
 
 
     def node_neighbours(self, point):
