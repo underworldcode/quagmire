@@ -45,6 +45,39 @@ def points_to_edges(tri, boundary):
     return boundary_edges
 
 
+def find_boundary_segments(simplices):
+    """
+    Finds all boundary segments in the triangulation.
+
+    Boundary segments should not share a segment with another triangle.
+
+    Parameters
+    ----------
+    simplices : array shape (nt,3)
+        list of simplices in a triangulaton.
+
+    Returns
+    -------
+    segments : array shape (n,2)
+        list of segments that define the convex hull (boundary)
+        of the triangulation.
+
+    Notes
+    -----
+    Spherical meshes generated with stripy will not have any boundary
+    segments, thus an empty list is returned.
+    """
+    i1 = np.sort([simplices[:,0], simplices[:,1]], axis=0)
+    i2 = np.sort([simplices[:,0], simplices[:,2]], axis=0)
+    i3 = np.sort([simplices[:,1], simplices[:,2]], axis=0)
+    
+    a = np.hstack([i1, i2, i3]).T
+
+    # find unique rows in numpy array
+    edges, counts = np.unique(a, return_counts=True, axis=0)
+    return edges[counts < 2]
+
+
 def create_DMPlex_from_points(x, y, bmask=None, refinement_levels=0):
     """
     Triangulates x,y coordinates on rank 0 and creates a PETSc DMPlex object
@@ -81,9 +114,8 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_levels=0):
     tri = Triangulation(x,y, permute=True)
 
     if bmask is None:
-        # cannot compute convex hull,
-        # so give this to create_DMPlex function to mark boundary faces
-        boundary_vertices = None
+        hull = tri.convex_hull()
+        boundary_vertices = np.column_stack([hull, np.hstack([hull[1:], hull[0]])])
     else:
         boundary_indices = np.nonzero(~bmask)[0]
         boundary_vertices = points_to_edges(tri, boundary_indices)
@@ -127,8 +159,7 @@ def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_level
     tri = sTriangulation(lons, lats, permute=True)
 
     if bmask is None:
-        hull = tri.convex_hull()
-        boundary_vertices = np.column_stack([hull, np.hstack([hull[1:], hull[0]])])
+        boundary_vertices = find_boundary_segments(tri.simplices)
     else:
         boundary_indices = np.nonzero(~bmask)[0]
         boundary_vertices = points_to_edges(tri, boundary_indices)
@@ -438,8 +469,16 @@ def create_spherical_DMPlex(lons, lats, simplices, boundary_vertices=None, refin
      DM : PETSc DMPlex object
     """
     from stripy.spherical import lonlat2xyz
+
+    # convert to xyz to construct the DM
     x,y,z = lonlat2xyz(lons, lats)
     points = np.c_[x,y,z]
+
+    # PETSc's markBoundaryFaces routine cannot detect boundary segments
+    # for our spherical implementation. We do it here instead.
+    if boundary_vertices is None:
+        boundary_vertices = find_boundary_segments(simplices)
+
     return _create_DMPlex(points, simplices, boundary_vertices, refinement_levels)
 
 
