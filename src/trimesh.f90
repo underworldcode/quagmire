@@ -68,6 +68,134 @@ subroutine ntriw ( n, x, y, nt, ltri, area, weight )
   return
 end
 
+subroutine lambert_equal_area( lon, lat, n, lons, lats, x, y )
+! Project lons and lats relative to maintain a consistent area
+! relative to lon and lat
+! 
+! The Lambert azimuthal equal-area projection is a particular mapping
+! from a sphere to a disk. It accurately represents area in all regions
+! of the sphere, but it does not accurately represent angles.
+! 
+! https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection
+
+  implicit none
+
+! INPUT VARIABLES
+  integer ( kind = 4 ) n
+  real ( kind = 8 ) lon, lat, lons(n), lats(n)
+! WORK VARIABLES
+  real ( kind = 8 ) cost1, sint1, sint(n), cost(n), k_prime(n)
+  real ( kind = 8 ) costcosll0(n)
+! OUTPUT VARIABLES
+  real ( kind = 8 ) x(n), y(n)
+
+  cost1 = cos(lat)
+  sint1 = sin(lat)
+  cost = cos(lats)
+  sint = sin(lats)
+  costcosll0 = cost*cos(lons - lon)
+  
+  k_prime = sqrt(2.0/(1.0 + sint1*sint + cost1*costcosll0))
+  x = k_prime*cost*sin(lons - lon)
+  y = k_prime*cost1*sint - sint1*costcosll0
+  return
+end subroutine
+
+function geocentric_radius( lat, r1, r2 )
+! Calculate the radius of an oblate spheroid (like the earth)
+!
+! Parameters
+! ----------
+! lat : array of floats
+!     latitudinal coordinates in radians
+! r1 : float
+!     radius at the equator (in metres)
+! r2 : float
+!     radius at the poles (in metres)
+!
+! Returns
+! -------
+! r : array of floats
+!     radius at provided latitudes `lat` in metres
+
+  implicit none
+
+  real ( kind = 8 ), intent(in) :: lat, r1, r2
+  real ( kind = 8 ) coslat, sinlat, num, den
+  real ( kind = 8 ) geocentric_radius
+
+  coslat = cos(lat)
+  sinlat = sin(lat)
+  num = ((r1**2)*coslat)**2 + ((r2**2)*sinlat)**2
+  den = (r1*coslat)**2 + (r2*sinlat)**2
+  geocentric_radius = sqrt(num/den)
+  return
+end function
+
+subroutine ntriw_s( n, lon, lat, nt, ltri, r1, r2, area, weight)
+!*****************************************************************************
+!! NTRIW_S computes the pointwise area to calculate local areas
+!! on a spherical mesh
+!
+! Parameters:
+!
+!   Input, integer ( kind = 4 ), n
+!   number of points in the triangulation
+!
+!   Input, real ( kind = 8 ), x(n), y(n)
+!   lon and lat coordinates that make up the triangulation
+!
+!   Input, integer ( kind = 4 ), n
+!   number of points in the triangulation
+!
+!   Input, integer ( kind = 4 ), nt
+!   number of triangles in the triangulation
+!
+!   Input, integer ( kind = 4 ), ltri(nt)
+!   list of triangles in the triangulation
+!
+!   Ouput, real ( kind = 8 ), area(n), weight(n)
+!   areas and weights for each point
+
+  implicit none
+
+  integer ( kind = 4 ) n, nt, i
+  real ( kind = 8 ) lon(n)
+  real ( kind = 8 ) lat(n)
+  real ( kind = 8 ) area(n)
+  real ( kind = 8 ) v1x, v1y, v2x, v2y, r, r1, r2
+  real ( kind = 8 ) x(3), y(3), ilon(3), ilat(3)
+  real ( kind = 8 ) geocentric_radius
+  integer ( kind = 4 ) weight(n)
+  integer ( kind = 4 ) ltri(3,nt)
+  integer ( kind = 4 ) tri(3)
+
+  area(:) = 0
+  weight(:) = 0
+
+  do i = 1, nt
+    tri = ltri(:,i)
+    ilon = lon(tri)
+    ilat = lat(tri)
+
+    call lambert_equal_area(ilon(1), ilat(1), 3, ilon, ilat, x, y)
+    r = geocentric_radius(ilat(1), r1, r2)
+    x = x * r
+    y = y * r
+
+    v1x = x(2) - x(1)
+    v1y = y(2) - y(1)
+    v2x = x(1) - x(3)
+    v2y = y(1) - y(3)
+
+    area(tri) = area(tri) + abs(v1x*v2y - v1y*v2x)
+    weight(tri) = weight(tri) + 1
+  end do
+
+  area = area / 6
+  return
+end subroutine
+
 subroutine add_pt ( pt, array, n )
 !*****************************************************************************
 ! ADD_PT adds a point to an integer array if it does not already exist
