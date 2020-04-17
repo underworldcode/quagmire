@@ -72,6 +72,39 @@ def points_to_edges(tri, boundary):
     return boundary_edges
 
 
+def find_boundary_segments(simplices):
+    &#34;&#34;&#34;
+    Finds all boundary segments in the triangulation.
+
+    Boundary segments should not share a segment with another triangle.
+
+    Parameters
+    ----------
+    simplices : array shape (nt,3)
+        list of simplices in a triangulaton.
+
+    Returns
+    -------
+    segments : array shape (n,2)
+        list of segments that define the convex hull (boundary)
+        of the triangulation.
+
+    Notes
+    -----
+    Spherical meshes generated with stripy will not have any boundary
+    segments, thus an empty list is returned.
+    &#34;&#34;&#34;
+    i1 = np.sort([simplices[:,0], simplices[:,1]], axis=0)
+    i2 = np.sort([simplices[:,0], simplices[:,2]], axis=0)
+    i3 = np.sort([simplices[:,1], simplices[:,2]], axis=0)
+    
+    a = np.hstack([i1, i2, i3]).T
+
+    # find unique rows in numpy array
+    edges, counts = np.unique(a, return_counts=True, axis=0)
+    return edges[counts &lt; 2]
+
+
 def create_DMPlex_from_points(x, y, bmask=None, refinement_levels=0):
     &#34;&#34;&#34;
     Triangulates x,y coordinates on rank 0 and creates a PETSc DMPlex object
@@ -108,9 +141,8 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_levels=0):
     tri = Triangulation(x,y, permute=True)
 
     if bmask is None:
-        # cannot compute convex hull,
-        # so give this to create_DMPlex function to mark boundary faces
-        boundary_vertices = None
+        hull = tri.convex_hull()
+        boundary_vertices = np.column_stack([hull, np.hstack([hull[1:], hull[0]])])
     else:
         boundary_indices = np.nonzero(~bmask)[0]
         boundary_vertices = points_to_edges(tri, boundary_indices)
@@ -154,8 +186,7 @@ def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_level
     tri = sTriangulation(lons, lats, permute=True)
 
     if bmask is None:
-        hull = tri.convex_hull()
-        boundary_vertices = np.column_stack([hull, np.hstack([hull[1:], hull[0]])])
+        boundary_vertices = find_boundary_segments(tri.simplices)
     else:
         boundary_indices = np.nonzero(~bmask)[0]
         boundary_vertices = points_to_edges(tri, boundary_indices)
@@ -465,8 +496,16 @@ def create_spherical_DMPlex(lons, lats, simplices, boundary_vertices=None, refin
      DM : PETSc DMPlex object
     &#34;&#34;&#34;
     from stripy.spherical import lonlat2xyz
+
+    # convert to xyz to construct the DM
     x,y,z = lonlat2xyz(lons, lats)
     points = np.c_[x,y,z]
+
+    # PETSc&#39;s markBoundaryFaces routine cannot detect boundary segments
+    # for our spherical implementation. We do it here instead.
+    if boundary_vertices is None:
+        boundary_vertices = find_boundary_segments(simplices)
+
     return _create_DMPlex(points, simplices, boundary_vertices, refinement_levels)
 
 
@@ -917,9 +956,8 @@ Boundary markers are automatically updated with each iteration.</p></div>
     tri = Triangulation(x,y, permute=True)
 
     if bmask is None:
-        # cannot compute convex hull,
-        # so give this to create_DMPlex function to mark boundary faces
-        boundary_vertices = None
+        hull = tri.convex_hull()
+        boundary_vertices = np.column_stack([hull, np.hstack([hull[1:], hull[0]])])
     else:
         boundary_indices = np.nonzero(~bmask)[0]
         boundary_vertices = points_to_edges(tri, boundary_indices)
@@ -991,8 +1029,7 @@ Boundary markers are automatically updated with each iteration.</p></div>
     tri = sTriangulation(lons, lats, permute=True)
 
     if bmask is None:
-        hull = tri.convex_hull()
-        boundary_vertices = np.column_stack([hull, np.hstack([hull[1:], hull[0]])])
+        boundary_vertices = find_boundary_segments(tri.simplices)
     else:
         boundary_indices = np.nonzero(~bmask)[0]
         boundary_vertices = points_to_edges(tri, boundary_indices)
@@ -1040,8 +1077,16 @@ boundary_vertices : array of ints, shape(l,2)
      DM : PETSc DMPlex object
     &#34;&#34;&#34;
     from stripy.spherical import lonlat2xyz
+
+    # convert to xyz to construct the DM
     x,y,z = lonlat2xyz(lons, lats)
     points = np.c_[x,y,z]
+
+    # PETSc&#39;s markBoundaryFaces routine cannot detect boundary segments
+    # for our spherical implementation. We do it here instead.
+    if boundary_vertices is None:
+        boundary_vertices = find_boundary_segments(simplices)
+
     return _create_DMPlex(points, simplices, boundary_vertices, refinement_levels)</code></pre>
 </details>
 </dd>
@@ -1065,6 +1110,63 @@ boundary_vertices : array of ints, shape(l,2)
     tri = cartesian_meshes.elliptical_mesh(extent_xy, spacingX, spacingY, random_scale, refinement_levels)
 
     return tri.x, tri.y, tri.simplices</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.meshtools.find_boundary_segments"><code class="name flex">
+<span>def <span class="ident">find_boundary_segments</span></span>(<span>simplices)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Finds all boundary segments in the triangulation.</p>
+<p>Boundary segments should not share a segment with another triangle.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>simplices</code></strong> :&ensp;<code>array shape (nt,3)</code></dt>
+<dd>list of simplices in a triangulaton.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>segments</code></strong> :&ensp;<code>array shape (n,2)</code></dt>
+<dd>list of segments that define the convex hull (boundary)
+of the triangulation.</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>Spherical meshes generated with stripy will not have any boundary
+segments, thus an empty list is returned.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_boundary_segments(simplices):
+    &#34;&#34;&#34;
+    Finds all boundary segments in the triangulation.
+
+    Boundary segments should not share a segment with another triangle.
+
+    Parameters
+    ----------
+    simplices : array shape (nt,3)
+        list of simplices in a triangulaton.
+
+    Returns
+    -------
+    segments : array shape (n,2)
+        list of segments that define the convex hull (boundary)
+        of the triangulation.
+
+    Notes
+    -----
+    Spherical meshes generated with stripy will not have any boundary
+    segments, thus an empty list is returned.
+    &#34;&#34;&#34;
+    i1 = np.sort([simplices[:,0], simplices[:,1]], axis=0)
+    i2 = np.sort([simplices[:,0], simplices[:,2]], axis=0)
+    i3 = np.sort([simplices[:,1], simplices[:,2]], axis=0)
+    
+    a = np.hstack([i1, i2, i3]).T
+
+    # find unique rows in numpy array
+    edges, counts = np.unique(a, return_counts=True, axis=0)
+    return edges[counts &lt; 2]</code></pre>
 </details>
 </dd>
 <dt id="quagmire.tools.meshtools.generate_elliptical_points"><code class="name flex">
@@ -1472,6 +1574,7 @@ as boundaries.</p></div>
 <li><code><a title="quagmire.tools.meshtools.create_DMPlex_from_spherical_points" href="#quagmire.tools.meshtools.create_DMPlex_from_spherical_points">create_DMPlex_from_spherical_points</a></code></li>
 <li><code><a title="quagmire.tools.meshtools.create_spherical_DMPlex" href="#quagmire.tools.meshtools.create_spherical_DMPlex">create_spherical_DMPlex</a></code></li>
 <li><code><a title="quagmire.tools.meshtools.elliptical_mesh" href="#quagmire.tools.meshtools.elliptical_mesh">elliptical_mesh</a></code></li>
+<li><code><a title="quagmire.tools.meshtools.find_boundary_segments" href="#quagmire.tools.meshtools.find_boundary_segments">find_boundary_segments</a></code></li>
 <li><code><a title="quagmire.tools.meshtools.generate_elliptical_points" href="#quagmire.tools.meshtools.generate_elliptical_points">generate_elliptical_points</a></code></li>
 <li><code><a title="quagmire.tools.meshtools.generate_square_points" href="#quagmire.tools.meshtools.generate_square_points">generate_square_points</a></code></li>
 <li><code><a title="quagmire.tools.meshtools.get_boundary_points" href="#quagmire.tools.meshtools.get_boundary_points">get_boundary_points</a></code></li>
