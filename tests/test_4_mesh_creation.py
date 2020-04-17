@@ -8,6 +8,7 @@ from mpi4py import MPI
 comm = MPI.COMM_WORLD
 
 from conftest import load_triangulated_mesh
+from conftest import load_triangulated_spherical_mesh
 
 
 def test_DMPlex_creation(load_triangulated_mesh):
@@ -49,6 +50,20 @@ def test_DMPlex_refinement(load_triangulated_mesh):
     v3 = DM_r3.createLocalVector().getSize()
 
     assert v1 < v2 < v3, "Mesh refinement is not working"
+
+
+def test_DMPlex_spherical_creation(load_triangulated_spherical_mesh):
+    lons = load_triangulated_spherical_mesh['lons']
+    lats = load_triangulated_spherical_mesh['lats']
+    simplices = load_triangulated_spherical_mesh['simplices']
+    DM = meshtools.create_spherical_DMPlex(lons, lats, simplices)
+
+
+def test_DMPlex_creation_from_spherical_points(load_triangulated_spherical_mesh):
+    lons = load_triangulated_spherical_mesh['lons']
+    lats = load_triangulated_spherical_mesh['lats']
+    simplices = load_triangulated_spherical_mesh['simplices']
+    DM = meshtools.create_DMPlex_from_spherical_points(lons, lats)
 
 
 # def test_DMPlex_creation_from_box():
