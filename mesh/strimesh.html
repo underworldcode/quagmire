@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.8.0" />
+<meta name="generator" content="pdoc 0.8.1" />
 <title>quagmire.mesh.strimesh API documentation</title>
 <meta name="description" content="For unstructured data on the sphere." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
@@ -169,14 +169,31 @@ class sTriMesh(_CommonMesh):
         return self.tri.lons, self.tri.lats, self.tri.simplices, self.bmask
 
 
-    def calculate_area_weights(self):
+    def calculate_area_weights(self, r1=6384.4e3, r2=6352.8e3):
         &#34;&#34;&#34;
-        Calculate weigths and pointwise area
+        Calculate pointwise weights and area
+
+        Parameters
+        ----------
+        r1 : float
+            radius of the sphere at the equator
+        r2 : float
+            radius of the sphere at the poles
+
+        Notes
+        -----
+        This calls a fortran 90 routine which computes the weight and area
+        for each point in the mesh.
+
+        The area is calculated using a Lambert azimuthal equal-area projection
+        https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection
+        where the geocentric radius uses the radius of the sphere at the
+        equator and the poles (defaults to Earth values: 6384.4km and 6352.8km)
         &#34;&#34;&#34;
 
-        from quagmire._fortran import ntriw
+        from quagmire._fortran import ntriw_s
 
-        self.area, self.weight = ntriw(self.tri.lons, self.tri.lats, self.tri.simplices.T+1)
+        self.area, self.weight = ntriw_s(self.tri.lons, self.tri.lats, self.tri.simplices.T+1, r1, r2)
 
 
     def node_neighbours(self, point):
@@ -600,14 +617,31 @@ class sTriMesh(_CommonMesh):
         return self.tri.lons, self.tri.lats, self.tri.simplices, self.bmask
 
 
-    def calculate_area_weights(self):
+    def calculate_area_weights(self, r1=6384.4e3, r2=6352.8e3):
         &#34;&#34;&#34;
-        Calculate weigths and pointwise area
+        Calculate pointwise weights and area
+
+        Parameters
+        ----------
+        r1 : float
+            radius of the sphere at the equator
+        r2 : float
+            radius of the sphere at the poles
+
+        Notes
+        -----
+        This calls a fortran 90 routine which computes the weight and area
+        for each point in the mesh.
+
+        The area is calculated using a Lambert azimuthal equal-area projection
+        https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection
+        where the geocentric radius uses the radius of the sphere at the
+        equator and the poles (defaults to Earth values: 6384.4km and 6352.8km)
         &#34;&#34;&#34;
 
-        from quagmire._fortran import ntriw
+        from quagmire._fortran import ntriw_s
 
-        self.area, self.weight = ntriw(self.tri.lons, self.tri.lats, self.tri.simplices.T+1)
+        self.area, self.weight = ntriw_s(self.tri.lons, self.tri.lats, self.tri.simplices.T+1, r1, r2)
 
 
     def node_neighbours(self, point):
@@ -926,22 +960,53 @@ def id(self):
 <h3>Methods</h3>
 <dl>
 <dt id="quagmire.mesh.strimesh.sTriMesh.calculate_area_weights"><code class="name flex">
-<span>def <span class="ident">calculate_area_weights</span></span>(<span>self)</span>
+<span>def <span class="ident">calculate_area_weights</span></span>(<span>self, r1=6384400.0, r2=6352800.0)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Calculate weigths and pointwise area</p></div>
+<div class="desc"><p>Calculate pointwise weights and area</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>r1</code></strong> :&ensp;<code>float</code></dt>
+<dd>radius of the sphere at the equator</dd>
+<dt><strong><code>r2</code></strong> :&ensp;<code>float</code></dt>
+<dd>radius of the sphere at the poles</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>This calls a fortran 90 routine which computes the weight and area
+for each point in the mesh.</p>
+<p>The area is calculated using a Lambert azimuthal equal-area projection
+<a href="https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection">https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection</a>
+where the geocentric radius uses the radius of the sphere at the
+equator and the poles (defaults to Earth values: 6384.4km and 6352.8km)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def calculate_area_weights(self):
+<pre><code class="python">def calculate_area_weights(self, r1=6384.4e3, r2=6352.8e3):
     &#34;&#34;&#34;
-    Calculate weigths and pointwise area
+    Calculate pointwise weights and area
+
+    Parameters
+    ----------
+    r1 : float
+        radius of the sphere at the equator
+    r2 : float
+        radius of the sphere at the poles
+
+    Notes
+    -----
+    This calls a fortran 90 routine which computes the weight and area
+    for each point in the mesh.
+
+    The area is calculated using a Lambert azimuthal equal-area projection
+    https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection
+    where the geocentric radius uses the radius of the sphere at the
+    equator and the poles (defaults to Earth values: 6384.4km and 6352.8km)
     &#34;&#34;&#34;
 
-    from quagmire._fortran import ntriw
+    from quagmire._fortran import ntriw_s
 
-    self.area, self.weight = ntriw(self.tri.lons, self.tri.lats, self.tri.simplices.T+1)</code></pre>
+    self.area, self.weight = ntriw_s(self.tri.lons, self.tri.lats, self.tri.simplices.T+1, r1, r2)</code></pre>
 </details>
 </dd>
 <dt id="quagmire.mesh.strimesh.sTriMesh.construct_extended_neighbour_cloud"><code class="name flex">
@@ -1389,7 +1454,7 @@ bmask
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.0</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>
