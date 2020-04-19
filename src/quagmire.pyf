@@ -61,6 +61,11 @@ python module _fortran ! in
             real(kind=8) dimension(n), intent(out) :: area
             integer(kind=4) dimension(n), intent(out) :: weight
         end subroutine ntriw_s
+        subroutine fill_mask_to_idx(rows,cols,mask,idx)
+            integer(kind=4), intent(hide) :: rows=len(idx)
+            integer(kind=4), intent(in) :: cols
+            logical(kind=4) dimension(rows,cols), intent(out) :: mask
+            integer(kind=4) dimension(rows), intent(in) :: idx
     end interface
 end python module _fortran
 

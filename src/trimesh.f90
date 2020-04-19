@@ -196,6 +196,22 @@ subroutine ntriw_s( n, lon, lat, nt, ltri, r1, r2, area, weight)
   return
 end subroutine
 
+subroutine fill_mask_to_idx( rows, cols, mask, idx )
+
+  implicit none
+
+  integer ( kind = 4 ) rows, cols, i
+  integer ( kind = 4 ) idx(rows)
+  logical ( kind = 4 ) mask(rows,cols)
+
+  mask(:,:) = .false.
+
+  do i = 1, rows
+    mask(i,1:idx(i)) = .true.
+  end do
+  return
+end subroutine
+
 subroutine add_pt ( pt, array, n )
 !*****************************************************************************
 ! ADD_PT adds a point to an integer array if it does not already exist
