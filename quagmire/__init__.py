@@ -222,6 +222,9 @@ def FlatMesh(DM, *args, **kwargs):
     Returns
     -------
     FlatMesh : object
+        Inherits methods and attributes from:
+
+        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
     """
 
     # get DM label name
@@ -288,6 +291,10 @@ def TopoMesh(DM, *args, **kwargs):
     Returns
     -------
     TopoMesh : object
+        Inherits methods and attributes from:
+
+        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
+        - `topomesh.topomesh.TopoMesh`
     """
 
     BaseMeshType = _get_label(DM)
@@ -330,7 +337,11 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
     Returns
     -------
     SurfaceProcessMesh : object
+        Inherits methods and attributes from:
 
+        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
+        - `topomesh.topomesh.TopoMesh`
+        - `surfmesh.surfmesh.SurfMesh`
     """
 
     BaseMeshType = _get_label(DM)

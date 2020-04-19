@@ -14,5 +14,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Tools for creating and saving meshes
+"""
+
 from .meshtools import *
 from .generate_xdmf import generateXdmf as generate_xdmf
