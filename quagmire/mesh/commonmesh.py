@@ -63,13 +63,10 @@ class CommonMesh(object):
 
         return
 
-    def add_variable(self, name=None):
+    def add_variable(self, name=None, locked=False):
 
-        from .basemesh import MeshVariable
-
-        variable = MeshVariable(name=name, mesh=self)
-
-        return variable
+        from quagmire.mesh import MeshVariable
+        return MeshVariable(name=name, mesh=self, locked=locked)
 
     def get_label(self, label):
         """

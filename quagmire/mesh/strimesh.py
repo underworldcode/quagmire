@@ -75,30 +75,38 @@ class sTriMesh(_CommonMesh):
         self.tri = stripy.sTriangulation(lons, lats)
         self.npoints = self.tri.npoints
         self.timings['triangulation'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.rank == 0 and self.verbose:
             print("{} - Delaunay triangulation {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
         # Calculate weigths and pointwise area
         t = perf_counter()
-        self.calculate_area_weights()
+        self.area, self.weight = self.calculate_area_weights()
+        self.pointwise_area = self.add_variable(name="area")
+        self.pointwise_area.data = self.area
+        self.pointwise_area.lock()
+
         self.timings['area weights'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.rank == 0 and self.verbose:
             print("{} - Calculate node weights and area {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
         # Find boundary points
         t = perf_counter()
         self.bmask = self.get_boundary()
+        self.mask = self.add_variable(name="Mask")
+        self.mask.data = self.bmask.astype(PETSc.ScalarType)
+        self.mask.lock()
+
         self.timings['find boundaries'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.rank == 0 and self.verbose:
             print("{} - Find boundaries {}s".format(self.dm.comm.rank, perf_counter()-t))
 
         # cKDTree
         t = perf_counter()
         self.cKDTree = _cKDTree(self.tri.points, balanced_tree=False)
         self.timings['cKDTree'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.rank == 0 and self.verbose:
             print("{} - cKDTree {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
@@ -106,7 +114,7 @@ class sTriMesh(_CommonMesh):
         t = perf_counter()
         self.construct_neighbour_cloud()
         self.timings['construct neighbour cloud'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.rank == 0 and self.verbose:
             print("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
@@ -114,7 +122,7 @@ class sTriMesh(_CommonMesh):
         t = perf_counter()
         self._construct_rbf_weights()
         self.timings['construct rbf weights'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
+        if self.rank == 0 and self.verbose:
             print("{} - Construct rbf weights {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
@@ -152,6 +160,13 @@ class sTriMesh(_CommonMesh):
         r2 : float
             radius of the sphere at the poles
 
+        Returns
+        -------
+        area : array of floats, shape (n,)
+            point-wise area
+        weights : array of ints, shape(n,)
+            weighting for each point
+
         Notes
         -----
         This calls a fortran 90 routine which computes the weight and area
@@ -165,7 +180,9 @@ class sTriMesh(_CommonMesh):
 
         from quagmire._fortran import ntriw_s
 
-        self.area, self.weight = ntriw_s(self.tri.lons, self.tri.lats, self.tri.simplices.T+1, r1, r2)
+        area, weight = ntriw_s(self.tri.lons, self.tri.lats, self.tri.simplices.T+1, r1, r2)
+        
+        return area, weight
 
 
     def node_neighbours(self, point):
@@ -354,9 +371,14 @@ class sTriMesh(_CommonMesh):
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
 
-        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
-        self.near_neighbours = neighbours
-        self.extended_neighbours = np.empty_like(neighbours).fill(size)
+        neighbours = np.bincount(self.tri.simplices.flat)
+        self.near_neighbours = neighbours + 2
+        self.extended_neighbours = np.full_like(neighbours, size)
+
+        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+        for node in range(0,self.npoints):
+            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
 
         return
 
@@ -424,40 +446,58 @@ class sTriMesh(_CommonMesh):
 
     def _construct_rbf_weights(self, delta=None):
 
-        self.delta  = delta
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
 
-        # delta_x = self.tri.x[self.neighbour_cloud] - self.tri.x.reshape(-1,1)
-        # delta_y = self.tri.y[self.neighbour_cloud] - self.tri.y.reshape(-1,1)
-        #
-        # neighbour_cloud_distances = np.hypot(delta_x, delta_y)
+        self.delta  = delta
+        self.gaussian_dist_w = self._rbf_weights(delta)
+
+        return
+
+    def _rbf_weights(self, delta=None):
 
         neighbour_cloud_distances = self.neighbour_cloud_distances
 
-        if self.delta == None:
-            self.delta = self.neighbour_cloud_distances[:, 1].mean()
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
 
         # Initialise the interpolants
 
         gaussian_dist_w       = np.zeros_like(neighbour_cloud_distances)
-        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/self.delta, 2.0))
+        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/delta, 2.0))
         gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
 
-        # gaussian_dist_w[self.extended_neighbours_mask] = 0.0
+        return gaussian_dist_w
 
-        self.gaussian_dist_w = gaussian_dist_w
+    def rbf_smoother(self, vector, iterations=1, delta=None):
+        """
+        Smoothing using a radial-basis function smoothing kernel
 
-        return
+        Arguments
+        ---------
+        vector : array of floats, shape (n,)
+            field variable to be smoothed
+        iterations : int
+            number of iterations to smooth vector
+        delta : float / array of floats shape (n,)
+            distance weights to apply the Gaussian interpolants
+
+        Returns
+        -------
+        smooth_vec : array of floats, shape (n,)
+            smoothed version of input vector
+        """
 
 
-    def rbf_smoother(self, vector, iterations=1):
+        if type(delta) != type(None):
+            self._construct_rbf_weights(delta)
 
-        # Should do some error checking here to ensure the field and point cloud are compatible
-
-        lvec = self.lvec.copy()
+        vector = self.sync(vector)
 
         for i in range(0, iterations):
-            vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
-            self.sync(vector)
-            vector = vector_smoothed.copy()
+            # print self.dm.comm.rank, ": RBF ",vector.max(), vector.min()
 
-        return vector_smoothed
+            vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+            vector = self.sync(vector_smoothed)
+
+        return vector

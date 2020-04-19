@@ -131,12 +131,6 @@ class TriMesh(_CommonMesh):
         self.interpolate = self.tri.interpolate
 
 
-    def add_variable(self, name=None, locked=False):
-
-        from quagmire.mesh import MeshVariable
-        return MeshVariable(name=name, mesh=self, locked=locked)
-
-
 
     def get_local_mesh(self):
         """
@@ -354,9 +348,9 @@ class TriMesh(_CommonMesh):
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
 
-        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
+        neighbours = np.bincount(self.tri.simplices.flat)
         self.near_neighbours = neighbours + 2
-        self.extended_neighbours = np.empty_like(neighbours).fill(size)
+        self.extended_neighbours = np.full_like(neighbours, size)
 
         self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
 
@@ -460,16 +454,17 @@ class TriMesh(_CommonMesh):
 
         Arguments
         ---------
-         vector     : field vector shape (n,)
-         iterations : int, number of iterations to smooth vector
-         delta      : distance weights to apply the the Gaussian
-                    : interpolants
+        vector : array of floats, shape (n,)
+            field variable to be smoothed
+        iterations : int
+            number of iterations to smooth vector
+        delta : float / array of floats shape (n,)
+            distance weights to apply the Gaussian interpolants
 
         Returns
         -------
-         smooth_vec : smoothed version of input vector
-             shape (n,)
-
+        smooth_vec : array of floats, shape (n,)
+            smoothed version of input vector
         """
 
 
