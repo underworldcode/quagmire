@@ -91,13 +91,10 @@ class CommonMesh(object):
 
         return
 
-    def add_variable(self, name=None):
+    def add_variable(self, name=None, locked=False):
 
-        from .basemesh import MeshVariable
-
-        variable = MeshVariable(name=name, mesh=self)
-
-        return variable
+        from quagmire.mesh import MeshVariable
+        return MeshVariable(name=name, mesh=self, locked=locked)
 
     def get_label(self, label):
         &#34;&#34;&#34;
@@ -364,13 +361,10 @@ class CommonMesh(object):
 
         return
 
-    def add_variable(self, name=None):
+    def add_variable(self, name=None, locked=False):
 
-        from .basemesh import MeshVariable
-
-        variable = MeshVariable(name=name, mesh=self)
-
-        return variable
+        from quagmire.mesh import MeshVariable
+        return MeshVariable(name=name, mesh=self, locked=locked)
 
     def get_label(self, label):
         &#34;&#34;&#34;
@@ -593,7 +587,7 @@ class CommonMesh(object):
 <h3>Methods</h3>
 <dl>
 <dt id="quagmire.mesh.commonmesh.CommonMesh.add_variable"><code class="name flex">
-<span>def <span class="ident">add_variable</span></span>(<span>self, name=None)</span>
+<span>def <span class="ident">add_variable</span></span>(<span>self, name=None, locked=False)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -601,13 +595,10 @@ class CommonMesh(object):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_variable(self, name=None):
+<pre><code class="python">def add_variable(self, name=None, locked=False):
 
-    from .basemesh import MeshVariable
-
-    variable = MeshVariable(name=name, mesh=self)
-
-    return variable</code></pre>
+    from quagmire.mesh import MeshVariable
+    return MeshVariable(name=name, mesh=self, locked=locked)</code></pre>
 </details>
 </dd>
 <dt id="quagmire.mesh.commonmesh.CommonMesh.gather_data"><code class="name flex">

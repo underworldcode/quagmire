@@ -159,12 +159,6 @@ class TriMesh(_CommonMesh):
         self.interpolate = self.tri.interpolate
 
 
-    def add_variable(self, name=None, locked=False):
-
-        from quagmire.mesh import MeshVariable
-        return MeshVariable(name=name, mesh=self, locked=locked)
-
-
 
     def get_local_mesh(self):
         &#34;&#34;&#34;
@@ -376,20 +370,19 @@ class TriMesh(_CommonMesh):
         Find neighbours from distance cKDTree.
 
         &#34;&#34;&#34;
+        from quagmire import _fortran
 
         nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
 
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
 
-        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
+        neighbours = np.bincount(self.tri.simplices.flat)
         self.near_neighbours = neighbours + 2
-        self.extended_neighbours = np.empty_like(neighbours).fill(size)
+        self.extended_neighbours = np.full_like(neighbours, size)
 
-        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
-
-        for node in range(0,self.npoints):
-            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+        near_neighbour_mask = _fortran.fill_mask_to_idx(size, self.near_neighbours)
+        self.near_neighbour_mask = near_neighbour_mask.astype(bool)
 
         return
 
@@ -488,16 +481,17 @@ class TriMesh(_CommonMesh):
 
         Arguments
         ---------
-         vector     : field vector shape (n,)
-         iterations : int, number of iterations to smooth vector
-         delta      : distance weights to apply the the Gaussian
-                    : interpolants
+        vector : array of floats, shape (n,)
+            field variable to be smoothed
+        iterations : int
+            number of iterations to smooth vector
+        delta : float / array of floats shape (n,)
+            distance weights to apply the Gaussian interpolants
 
         Returns
         -------
-         smooth_vec : smoothed version of input vector
-             shape (n,)
-
+        smooth_vec : array of floats, shape (n,)
+            smoothed version of input vector
         &#34;&#34;&#34;
 
 
@@ -695,12 +689,6 @@ We recommend having 1) triangle or 2) scipy installed for Delaunay triangulation
         self.interpolate = self.tri.interpolate
 
 
-    def add_variable(self, name=None, locked=False):
-
-        from quagmire.mesh import MeshVariable
-        return MeshVariable(name=name, mesh=self, locked=locked)
-
-
 
     def get_local_mesh(self):
         &#34;&#34;&#34;
@@ -912,20 +900,19 @@ We recommend having 1) triangle or 2) scipy installed for Delaunay triangulation
         Find neighbours from distance cKDTree.
 
         &#34;&#34;&#34;
+        from quagmire import _fortran
 
         nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
 
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
 
-        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
+        neighbours = np.bincount(self.tri.simplices.flat)
         self.near_neighbours = neighbours + 2
-        self.extended_neighbours = np.empty_like(neighbours).fill(size)
+        self.extended_neighbours = np.full_like(neighbours, size)
 
-        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
-
-        for node in range(0,self.npoints):
-            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+        near_neighbour_mask = _fortran.fill_mask_to_idx(size, self.near_neighbours)
+        self.near_neighbour_mask = near_neighbour_mask.astype(bool)
 
         return
 
@@ -1024,16 +1011,17 @@ We recommend having 1) triangle or 2) scipy installed for Delaunay triangulation
 
         Arguments
         ---------
-         vector     : field vector shape (n,)
-         iterations : int, number of iterations to smooth vector
-         delta      : distance weights to apply the the Gaussian
-                    : interpolants
+        vector : array of floats, shape (n,)
+            field variable to be smoothed
+        iterations : int
+            number of iterations to smooth vector
+        delta : float / array of floats shape (n,)
+            distance weights to apply the Gaussian interpolants
 
         Returns
         -------
-         smooth_vec : smoothed version of input vector
-             shape (n,)
-
+        smooth_vec : array of floats, shape (n,)
+            smoothed version of input vector
         &#34;&#34;&#34;
 
 
@@ -1134,21 +1122,6 @@ def id(self):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="quagmire.mesh.trimesh.TriMesh.add_variable"><code class="name flex">
-<span>def <span class="ident">add_variable</span></span>(<span>self, name=None, locked=False)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def add_variable(self, name=None, locked=False):
-
-    from quagmire.mesh import MeshVariable
-    return MeshVariable(name=name, mesh=self, locked=locked)</code></pre>
-</details>
-</dd>
 <dt id="quagmire.mesh.trimesh.TriMesh.build_rbf_smoother"><code class="name flex">
 <span>def <span class="ident">build_rbf_smoother</span></span>(<span>self, delta, iterations=1)</span>
 </code></dt>
@@ -1318,20 +1291,19 @@ def id(self):
     Find neighbours from distance cKDTree.
 
     &#34;&#34;&#34;
+    from quagmire import _fortran
 
     nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
 
     self.neighbour_cloud = nncloud
     self.neighbour_cloud_distances = nndist
 
-    unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
+    neighbours = np.bincount(self.tri.simplices.flat)
     self.near_neighbours = neighbours + 2
-    self.extended_neighbours = np.empty_like(neighbours).fill(size)
+    self.extended_neighbours = np.full_like(neighbours, size)
 
-    self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
-
-    for node in range(0,self.npoints):
-        self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+    near_neighbour_mask = _fortran.fill_mask_to_idx(size, self.near_neighbours)
+    self.near_neighbour_mask = near_neighbour_mask.astype(bool)
 
     return</code></pre>
 </details>
@@ -1616,15 +1588,19 @@ bmask
 <dd>
 <div class="desc"><p>Smoothing using a radial-basis function smoothing kernel</p>
 <h2 id="arguments">Arguments</h2>
-<p>vector
-: field vector shape (n,)
-iterations : int, number of iterations to smooth vector
-delta
-: distance weights to apply the the Gaussian
-: interpolants</p>
+<dl>
+<dt><strong><code>vector</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,)</code></dt>
+<dd>field variable to be smoothed</dd>
+<dt><strong><code>iterations</code></strong> :&ensp;<code>int</code></dt>
+<dd>number of iterations to smooth vector</dd>
+<dt><strong><code>delta</code></strong> :&ensp;<code>float / array</code> of <code>floats shape (n,)</code></dt>
+<dd>distance weights to apply the Gaussian interpolants</dd>
+</dl>
 <h2 id="returns">Returns</h2>
-<p>smooth_vec : smoothed version of input vector
-shape (n,)</p></div>
+<dl>
+<dt><strong><code>smooth_vec</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,)</code></dt>
+<dd>smoothed version of input vector</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1635,16 +1611,17 @@ shape (n,)</p></div>
 
     Arguments
     ---------
-     vector     : field vector shape (n,)
-     iterations : int, number of iterations to smooth vector
-     delta      : distance weights to apply the the Gaussian
-                : interpolants
+    vector : array of floats, shape (n,)
+        field variable to be smoothed
+    iterations : int
+        number of iterations to smooth vector
+    delta : float / array of floats shape (n,)
+        distance weights to apply the Gaussian interpolants
 
     Returns
     -------
-     smooth_vec : smoothed version of input vector
-         shape (n,)
-
+    smooth_vec : array of floats, shape (n,)
+        smoothed version of input vector
     &#34;&#34;&#34;
 
 
@@ -1698,7 +1675,6 @@ shape (n,)</p></div>
 <li>
 <h4><code><a title="quagmire.mesh.trimesh.TriMesh" href="#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code></h4>
 <ul class="">
-<li><code><a title="quagmire.mesh.trimesh.TriMesh.add_variable" href="#quagmire.mesh.trimesh.TriMesh.add_variable">add_variable</a></code></li>
 <li><code><a title="quagmire.mesh.trimesh.TriMesh.build_rbf_smoother" href="#quagmire.mesh.trimesh.TriMesh.build_rbf_smoother">build_rbf_smoother</a></code></li>
 <li><code><a title="quagmire.mesh.trimesh.TriMesh.calculate_area_weights" href="#quagmire.mesh.trimesh.TriMesh.calculate_area_weights">calculate_area_weights</a></code></li>
 <li><code><a title="quagmire.mesh.trimesh.TriMesh.construct_extended_neighbour_cloud" href="#quagmire.mesh.trimesh.TriMesh.construct_extended_neighbour_cloud">construct_extended_neighbour_cloud</a></code></li>

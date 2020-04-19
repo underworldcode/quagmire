@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
 <title>quagmire.tools.meshtools API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Tools for creating Quagmire meshes …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -21,6 +21,34 @@
 <h1 class="title">Module <code>quagmire.tools.meshtools</code></h1>
 </header>
 <section id="section-intro">
+<p>Tools for creating Quagmire meshes.</p>
+<p>Quagmire constructs meshes as <code>PETSc DMPlex</code> and <code>DMDA</code> objects.</p>
+<h2 id="regular-meshes">Regular Meshes</h2>
+<p>Create a <strong>regularly-spaced Cartesian</strong> grid with <code>PETSc DMDA</code> using:</p>
+<ul>
+<li><code><a title="quagmire.tools.meshtools.create_DMDA" href="#quagmire.tools.meshtools.create_DMDA">create_DMDA()</a></code></li>
+</ul>
+<h2 id="unstructured-cartesian-meshes">Unstructured Cartesian meshes</h2>
+<p>Create an <strong>unstructured Cartesian</strong> mesh with <code>PETSc DMPlex</code> using:</p>
+<ul>
+<li><code><a title="quagmire.tools.meshtools.create_DMPlex" href="#quagmire.tools.meshtools.create_DMPlex">create_DMPlex()</a></code></li>
+<li><code><a title="quagmire.tools.meshtools.create_DMPlex_from_points" href="#quagmire.tools.meshtools.create_DMPlex_from_points">create_DMPlex_from_points()</a></code></li>
+<li><code><a title="quagmire.tools.meshtools.create_DMPlex_from_box" href="#quagmire.tools.meshtools.create_DMPlex_from_box">create_DMPlex_from_box()</a></code></li>
+</ul>
+<h2 id="unstructured-spherical-meshes">Unstructured Spherical meshes</h2>
+<p>Create an <strong>unstructured Spherical</strong> mesh with <code>PETSc DMPlex</code> using:</p>
+<ul>
+<li><code><a title="quagmire.tools.meshtools.create_spherical_DMPlex" href="#quagmire.tools.meshtools.create_spherical_DMPlex">create_spherical_DMPlex()</a></code></li>
+<li><code><a title="quagmire.tools.meshtools.create_DMPlex_from_spherical_points" href="#quagmire.tools.meshtools.create_DMPlex_from_spherical_points">create_DMPlex_from_spherical_points()</a></code></li>
+</ul>
+<p>Reconstruct a mesh that has been saved to an HDF5 file:</p>
+<ul>
+<li><code><a title="quagmire.tools.meshtools.create_DMPlex_from_hdf5" href="#quagmire.tools.meshtools.create_DMPlex_from_hdf5">create_DMPlex_from_hdf5()</a></code></li>
+</ul>
+<h3 id="additional-tools">Additional tools</h3>
+<p>Refine any mesh with <code><a title="quagmire.tools.meshtools.refine_DM" href="#quagmire.tools.meshtools.refine_DM">refine_DM()</a></code>. This adds the midpoint of all line
+segments to the mesh.</p>
+<p>Save any mesh to an HDF5 file with <code><a title="quagmire.tools.meshtools.save_DM_to_hdf5" href="#quagmire.tools.meshtools.save_DM_to_hdf5">save_DM_to_hdf5()</a></code>.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -40,6 +68,46 @@
 # 
 # You should have received a copy of the GNU Lesser General Public License
 # along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+
+&#34;&#34;&#34;
+Tools for creating Quagmire meshes.
+
+Quagmire constructs meshes as `PETSc DMPlex` and `DMDA` objects.
+
+## Regular Meshes
+
+Create a __regularly-spaced Cartesian__ grid with `PETSc DMDA` using:
+
+- `create_DMDA`
+
+## Unstructured Cartesian meshes
+
+Create an __unstructured Cartesian__ mesh with `PETSc DMPlex` using:
+
+- `create_DMPlex`
+- `create_DMPlex_from_points`
+- `create_DMPlex_from_box`
+
+## Unstructured Spherical meshes
+
+Create an __unstructured Spherical__ mesh with `PETSc DMPlex` using:
+
+- `create_spherical_DMPlex`
+- `create_DMPlex_from_spherical_points`
+
+Reconstruct a mesh that has been saved to an HDF5 file:
+
+- `create_DMPlex_from_hdf5`
+
+
+### Additional tools
+
+Refine any mesh with `refine_DM`. This adds the midpoint of all line
+segments to the mesh.
+
+Save any mesh to an HDF5 file with `save_DM_to_hdf5`.
+
+&#34;&#34;&#34;
 
 import numpy as np
 
@@ -112,29 +180,27 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_levels=0):
 
     Parameters
     ----------
-     x : array of floats, shape (n,)
+    x : array of floats, shape (n,)
         x coordinates
-     y : array of floats, shape (n,)
+    y : array of floats, shape (n,)
         y coordinates
-     bmask : array of bools, shape (n,)
+    bmask : array of bools, shape (n,)
         boundary mask where points along the boundary
         equal False, and the interior equal True
         if bmask=None (default) then the convex hull of points is used
-     refinement_levels : int
+    refinement_levels : int
         number of iterations to refine the mesh (default: 0)
 
     Returns
     -------
-     DM : object
-        PETSc DMPlex object
+    DM : PETSc DMPlex object
 
     Notes
     -----
-     x and y are shuffled on input to aid triangulation efficiency
+    `x` and `y` are shuffled on input to aid triangulation efficiency
 
-     Refinement adds the midpoints of every line segment to the DM.
-     Boundary markers are automatically updated with each iteration.
-
+    Refinement adds the midpoints of every line segment to the DM.
+    Boundary markers are automatically updated with each iteration.
     &#34;&#34;&#34;
     from stripy import Triangulation
 
@@ -157,28 +223,27 @@ def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_level
 
     Parameters
     ----------
-     lons : array of floats, shape (n,)
+    lons : array of floats, shape (n,)
         longitudinal coordinates in radians
-     lats : array of floats, shape (n,)
+    lats : array of floats, shape (n,)
         latitudinal coordinates in radians
-     bmask : array of bools, shape (n,)
+    bmask : array of bools, shape (n,)
         boundary mask where points along the boundary
         equal False, and the interior equal True
         if bmask=None (default) then the convex hull of points is used
-     refinement_levels : int
+    refinement_levels : int
         number of iterations to refine the mesh (default: 0)
 
     Returns
     -------
-     DM : object
-        PETSc DMPlex object
+    DM : PETSc DMPlex object
 
     Notes
     -----
-     lons and lats are shuffled on input to aid triangulation efficiency
+    `lons` and `lats` are shuffled on input to aid triangulation efficiency
 
-     Refinement adds the midpoints of every line segment to the DM.
-     Boundary markers are automatically updated with each iteration.
+    Refinement adds the midpoints of every line segment to the DM.
+    Boundary markers are automatically updated with each iteration.
 
     &#34;&#34;&#34;
     from stripy import sTriangulation
@@ -281,17 +346,16 @@ def create_DMPlex_from_hdf5(file):
 
     Parameters
     ----------
-     file : string
+    file : string
         point to the location of hdf5 file
 
     Returns
     -------
-     DM : object
-        PETSc DMPlex object
+    DM : PETSc DMPlex object
 
     Notes
     -----
-     This function requires petsc4py &gt;= 3.8
+    This function requires petsc4py &gt;= 3.8
     &#34;&#34;&#34;
     from petsc4py import PETSc
 
@@ -322,7 +386,31 @@ def create_DMPlex_from_hdf5(file):
 def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
     &#34;&#34;&#34;
     Create a box and fill with triangles up to a specified refinement
-    - This only works if PETSc was configured with triangle
+
+    Parameters
+    ----------
+    minX : float
+        minimum x-coordinate
+    maxX : float
+        maximum x-coordinate
+    minY : float
+        minimum y-coordinate
+    maxY : float
+        maximum y-coordinate
+    resX : float
+        resolution in the x direction
+    resY : float
+        resolution in the y direction
+    refinement : float (default: None)
+        (optional) set refinement limit
+
+    Returns
+    -------
+    DM : PETSc DMPlex object
+
+    Notes
+    -----
+    This only works if PETSc was configured with triangle
     &#34;&#34;&#34;
     from petsc4py import PETSc
 
@@ -358,8 +446,29 @@ def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
 
 def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     &#34;&#34;&#34;
-    Create a PETSc DMDA object from the bounding box of the regularly-
-    spaced grid.
+    Create a PETSc DMDA mesh object from the bounding box of the
+    regularly-spaced grid.
+
+    Parameters
+    ----------
+    minX : float
+        minimum x-coordinate
+    maxX : float
+        maximum x-coordinate
+    minY : float
+        minimum y-coordinate
+    maxY : float
+        maximum y-coordinate
+    resX : float
+        resolution in the x direction
+    resY : float
+        resolution in the y direction
+    refinement : float (default: None)
+        (optional) set refinement limit
+
+    Returns
+    -------
+    DM : PETSc DMDA object
     &#34;&#34;&#34;
     from petsc4py import PETSc
 
@@ -460,17 +569,18 @@ def create_DMPlex(x, y, simplices, boundary_vertices=None, refinement_levels=0):
 
     Parameters
     ----------
-     x : array of floats shape (n,)
+    x : array of floats shape (n,)
         x coordinates
-     y : array of floats shape (n,)
+    y : array of floats shape (n,)
         y coordinates
-     simplices : connectivity of the mesh
-     boundary_vertices : array of ints, shape(l,2)
+    simplices : array of ints shape (nt,3)
+        connectivity of the mesh
+    boundary_vertices : array of ints, shape(l,2)
         (optional) boundary edges
 
     Returns
     -------
-     DM : PETSc DMPlex object
+    DM : PETSc DMPlex object
     &#34;&#34;&#34;
     points = np.c_[x,y]
     return _create_DMPlex(points, simplices, boundary_vertices, refinement_levels)
@@ -483,17 +593,17 @@ def create_spherical_DMPlex(lons, lats, simplices, boundary_vertices=None, refin
 
     Parameters
     ----------
-     lons : array of floats shape (n,)
+    lons : array of floats shape (n,)
         longitudinal coordinates
-     lats : array of floats shape (n,)
+    lats : array of floats shape (n,)
         latitudinal coordinates
-     simplices : connectivity of the mesh
-     boundary_vertices : array of ints, shape(l,2)
+    simplices : connectivity of the mesh
+    boundary_vertices : array of ints, shape(l,2)
         (optional) boundary edges
 
     Returns
     -------
-     DM : PETSc DMPlex object
+    DM : PETSc DMPlex object
     &#34;&#34;&#34;
     from stripy.spherical import lonlat2xyz
 
@@ -711,16 +821,59 @@ def generate_elliptical_points(minX, maxX, minY, maxY, spacingX, spacingY, sampl
 <span>def <span class="ident">create_DMDA</span></span>(<span>minX, maxX, minY, maxY, resX, resY)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Create a PETSc DMDA object from the bounding box of the regularly-
-spaced grid.</p></div>
+<div class="desc"><p>Create a PETSc DMDA mesh object from the bounding box of the
+regularly-spaced grid.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>minX</code></strong> :&ensp;<code>float</code></dt>
+<dd>minimum x-coordinate</dd>
+<dt><strong><code>maxX</code></strong> :&ensp;<code>float</code></dt>
+<dd>maximum x-coordinate</dd>
+<dt><strong><code>minY</code></strong> :&ensp;<code>float</code></dt>
+<dd>minimum y-coordinate</dd>
+<dt><strong><code>maxY</code></strong> :&ensp;<code>float</code></dt>
+<dd>maximum y-coordinate</dd>
+<dt><strong><code>resX</code></strong> :&ensp;<code>float</code></dt>
+<dd>resolution in the x direction</dd>
+<dt><strong><code>resY</code></strong> :&ensp;<code>float</code></dt>
+<dd>resolution in the y direction</dd>
+<dt><strong><code>refinement</code></strong> :&ensp;<code>float (default: None)</code></dt>
+<dd>(optional) set refinement limit</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DMDA object</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     &#34;&#34;&#34;
-    Create a PETSc DMDA object from the bounding box of the regularly-
-    spaced grid.
+    Create a PETSc DMDA mesh object from the bounding box of the
+    regularly-spaced grid.
+
+    Parameters
+    ----------
+    minX : float
+        minimum x-coordinate
+    maxX : float
+        maximum x-coordinate
+    minY : float
+        minimum y-coordinate
+    maxY : float
+        maximum y-coordinate
+    resX : float
+        resolution in the x direction
+    resY : float
+        resolution in the y direction
+    refinement : float (default: None)
+        (optional) set refinement limit
+
+    Returns
+    -------
+    DM : PETSc DMDA object
     &#34;&#34;&#34;
     from petsc4py import PETSc
 
@@ -744,15 +897,21 @@ spaced grid.</p></div>
 <div class="desc"><p>Create a PETSc DMPlex object on root processor
 and distribute to other processors</p>
 <h2 id="parameters">Parameters</h2>
-<p>x : array of floats shape (n,)
-x coordinates
-y : array of floats shape (n,)
-y coordinates
-simplices : connectivity of the mesh
-boundary_vertices : array of ints, shape(l,2)
-(optional) boundary edges</p>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>array</code> of <code>floats shape (n,)</code></dt>
+<dd>x coordinates</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>array</code> of <code>floats shape (n,)</code></dt>
+<dd>y coordinates</dd>
+<dt><strong><code>simplices</code></strong> :&ensp;<code>array</code> of <code>ints shape (nt,3)</code></dt>
+<dd>connectivity of the mesh</dd>
+<dt><strong><code>boundary_vertices</code></strong> :&ensp;<code>array</code> of <code>ints, shape(l,2)</code></dt>
+<dd>(optional) boundary edges</dd>
+</dl>
 <h2 id="returns">Returns</h2>
-<p>DM : PETSc DMPlex object</p></div>
+<dl>
+<dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DMPlex object</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -764,17 +923,18 @@ boundary_vertices : array of ints, shape(l,2)
 
     Parameters
     ----------
-     x : array of floats shape (n,)
+    x : array of floats shape (n,)
         x coordinates
-     y : array of floats shape (n,)
+    y : array of floats shape (n,)
         y coordinates
-     simplices : connectivity of the mesh
-     boundary_vertices : array of ints, shape(l,2)
+    simplices : array of ints shape (nt,3)
+        connectivity of the mesh
+    boundary_vertices : array of ints, shape(l,2)
         (optional) boundary edges
 
     Returns
     -------
-     DM : PETSc DMPlex object
+    DM : PETSc DMPlex object
     &#34;&#34;&#34;
     points = np.c_[x,y]
     return _create_DMPlex(points, simplices, boundary_vertices, refinement_levels)</code></pre>
@@ -784,8 +944,31 @@ boundary_vertices : array of ints, shape(l,2)
 <span>def <span class="ident">create_DMPlex_from_box</span></span>(<span>minX, maxX, minY, maxY, resX, resY, refinement=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Create a box and fill with triangles up to a specified refinement
-- This only works if PETSc was configured with triangle</p></div>
+<div class="desc"><p>Create a box and fill with triangles up to a specified refinement</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>minX</code></strong> :&ensp;<code>float</code></dt>
+<dd>minimum x-coordinate</dd>
+<dt><strong><code>maxX</code></strong> :&ensp;<code>float</code></dt>
+<dd>maximum x-coordinate</dd>
+<dt><strong><code>minY</code></strong> :&ensp;<code>float</code></dt>
+<dd>minimum y-coordinate</dd>
+<dt><strong><code>maxY</code></strong> :&ensp;<code>float</code></dt>
+<dd>maximum y-coordinate</dd>
+<dt><strong><code>resX</code></strong> :&ensp;<code>float</code></dt>
+<dd>resolution in the x direction</dd>
+<dt><strong><code>resY</code></strong> :&ensp;<code>float</code></dt>
+<dd>resolution in the y direction</dd>
+<dt><strong><code>refinement</code></strong> :&ensp;<code>float (default: None)</code></dt>
+<dd>(optional) set refinement limit</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DMPlex object</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>This only works if PETSc was configured with triangle</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -793,7 +976,31 @@ boundary_vertices : array of ints, shape(l,2)
 <pre><code class="python">def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
     &#34;&#34;&#34;
     Create a box and fill with triangles up to a specified refinement
-    - This only works if PETSc was configured with triangle
+
+    Parameters
+    ----------
+    minX : float
+        minimum x-coordinate
+    maxX : float
+        maximum x-coordinate
+    minY : float
+        minimum y-coordinate
+    maxY : float
+        maximum y-coordinate
+    resX : float
+        resolution in the x direction
+    resY : float
+        resolution in the y direction
+    refinement : float (default: None)
+        (optional) set refinement limit
+
+    Returns
+    -------
+    DM : PETSc DMPlex object
+
+    Notes
+    -----
+    This only works if PETSc was configured with triangle
     &#34;&#34;&#34;
     from petsc4py import PETSc
 
@@ -835,11 +1042,15 @@ boundary_vertices : array of ints, shape(l,2)
 This is useful for rebuilding a mesh that is saved from a
 previous simulation.</p>
 <h2 id="parameters">Parameters</h2>
-<p>file : string
-point to the location of hdf5 file</p>
+<dl>
+<dt><strong><code>file</code></strong> :&ensp;<code>string</code></dt>
+<dd>point to the location of hdf5 file</dd>
+</dl>
 <h2 id="returns">Returns</h2>
-<p>DM : object
-PETSc DMPlex object</p>
+<dl>
+<dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DMPlex object</code></dt>
+<dd>&nbsp;</dd>
+</dl>
 <h2 id="notes">Notes</h2>
 <p>This function requires petsc4py &gt;= 3.8</p></div>
 <details class="source">
@@ -854,17 +1065,16 @@ PETSc DMPlex object</p>
 
     Parameters
     ----------
-     file : string
+    file : string
         point to the location of hdf5 file
 
     Returns
     -------
-     DM : object
-        PETSc DMPlex object
+    DM : PETSc DMPlex object
 
     Notes
     -----
-     This function requires petsc4py &gt;= 3.8
+    This function requires petsc4py &gt;= 3.8
     &#34;&#34;&#34;
     from petsc4py import PETSc
 
@@ -899,21 +1109,25 @@ PETSc DMPlex object</p>
 <div class="desc"><p>Triangulates x,y coordinates on rank 0 and creates a PETSc DMPlex object
 from the cells and vertices to distribute among processors.</p>
 <h2 id="parameters">Parameters</h2>
-<p>x : array of floats, shape (n,)
-x coordinates
-y : array of floats, shape (n,)
-y coordinates
-bmask : array of bools, shape (n,)
-boundary mask where points along the boundary
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,)</code></dt>
+<dd>x coordinates</dd>
+<dt><strong><code>y</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,)</code></dt>
+<dd>y coordinates</dd>
+<dt><strong><code>bmask</code></strong> :&ensp;<code>array</code> of <code>bools, shape (n,)</code></dt>
+<dd>boundary mask where points along the boundary
 equal False, and the interior equal True
-if bmask=None (default) then the convex hull of points is used
-refinement_levels : int
-number of iterations to refine the mesh (default: 0)</p>
+if bmask=None (default) then the convex hull of points is used</dd>
+<dt><strong><code>refinement_levels</code></strong> :&ensp;<code>int</code></dt>
+<dd>number of iterations to refine the mesh (default: 0)</dd>
+</dl>
 <h2 id="returns">Returns</h2>
-<p>DM : object
-PETSc DMPlex object</p>
+<dl>
+<dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DMPlex object</code></dt>
+<dd>&nbsp;</dd>
+</dl>
 <h2 id="notes">Notes</h2>
-<p>x and y are shuffled on input to aid triangulation efficiency</p>
+<p><code>x</code> and <code>y</code> are shuffled on input to aid triangulation efficiency</p>
 <p>Refinement adds the midpoints of every line segment to the DM.
 Boundary markers are automatically updated with each iteration.</p></div>
 <details class="source">
@@ -927,29 +1141,27 @@ Boundary markers are automatically updated with each iteration.</p></div>
 
     Parameters
     ----------
-     x : array of floats, shape (n,)
+    x : array of floats, shape (n,)
         x coordinates
-     y : array of floats, shape (n,)
+    y : array of floats, shape (n,)
         y coordinates
-     bmask : array of bools, shape (n,)
+    bmask : array of bools, shape (n,)
         boundary mask where points along the boundary
         equal False, and the interior equal True
         if bmask=None (default) then the convex hull of points is used
-     refinement_levels : int
+    refinement_levels : int
         number of iterations to refine the mesh (default: 0)
 
     Returns
     -------
-     DM : object
-        PETSc DMPlex object
+    DM : PETSc DMPlex object
 
     Notes
     -----
-     x and y are shuffled on input to aid triangulation efficiency
+    `x` and `y` are shuffled on input to aid triangulation efficiency
 
-     Refinement adds the midpoints of every line segment to the DM.
-     Boundary markers are automatically updated with each iteration.
-
+    Refinement adds the midpoints of every line segment to the DM.
+    Boundary markers are automatically updated with each iteration.
     &#34;&#34;&#34;
     from stripy import Triangulation
 
@@ -972,21 +1184,25 @@ Boundary markers are automatically updated with each iteration.</p></div>
 <div class="desc"><p>Triangulates lon,lat coordinates on rank 0 and creates a PETSc DMPlex object
 from the cells and vertices to distribute among processors.</p>
 <h2 id="parameters">Parameters</h2>
-<p>lons : array of floats, shape (n,)
-longitudinal coordinates in radians
-lats : array of floats, shape (n,)
-latitudinal coordinates in radians
-bmask : array of bools, shape (n,)
-boundary mask where points along the boundary
+<dl>
+<dt><strong><code>lons</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,)</code></dt>
+<dd>longitudinal coordinates in radians</dd>
+<dt><strong><code>lats</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,)</code></dt>
+<dd>latitudinal coordinates in radians</dd>
+<dt><strong><code>bmask</code></strong> :&ensp;<code>array</code> of <code>bools, shape (n,)</code></dt>
+<dd>boundary mask where points along the boundary
 equal False, and the interior equal True
-if bmask=None (default) then the convex hull of points is used
-refinement_levels : int
-number of iterations to refine the mesh (default: 0)</p>
+if bmask=None (default) then the convex hull of points is used</dd>
+<dt><strong><code>refinement_levels</code></strong> :&ensp;<code>int</code></dt>
+<dd>number of iterations to refine the mesh (default: 0)</dd>
+</dl>
 <h2 id="returns">Returns</h2>
-<p>DM : object
-PETSc DMPlex object</p>
+<dl>
+<dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DMPlex object</code></dt>
+<dd>&nbsp;</dd>
+</dl>
 <h2 id="notes">Notes</h2>
-<p>lons and lats are shuffled on input to aid triangulation efficiency</p>
+<p><code>lons</code> and <code>lats</code> are shuffled on input to aid triangulation efficiency</p>
 <p>Refinement adds the midpoints of every line segment to the DM.
 Boundary markers are automatically updated with each iteration.</p></div>
 <details class="source">
@@ -1000,28 +1216,27 @@ Boundary markers are automatically updated with each iteration.</p></div>
 
     Parameters
     ----------
-     lons : array of floats, shape (n,)
+    lons : array of floats, shape (n,)
         longitudinal coordinates in radians
-     lats : array of floats, shape (n,)
+    lats : array of floats, shape (n,)
         latitudinal coordinates in radians
-     bmask : array of bools, shape (n,)
+    bmask : array of bools, shape (n,)
         boundary mask where points along the boundary
         equal False, and the interior equal True
         if bmask=None (default) then the convex hull of points is used
-     refinement_levels : int
+    refinement_levels : int
         number of iterations to refine the mesh (default: 0)
 
     Returns
     -------
-     DM : object
-        PETSc DMPlex object
+    DM : PETSc DMPlex object
 
     Notes
     -----
-     lons and lats are shuffled on input to aid triangulation efficiency
+    `lons` and `lats` are shuffled on input to aid triangulation efficiency
 
-     Refinement adds the midpoints of every line segment to the DM.
-     Boundary markers are automatically updated with each iteration.
+    Refinement adds the midpoints of every line segment to the DM.
+    Boundary markers are automatically updated with each iteration.
 
     &#34;&#34;&#34;
     from stripy import sTriangulation
@@ -1044,15 +1259,21 @@ Boundary markers are automatically updated with each iteration.</p></div>
 <div class="desc"><p>Create a PETSc DMPlex object on root processor
 and distribute to other processors</p>
 <h2 id="parameters">Parameters</h2>
-<p>lons : array of floats shape (n,)
-longitudinal coordinates
-lats : array of floats shape (n,)
-latitudinal coordinates
-simplices : connectivity of the mesh
-boundary_vertices : array of ints, shape(l,2)
-(optional) boundary edges</p>
+<dl>
+<dt><strong><code>lons</code></strong> :&ensp;<code>array</code> of <code>floats shape (n,)</code></dt>
+<dd>longitudinal coordinates</dd>
+<dt><strong><code>lats</code></strong> :&ensp;<code>array</code> of <code>floats shape (n,)</code></dt>
+<dd>latitudinal coordinates</dd>
+<dt><strong><code>simplices</code></strong> :&ensp;<code>connectivity</code> of <code>the mesh</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>boundary_vertices</code></strong> :&ensp;<code>array</code> of <code>ints, shape(l,2)</code></dt>
+<dd>(optional) boundary edges</dd>
+</dl>
 <h2 id="returns">Returns</h2>
-<p>DM : PETSc DMPlex object</p></div>
+<dl>
+<dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DMPlex object</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1064,17 +1285,17 @@ boundary_vertices : array of ints, shape(l,2)
 
     Parameters
     ----------
-     lons : array of floats shape (n,)
+    lons : array of floats shape (n,)
         longitudinal coordinates
-     lats : array of floats shape (n,)
+    lats : array of floats shape (n,)
         latitudinal coordinates
-     simplices : connectivity of the mesh
-     boundary_vertices : array of ints, shape(l,2)
+    simplices : connectivity of the mesh
+    boundary_vertices : array of ints, shape(l,2)
         (optional) boundary edges
 
     Returns
     -------
-     DM : PETSc DMPlex object
+    DM : PETSc DMPlex object
     &#34;&#34;&#34;
     from stripy.spherical import lonlat2xyz
 
@@ -1556,7 +1777,14 @@ as boundaries.</p></div>
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul></ul>
+<ul>
+<li><a href="#regular-meshes">Regular Meshes</a></li>
+<li><a href="#unstructured-cartesian-meshes">Unstructured Cartesian meshes</a></li>
+<li><a href="#unstructured-spherical-meshes">Unstructured Spherical meshes</a><ul>
+<li><a href="#additional-tools">Additional tools</a></li>
+</ul>
+</li>
+</ul>
 </div>
 <ul id="index">
 <li><h3>Super-module</h3>
