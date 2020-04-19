@@ -342,6 +342,7 @@ class TriMesh(_CommonMesh):
         Find neighbours from distance cKDTree.
 
         """
+        from quagmire import _fortran
 
         nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
 
@@ -352,10 +353,8 @@ class TriMesh(_CommonMesh):
         self.near_neighbours = neighbours + 2
         self.extended_neighbours = np.full_like(neighbours, size)
 
-        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
-
-        for node in range(0,self.npoints):
-            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+        near_neighbour_mask = _fortran.fill_mask_to_idx(size, self.near_neighbours)
+        self.near_neighbour_mask = near_neighbour_mask.astype(bool)
 
         return
 
