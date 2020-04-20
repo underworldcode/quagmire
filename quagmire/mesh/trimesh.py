@@ -36,8 +36,31 @@ from quagmire.function import LazyEvaluation as _LazyEvaluation
 
 class TriMesh(_CommonMesh):
     """
-    Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
-    We recommend having 1) triangle or 2) scipy installed for Delaunay triangulations.
+    Build spatial data structures on an __unstructured Cartesian mesh__.
+
+    Use `TriMesh` for:
+
+    - calculating spatial derivatives
+    - identifying node neighbour relationships
+    - interpolation / extrapolation
+    - smoothing operators
+    - importing and saving mesh information
+
+    Each of these data structures are built on top of a `PETSc DM` object
+    (created from `quagmire.tools.meshtools`).
+
+    Parameters
+    ----------
+    DM : PETSc DMPlex object
+        Build this unstructured Cartesian mesh object using one of:
+
+        - `quagmire.tools.meshtools.create_DMPlex`
+        - `quagmire.tools.meshtools.create_DMPlex_from_points`
+        - `quagmire.tools.meshtools.create_DMPlex_from_box`
+    verbose : bool
+        Flag toggles verbose output
+    *args : optional arguments
+    **kwargs : optional keyword arguments
     """
 
     ## This is a count of all the instances of the class that are launched
@@ -138,13 +161,13 @@ class TriMesh(_CommonMesh):
 
         Returns
         -------
-         x : array of floats, shape (n,)
+        x : array of floats, shape (n,)
             x coordinates
-         y : array of floats, shape (n,)
+        y : array of floats, shape (n,)
             y coordinates
-         simplices : array of ints, shape (ntri, 3)
+        simplices : array of ints, shape (ntri, 3)
             simplices of the triangulation
-         bmask  : array of bools, shape (n,2)
+        bmask  : array of bools, shape (n,2)
         """
 
         return self.tri.x, self.tri.y, self.tri.simplices, self.bmask
@@ -178,18 +201,18 @@ class TriMesh(_CommonMesh):
 
         Arguments
         ---------
-         PHI : ndarray of floats, shape (n,)
+        PHI : ndarray of floats, shape (n,)
             compute the derivative of this array
-         nit : int optional (default: 10)
+        nit : int optional (default: 10)
             number of iterations to reach convergence
-         tol : float optional (default: 1e-8)
+        tol : float optional (default: 1e-8)
             convergence is reached when this tolerance is met
 
         Returns
         -------
-         PHIx : ndarray of floats, shape(n,)
+        PHIx : ndarray of floats, shape(n,)
             first partial derivative of PHI in x direction
-         PHIy : ndarray of floats, shape(n,)
+        PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         """
         return self.tri.gradient(PHI, nit, tol)
@@ -202,17 +225,17 @@ class TriMesh(_CommonMesh):
 
         Arguments
         ---------
-         PHIx : ndarray of floats, shape (n,)
+        PHIx : ndarray of floats, shape (n,)
             array of first partial derivatives in x direction
-         PHIy : ndarray of floats, shape (n,)
+        PHIy : ndarray of floats, shape (n,)
             array of first partial derivatives in y direction
-         kwargs : optional keyword-argument specifiers
+        kwargs : optional keyword-argument specifiers
             keyword arguments to be passed onto derivative_grad
             e.g. nit=5, tol=1e-3
 
         Returns
         -------
-         del2PHI : ndarray of floats, shape (n,)
+        del2PHI : ndarray of floats, shape (n,)
             second derivative of PHI
         """
         u_xx, u_xy = self.derivative_grad(PHIx, **kwargs)

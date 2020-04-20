@@ -33,8 +33,46 @@ except: pass
 
 class PixMesh(_CommonMesh):
     """
-    Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
+    Build spatial data structures on an __structured Cartesian grid__.
+
+    Use `PixMesh` for:
+
+    - calculating spatial derivatives
+    - identifying node neighbour relationships
+    - interpolation / extrapolation
+    - smoothing operators
+    - importing and saving mesh information
+
+    Each of these data structures are built on top of a `PETSc DM` object
+    (created from `quagmire.tools.meshtools`).
+
+    Parameters
+    ----------
+    DM : PETSc DMDA object
+        Build this unstructured Cartesian mesh object using one of:
+
+        - `quagmire.tools.meshtools.create_DMDA`
+    verbose : bool
+        Flag toggles verbose output
+    *args : optional arguments
+    **kwargs : optional keyword arguments
     """
+
+    ## This is a count of all the instances of the class that are launched
+    ## so that we have a way to name / identify them
+
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        TriMesh.__count += 1
+        return TriMesh.__count
+
+    @property
+    def id(self):
+        return self.__id
+
+
     def __init__(self, dm, verbose=True, *args, **kwargs):
         from scipy.spatial import cKDTree as _cKDTree
 

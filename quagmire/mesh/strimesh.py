@@ -35,6 +35,32 @@ from quagmire.function import LazyEvaluation as _LazyEvaluation
 
 
 class sTriMesh(_CommonMesh):
+    """
+    Build spatial data structures on an __unstructured spherical mesh__.
+
+    Use `sTriMesh` for:
+
+    - calculating spatial derivatives
+    - identifying node neighbour relationships
+    - interpolation / extrapolation
+    - smoothing operators
+    - importing and saving mesh information
+
+    Each of these data structures are built on top of a `PETSc DM` object
+    (created from `quagmire.tools.meshtools`).
+
+    Parameters
+    ----------
+    DM : PETSc DMPlex object
+        Build this unstructured spherical mesh object using one of:
+
+        - `quagmire.tools.meshtools.create_spherical_DMPlex`
+        - `quagmire.tools.meshtools.create_DMPlex_from_spherical_points`
+    verbose : bool
+        Flag toggles verbose output
+    *args : optional arguments
+    **kwargs : optional keyword arguments
+    """
 
     __count = 0
 
@@ -138,13 +164,13 @@ class sTriMesh(_CommonMesh):
 
         Returns
         -------
-         x : array of floats, shape (n,)
+        x : array of floats, shape (n,)
             x coordinates
-         y : array of floats, shape (n,)
+        y : array of floats, shape (n,)
             y coordinates
-         simplices : array of ints, shape (ntri, 3)
+        simplices : array of ints, shape (ntri, 3)
             simplices of the triangulation
-         bmask  : array of bools, shape (n,2)
+        bmask  : array of bools, shape (n,2)
         """
         return self.tri.lons, self.tri.lats, self.tri.simplices, self.bmask
 
@@ -200,18 +226,18 @@ class sTriMesh(_CommonMesh):
 
         Arguments
         ---------
-         PHI : ndarray of floats, shape (n,)
+        PHI : ndarray of floats, shape (n,)
             compute the derivative of this array
-         nit : int optional (default: 10)
+        nit : int optional (default: 10)
             number of iterations to reach convergence
-         tol : float optional (default: 1e-8)
+        tol : float optional (default: 1e-8)
             convergence is reached when this tolerance is met
 
         Returns
         -------
-         PHIx : ndarray of floats, shape(n,)
+        PHIx : ndarray of floats, shape(n,)
             first partial derivative of PHI in x direction
-         PHIy : ndarray of floats, shape(n,)
+        PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         """
         PHIx, PHIy, PHIz = self.tri.gradient(PHI, nit, tol)
@@ -225,17 +251,17 @@ class sTriMesh(_CommonMesh):
 
         Arguments
         ---------
-         PHIx : ndarray of floats, shape (n,)
+        PHIx : ndarray of floats, shape (n,)
             array of first partial derivatives in x direction
-         PHIy : ndarray of floats, shape (n,)
+        PHIy : ndarray of floats, shape (n,)
             array of first partial derivatives in y direction
-         kwargs : optional keyword-argument specifiers
+        kwargs : optional keyword-argument specifiers
             keyword arguments to be passed onto derivative_grad
             e.g. nit=5, tol=1e-3
 
         Returns
         -------
-         del2PHI : ndarray of floats, shape (n,)
+        del2PHI : ndarray of floats, shape (n,)
             second derivative of PHI
         """
         u_xx, u_xy = self.derivative_grad(PHIx, **kwargs)
