@@ -43,7 +43,7 @@ jobs:
           conda config --add channels underworldcode
           conda config --add channels conda-forge
 
-     - name: Install dependencies with conda
+      - name: Install dependencies with conda
         if: matrix.os == 'ubuntu-latest' 
         shell: bash -l {0}
         run: |
