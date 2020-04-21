@@ -58,7 +58,6 @@ class TopoMesh(object):
         # Slope (function)
         self.slope = fn.math.sqrt(self.topography.fn_gradient(0)**2.0+self.topography.fn_gradient(1)**2.0)
 
-
         self._heightVariable = self.topography
 
 

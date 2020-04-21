@@ -37,11 +37,6 @@ class SurfMesh(_TopoMesh):
 
         # self.kappa = 1.0 # dummy value
 
-        ## Variables that are needed by default methods
-
-        # self.rainfall_pattern_Variable = self.add_variable(name="precipitation")
-        # self.sediment_distribution_Variable = self.add_variable(name="sediment")
-
         # new context manager ...
         self.deform_topography = self._height_update_context_manager_generator()
         self.upstream_area     = self.add_variable(name="A(x,y)", locked=True)

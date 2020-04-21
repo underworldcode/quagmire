@@ -111,15 +111,15 @@ class TriMesh(_CommonMesh):
 
         # Find neighbours
         t = perf_counter()
-
         self.construct_neighbour_cloud()
 
         self.timings['construct neighbour cloud'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
-            print(("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, perf_counter()-t)))
+            print(("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, perf_counter()-t)), flush=True)
 
         # sync smoothing operator
         t = perf_counter()
+
         self._construct_rbf_weights()
         self.timings['construct rbf weights'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
@@ -337,27 +337,53 @@ class TriMesh(_CommonMesh):
             print((" - Array sort {}s".format(perf_counter()-t)))
 
 
+    # def construct_neighbour_cloud(self, size=25):
+    #     """
+    #     Find neighbours from distance cKDTree.
+
+    #     """
+
+    #     print("Fortran routine", flush=True)
+    #     from quagmire import _fortran
+
+    #     nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
+
+    #     self.neighbour_cloud = nncloud
+    #     self.neighbour_cloud_distances = nndist
+
+    #     neighbours = np.bincount(self.tri.simplices.flat)
+    #     self.near_neighbours = neighbours + 2
+    #     self.extended_neighbours = np.full_like(neighbours, size)
+
+    #     print("Fortran routine (2)", flush=True)
+
+    #     near_neighbour_mask = _fortran.fill_mask_to_idx(size, self.near_neighbours)
+    #     self.near_neighbour_mask = near_neighbour_mask.astype(bool)
+
+    #     print("Fortran routine (3)", flush=True)
+
+    #     return
+
     def construct_neighbour_cloud(self, size=25):
         """
         Find neighbours from distance cKDTree.
-
         """
-        from quagmire import _fortran
 
         nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
 
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
 
-        neighbours = np.bincount(self.tri.simplices.flat)
+        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
         self.near_neighbours = neighbours + 2
-        self.extended_neighbours = np.full_like(neighbours, size)
+        self.extended_neighbours = np.empty_like(neighbours).fill(size)
 
-        near_neighbour_mask = _fortran.fill_mask_to_idx(size, self.near_neighbours)
-        self.near_neighbour_mask = near_neighbour_mask.astype(bool)
+        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+        for node in range(0,self.npoints):
+            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
 
         return
-
 
     def _build_smoothing_matrix(self):
 
