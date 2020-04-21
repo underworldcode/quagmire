@@ -29,10 +29,22 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies with conda
+        if: matrix.os == 'macos-latest' 
         shell: bash -l {0}
         run: |
           conda install pip 
           conda install -c conda-forge libgfortran numpy scipy sympy
+          conda install -c conda-forge petsc4py petsc mpi4py h5py
+          conda install -c conda-forge pint 
+          conda install -c underworldcode stripy 
+          conda install pytest
+
+     - name: Install dependencies with conda
+        if: matrix.os == 'ubuntu-latest' 
+        shell: bash -l {0}
+        run: |
+          conda install pip 
+          conda install -c conda-forge compilers numpy scipy sympy
           conda install -c conda-forge petsc4py petsc mpi4py h5py
           conda install -c conda-forge pint 
           conda install -c underworldcode stripy 
