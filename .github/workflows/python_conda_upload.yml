@@ -29,7 +29,7 @@ jobs:
         shell: bash -l {0}
         run: conda info
 
-       - name: Install dependencies with conda
+      - name: Install dependencies with conda
         if: matrix.os == 'macos-latest' 
         shell: bash -l {0}
         run: |
