@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
 <title>quagmire.mesh.basemesh API documentation</title>
-<meta name="description" content="Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …" />
+<meta name="description" content="Create mesh variables that interface with functions …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -21,39 +21,34 @@
 <h1 class="title">Module <code>quagmire.mesh.basemesh</code></h1>
 </header>
 <section id="section-intro">
-<p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher</p>
-<p>This file is part of Quagmire.</p>
-<p>Quagmire is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or any later version.</p>
-<p>Quagmire is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the
-GNU Lesser General Public License for more details.</p>
-<p>You should have received a copy of the GNU Lesser General Public License
-along with Quagmire.
-If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+<p>Create mesh variables that interface with functions</p>
+<p>Initialise a <code><a title="quagmire.mesh.basemesh.MeshVariable" href="#quagmire.mesh.basemesh.MeshVariable">MeshVariable</a></code> for scalar fields or <code><a title="quagmire.mesh.basemesh.VectorMeshVariable" href="#quagmire.mesh.basemesh.VectorMeshVariable">VectorMeshVariable</a></code> for vectors
+on the mesh. These inherit the <code><a title="quagmire.function" href="../function/index.html">quagmire.function</a></code> classes that exploit lazy evaluation.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;
-Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher
+<pre><code class="python"># Copyright 2016-2020 Louis Moresi, Ben Mather, Romain Beucher
+# 
+# This file is part of Quagmire.
+# 
+# Quagmire is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or any later version.
+# 
+# Quagmire is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 
-This file is part of Quagmire.
+&#34;&#34;&#34;
+Create mesh variables that interface with functions
 
-Quagmire is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or any later version.
-
-Quagmire is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+Initialise a `MeshVariable` for scalar fields or `VectorMeshVariable` for vectors
+on the mesh. These inherit the `quagmire.function` classes that exploit lazy evaluation.
 &#34;&#34;&#34;
 
 try: range = xrange
@@ -67,15 +62,16 @@ from ..function import LazyEvaluation as _LazyEvaluation
 
 
 class MeshVariable(_LazyEvaluation):
-    &#34;&#34;&#34;The MeshVariable class generates a variable supported on the mesh.
+    &#34;&#34;&#34;
+    The MeshVariable class generates a variable supported on the mesh.
 
-    To set / read nodal values, use the numpy interface via the &#39;data&#39; property.
+    To set/read nodal values, use the numpy interface via the &#39;self.data&#39; property.
 
     Parameters
     ----------
-     name : str
+    name : str
         Assign the MeshVariable a unique identifier
-     mesh : quagmire mesh object
+    mesh : quagmire mesh object
         The supporting mesh for the variable
     &#34;&#34;&#34;
     def __init__(self, name=None, mesh=None, locked=False):
@@ -425,16 +421,18 @@ class VectorMeshVariable(MeshVariable):
     &#34;&#34;&#34;
     The VectorMeshVariable class generates a vector variable supported on the mesh.
 
-    To set / read nodal values, use the numpy interface via the &#39;data&#39; property.
+    To set/read nodal values, use the numpy interface via the &#39;self.data&#39; property.
+
     Parameters
     ----------
-     name : str
+    name : str
         Assign the MeshVariable a unique identifier
-     mesh : quagmire mesh object
+    mesh : quagmire mesh object
         The supporting mesh for the variable
+
     Notes
     -----
-     This class inherits several methods from the MeshVariable class.
+    This class inherits several methods from the `MeshVariable` class.
     &#34;&#34;&#34;
     def __init__(self, name, mesh):
         self._mesh = mesh
@@ -502,12 +500,14 @@ class VectorMeshVariable(MeshVariable):
 </code></dt>
 <dd>
 <div class="desc"><p>The MeshVariable class generates a variable supported on the mesh.</p>
-<p>To set / read nodal values, use the numpy interface via the 'data' property.</p>
+<p>To set/read nodal values, use the numpy interface via the 'self.data' property.</p>
 <h2 id="parameters">Parameters</h2>
-<p>name : str
-Assign the MeshVariable a unique identifier
-mesh : quagmire mesh object
-The supporting mesh for the variable</p>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>Assign the MeshVariable a unique identifier</dd>
+<dt><strong><code>mesh</code></strong> :&ensp;<code><a title="quagmire" href="../index.html">quagmire</a> mesh object</code></dt>
+<dd>The supporting mesh for the variable</dd>
+</dl>
 <p>Lazy evaluation of mesh variables / parameters
 If no mesh is provided then no gradient function can be implemented</p></div>
 <details class="source">
@@ -515,15 +515,16 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class MeshVariable(_LazyEvaluation):
-    &#34;&#34;&#34;The MeshVariable class generates a variable supported on the mesh.
+    &#34;&#34;&#34;
+    The MeshVariable class generates a variable supported on the mesh.
 
-    To set / read nodal values, use the numpy interface via the &#39;data&#39; property.
+    To set/read nodal values, use the numpy interface via the &#39;self.data&#39; property.
 
     Parameters
     ----------
-     name : str
+    name : str
         Assign the MeshVariable a unique identifier
-     mesh : quagmire mesh object
+    mesh : quagmire mesh object
         The supporting mesh for the variable
     &#34;&#34;&#34;
     def __init__(self, name=None, mesh=None, locked=False):
@@ -1384,16 +1385,16 @@ Append to existing file if it exists</p>
 </code></dt>
 <dd>
 <div class="desc"><p>The VectorMeshVariable class generates a vector variable supported on the mesh.</p>
-<p>To set / read nodal values, use the numpy interface via the 'data' property.
-Parameters</p>
-<hr>
-<p>name : str
-Assign the MeshVariable a unique identifier
-mesh : quagmire mesh object
-The supporting mesh for the variable
-Notes</p>
-<hr>
-<p>This class inherits several methods from the MeshVariable class.</p>
+<p>To set/read nodal values, use the numpy interface via the 'self.data' property.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>Assign the MeshVariable a unique identifier</dd>
+<dt><strong><code>mesh</code></strong> :&ensp;<code><a title="quagmire" href="../index.html">quagmire</a> mesh object</code></dt>
+<dd>The supporting mesh for the variable</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>This class inherits several methods from the <code><a title="quagmire.mesh.basemesh.MeshVariable" href="#quagmire.mesh.basemesh.MeshVariable">MeshVariable</a></code> class.</p>
 <p>Lazy evaluation of mesh variables / parameters
 If no mesh is provided then no gradient function can be implemented</p></div>
 <details class="source">
@@ -1404,16 +1405,18 @@ If no mesh is provided then no gradient function can be implemented</p></div>
     &#34;&#34;&#34;
     The VectorMeshVariable class generates a vector variable supported on the mesh.
 
-    To set / read nodal values, use the numpy interface via the &#39;data&#39; property.
+    To set/read nodal values, use the numpy interface via the &#39;self.data&#39; property.
+
     Parameters
     ----------
-     name : str
+    name : str
         Assign the MeshVariable a unique identifier
-     mesh : quagmire mesh object
+    mesh : quagmire mesh object
         The supporting mesh for the variable
+
     Notes
     -----
-     This class inherits several methods from the MeshVariable class.
+    This class inherits several methods from the `MeshVariable` class.
     &#34;&#34;&#34;
     def __init__(self, name, mesh):
         self._mesh = mesh
