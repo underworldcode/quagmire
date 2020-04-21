@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
 <title>quagmire.mesh API documentation</title>
-<meta name="description" content="The mesh module provides 3 fundamental spatial data structures …" />
+<meta name="description" content="Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -21,57 +21,39 @@
 <h1 class="title">Module <code>quagmire.mesh</code></h1>
 </header>
 <section id="section-intro">
-<p>The mesh module provides 3 fundamental spatial data structures</p>
-<ul>
-<li><code><a title="quagmire.mesh.pixmesh.PixMesh" href="pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code>: for structured data on a regular grid.</li>
-<li><code><a title="quagmire.mesh.trimesh.TriMesh" href="trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code>: for unstructured data in Cartesian coordinates.</li>
-<li><code><a title="quagmire.mesh.strimesh.sTriMesh" href="strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code>: for unstructured data on the sphere.</li>
-</ul>
-<p>Each of these data structures are built on top of a <code>PETSc DM</code> object
-(created from <code><a title="quagmire.tools.meshtools" href="../tools/meshtools.html">quagmire.tools.meshtools</a></code>) and implement the general functionality of:</p>
-<ul>
-<li>calculating spatial derivatives</li>
-<li>identifying node neighbour relationships</li>
-<li>interpolation / extrapolation</li>
-<li>smoothing operators</li>
-<li>importing and saving mesh information</li>
-</ul>
+<p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher</p>
+<p>This file is part of Quagmire.</p>
+<p>Quagmire is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or any later version.</p>
+<p>Quagmire is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the
+GNU Lesser General Public License for more details.</p>
+<p>You should have received a copy of the GNU Lesser General Public License
+along with Quagmire.
+If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python"># Copyright 2016-2020 Louis Moresi, Ben Mather, Romain Beucher
-# 
-# This file is part of Quagmire.
-# 
-# Quagmire is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or any later version.
-# 
-# Quagmire is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
-# 
-# You should have received a copy of the GNU Lesser General Public License
-# along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<pre><code class="python">&#34;&#34;&#34;
+Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher
 
-&#34;&#34;&#34;
-The mesh module provides 3 fundamental spatial data structures
+This file is part of Quagmire.
 
-- `pixmesh.PixMesh`: for structured data on a regular grid.
-- `trimesh.TriMesh`: for unstructured data in Cartesian coordinates.
-- `strimesh.sTriMesh`: for unstructured data on the sphere.
+Quagmire is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or any later version.
 
-Each of these data structures are built on top of a `PETSc DM` object
-(created from `quagmire.tools.meshtools`) and implement the general functionality of:
+Quagmire is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
 
-- calculating spatial derivatives
-- identifying node neighbour relationships
-- interpolation / extrapolation
-- smoothing operators
-- importing and saving mesh information
-
+You should have received a copy of the GNU Lesser General Public License
+along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 &#34;&#34;&#34;
 
 from .trimesh import TriMesh
@@ -82,36 +64,12 @@ from .basemesh import VectorMeshVariable
 
 
 def check_object_is_a_q_mesh(mesh_object):
-    &#34;&#34;&#34;
-    Is this object a `quagmire.mesh` of some kind?
-
-    Parameters
-    ----------
-    mesh_object : object
-        Checks if one of `trimesh.TriMesh`, `pixmesh.PixMesh`, `strimesh.sTriMesh`
-
-    Returns
-    -------
-    statement : bool
-        True or False
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;Is this object a quagmire mesh of some kind  ?&#34;&#34;&#34;
 
     return isinstance(mesh_object, (TriMesh, PixMesh, sTriMesh))
 
 def check_object_is_a_q_mesh_and_raise(mesh_object):
-    &#34;&#34;&#34;
-    If this object is not a `quagmire.mesh` then raises a RuntimeError
-
-    Parameters
-    ----------
-    mesh_object : object
-        Checks if one of `trimesh.TriMesh`, `pixmesh.PixMesh`, `strimesh.sTriMesh`
-
-    Returns
-    -------
-    statement : bool
-        True or False
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;If this object is not a quagmire LazyEvaluation function then everything must die !&#34;&#34;&#34;
 
     if not check_object_is_a_q_mesh(mesh_object):
         raise RuntimeError(&#34;Expecting a quagmire.mesh object&#34;)
@@ -124,23 +82,23 @@ def check_object_is_a_q_mesh_and_raise(mesh_object):
 <dl>
 <dt><code class="name"><a title="quagmire.mesh.basemesh" href="basemesh.html">quagmire.mesh.basemesh</a></code></dt>
 <dd>
-<div class="desc"><p>Create mesh variables that interface with functions …</p></div>
+<div class="desc"><p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …</p></div>
 </dd>
 <dt><code class="name"><a title="quagmire.mesh.commonmesh" href="commonmesh.html">quagmire.mesh.commonmesh</a></code></dt>
 <dd>
-<div class="desc"><p>Routines common to all mesh types.</p></div>
+<div class="desc"><p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …</p></div>
 </dd>
 <dt><code class="name"><a title="quagmire.mesh.pixmesh" href="pixmesh.html">quagmire.mesh.pixmesh</a></code></dt>
 <dd>
-<div class="desc"><p>For structured data on a regular grid.</p></div>
+<div class="desc"><p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …</p></div>
 </dd>
 <dt><code class="name"><a title="quagmire.mesh.strimesh" href="strimesh.html">quagmire.mesh.strimesh</a></code></dt>
 <dd>
-<div class="desc"><p>For unstructured data on the sphere.</p></div>
+<div class="desc"><p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …</p></div>
 </dd>
 <dt><code class="name"><a title="quagmire.mesh.trimesh" href="trimesh.html">quagmire.mesh.trimesh</a></code></dt>
 <dd>
-<div class="desc"><p>For unstructured data in Cartesian coordinates.</p></div>
+<div class="desc"><p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …</p></div>
 </dd>
 </dl>
 </section>
@@ -153,35 +111,14 @@ def check_object_is_a_q_mesh_and_raise(mesh_object):
 <span>def <span class="ident">check_object_is_a_q_mesh</span></span>(<span>mesh_object)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Is this object a <code><a title="quagmire.mesh" href="#quagmire.mesh">quagmire.mesh</a></code> of some kind?</p>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>mesh_object</code></strong> :&ensp;<code>object</code></dt>
-<dd>Checks if one of <code><a title="quagmire.mesh.trimesh.TriMesh" href="trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code>, <code><a title="quagmire.mesh.pixmesh.PixMesh" href="pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code>, <code><a title="quagmire.mesh.strimesh.sTriMesh" href="strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code></dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><strong><code>statement</code></strong> :&ensp;<code>bool</code></dt>
-<dd>True or False</dd>
-</dl></div>
+<div class="desc"><p>Is this object a quagmire mesh of some kind
+?</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def check_object_is_a_q_mesh(mesh_object):
-    &#34;&#34;&#34;
-    Is this object a `quagmire.mesh` of some kind?
-
-    Parameters
-    ----------
-    mesh_object : object
-        Checks if one of `trimesh.TriMesh`, `pixmesh.PixMesh`, `strimesh.sTriMesh`
-
-    Returns
-    -------
-    statement : bool
-        True or False
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;Is this object a quagmire mesh of some kind  ?&#34;&#34;&#34;
 
     return isinstance(mesh_object, (TriMesh, PixMesh, sTriMesh))</code></pre>
 </details>
@@ -190,35 +127,13 @@ def check_object_is_a_q_mesh_and_raise(mesh_object):
 <span>def <span class="ident">check_object_is_a_q_mesh_and_raise</span></span>(<span>mesh_object)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>If this object is not a <code><a title="quagmire.mesh" href="#quagmire.mesh">quagmire.mesh</a></code> then raises a RuntimeError</p>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>mesh_object</code></strong> :&ensp;<code>object</code></dt>
-<dd>Checks if one of <code><a title="quagmire.mesh.trimesh.TriMesh" href="trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code>, <code><a title="quagmire.mesh.pixmesh.PixMesh" href="pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code>, <code><a title="quagmire.mesh.strimesh.sTriMesh" href="strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code></dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><strong><code>statement</code></strong> :&ensp;<code>bool</code></dt>
-<dd>True or False</dd>
-</dl></div>
+<div class="desc"><p>If this object is not a quagmire LazyEvaluation function then everything must die !</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def check_object_is_a_q_mesh_and_raise(mesh_object):
-    &#34;&#34;&#34;
-    If this object is not a `quagmire.mesh` then raises a RuntimeError
-
-    Parameters
-    ----------
-    mesh_object : object
-        Checks if one of `trimesh.TriMesh`, `pixmesh.PixMesh`, `strimesh.sTriMesh`
-
-    Returns
-    -------
-    statement : bool
-        True or False
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;If this object is not a quagmire LazyEvaluation function then everything must die !&#34;&#34;&#34;
 
     if not check_object_is_a_q_mesh(mesh_object):
         raise RuntimeError(&#34;Expecting a quagmire.mesh object&#34;)

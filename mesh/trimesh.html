@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
 <title>quagmire.mesh.trimesh API documentation</title>
-<meta name="description" content="For unstructured data in Cartesian coordinates." />
+<meta name="description" content="Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -21,29 +21,39 @@
 <h1 class="title">Module <code>quagmire.mesh.trimesh</code></h1>
 </header>
 <section id="section-intro">
-<p>For unstructured data in Cartesian coordinates.</p>
+<p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher</p>
+<p>This file is part of Quagmire.</p>
+<p>Quagmire is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or any later version.</p>
+<p>Quagmire is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the
+GNU Lesser General Public License for more details.</p>
+<p>You should have received a copy of the GNU Lesser General Public License
+along with Quagmire.
+If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python"># Copyright 2016-2020 Louis Moresi, Ben Mather, Romain Beucher
-# 
-# This file is part of Quagmire.
-# 
-# Quagmire is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or any later version.
-# 
-# Quagmire is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
-# 
-# You should have received a copy of the GNU Lesser General Public License
-# along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<pre><code class="python">&#34;&#34;&#34;
+Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher
 
-&#34;&#34;&#34;
-For unstructured data in Cartesian coordinates.
+This file is part of Quagmire.
+
+Quagmire is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or any later version.
+
+Quagmire is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 &#34;&#34;&#34;
 
 import numpy as np
@@ -157,6 +167,12 @@ class TriMesh(_CommonMesh):
         self.coords = self.tri.points
         self.data = self.coords
         self.interpolate = self.tri.interpolate
+
+
+    def add_variable(self, name=None, locked=False):
+
+        from quagmire.mesh import MeshVariable
+        return MeshVariable(name=name, mesh=self, locked=locked)
 
 
 
@@ -370,19 +386,20 @@ class TriMesh(_CommonMesh):
         Find neighbours from distance cKDTree.
 
         &#34;&#34;&#34;
-        from quagmire import _fortran
 
         nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
 
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
 
-        neighbours = np.bincount(self.tri.simplices.flat)
+        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
         self.near_neighbours = neighbours + 2
-        self.extended_neighbours = np.full_like(neighbours, size)
+        self.extended_neighbours = np.empty_like(neighbours).fill(size)
 
-        near_neighbour_mask = _fortran.fill_mask_to_idx(size, self.near_neighbours)
-        self.near_neighbour_mask = near_neighbour_mask.astype(bool)
+        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+        for node in range(0,self.npoints):
+            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
 
         return
 
@@ -481,17 +498,16 @@ class TriMesh(_CommonMesh):
 
         Arguments
         ---------
-        vector : array of floats, shape (n,)
-            field variable to be smoothed
-        iterations : int
-            number of iterations to smooth vector
-        delta : float / array of floats shape (n,)
-            distance weights to apply the Gaussian interpolants
+         vector     : field vector shape (n,)
+         iterations : int, number of iterations to smooth vector
+         delta      : distance weights to apply the the Gaussian
+                    : interpolants
 
         Returns
         -------
-        smooth_vec : array of floats, shape (n,)
-            smoothed version of input vector
+         smooth_vec : smoothed version of input vector
+             shape (n,)
+
         &#34;&#34;&#34;
 
 
@@ -689,6 +705,12 @@ We recommend having 1) triangle or 2) scipy installed for Delaunay triangulation
         self.interpolate = self.tri.interpolate
 
 
+    def add_variable(self, name=None, locked=False):
+
+        from quagmire.mesh import MeshVariable
+        return MeshVariable(name=name, mesh=self, locked=locked)
+
+
 
     def get_local_mesh(self):
         &#34;&#34;&#34;
@@ -900,19 +922,20 @@ We recommend having 1) triangle or 2) scipy installed for Delaunay triangulation
         Find neighbours from distance cKDTree.
 
         &#34;&#34;&#34;
-        from quagmire import _fortran
 
         nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
 
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
 
-        neighbours = np.bincount(self.tri.simplices.flat)
+        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
         self.near_neighbours = neighbours + 2
-        self.extended_neighbours = np.full_like(neighbours, size)
+        self.extended_neighbours = np.empty_like(neighbours).fill(size)
 
-        near_neighbour_mask = _fortran.fill_mask_to_idx(size, self.near_neighbours)
-        self.near_neighbour_mask = near_neighbour_mask.astype(bool)
+        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+        for node in range(0,self.npoints):
+            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
 
         return
 
@@ -1011,17 +1034,16 @@ We recommend having 1) triangle or 2) scipy installed for Delaunay triangulation
 
         Arguments
         ---------
-        vector : array of floats, shape (n,)
-            field variable to be smoothed
-        iterations : int
-            number of iterations to smooth vector
-        delta : float / array of floats shape (n,)
-            distance weights to apply the Gaussian interpolants
+         vector     : field vector shape (n,)
+         iterations : int, number of iterations to smooth vector
+         delta      : distance weights to apply the the Gaussian
+                    : interpolants
 
         Returns
         -------
-        smooth_vec : array of floats, shape (n,)
-            smoothed version of input vector
+         smooth_vec : smoothed version of input vector
+             shape (n,)
+
         &#34;&#34;&#34;
 
 
@@ -1122,6 +1144,21 @@ def id(self):
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="quagmire.mesh.trimesh.TriMesh.add_variable"><code class="name flex">
+<span>def <span class="ident">add_variable</span></span>(<span>self, name=None, locked=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_variable(self, name=None, locked=False):
+
+    from quagmire.mesh import MeshVariable
+    return MeshVariable(name=name, mesh=self, locked=locked)</code></pre>
+</details>
+</dd>
 <dt id="quagmire.mesh.trimesh.TriMesh.build_rbf_smoother"><code class="name flex">
 <span>def <span class="ident">build_rbf_smoother</span></span>(<span>self, delta, iterations=1)</span>
 </code></dt>
@@ -1291,19 +1328,20 @@ def id(self):
     Find neighbours from distance cKDTree.
 
     &#34;&#34;&#34;
-    from quagmire import _fortran
 
     nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
 
     self.neighbour_cloud = nncloud
     self.neighbour_cloud_distances = nndist
 
-    neighbours = np.bincount(self.tri.simplices.flat)
+    unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
     self.near_neighbours = neighbours + 2
-    self.extended_neighbours = np.full_like(neighbours, size)
+    self.extended_neighbours = np.empty_like(neighbours).fill(size)
 
-    near_neighbour_mask = _fortran.fill_mask_to_idx(size, self.near_neighbours)
-    self.near_neighbour_mask = near_neighbour_mask.astype(bool)
+    self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+    for node in range(0,self.npoints):
+        self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
 
     return</code></pre>
 </details>
@@ -1588,19 +1626,15 @@ bmask
 <dd>
 <div class="desc"><p>Smoothing using a radial-basis function smoothing kernel</p>
 <h2 id="arguments">Arguments</h2>
-<dl>
-<dt><strong><code>vector</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,)</code></dt>
-<dd>field variable to be smoothed</dd>
-<dt><strong><code>iterations</code></strong> :&ensp;<code>int</code></dt>
-<dd>number of iterations to smooth vector</dd>
-<dt><strong><code>delta</code></strong> :&ensp;<code>float / array</code> of <code>floats shape (n,)</code></dt>
-<dd>distance weights to apply the Gaussian interpolants</dd>
-</dl>
+<p>vector
+: field vector shape (n,)
+iterations : int, number of iterations to smooth vector
+delta
+: distance weights to apply the the Gaussian
+: interpolants</p>
 <h2 id="returns">Returns</h2>
-<dl>
-<dt><strong><code>smooth_vec</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,)</code></dt>
-<dd>smoothed version of input vector</dd>
-</dl></div>
+<p>smooth_vec : smoothed version of input vector
+shape (n,)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1611,17 +1645,16 @@ bmask
 
     Arguments
     ---------
-    vector : array of floats, shape (n,)
-        field variable to be smoothed
-    iterations : int
-        number of iterations to smooth vector
-    delta : float / array of floats shape (n,)
-        distance weights to apply the Gaussian interpolants
+     vector     : field vector shape (n,)
+     iterations : int, number of iterations to smooth vector
+     delta      : distance weights to apply the the Gaussian
+                : interpolants
 
     Returns
     -------
-    smooth_vec : array of floats, shape (n,)
-        smoothed version of input vector
+     smooth_vec : smoothed version of input vector
+         shape (n,)
+
     &#34;&#34;&#34;
 
 
@@ -1675,6 +1708,7 @@ bmask
 <li>
 <h4><code><a title="quagmire.mesh.trimesh.TriMesh" href="#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code></h4>
 <ul class="">
+<li><code><a title="quagmire.mesh.trimesh.TriMesh.add_variable" href="#quagmire.mesh.trimesh.TriMesh.add_variable">add_variable</a></code></li>
 <li><code><a title="quagmire.mesh.trimesh.TriMesh.build_rbf_smoother" href="#quagmire.mesh.trimesh.TriMesh.build_rbf_smoother">build_rbf_smoother</a></code></li>
 <li><code><a title="quagmire.mesh.trimesh.TriMesh.calculate_area_weights" href="#quagmire.mesh.trimesh.TriMesh.calculate_area_weights">calculate_area_weights</a></code></li>
 <li><code><a title="quagmire.mesh.trimesh.TriMesh.construct_extended_neighbour_cloud" href="#quagmire.mesh.trimesh.TriMesh.construct_extended_neighbour_cloud">construct_extended_neighbour_cloud</a></code></li>

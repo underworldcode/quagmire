@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
 <title>quagmire API documentation</title>
-<meta name="description" content="&lt;img src=&#34;https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/AusFlow.png&#34; style=&#34;display: block; margin: 0 auto&#34;&gt; …" />
+<meta name="description" content="Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -21,210 +21,36 @@
 <h1 class="title">Package <code>quagmire</code></h1>
 </header>
 <section id="section-intro">
-<p><img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/AusFlow.png" style="display: block; margin: 0 auto"></p>
-<p><strong>Quagmire is a Python surface process framework for building erosion and deposition models on highly parallel, decomposed structured and unstructured meshes.</strong></p>
-<p><img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/hierarchy_chart.png" style="width: 400px; float:right"></p>
-<p>Quagmire is structured into three major classes that inherit methods and attributes from lower tiers.</p>
-<p>The Surface Processes class inherits from the Topography class, which in turn inherits from TriMesh or PixMesh depending on the type of mesh.</p>
-<h2 id="installation">Installation</h2>
-<p>Numpy and a fortran compiler, preferably <a href="https://gcc.gnu.org/wiki/GFortran">gfortran</a>, are required to install Quagmire.</p>
-<ul>
-<li><code>python setup.py build</code></li>
-<li>If you change the fortran compiler, you may have to add the
-flags <code>config_fc --fcompiler=&lt;compiler name&gt;</code> when setup.py is run
-(see docs for <a href="http://docs.scipy.org/doc/numpy-dev/f2py/distutils.html">numpy.distutils</a>).</li>
-<li><code>python setup.py install</code></li>
-</ul>
-<h2 id="dependencies">Dependencies</h2>
-<p>Running this code requires the following packages to be installed. The visualisation options are required for the notebooks and are included in the docker image.</p>
-<ul>
-<li>Python 2.7.x and above</li>
-<li>Numpy 1.9 and above</li>
-<li>Scipy 0.15 and above</li>
-<li><a href="http://pythonhosted.org/mpi4py/usrman/index.html">mpi4py</a></li>
-<li><a href="https://pythonhosted.org/petsc4py/usrman/install.html">petsc4py</a></li>
-<li><a href="https://github.com/University-of-Melbourne-Geodynamics/stripy">stripy</a></li>
-<li><a href="http://docs.h5py.org/en/latest/mpi.html#building-against-parallel-hdf5">h5py</a> (optional - for saving parallel data)</li>
-<li>Matplotlib (optional - for visualisation)</li>
-<li>lavavu (optional - for visualisation)</li>
-</ul>
-<h3 id="petsc-installation">PETSc installation</h3>
-<p>PETSc is used extensively via the Python frontend, petsc4py. It is required that PETSc be configured and installed on your local machine prior to using Quagmire. You can use pip or petsc to install petsc4py and its dependencies with consistent versions.</p>
-<pre><code>[sudo] pip install numpy mpi4py
-[sudo] pip install petsc petsc4py
-</code></pre>
-<p>If that fails you must compile these manually.</p>
-<h3 id="hdf5-installation">HDF5 installation</h3>
-<p>This is an optional installation, but it is very useful for saving data that is distributed across multiple processes. If you are compiling HDF5 from <a href="https://support.hdfgroup.org/downloads/index.html">source</a> it should be configured with the <code>--enable-parallel</code> flag:</p>
-<pre><code>CC=/usr/local/mpi/bin/mpicc ./configure --enable-parallel --enable-shared --prefix=&lt;install-directory&gt;
-make    # build the library
-make check  # verify the correctness
-make install
-</code></pre>
-<p>You can then point to this install directory when you install <a href="http://docs.h5py.org/en/latest/mpi.html#building-against-parallel-hdf5">h5py</a>.</p>
-<h2 id="usage">Usage</h2>
-<p>Quagmire is scalable in parallel. All of the python scripts in the <em>tests</em> subdirectory can be run in parallel, e.g.</p>
-<pre><code>mpirun -np 4 python stream_power.py
-</code></pre>
-<p>where the number after the <code>-np</code> flag specifies the number of processors.</p>
-<h2 id="tutorials">Tutorials</h2>
-<p>Tutorials with worked examples can be found in the <em>Notebooks</em> subdirectory. These are Jupyter Notebooks that can be run locally.
-We recommend installing <a href="https://ffmpeg.org/">FFmpeg</a> to create videos in some of the notebooks.</p>
-<p>The topics covered in the Notebooks include:</p>
-<p><strong>Meshing</strong></p>
-<p>Triangulations and regular 2d arrays are included and have the same API.</p>
-<ul>
-<li>Square mesh</li>
-<li>Elliptical mesh</li>
-<li>Mesh refinement (e.g. Lloyd's mesh improvement)</li>
-</ul>
-<p><strong>Flow algorithms</strong></p>
-<ul>
-<li>Single and multiple downhill pathways</li>
-<li>Accumulating flow</li>
-</ul>
-<p><strong>Erosion and deposition</strong></p>
-<p>Operators for</p>
-<ul>
-<li>Long-range stream flow models</li>
-<li>Short-range diffusive evolution</li>
-</ul>
-<p><strong>Landscape evolution</strong></p>
-<p><em>Work in progress</em></p>
-<ul>
-<li>Explicit timestepping and numerical stability</li>
-<li>Landscape equilibrium metrics</li>
-<li>Basement uplift</li>
-</ul>
-<p><strong>Benchmarking</strong></p>
-<p><em>Work in progress</em></p>
+<p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher</p>
+<p>Quagmire is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or any later version.</p>
+<p>Quagmire is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the
+GNU Lesser General Public License for more details.</p>
+<p>You should have received a copy of the GNU Lesser General Public License
+along with Quagmire.
+If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python"># Copyright 2016-2020 Louis Moresi, Ben Mather, Romain Beucher
-# 
-# This file is part of Quagmire.
-#
-# Quagmire is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or any later version.
-# 
-# Quagmire is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
-# 
-# You should have received a copy of the GNU Lesser General Public License
-# along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<pre><code class="python">&#34;&#34;&#34;
+Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher
 
-&#34;&#34;&#34;
-&lt;img src=&#34;https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/AusFlow.png&#34; style=&#34;display: block; margin: 0 auto&#34;&gt;
+Quagmire is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or any later version.
 
-**Quagmire is a Python surface process framework for building erosion and deposition models on highly parallel, decomposed structured and unstructured meshes.**
+Quagmire is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
 
-&lt;img src=&#34;https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/hierarchy_chart.png&#34; style=&#34;width: 400px; float:right&#34;&gt;
-
-Quagmire is structured into three major classes that inherit methods and attributes from lower tiers.
-
-The Surface Processes class inherits from the Topography class, which in turn inherits from TriMesh or PixMesh depending on the type of mesh.
-
-## Installation
-
-Numpy and a fortran compiler, preferably [gfortran](https://gcc.gnu.org/wiki/GFortran), are required to install Quagmire.
-
-- ``python setup.py build``
-   - If you change the fortran compiler, you may have to add the
-flags `config_fc --fcompiler=&lt;compiler name&gt;` when setup.py is run
-(see docs for [numpy.distutils](http://docs.scipy.org/doc/numpy-dev/f2py/distutils.html)).
-- ``python setup.py install``
-
-## Dependencies
-
-Running this code requires the following packages to be installed. The visualisation options are required for the notebooks and are included in the docker image.
-
-- Python 2.7.x and above
-- Numpy 1.9 and above
-- Scipy 0.15 and above
-- [mpi4py](http://pythonhosted.org/mpi4py/usrman/index.html)
-- [petsc4py](https://pythonhosted.org/petsc4py/usrman/install.html)
-- [stripy](https://github.com/University-of-Melbourne-Geodynamics/stripy)
-- [h5py](http://docs.h5py.org/en/latest/mpi.html#building-against-parallel-hdf5) (optional - for saving parallel data)
-- Matplotlib (optional - for visualisation)
-- lavavu (optional - for visualisation)
-
-### PETSc installation
-
-PETSc is used extensively via the Python frontend, petsc4py. It is required that PETSc be configured and installed on your local machine prior to using Quagmire. You can use pip or petsc to install petsc4py and its dependencies with consistent versions.
-
-```
-[sudo] pip install numpy mpi4py
-[sudo] pip install petsc petsc4py
-```
-
-If that fails you must compile these manually.
-
-### HDF5 installation
-
-This is an optional installation, but it is very useful for saving data that is distributed across multiple processes. If you are compiling HDF5 from [source](https://support.hdfgroup.org/downloads/index.html) it should be configured with the `--enable-parallel` flag:
-
-```
-CC=/usr/local/mpi/bin/mpicc ./configure --enable-parallel --enable-shared --prefix=&lt;install-directory&gt;
-make    # build the library
-make check  # verify the correctness
-make install
-```
-
-You can then point to this install directory when you install [h5py](http://docs.h5py.org/en/latest/mpi.html#building-against-parallel-hdf5).
-
-## Usage
-
-Quagmire is scalable in parallel. All of the python scripts in the *tests* subdirectory can be run in parallel, e.g.
-
-```
-mpirun -np 4 python stream_power.py
-```
-
-where the number after the `-np` flag specifies the number of processors.
-
-## Tutorials
-
-Tutorials with worked examples can be found in the *Notebooks* subdirectory. These are Jupyter Notebooks that can be run locally.
-We recommend installing [FFmpeg](https://ffmpeg.org/) to create videos in some of the notebooks.
-
-The topics covered in the Notebooks include:
-
-**Meshing**
-
-Triangulations and regular 2d arrays are included and have the same API.
-
-- Square mesh
-- Elliptical mesh
-- Mesh refinement (e.g. Lloyd&#39;s mesh improvement)
-
-**Flow algorithms**
-
-- Single and multiple downhill pathways
-- Accumulating flow
-
-**Erosion and deposition**
-
-Operators for
-
-- Long-range stream flow models
-- Short-range diffusive evolution
-
-**Landscape evolution**
-
-_Work in progress_
-
-- Explicit timestepping and numerical stability
-- Landscape equilibrium metrics
-- Basement uplift
-
-**Benchmarking**
-
-_Work in progress_
+You should have received a copy of the GNU Lesser General Public License
+along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 &#34;&#34;&#34;
 
 from .mesh import PixMesh as _PixMesh
@@ -307,28 +133,23 @@ def _get_label(DM):
 
 def FlatMesh(DM, *args, **kwargs):
     &#34;&#34;&#34;
-    Instantiates a mesh using `mesh.trimesh.TriMesh`,
-    `mesh.strimesh.sTriMesh` or `mesh.pixmesh.PixMesh` objects.
+    Instantiates a mesh using TriMesh, sTriMesh or PixMesh objects.
 
     This object contains methods for the following operations:
-
-    - calculating derivatives
-    - interpolation (nearest-neighbour, linear, cubic)
-    - local smoothing operations
-    - identifying node neighbours
+     - calculating derivatives
+     - interpolation (nearest-neighbour, linear, cubic)
+     - local smoothing operations
+     - identifying node neighbours
 
     Parameters
     ----------
-    DM : PETSc DM object
+     DM : PETSc DM object
         Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
+        functions within the tools subdirectory
 
     Returns
     -------
-    FlatMesh : object
-        Inherits methods and attributes from:
-
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
+     FlatMesh : object
     &#34;&#34;&#34;
 
     # get DM label name
@@ -377,28 +198,25 @@ def FlatMesh(DM, *args, **kwargs):
 def TopoMesh(DM, *args, **kwargs):
     &#34;&#34;&#34;
     Instantiates a mesh with a height field.
-    TopoMesh inherits from `FlatMesh`.
+    TopoMesh inherits from FlatMesh.
 
     This object contains methods for the following operations:
+     - calculating the slope from height field
+     - constructing downhill matrices
+     - cumulative downstream flow
+     - handling flat spots and local minima
 
-    - calculating the slope from height field
-    - constructing downhill matrices
-    - cumulative downstream flow
-    - handling flat spots and local minima
+    Call update_height to initialise these data structures.
 
     Parameters
     ----------
-    DM : PETSc DM object
+     DM : PETSc DM object
         Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
+        functions within the tools subdirectory
 
     Returns
     -------
-    TopoMesh : object
-        Inherits methods and attributes from:
-
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
-        - `topomesh.topomesh.TopoMesh`
+     TopoMesh : object
     &#34;&#34;&#34;
 
     BaseMeshType = _get_label(DM)
@@ -423,29 +241,26 @@ def TopoMesh(DM, *args, **kwargs):
 def SurfaceProcessMesh(DM, *args, **kwargs):
     &#34;&#34;&#34;
     Instantiates a mesh with a height and rainfall field.
-    SurfaceProcessMesh inherits from `FlatMesh` and `TopoMesh`.
+    SurfaceProcessMesh inherits from FlatMesh and TopoMesh.
 
     This object contains methods for the following operations:
+     - long-range flow models
+     - calculate erosion and deposition rates
+     - landscape equilibrium metrics
+     - stream-wise smoothing
 
-    - long-range flow models
-    - calculate erosion and deposition rates
-    - landscape equilibrium metrics
-    - stream-wise smoothing
+    Call update_height and update_surface_processes to initialise
+    these data structures.
 
     Parameters
     ----------
-    DM : PETSc DM object
+     DM : PETSc DM object
         Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
+        functions within the tools subdirectory
 
     Returns
     -------
-    SurfaceProcessMesh : object
-        Inherits methods and attributes from:
-
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
-        - `topomesh.topomesh.TopoMesh`
-        - `surfmesh.surfmesh.SurfMesh`
+     SurfaceProcessMesh : object
     &#34;&#34;&#34;
 
     BaseMeshType = _get_label(DM)
@@ -472,11 +287,11 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
 <dl>
 <dt><code class="name"><a title="quagmire.documentation" href="documentation.html">quagmire.documentation</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …</p></div>
 </dd>
 <dt><code class="name"><a title="quagmire.equation_systems" href="equation_systems/index.html">quagmire.equation_systems</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Copyright 2016-2019 Louis Moresi, Ben Mather, Romain Beucher …</p></div>
 </dd>
 <dt><code class="name"><a title="quagmire.function" href="function/index.html">quagmire.function</a></code></dt>
 <dd>
@@ -484,7 +299,7 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
 </dd>
 <dt><code class="name"><a title="quagmire.mesh" href="mesh/index.html">quagmire.mesh</a></code></dt>
 <dd>
-<div class="desc"><p>The mesh module provides 3 fundamental spatial data structures …</p></div>
+<div class="desc"><p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …</p></div>
 </dd>
 <dt><code class="name"><a title="quagmire.scaling" href="scaling/index.html">quagmire.scaling</a></code></dt>
 <dd>
@@ -492,15 +307,15 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
 </dd>
 <dt><code class="name"><a title="quagmire.surfmesh" href="surfmesh/index.html">quagmire.surfmesh</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …</p></div>
 </dd>
 <dt><code class="name"><a title="quagmire.tools" href="tools/index.html">quagmire.tools</a></code></dt>
 <dd>
-<div class="desc"><p>Tools for creating and saving meshes</p></div>
+<div class="desc"><p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …</p></div>
 </dd>
 <dt><code class="name"><a title="quagmire.topomesh" href="topomesh/index.html">quagmire.topomesh</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Copyright 2016-2017 Louis Moresi, Ben Mather, Romain Beucher …</p></div>
 </dd>
 </dl>
 </section>
@@ -513,59 +328,41 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
 <span>def <span class="ident">FlatMesh</span></span>(<span>DM, *args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Instantiates a mesh using <code><a title="quagmire.mesh.trimesh.TriMesh" href="mesh/trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code>,
-<code><a title="quagmire.mesh.strimesh.sTriMesh" href="mesh/strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code> or <code><a title="quagmire.mesh.pixmesh.PixMesh" href="mesh/pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code> objects.</p>
-<p>This object contains methods for the following operations:</p>
-<ul>
-<li>calculating derivatives</li>
-<li>interpolation (nearest-neighbour, linear, cubic)</li>
-<li>local smoothing operations</li>
-<li>identifying node neighbours</li>
-</ul>
+<div class="desc"><p>Instantiates a mesh using TriMesh, sTriMesh or PixMesh objects.</p>
+<p>This object contains methods for the following operations:
+- calculating derivatives
+- interpolation (nearest-neighbour, linear, cubic)
+- local smoothing operations
+- identifying node neighbours</p>
 <h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DM object</code></dt>
-<dd>Either a DMDA or DMPlex object created using the meshing
-functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools.html">quagmire.tools.meshtools</a></code></dd>
-</dl>
+<p>DM : PETSc DM object
+Either a DMDA or DMPlex object created using the meshing
+functions within the tools subdirectory</p>
 <h2 id="returns">Returns</h2>
-<dl>
-<dt><strong><code>FlatMesh</code></strong> :&ensp;<code>object</code></dt>
-<dd>
-<p>Inherits methods and attributes from:</p>
-<ul>
-<li><code><a title="quagmire.mesh.pixmesh.PixMesh" href="mesh/pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code>, <code><a title="quagmire.mesh.trimesh.TriMesh" href="mesh/trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code>, or <code><a title="quagmire.mesh.strimesh.sTriMesh" href="mesh/strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code></li>
-</ul>
-</dd>
-</dl></div>
+<p>FlatMesh : object</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def FlatMesh(DM, *args, **kwargs):
     &#34;&#34;&#34;
-    Instantiates a mesh using `mesh.trimesh.TriMesh`,
-    `mesh.strimesh.sTriMesh` or `mesh.pixmesh.PixMesh` objects.
+    Instantiates a mesh using TriMesh, sTriMesh or PixMesh objects.
 
     This object contains methods for the following operations:
-
-    - calculating derivatives
-    - interpolation (nearest-neighbour, linear, cubic)
-    - local smoothing operations
-    - identifying node neighbours
+     - calculating derivatives
+     - interpolation (nearest-neighbour, linear, cubic)
+     - local smoothing operations
+     - identifying node neighbours
 
     Parameters
     ----------
-    DM : PETSc DM object
+     DM : PETSc DM object
         Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
+        functions within the tools subdirectory
 
     Returns
     -------
-    FlatMesh : object
-        Inherits methods and attributes from:
-
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
+     FlatMesh : object
     &#34;&#34;&#34;
 
     # get DM label name
@@ -617,32 +414,20 @@ functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools
 </code></dt>
 <dd>
 <div class="desc"><p>Instantiates a mesh with a height and rainfall field.
-SurfaceProcessMesh inherits from <code><a title="quagmire.FlatMesh" href="#quagmire.FlatMesh">FlatMesh()</a></code> and <code><a title="quagmire.TopoMesh" href="#quagmire.TopoMesh">TopoMesh()</a></code>.</p>
-<p>This object contains methods for the following operations:</p>
-<ul>
-<li>long-range flow models</li>
-<li>calculate erosion and deposition rates</li>
-<li>landscape equilibrium metrics</li>
-<li>stream-wise smoothing</li>
-</ul>
+SurfaceProcessMesh inherits from FlatMesh and TopoMesh.</p>
+<p>This object contains methods for the following operations:
+- long-range flow models
+- calculate erosion and deposition rates
+- landscape equilibrium metrics
+- stream-wise smoothing</p>
+<p>Call update_height and update_surface_processes to initialise
+these data structures.</p>
 <h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DM object</code></dt>
-<dd>Either a DMDA or DMPlex object created using the meshing
-functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools.html">quagmire.tools.meshtools</a></code></dd>
-</dl>
+<p>DM : PETSc DM object
+Either a DMDA or DMPlex object created using the meshing
+functions within the tools subdirectory</p>
 <h2 id="returns">Returns</h2>
-<dl>
-<dt><strong><code>SurfaceProcessMesh</code></strong> :&ensp;<code>object</code></dt>
-<dd>
-<p>Inherits methods and attributes from:</p>
-<ul>
-<li><code><a title="quagmire.mesh.pixmesh.PixMesh" href="mesh/pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code>, <code><a title="quagmire.mesh.trimesh.TriMesh" href="mesh/trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code>, or <code><a title="quagmire.mesh.strimesh.sTriMesh" href="mesh/strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code></li>
-<li><code><a title="quagmire.topomesh.topomesh.TopoMesh" href="topomesh/topomesh.html#quagmire.topomesh.topomesh.TopoMesh">TopoMesh</a></code></li>
-<li><code><a title="quagmire.surfmesh.surfmesh.SurfMesh" href="surfmesh/surfmesh.html#quagmire.surfmesh.surfmesh.SurfMesh">SurfMesh</a></code></li>
-</ul>
-</dd>
-</dl></div>
+<p>SurfaceProcessMesh : object</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -650,29 +435,26 @@ functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools
 <pre><code class="python">def SurfaceProcessMesh(DM, *args, **kwargs):
     &#34;&#34;&#34;
     Instantiates a mesh with a height and rainfall field.
-    SurfaceProcessMesh inherits from `FlatMesh` and `TopoMesh`.
+    SurfaceProcessMesh inherits from FlatMesh and TopoMesh.
 
     This object contains methods for the following operations:
+     - long-range flow models
+     - calculate erosion and deposition rates
+     - landscape equilibrium metrics
+     - stream-wise smoothing
 
-    - long-range flow models
-    - calculate erosion and deposition rates
-    - landscape equilibrium metrics
-    - stream-wise smoothing
+    Call update_height and update_surface_processes to initialise
+    these data structures.
 
     Parameters
     ----------
-    DM : PETSc DM object
+     DM : PETSc DM object
         Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
+        functions within the tools subdirectory
 
     Returns
     -------
-    SurfaceProcessMesh : object
-        Inherits methods and attributes from:
-
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
-        - `topomesh.topomesh.TopoMesh`
-        - `surfmesh.surfmesh.SurfMesh`
+     SurfaceProcessMesh : object
     &#34;&#34;&#34;
 
     BaseMeshType = _get_label(DM)
@@ -699,31 +481,19 @@ functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools
 </code></dt>
 <dd>
 <div class="desc"><p>Instantiates a mesh with a height field.
-TopoMesh inherits from <code><a title="quagmire.FlatMesh" href="#quagmire.FlatMesh">FlatMesh()</a></code>.</p>
-<p>This object contains methods for the following operations:</p>
-<ul>
-<li>calculating the slope from height field</li>
-<li>constructing downhill matrices</li>
-<li>cumulative downstream flow</li>
-<li>handling flat spots and local minima</li>
-</ul>
+TopoMesh inherits from FlatMesh.</p>
+<p>This object contains methods for the following operations:
+- calculating the slope from height field
+- constructing downhill matrices
+- cumulative downstream flow
+- handling flat spots and local minima</p>
+<p>Call update_height to initialise these data structures.</p>
 <h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DM object</code></dt>
-<dd>Either a DMDA or DMPlex object created using the meshing
-functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools.html">quagmire.tools.meshtools</a></code></dd>
-</dl>
+<p>DM : PETSc DM object
+Either a DMDA or DMPlex object created using the meshing
+functions within the tools subdirectory</p>
 <h2 id="returns">Returns</h2>
-<dl>
-<dt><strong><code>TopoMesh</code></strong> :&ensp;<code>object</code></dt>
-<dd>
-<p>Inherits methods and attributes from:</p>
-<ul>
-<li><code><a title="quagmire.mesh.pixmesh.PixMesh" href="mesh/pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code>, <code><a title="quagmire.mesh.trimesh.TriMesh" href="mesh/trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code>, or <code><a title="quagmire.mesh.strimesh.sTriMesh" href="mesh/strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code></li>
-<li><code><a title="quagmire.topomesh.topomesh.TopoMesh" href="topomesh/topomesh.html#quagmire.topomesh.topomesh.TopoMesh">TopoMesh</a></code></li>
-</ul>
-</dd>
-</dl></div>
+<p>TopoMesh : object</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -731,28 +501,25 @@ functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools
 <pre><code class="python">def TopoMesh(DM, *args, **kwargs):
     &#34;&#34;&#34;
     Instantiates a mesh with a height field.
-    TopoMesh inherits from `FlatMesh`.
+    TopoMesh inherits from FlatMesh.
 
     This object contains methods for the following operations:
+     - calculating the slope from height field
+     - constructing downhill matrices
+     - cumulative downstream flow
+     - handling flat spots and local minima
 
-    - calculating the slope from height field
-    - constructing downhill matrices
-    - cumulative downstream flow
-    - handling flat spots and local minima
+    Call update_height to initialise these data structures.
 
     Parameters
     ----------
-    DM : PETSc DM object
+     DM : PETSc DM object
         Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
+        functions within the tools subdirectory
 
     Returns
     -------
-    TopoMesh : object
-        Inherits methods and attributes from:
-
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
-        - `topomesh.topomesh.TopoMesh`
+     TopoMesh : object
     &#34;&#34;&#34;
 
     BaseMeshType = _get_label(DM)
@@ -781,16 +548,7 @@ functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#dependencies">Dependencies</a><ul>
-<li><a href="#petsc-installation">PETSc installation</a></li>
-<li><a href="#hdf5-installation">HDF5 installation</a></li>
-</ul>
-</li>
-<li><a href="#usage">Usage</a></li>
-<li><a href="#tutorials">Tutorials</a></li>
-</ul>
+<ul></ul>
 </div>
 <ul id="index">
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
