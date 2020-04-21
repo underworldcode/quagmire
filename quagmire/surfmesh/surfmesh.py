@@ -48,6 +48,9 @@ class SurfMesh(_TopoMesh):
         self.deform_topography = self._height_update_context_manager_generator()
         self.upstream_area     = self.add_variable(name="A(x,y)", locked=True)
 
+        ## TODO: Should be able to fix upstream area as a "partial" function of upstream area
+        ## with a parameter value of 1.0 in the argument (or 1.0 above a ref height)
+
     ## Not sure if it is best to inherit this manager and extend it or to
     ## redefine / over-ride it. Only the exit method has changed.
 
@@ -90,7 +93,7 @@ class SurfMesh(_TopoMesh):
         t = perf_counter()
 
         self.upstream_area.unlock()
-        self.upstream_area.data = self.cumulative_flow(self.area)
+        self.upstream_area.data = self.cumulative_flow(self.area)  ## Should be upstream integral of 1.0
         self.upstream_area.lock()
 
         self.timings['Upstream area'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
@@ -162,7 +165,7 @@ class SurfMesh(_TopoMesh):
                                                          h[low_points])
             ## Note, the smoother has a communication barrier so needs to be called even
             ## if len(low_points==0) and there is no work to do on this process
-            smoothed_height = self.rbf_smoother(h+delta_height, iterations=smoothing_steps)
+            smoothed_height = h + self.rbf_smoother(delta_height, iterations=smoothing_steps)
 
             self.topography.data = np.maximum(smoothed_height, h)
             self.topography.sync()
@@ -178,7 +181,7 @@ class SurfMesh(_TopoMesh):
         return
 
 
-    def low_points_swamp_fill(self, its=1000, saddles=True, ref_height=0.0):
+    def low_points_swamp_fill(self, its=1000, saddles=True, ref_height=0.0, ref_gradient=0.001):
 
         import petsc4py
         from petsc4py import PETSc
@@ -193,16 +196,23 @@ class SurfMesh(_TopoMesh):
         my_low_points = self.identify_low_points()
         my_glow_points = self.lgmap_row.apply(my_low_points.astype(PETSc.IntType))
 
-
         t = perf_counter()
         ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
 
         if self.rank==0 and self.verbose:
             print("Build low point catchments - ", perf_counter() - t, " seconds")
 
-        if saddles:  # Find saddle points on the catchment edge
+        if saddles:  # Find saddle points on the catchment edge - catchment detection is via down-neighbour 1,
+                     # so neighbour 2 (or 3) is the earliest detection opportunity for a spill
+
             cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
-        else:        # Fine all edge points
+            try:
+                cedges3 = np.where(ctmt[self.down_neighbour[3]] != ctmt )[0] ## local numbering
+                cedges = np.unique(np.hstack((cedges,cedges3)))
+            except:
+                pass
+
+        else:        # Find all edge points (this does not seem to work in most cases ... why not ?)
             ctmt2 = ctmt[self.neighbour_cloud] - ctmt.reshape(-1,1)
             ctmt3 = ctmt2 * self.near_neighbour_mask
             cedges = np.where(ctmt3.any(axis=1))[0]
@@ -280,7 +290,8 @@ class SurfMesh(_TopoMesh):
             separation_y = (self.coords[catchment_nodes,1] - spill['y'])
             distance = np.hypot(separation_x, separation_y)
 
-            height2[catchment_nodes] = spill['h'] + 0.000001 * distance  # A 'small' gradient (should be a user-parameter)
+            ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
+            height2[catchment_nodes] = spill['h'] + ref_gradient * distance  # A 'small' gradient (should be a user-parameter)
 
         height2 = self.sync(height2)
 
