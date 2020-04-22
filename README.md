@@ -1,6 +1,6 @@
 # Quagmire
 
-
+![build/test](https://github.com/underworldcode/quagmire/workflows/build/test/badge.svg)
 
 Quagmire is a Python surface process framework for building erosion and deposition models on highly parallel, decomposed structured and unstructured meshes.
 
@@ -12,7 +12,7 @@ The Surface Processes class inherits from the Topography class, which in turn in
 
 ## Demonstration
 
-[![https://img.shields.io/badge/<LABEL>-<MESSAGE>-<COLOR>](https://img.shields.io/badge/Launch-Quagmire_Demo-blue)](https://demon.underworldcloud.org/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Funderworldcode%2Fquagmire&urlpath=lab%2Ftree%2Fquagmire%2Fquagmire%2FExamples%2FNotebooks)
+[![Launch Demo](https://img.shields.io/badge/Launch-Quagmire_Demo-Blue)](https://demon.underworldcloud.org/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Funderworldcode%2Fquagmire&urlpath=lab%2Ftree%2Fquagmire%2Fquagmire%2FExamples%2FNotebooks)
 
 
 ## Installation
