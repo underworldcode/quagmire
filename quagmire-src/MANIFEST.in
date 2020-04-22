@@ -1,9 +1,0 @@
-include README.md
-include LICENCE
-include MANIFEST.in
-include COPYING
-include setup.cfg
-include fortran/*
-recursive-include quagmire/*.py
-# include tests/*.py
-# include Notebooks/*

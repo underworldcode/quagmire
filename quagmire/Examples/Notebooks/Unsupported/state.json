@@ -1,0 +1,150 @@
+{
+  "colourmaps": [
+    {
+      "colours": [
+        {
+          "colour": "rgba(0,0,0,1)",
+          "position": 0.0
+        },
+        {
+          "colour": "rgba(5,0,0,0)",
+          "position": 1.0
+        }
+      ],
+      "logscale": false,
+      "name": "surface_colourmap",
+      "range": [
+        -1.0,
+        5.0
+      ]
+    },
+    {
+      "colours": [
+        {
+          "colour": "rgba(0,0,0,1)",
+          "position": 0.0
+        },
+        {
+          "colour": "rgba(0,0,0,0)",
+          "position": 1.0
+        }
+      ],
+      "logscale": true,
+      "name": "flow_surface_colourmap"
+    }
+  ],
+  "objects": [
+    {
+      "colourmap": "surface_colourmap",
+      "data": {
+        "topography": {
+          "label": "topography",
+          "maximum": 1.49932253360748,
+          "minimum": -0.000472582643851638,
+          "size": 250737
+        }
+      },
+      "geometry": "triangles",
+      "logScale": false,
+      "max": [
+        5.00500154495239,
+        5.00500011444092,
+        1.49932253360748
+      ],
+      "min": [
+        -5.00499820709229,
+        -5.00499868392944,
+        -0.000472582643851638
+      ],
+      "name": "surface",
+      "visible": true,
+      "wireframe": false,
+      "zmin": -0.1
+    },
+    {
+      "colourmap": "flow_surface_colourmap",
+      "data": {
+        "flowpaths": {
+          "label": "flowpaths",
+          "maximum": 13257.9130859375,
+          "minimum": 1.0,
+          "size": 250737
+        }
+      },
+      "geometry": "triangles",
+      "logScale": false,
+      "max": [
+        5.00500154495239,
+        5.00500011444092,
+        1.50932252407074
+      ],
+      "min": [
+        -5.00499820709229,
+        -5.00499868392944,
+        0.0095274168998003
+      ],
+      "name": "flow_surface",
+      "visible": true,
+      "wireframe": false
+    },
+    {
+      "colourbar": true,
+      "colourmap": "surface_colourmap",
+      "label": "Topography Colormap",
+      "name": "surface_colourbar",
+      "visible": true
+    }
+  ],
+  "properties": {
+    "background": "rgba(255,255,255,1)",
+    "border": 0,
+    "near": -10.0,
+    "resolution": [
+      1000,
+      600
+    ]
+  },
+  "reload": false,
+  "views": [
+    {
+      "bounds": {
+        "max": [
+          5.00500154495239,
+          5.00500011444092,
+          1.50932252407074
+        ],
+        "min": [
+          -5.00499820709229,
+          -5.00499868392944,
+          -0.000472582643851638
+        ]
+      },
+      "focus": [
+        1.9073486328125e-06,
+        4.76837158203125e-07,
+        0.754424929618835
+      ],
+      "rotate": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "translate": [
+        0.0,
+        0.0,
+        -14.2365608215332
+      ],
+      "xyzrotate": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ]
+}

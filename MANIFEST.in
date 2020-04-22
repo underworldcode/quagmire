@@ -1,0 +1,10 @@
+include README.md
+include MANIFEST.in
+include COPYING
+include COPYING.LESSER
+include setup.cfg
+include src/*
+recursive-include quagmire/ *.py
+include quagmire/Examples/Notebooks/Tutorial/*.ipynb
+include quagmire/Examples/Notebooks/WorkedExamples/*.ipynb
+include quagmire/Examples/0-StartHere.ipynb

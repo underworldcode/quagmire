@@ -2,6 +2,11 @@
 *.pyc
 
 *checkpoint.ipynb
+.ipynb_checkpoints/*
+*.ipynb_checkpoints*
+
+Paper-Theory
+Paper-JOSS
 
 *.mp4
 *.h5
@@ -24,3 +29,27 @@ quagmire/Examples/data/ETOPO1_Ice_c_geotiff.tif
 .local
 .cache
 .bash_history
+
+/.eggs/
+/.idea/
+/.vscode/
+/.config/
+/.spyproject/
+/fortran/
+
+
+/quagmire/_fortran.cpython-37m-darwin.so.dSYM
+/quagmire/Examples/Scripts/control.html
+/quagmire/_fortran.cpython-37m-darwin.so
+/quagmire/_fortran.cpython-38-darwin.so
+/quagmire.egg-info/
+
+Notebooks/.ipython
+Notebooks/.local
+
+/.pytest_cache/
+
+__pycache__
+
+src/_fortranmodule.c
+src/_fortran-f2pywrappers.f

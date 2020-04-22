@@ -1,0 +1,46 @@
+name: Deploy docs to gh-pages
+
+on:
+  push
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: goanpeca/setup-miniconda@v1
+        with:
+          python-version: '3.7'
+
+      - name: Install dependencies with conda
+        shell: bash -l {0}
+        run: |
+          conda install pip 
+          conda install -c conda-forge compilers numpy scipy sympy
+          conda install -c conda-forge petsc4py petsc mpi4py h5py
+          conda install -c conda-forge pint 
+          conda install -c underworldcode stripy
+
+      - name: Install pdoc3
+        shell: bash -l {0}
+        run: |
+          pip install pdoc3
+
+      - name: Install (self)
+        shell: bash -l {0}
+        run: |
+          python --version 
+          pip install -e .
+   
+      - name: Build docs with pdoc
+        shell: bash -l {0}
+        run: |
+          mkdir -p docs
+          pdoc3 --config latex_math=True --html -o docs --force quagmire 
+
+      # Note deploy key needs the ----BEGIN ... KEY---- lines too
+      - name: Deploy docs to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.GH_PAGES_DEPLOY_PR_KEY }}
+          publish_dir: docs/quagmire

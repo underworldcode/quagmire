@@ -1,0 +1,67 @@
+## Workflow to build dependencies with conda / install locally with pip
+name: conda + pip
+
+on: 
+  push
+
+jobs:
+  build_and_test: 
+    name: Build test (${{matrix.os}}, py ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'macos-latest', 'ubuntu-latest' ]
+        python-version: [  '3.7' ]
+      
+        # exclude: 
+        # - os: ubuntu-latest
+        #   python-version: '2.7'
+        # - os: macos-latest
+        #   python-version: '2.7'
+
+    steps:
+
+      - uses: actions/checkout@v2
+      - uses: goanpeca/setup-miniconda@v1
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies with conda
+        if: matrix.os == 'macos-latest' 
+        shell: bash -l {0}
+        run: |
+          conda install pip 
+          conda install conda-build anaconda-client
+          conda install -c conda-forge libgfortran numpy scipy sympy
+          conda install -c conda-forge petsc4py petsc mpi4py h5py
+          conda install -c conda-forge pint 
+          conda install -c underworldcode stripy 
+          conda install pytest
+
+      - name: Install dependencies with conda
+        if: matrix.os == 'ubuntu-latest' 
+        shell: bash -l {0}
+        run: |
+          conda install pip 
+          conda install conda-build anaconda-client
+          conda install -c conda-forge compilers numpy scipy sympy
+          conda install -c conda-forge petsc4py petsc mpi4py h5py
+          conda install -c conda-forge pint 
+          conda install -c underworldcode stripy 
+          conda install pytest
+
+      - name: Install (self)
+        shell: bash -l {0}
+        run: |
+          python --version 
+          pip install -e . 
+          
+      - name: Test with pytest
+        shell: bash -l {0}
+        run: |
+          pytest
+
+
+          
