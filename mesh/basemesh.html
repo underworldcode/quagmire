@@ -90,6 +90,22 @@ class MeshVariable(_LazyEvaluation):
         return
 
     def copy(self, name=None, locked=None):
+        &#34;&#34;&#34;
+        Create a copy of this MeshVariable
+
+        Parameters
+        ----------
+        name : str
+            set a name to this MeshVariable, otherwise &#34;copy&#34;
+            is appended to the original name
+        locked : bool (default: False)
+            lock the mesh variable from accidental modification
+
+        Returns
+        -------
+        MeshVariable : object
+            Instantiate a MeshVariable copy.
+        &#34;&#34;&#34;
 
         if name is None:
             name = self._name+&#34;_copy&#34;
@@ -120,6 +136,7 @@ class MeshVariable(_LazyEvaluation):
 
     @property
     def data(self):
+        &#34;&#34;&#34; View of MeshVariable data of shape (n,) &#34;&#34;&#34;
         pass
 
     @data.getter
@@ -166,14 +183,18 @@ class MeshVariable(_LazyEvaluation):
 
 
     def getGlobalVector(self, gdata):
+        &#34;&#34;&#34;
+        Obtain a PETSc global vector of the MeshVariable
+        &#34;&#34;&#34;
         from petsc4py import PETSc
         self._dm.localToGlobal(self._ldata, gdata, addv=PETSc.InsertMode.INSERT_VALUES)
         return
 
 
     def sync(self, mergeShadow=False):
-
-        &#34;&#34;&#34; Explicit global sync of data &#34;&#34;&#34;
+        &#34;&#34;&#34;
+        Explicit global sync of data
+        &#34;&#34;&#34;
 
         from petsc4py import PETSc
 
@@ -196,17 +217,18 @@ class MeshVariable(_LazyEvaluation):
     def save(self, filename=None, append=False):
         &#34;&#34;&#34;
         Save the MeshVariable to disk.
+
         Parameters
         ----------
-         filename : str (optional)
+        filename : str (optional)
             The name of the output file. Relative or absolute paths may be
             used, but all directories must exist.
-         append   : bool (default is False)
+        append : bool (default is False)
             Append to existing file if it exists
 
         Notes
         -----
-         This method must be called collectively by all processes.
+        This method must be called collectively by all processes.
         &#34;&#34;&#34;
         from petsc4py import PETSc
         import os
@@ -239,14 +261,14 @@ class MeshVariable(_LazyEvaluation):
 
         Parameters
         ----------
-         filename: str
-             The filename for the saved file. Relative or absolute paths may be
-             used, but all directories must exist.
+        filename: str
+            The filename for the saved file. Relative or absolute paths may be
+            used, but all directories must exist.
 
         Notes
         -----
-         Provided files must be in hdf5 format, and contain a vector the same
-         size and with the same name as the current MeshVariable
+        Provided files must be in hdf5 format, and contain a vector the same
+        size and with the same name as the current MeshVariable
         &#34;&#34;&#34;
         from petsc4py import PETSc
         # need a global vector
@@ -269,17 +291,17 @@ class MeshVariable(_LazyEvaluation):
 
         Parameters
         ----------
-         PHI : ndarray of floats, shape (n,)
+        PHI : ndarray of floats, shape (n,)
             compute the derivative of this array
-         nit : int optional (default: 10)
+        nit : int optional (default: 10)
             number of iterations to reach convergence
-         tol : float optional (default: 1e-8)
+        tol : float optional (default: 1e-8)
             convergence is reached when this tolerance is met
         Returns
         -------
-         PHIx : ndarray of floats, shape(n,)
+        PHIx : ndarray of floats, shape (n,)
             first partial derivative of PHI in x direction
-         PHIy : ndarray of floats, shape(n,)
+        PHIy : ndarray of floats, shape (n,)
             first partial derivative of PHI in y direction
         &#34;&#34;&#34;
 
@@ -295,14 +317,14 @@ class MeshVariable(_LazyEvaluation):
 
         Parameters
         ----------
-         PHI : ndarray of floats, shape (n,)
+        PHI : ndarray of floats, shape (n,)
             compute the derivative of this array
 
         Returns
         -------
-         PHIx : ndarray of floats, shape(n,)
+        PHIx : ndarray of floats, shape(n,)
             first partial derivative of PHI in x direction
-         PHIy : ndarray of floats, shape(n,)
+        PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         &#34;&#34;&#34;
 
@@ -344,6 +366,30 @@ class MeshVariable(_LazyEvaluation):
 
 
     def interpolate(self, xi, yi, err=False, **kwargs):
+        &#34;&#34;&#34;
+        Interpolate mesh data to a set of coordinates
+
+        This method just passes the coordinates to the interpolation
+        methods on the mesh object.
+
+        Parameters
+        ----------
+        xi : array of floats, shape (l,)
+            interpolation coordinates in the x direction
+        yi : array of floats, shape (l,)
+            interpolation coordinates in the y direction
+        err : bool (default: False)
+            toggle whether to return error information
+        **kwargs : keyword arguments
+            optional arguments to pass through to the interpolation method
+
+        Returns
+        -------
+        interp : array of floats, shape (l,)
+            interpolated values of MeshVariable at xi,yi coordinates
+        err : array of ints, shape (l,)
+            error information to diagnose interpolation / extrapolation
+        &#34;&#34;&#34;
         ## pass through for the mesh&#39;s interpolate method
         import numpy as np
 
@@ -361,9 +407,10 @@ class MeshVariable(_LazyEvaluation):
 
 
     def evaluate(self, *args, **kwargs):
-        &#34;&#34;&#34; If the argument is a mesh, return the
-            values at the nodes. In all other cases call the interpolate
-            method &#34;&#34;&#34;
+        &#34;&#34;&#34;
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+        &#34;&#34;&#34;
 
         import quagmire
 
@@ -447,6 +494,7 @@ class VectorMeshVariable(MeshVariable):
 
     @property
     def data(self):
+        &#34;&#34;&#34; View of MeshVariable data of shape (n,) &#34;&#34;&#34;
         pass
 
     @data.getter
@@ -470,9 +518,10 @@ class VectorMeshVariable(MeshVariable):
         raise TypeError(&#34;VectorMeshVariable does not currently support interpolate operations&#34;)
 
     def evaluate(self, xi, yi, err=False, **kwargs):
-        &#34;&#34;&#34;A pass through for the interpolate method chosen for
-        consistency with underworld&#34;&#34;&#34;
-
+        &#34;&#34;&#34;
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+        &#34;&#34;&#34;
         return self.interpolate(*args, **kwargs)
 
 
@@ -543,6 +592,22 @@ If no mesh is provided then no gradient function can be implemented</p></div>
         return
 
     def copy(self, name=None, locked=None):
+        &#34;&#34;&#34;
+        Create a copy of this MeshVariable
+
+        Parameters
+        ----------
+        name : str
+            set a name to this MeshVariable, otherwise &#34;copy&#34;
+            is appended to the original name
+        locked : bool (default: False)
+            lock the mesh variable from accidental modification
+
+        Returns
+        -------
+        MeshVariable : object
+            Instantiate a MeshVariable copy.
+        &#34;&#34;&#34;
 
         if name is None:
             name = self._name+&#34;_copy&#34;
@@ -573,6 +638,7 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 
     @property
     def data(self):
+        &#34;&#34;&#34; View of MeshVariable data of shape (n,) &#34;&#34;&#34;
         pass
 
     @data.getter
@@ -619,14 +685,18 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 
 
     def getGlobalVector(self, gdata):
+        &#34;&#34;&#34;
+        Obtain a PETSc global vector of the MeshVariable
+        &#34;&#34;&#34;
         from petsc4py import PETSc
         self._dm.localToGlobal(self._ldata, gdata, addv=PETSc.InsertMode.INSERT_VALUES)
         return
 
 
     def sync(self, mergeShadow=False):
-
-        &#34;&#34;&#34; Explicit global sync of data &#34;&#34;&#34;
+        &#34;&#34;&#34;
+        Explicit global sync of data
+        &#34;&#34;&#34;
 
         from petsc4py import PETSc
 
@@ -649,17 +719,18 @@ If no mesh is provided then no gradient function can be implemented</p></div>
     def save(self, filename=None, append=False):
         &#34;&#34;&#34;
         Save the MeshVariable to disk.
+
         Parameters
         ----------
-         filename : str (optional)
+        filename : str (optional)
             The name of the output file. Relative or absolute paths may be
             used, but all directories must exist.
-         append   : bool (default is False)
+        append : bool (default is False)
             Append to existing file if it exists
 
         Notes
         -----
-         This method must be called collectively by all processes.
+        This method must be called collectively by all processes.
         &#34;&#34;&#34;
         from petsc4py import PETSc
         import os
@@ -692,14 +763,14 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 
         Parameters
         ----------
-         filename: str
-             The filename for the saved file. Relative or absolute paths may be
-             used, but all directories must exist.
+        filename: str
+            The filename for the saved file. Relative or absolute paths may be
+            used, but all directories must exist.
 
         Notes
         -----
-         Provided files must be in hdf5 format, and contain a vector the same
-         size and with the same name as the current MeshVariable
+        Provided files must be in hdf5 format, and contain a vector the same
+        size and with the same name as the current MeshVariable
         &#34;&#34;&#34;
         from petsc4py import PETSc
         # need a global vector
@@ -722,17 +793,17 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 
         Parameters
         ----------
-         PHI : ndarray of floats, shape (n,)
+        PHI : ndarray of floats, shape (n,)
             compute the derivative of this array
-         nit : int optional (default: 10)
+        nit : int optional (default: 10)
             number of iterations to reach convergence
-         tol : float optional (default: 1e-8)
+        tol : float optional (default: 1e-8)
             convergence is reached when this tolerance is met
         Returns
         -------
-         PHIx : ndarray of floats, shape(n,)
+        PHIx : ndarray of floats, shape (n,)
             first partial derivative of PHI in x direction
-         PHIy : ndarray of floats, shape(n,)
+        PHIy : ndarray of floats, shape (n,)
             first partial derivative of PHI in y direction
         &#34;&#34;&#34;
 
@@ -748,14 +819,14 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 
         Parameters
         ----------
-         PHI : ndarray of floats, shape (n,)
+        PHI : ndarray of floats, shape (n,)
             compute the derivative of this array
 
         Returns
         -------
-         PHIx : ndarray of floats, shape(n,)
+        PHIx : ndarray of floats, shape(n,)
             first partial derivative of PHI in x direction
-         PHIy : ndarray of floats, shape(n,)
+        PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         &#34;&#34;&#34;
 
@@ -797,6 +868,30 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 
 
     def interpolate(self, xi, yi, err=False, **kwargs):
+        &#34;&#34;&#34;
+        Interpolate mesh data to a set of coordinates
+
+        This method just passes the coordinates to the interpolation
+        methods on the mesh object.
+
+        Parameters
+        ----------
+        xi : array of floats, shape (l,)
+            interpolation coordinates in the x direction
+        yi : array of floats, shape (l,)
+            interpolation coordinates in the y direction
+        err : bool (default: False)
+            toggle whether to return error information
+        **kwargs : keyword arguments
+            optional arguments to pass through to the interpolation method
+
+        Returns
+        -------
+        interp : array of floats, shape (l,)
+            interpolated values of MeshVariable at xi,yi coordinates
+        err : array of ints, shape (l,)
+            error information to diagnose interpolation / extrapolation
+        &#34;&#34;&#34;
         ## pass through for the mesh&#39;s interpolate method
         import numpy as np
 
@@ -814,9 +909,10 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 
 
     def evaluate(self, *args, **kwargs):
-        &#34;&#34;&#34; If the argument is a mesh, return the
-            values at the nodes. In all other cases call the interpolate
-            method &#34;&#34;&#34;
+        &#34;&#34;&#34;
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+        &#34;&#34;&#34;
 
         import quagmire
 
@@ -908,12 +1004,41 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 <span>def <span class="ident">copy</span></span>(<span>self, name=None, locked=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Create a copy of this MeshVariable</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>set a name to this MeshVariable, otherwise "copy"
+is appended to the original name</dd>
+<dt><strong><code>locked</code></strong> :&ensp;<code>bool (default: False)</code></dt>
+<dd>lock the mesh variable from accidental modification</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>MeshVariable</code></strong> :&ensp;<code>object</code></dt>
+<dd>Instantiate a MeshVariable copy.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def copy(self, name=None, locked=None):
+    &#34;&#34;&#34;
+    Create a copy of this MeshVariable
+
+    Parameters
+    ----------
+    name : str
+        set a name to this MeshVariable, otherwise &#34;copy&#34;
+        is appended to the original name
+    locked : bool (default: False)
+        lock the mesh variable from accidental modification
+
+    Returns
+    -------
+    MeshVariable : object
+        Instantiate a MeshVariable copy.
+    &#34;&#34;&#34;
 
     if name is None:
         name = self._name+&#34;_copy&#34;
@@ -934,17 +1059,17 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 <span>def <span class="ident">evaluate</span></span>(<span>self, *args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>If the argument is a mesh, return the
-values at the nodes. In all other cases call the interpolate
-method</p></div>
+<div class="desc"><p>If the argument is a mesh, return the values at the nodes.
+In all other cases call the <code>interpolate</code> method.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def evaluate(self, *args, **kwargs):
-    &#34;&#34;&#34; If the argument is a mesh, return the
-        values at the nodes. In all other cases call the interpolate
-        method &#34;&#34;&#34;
+    &#34;&#34;&#34;
+    If the argument is a mesh, return the values at the nodes.
+    In all other cases call the `interpolate` method.
+    &#34;&#34;&#34;
 
     import quagmire
 
@@ -961,12 +1086,15 @@ method</p></div>
 <span>def <span class="ident">getGlobalVector</span></span>(<span>self, gdata)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Obtain a PETSc global vector of the MeshVariable</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def getGlobalVector(self, gdata):
+    &#34;&#34;&#34;
+    Obtain a PETSc global vector of the MeshVariable
+    &#34;&#34;&#34;
     from petsc4py import PETSc
     self._dm.localToGlobal(self._ldata, gdata, addv=PETSc.InsertMode.INSERT_VALUES)
     return</code></pre>
@@ -979,18 +1107,21 @@ method</p></div>
 <div class="desc"><p>Compute values of the derivatives of PHI in the x, y directions at the nodal points.
 This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.</p>
 <h2 id="parameters">Parameters</h2>
-<p>PHI : ndarray of floats, shape (n,)
-compute the derivative of this array
-nit : int optional (default: 10)
-number of iterations to reach convergence
-tol : float optional (default: 1e-8)
-convergence is reached when this tolerance is met
-Returns</p>
-<hr>
-<p>PHIx : ndarray of floats, shape(n,)
-first partial derivative of PHI in x direction
-PHIy : ndarray of floats, shape(n,)
-first partial derivative of PHI in y direction</p></div>
+<dl>
+<dt><strong><code>PHI</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape (n,)</code></dt>
+<dd>compute the derivative of this array</dd>
+<dt><strong><code>nit</code></strong> :&ensp;<code>int optional (default: 10)</code></dt>
+<dd>number of iterations to reach convergence</dd>
+<dt><strong><code>tol</code></strong> :&ensp;<code>float optional (default: 1e-8)</code></dt>
+<dd>convergence is reached when this tolerance is met</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>PHIx</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape (n,)</code></dt>
+<dd>first partial derivative of PHI in x direction</dd>
+<dt><strong><code>PHIy</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape (n,)</code></dt>
+<dd>first partial derivative of PHI in y direction</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1002,17 +1133,17 @@ first partial derivative of PHI in y direction</p></div>
 
     Parameters
     ----------
-     PHI : ndarray of floats, shape (n,)
+    PHI : ndarray of floats, shape (n,)
         compute the derivative of this array
-     nit : int optional (default: 10)
+    nit : int optional (default: 10)
         number of iterations to reach convergence
-     tol : float optional (default: 1e-8)
+    tol : float optional (default: 1e-8)
         convergence is reached when this tolerance is met
     Returns
     -------
-     PHIx : ndarray of floats, shape(n,)
+    PHIx : ndarray of floats, shape (n,)
         first partial derivative of PHI in x direction
-     PHIy : ndarray of floats, shape(n,)
+    PHIy : ndarray of floats, shape (n,)
         first partial derivative of PHI in y direction
     &#34;&#34;&#34;
 
@@ -1028,13 +1159,17 @@ first partial derivative of PHI in y direction</p></div>
 <div class="desc"><p>Compute values of the derivatives of PHI in the x, y directions at the nodal points.
 This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.</p>
 <h2 id="parameters">Parameters</h2>
-<p>PHI : ndarray of floats, shape (n,)
-compute the derivative of this array</p>
+<dl>
+<dt><strong><code>PHI</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape (n,)</code></dt>
+<dd>compute the derivative of this array</dd>
+</dl>
 <h2 id="returns">Returns</h2>
-<p>PHIx : ndarray of floats, shape(n,)
-first partial derivative of PHI in x direction
-PHIy : ndarray of floats, shape(n,)
-first partial derivative of PHI in y direction</p></div>
+<dl>
+<dt><strong><code>PHIx</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape(n,)</code></dt>
+<dd>first partial derivative of PHI in x direction</dd>
+<dt><strong><code>PHIy</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape(n,)</code></dt>
+<dd>first partial derivative of PHI in y direction</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1046,14 +1181,14 @@ first partial derivative of PHI in y direction</p></div>
 
     Parameters
     ----------
-     PHI : ndarray of floats, shape (n,)
+    PHI : ndarray of floats, shape (n,)
         compute the derivative of this array
 
     Returns
     -------
-     PHIx : ndarray of floats, shape(n,)
+    PHIx : ndarray of floats, shape(n,)
         first partial derivative of PHI in x direction
-     PHIy : ndarray of floats, shape(n,)
+    PHIy : ndarray of floats, shape(n,)
         first partial derivative of PHI in y direction
     &#34;&#34;&#34;
 
@@ -1097,12 +1232,56 @@ first partial derivative of PHI in y direction</p></div>
 <span>def <span class="ident">interpolate</span></span>(<span>self, xi, yi, err=False, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Interpolate mesh data to a set of coordinates</p>
+<p>This method just passes the coordinates to the interpolation
+methods on the mesh object.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>xi</code></strong> :&ensp;<code>array</code> of <code>floats, shape (l,)</code></dt>
+<dd>interpolation coordinates in the x direction</dd>
+<dt><strong><code>yi</code></strong> :&ensp;<code>array</code> of <code>floats, shape (l,)</code></dt>
+<dd>interpolation coordinates in the y direction</dd>
+<dt><strong><code>err</code></strong> :&ensp;<code>bool (default: False)</code></dt>
+<dd>toggle whether to return error information</dd>
+<dt><strong><code>**kwargs</code></strong> :&ensp;<code>keyword arguments</code></dt>
+<dd>optional arguments to pass through to the interpolation method</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>interp</code></strong> :&ensp;<code>array</code> of <code>floats, shape (l,)</code></dt>
+<dd>interpolated values of MeshVariable at xi,yi coordinates</dd>
+<dt><strong><code>err</code></strong> :&ensp;<code>array</code> of <code>ints, shape (l,)</code></dt>
+<dd>error information to diagnose interpolation / extrapolation</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def interpolate(self, xi, yi, err=False, **kwargs):
+    &#34;&#34;&#34;
+    Interpolate mesh data to a set of coordinates
+
+    This method just passes the coordinates to the interpolation
+    methods on the mesh object.
+
+    Parameters
+    ----------
+    xi : array of floats, shape (l,)
+        interpolation coordinates in the x direction
+    yi : array of floats, shape (l,)
+        interpolation coordinates in the y direction
+    err : bool (default: False)
+        toggle whether to return error information
+    **kwargs : keyword arguments
+        optional arguments to pass through to the interpolation method
+
+    Returns
+    -------
+    interp : array of floats, shape (l,)
+        interpolated values of MeshVariable at xi,yi coordinates
+    err : array of ints, shape (l,)
+        error information to diagnose interpolation / extrapolation
+    &#34;&#34;&#34;
     ## pass through for the mesh&#39;s interpolate method
     import numpy as np
 
@@ -1125,9 +1304,11 @@ first partial derivative of PHI in y direction</p></div>
 <dd>
 <div class="desc"><p>Load the MeshVariable from disk.</p>
 <h2 id="parameters">Parameters</h2>
-<p>filename: str
-The filename for the saved file. Relative or absolute paths may be
-used, but all directories must exist.</p>
+<dl>
+<dt><strong><code>filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>The filename for the saved file. Relative or absolute paths may be
+used, but all directories must exist.</dd>
+</dl>
 <h2 id="notes">Notes</h2>
 <p>Provided files must be in hdf5 format, and contain a vector the same
 size and with the same name as the current MeshVariable</p></div>
@@ -1141,14 +1322,14 @@ size and with the same name as the current MeshVariable</p></div>
 
     Parameters
     ----------
-     filename: str
-         The filename for the saved file. Relative or absolute paths may be
-         used, but all directories must exist.
+    filename: str
+        The filename for the saved file. Relative or absolute paths may be
+        used, but all directories must exist.
 
     Notes
     -----
-     Provided files must be in hdf5 format, and contain a vector the same
-     size and with the same name as the current MeshVariable
+    Provided files must be in hdf5 format, and contain a vector the same
+    size and with the same name as the current MeshVariable
     &#34;&#34;&#34;
     from petsc4py import PETSc
     # need a global vector
@@ -1232,15 +1413,15 @@ size and with the same name as the current MeshVariable</p></div>
 <span>def <span class="ident">save</span></span>(<span>self, filename=None, append=False)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Save the MeshVariable to disk.
-Parameters</p>
-<hr>
-<p>filename : str (optional)
-The name of the output file. Relative or absolute paths may be
-used, but all directories must exist.
-append
-: bool (default is False)
-Append to existing file if it exists</p>
+<div class="desc"><p>Save the MeshVariable to disk.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>filename</code></strong> :&ensp;<code>str (optional)</code></dt>
+<dd>The name of the output file. Relative or absolute paths may be
+used, but all directories must exist.</dd>
+<dt><strong><code>append</code></strong> :&ensp;<code>bool (default is False)</code></dt>
+<dd>Append to existing file if it exists</dd>
+</dl>
 <h2 id="notes">Notes</h2>
 <p>This method must be called collectively by all processes.</p></div>
 <details class="source">
@@ -1250,17 +1431,18 @@ Append to existing file if it exists</p>
 <pre><code class="python">def save(self, filename=None, append=False):
     &#34;&#34;&#34;
     Save the MeshVariable to disk.
+
     Parameters
     ----------
-     filename : str (optional)
+    filename : str (optional)
         The name of the output file. Relative or absolute paths may be
         used, but all directories must exist.
-     append   : bool (default is False)
+    append : bool (default is False)
         Append to existing file if it exists
 
     Notes
     -----
-     This method must be called collectively by all processes.
+    This method must be called collectively by all processes.
     &#34;&#34;&#34;
     from petsc4py import PETSc
     import os
@@ -1334,8 +1516,9 @@ Append to existing file if it exists</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def sync(self, mergeShadow=False):
-
-    &#34;&#34;&#34; Explicit global sync of data &#34;&#34;&#34;
+    &#34;&#34;&#34;
+    Explicit global sync of data
+    &#34;&#34;&#34;
 
     from petsc4py import PETSc
 
@@ -1431,6 +1614,7 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 
     @property
     def data(self):
+        &#34;&#34;&#34; View of MeshVariable data of shape (n,) &#34;&#34;&#34;
         pass
 
     @data.getter
@@ -1454,9 +1638,10 @@ If no mesh is provided then no gradient function can be implemented</p></div>
         raise TypeError(&#34;VectorMeshVariable does not currently support interpolate operations&#34;)
 
     def evaluate(self, xi, yi, err=False, **kwargs):
-        &#34;&#34;&#34;A pass through for the interpolate method chosen for
-        consistency with underworld&#34;&#34;&#34;
-
+        &#34;&#34;&#34;
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+        &#34;&#34;&#34;
         return self.interpolate(*args, **kwargs)
 
 
@@ -1487,36 +1672,6 @@ def data(self):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="quagmire.mesh.basemesh.VectorMeshVariable.evaluate"><code class="name flex">
-<span>def <span class="ident">evaluate</span></span>(<span>self, xi, yi, err=False, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>A pass through for the interpolate method chosen for
-consistency with underworld</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def evaluate(self, xi, yi, err=False, **kwargs):
-    &#34;&#34;&#34;A pass through for the interpolate method chosen for
-    consistency with underworld&#34;&#34;&#34;
-
-    return self.interpolate(*args, **kwargs)</code></pre>
-</details>
-</dd>
-<dt id="quagmire.mesh.basemesh.VectorMeshVariable.interpolate"><code class="name flex">
-<span>def <span class="ident">interpolate</span></span>(<span>self, xi, yi, err=False, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def interpolate(self, xi, yi, err=False, **kwargs):
-    raise TypeError(&#34;VectorMeshVariable does not currently support interpolate operations&#34;)</code></pre>
-</details>
-</dd>
 <dt id="quagmire.mesh.basemesh.VectorMeshVariable.norm"><code class="name flex">
 <span>def <span class="ident">norm</span></span>(<span>self, axis=1)</span>
 </code></dt>
@@ -1537,9 +1692,13 @@ consistency with underworld</p></div>
 <ul class="hlist">
 <li><code><b><a title="quagmire.mesh.basemesh.MeshVariable" href="#quagmire.mesh.basemesh.MeshVariable">MeshVariable</a></b></code>:
 <ul class="hlist">
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.copy" href="#quagmire.mesh.basemesh.MeshVariable.copy">copy</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.evaluate" href="#quagmire.mesh.basemesh.MeshVariable.evaluate">evaluate</a></code></li>
 <li><code><a title="quagmire.mesh.basemesh.MeshVariable.fn_gradient" href="../function/function_classes.html#quagmire.function.function_classes.LazyEvaluation.fn_gradient">fn_gradient</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.getGlobalVector" href="#quagmire.mesh.basemesh.MeshVariable.getGlobalVector">getGlobalVector</a></code></li>
 <li><code><a title="quagmire.mesh.basemesh.MeshVariable.gradient" href="#quagmire.mesh.basemesh.MeshVariable.gradient">gradient</a></code></li>
 <li><code><a title="quagmire.mesh.basemesh.MeshVariable.gradient_patch" href="#quagmire.mesh.basemesh.MeshVariable.gradient_patch">gradient_patch</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.interpolate" href="#quagmire.mesh.basemesh.MeshVariable.interpolate">interpolate</a></code></li>
 <li><code><a title="quagmire.mesh.basemesh.MeshVariable.load" href="#quagmire.mesh.basemesh.MeshVariable.load">load</a></code></li>
 <li><code><a title="quagmire.mesh.basemesh.MeshVariable.max" href="#quagmire.mesh.basemesh.MeshVariable.max">max</a></code></li>
 <li><code><a title="quagmire.mesh.basemesh.MeshVariable.mean" href="#quagmire.mesh.basemesh.MeshVariable.mean">mean</a></code></li>
@@ -1594,8 +1753,6 @@ consistency with underworld</p></div>
 <h4><code><a title="quagmire.mesh.basemesh.VectorMeshVariable" href="#quagmire.mesh.basemesh.VectorMeshVariable">VectorMeshVariable</a></code></h4>
 <ul class="">
 <li><code><a title="quagmire.mesh.basemesh.VectorMeshVariable.data" href="#quagmire.mesh.basemesh.VectorMeshVariable.data">data</a></code></li>
-<li><code><a title="quagmire.mesh.basemesh.VectorMeshVariable.evaluate" href="#quagmire.mesh.basemesh.VectorMeshVariable.evaluate">evaluate</a></code></li>
-<li><code><a title="quagmire.mesh.basemesh.VectorMeshVariable.interpolate" href="#quagmire.mesh.basemesh.VectorMeshVariable.interpolate">interpolate</a></code></li>
 <li><code><a title="quagmire.mesh.basemesh.VectorMeshVariable.norm" href="#quagmire.mesh.basemesh.VectorMeshVariable.norm">norm</a></code></li>
 </ul>
 </li>
