@@ -1,12 +1,19 @@
 # Quagmire
 
+
+
 Quagmire is a Python surface process framework for building erosion and deposition models on highly parallel, decomposed structured and unstructured meshes.
 
 Quagmire is structured into three major classes that inherit methods and attributes from lower tiers.
 
-![Quagmire hierarchy](https://github.com/University-of-Melbourne-Geodynamics/quagmire/blob/master/Notebooks/Images/hierarchy_chart.png)
+![Quagmire hierarchy](https://github.com/Underworldcode/quagmire/blob/master/Notebooks/Images/hierarchy_chart.png)
 
 The Surface Processes class inherits from the Topography class, which in turn inherits from TriMesh or PixMesh depending on the type of mesh.
+
+## Demonstration
+
+[![https://img.shields.io/badge/<LABEL>-<MESSAGE>-<COLOR>](https://img.shields.io/badge/Launch-Quagmire_Demo-blue)](https://demon.underworldcloud.org/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Funderworldcode%2Fquagmire&urlpath=lab%2Ftree%2Fquagmire%2Fquagmire%2FExamples%2FNotebooks)
+
 
 ## Installation
 
@@ -16,7 +23,21 @@ Numpy and a fortran compiler, preferably [gfortran](https://gcc.gnu.org/wiki/GFo
    - If you change the fortran compiler, you may have to add the
 flags `config_fc --fcompiler=<compiler name>` when setup.py is run
 (see docs for [numpy.distutils](http://docs.scipy.org/doc/numpy-dev/f2py/distutils.html)).
-- ``python setup.py install``
+- ``python setup.py install``'
+
+If you are using python 3.7+ and linux or Macos, then you may wish to try
+
+- `conda install -c underworldcode quagmire` 
+
+To run the demonstration examples
+
+- `conda install -c conda-forge gdal cartopy`
+- `conda install -c underworld code quagmire`
+
+However, we are aware that the dependency list is quite large and restrictive and this can make it tough for anaconda to install other complicated packages. You make need to do this in a separate conda environment. 
+
+Some parts of the examples include references to the [lavavu](https://github.com/lavavu/LavaVu) package which has its own installation requirements and it might be best to read [their documentation](https://lavavu.github.io/Documentation/)
+
 
 ## Dependencies
 
