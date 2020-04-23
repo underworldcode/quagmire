@@ -33,8 +33,67 @@ except: pass
 
 class PixMesh(_CommonMesh):
     """
-    Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
+    Build spatial data structures on an __structured Cartesian grid__.
+
+    Use `PixMesh` for:
+
+    - calculating spatial derivatives
+    - identifying node neighbour relationships
+    - interpolation / extrapolation
+    - smoothing operators
+    - importing and saving mesh information
+
+    Each of these data structures are built on top of a `PETSc DM` object
+    (created from `quagmire.tools.meshtools`).
+
+    Parameters
+    ----------
+    DM : PETSc DMDA object
+        Build this unstructured Cartesian mesh object using one of:
+
+        - `quagmire.tools.meshtools.create_DMDA`
+    verbose : bool
+        Flag toggles verbose output
+    *args : optional arguments
+    **kwargs : optional keyword arguments
+
+    Attributes
+    ----------
+    dx : float
+        spacing in the x direction
+    dy : float
+        spacing in the y direction
+    npoints : int
+        Number of points (n) in the mesh
+    pointwise_area : Quagmire MeshVariable
+        `quagmire.mesh.basemesh.MeshVariable` of point-wise area
+    mask : Quagmire MeshVariable
+        `quagmire.mesh.basemesh.MeshVariable` to denote points on the boundary
+    data : array of floats, shape (n,2)
+        Cartesian mesh coordinates in x,y directions
+    coords : array of floats, shape (n,2)
+        Same as `data`
+    neighbour_array : array of ints, shape(n,25)
+        array of node neighbours
+    timings : dict
+        Timing information for each Quagmire routine
     """
+
+    ## This is a count of all the instances of the class that are launched
+    ## so that we have a way to name / identify them
+
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        TriMesh.__count += 1
+        return TriMesh.__count
+
+    @property
+    def id(self):
+        return self.__id
+
+
     def __init__(self, dm, verbose=True, *args, **kwargs):
         from scipy.spatial import cKDTree as _cKDTree
 
@@ -132,7 +191,26 @@ class PixMesh(_CommonMesh):
 
 
     def derivative_grad(self, PHI):
+        """
+        Compute derivatives of PHI in the x, y directions.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
 
+        Arguments
+        ---------
+        PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+        nit : int optional (default: 10)
+            number of iterations to reach convergence
+        tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+
+        Returns
+        -------
+        PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+        PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
+        """
         u = PHI.reshape(self.ny, self.nx)
         u_x, u_y = np.gradient(u, self.dx, self.dy)
 
@@ -140,13 +218,42 @@ class PixMesh(_CommonMesh):
 
 
     def derivative_div(self, PHIx, PHIy):
+        """
+        Compute second order derivative from flux fields PHIx, PHIy
+        We evaluate the gradient on these fields using the derivative-grad method.
 
+        Arguments
+        ---------
+        PHIx : ndarray of floats, shape (n,)
+            array of first partial derivatives in x direction
+        PHIy : ndarray of floats, shape (n,)
+            array of first partial derivatives in y direction
+        kwargs : optional keyword-argument specifiers
+            keyword arguments to be passed onto derivative_grad
+            e.g. nit=5, tol=1e-3
+
+        Returns
+        -------
+        del2PHI : ndarray of floats, shape (n,)
+            second derivative of PHI
+        """
         u_xx, u_xy = self.derivative_grad(PHIx)
         u_yx, u_yy = self.derivative_grad(PHIy)
 
         return u_xx + u_yy
 
     def construct_neighbours(self):
+        """
+        Find neighbours from edges and store as CSR coordinates.
+
+        This allows you to directly ask the neighbours for a given node a la Qhull,
+        or efficiently construct a sparse matrix (PETSc/SciPy)
+
+        Notes
+        -----
+        This method searches only for immediate note neighbours that are connected
+        by a line segment.
+        """
 
         nx, ny = self.nx, self.ny
         n = self.npoints
@@ -286,7 +393,24 @@ class PixMesh(_CommonMesh):
 
 
     def local_area_smoothing(self, data, its=1, centre_weight=0.75):
+        """
+        Local area smoothing using radial-basis function smoothing kernel
 
+        Parameters
+        ----------
+        data : array of floats, shape (n,)
+            field variable to be smoothed
+        its : int
+            number of iterations (default: 1)
+        centre_weight : float
+            weight to apply to centre nodes (default: 0.75)
+            other nodes are weighted by (1 - `centre_weight`)
+
+        Returns
+        -------
+        sm : array of floats, shape (n,)
+            smoothed field variable
+        """
         self.lvec.setArray(data)
         self.dm.localToGlobal(self.lvec, self.gvec)
         smooth_data = self.gvec.copy()
@@ -301,7 +425,15 @@ class PixMesh(_CommonMesh):
 
 
     def get_boundary(self):
+        """
+        Get boundary information on the mesh
 
+        Returns
+        -------
+        bmask : array of bools, shape (n,)
+            mask out the boundary nodes. Interior nodes are True;
+            Boundary nodes are False.
+        """
         bmask = np.ones(self.npoints, dtype=bool)
 
         for key in self.bc:
@@ -330,6 +462,23 @@ class PixMesh(_CommonMesh):
         return
 
     def rbf_smoother(self, field):
+        """
+        Smoothing using a radial-basis function smoothing kernel
+
+        Arguments
+        ---------
+        vector : array of floats, shape (n,)
+            field variable to be smoothed
+        iterations : int
+            number of iterations to smooth vector
+        delta : float / array of floats shape (n,)
+            distance weights to apply the Gaussian interpolants
+
+        Returns
+        -------
+        smooth_vec : array of floats, shape (n,)
+            smoothed version of input vector
+        """
 
         # Should do some error checking here to ensure the field and point cloud are compatible
 
