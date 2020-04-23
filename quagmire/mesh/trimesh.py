@@ -448,19 +448,19 @@ class TriMesh(_CommonMesh):
         should be captured by the search depending on how large
         `size` is set to.
         """
-        from quagmire import _fortran
-
         nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
 
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
 
-        neighbours = np.bincount(self.tri.simplices.flat)
+        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
         self.near_neighbours = neighbours + 2
-        self.extended_neighbours = np.full_like(neighbours, size)
+        self.extended_neighbours = np.empty_like(neighbours).fill(size)
 
-        near_neighbour_mask = _fortran.fill_mask_to_idx(size, self.near_neighbours)
-        self.near_neighbour_mask = near_neighbour_mask.astype(bool)
+        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+        for node in range(0,self.npoints):
+            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
 
         return
 
