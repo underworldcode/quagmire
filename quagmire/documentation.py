@@ -41,10 +41,8 @@ def install_documentation(path="./Quagmire-Notebooks"):
 
     """
 
-    ## Question
+   ## TODO: download / clone the repo on demand to the require path
 
-    Notebooks_Path = _pkg_resources.resource_filename('quagmire', os.path.join("Examples"))
+   print("Documentation is availble at https://github.com/underworld-community/quagmire-examples-and-workflows")
 
-    ct = _dir_util.copy_tree(Notebooks_Path, path, preserve_mode=1, preserve_times=1, preserve_symlinks=1, update=1, verbose=1, dry_run=0)
-
-    return
+   return
