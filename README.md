@@ -34,7 +34,7 @@ To run the demonstration examples
 - `conda install -c conda-forge gdal cartopy`
 - `conda install -c underworld code quagmire`
 
-However, we are aware that the dependency list is quite large and restrictive and this can make it tough for anaconda to install other complicated packages. You make need to do this in a separate conda environment. 
+However, we are aware that the dependency list is quite large and restrictive and this can make it tough for anaconda to install other complicated packages. You may need to do this in a separate conda environment. 
 
 Some parts of the examples include references to the [lavavu](https://github.com/lavavu/LavaVu) package which has its own installation requirements and it might be best to read [their documentation](https://lavavu.github.io/Documentation/)
 
