@@ -122,7 +122,7 @@ class sTriMesh(_CommonMesh):
     def id(self):
         return self.__id
 
-    def __init__(self, dm, verbose=True, *args, **kwargs):
+    def __init__(self, dm, r1=6384.4e3, r2=6352.8e3, verbose=True, *args, **kwargs):
         import stripy
         from scipy.spatial import cKDTree as _cKDTree
 
@@ -153,6 +153,11 @@ class sTriMesh(_CommonMesh):
         if self.rank == 0 and self.verbose:
             print(&#34;{} - Delaunay triangulation {}s&#34;.format(self.dm.comm.rank, perf_counter()-t))
 
+
+        # Calculate geocentric radius
+        self._r1 = r1
+        self._r2 = r2
+        self._radius = geocentric_radius(self.tri.lats, r1, r2)
 
         # Calculate weigths and pointwise area
         t = perf_counter()
@@ -202,8 +207,8 @@ class sTriMesh(_CommonMesh):
 
 
         self.root = False
-        self.coords = self.tri.points
-        self.data = self.coords
+        self.coords = np.c_[self.tri.lons, self.tri.lats]
+        self.data = self.tri.points
         self.interpolate = self.tri.interpolate
 
 
@@ -245,17 +250,19 @@ class sTriMesh(_CommonMesh):
         Notes
         -----
         This calls a fortran 90 routine which computes the weight and area
-        for each point in the mesh.
-
-        The area is calculated using a Lambert azimuthal equal-area projection
-        https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection
-        where the geocentric radius uses the radius of the sphere at the
-        equator and the poles (defaults to Earth values: 6384.4km and 6352.8km)
+        for each point in the mesh using the geocentric radius of the sphere
+        at the equator `r1` and the poles `r2` (defaults to Earth values:
+        6384.4km and 6352.8km, respectively).
         &#34;&#34;&#34;
 
-        from quagmire._fortran import ntriw_s
+        from quagmire._fortran import ntriw
 
-        area, weight = ntriw_s(self.tri.lons, self.tri.lats, self.tri.simplices.T+1, r1, r2)
+        R = self._radius
+
+        xs = R*self.tri.x
+        ys = R*self.tri.y
+
+        area, weight = ntriw(xs, ys, self.tri.simplices.T+1)
         
         return area, weight
 
@@ -301,11 +308,17 @@ class sTriMesh(_CommonMesh):
         PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         &#34;&#34;&#34;
-        PHIx, PHIy, PHIz = self.tri.gradient(PHI, nit, tol)
-        return self.tri.transform_to_spherical(PHIx, PHIy, PHIz)
+        PHIx, PHIy, PHIz = self.tri.gradient_xyz(PHI, nit, tol)
+
+        R = self._radius
+
+        PHIx *= R
+        PHIy *= R
+        PHIz *= R
+        return PHIx, PHIy, PHIz
 
 
-    def derivative_div(self, PHIx, PHIy, **kwargs):
+    def derivative_div(self, PHIx, PHIy, PHIz, **kwargs):
         &#34;&#34;&#34;
         Compute second order derivative from flux fields PHIx, PHIy
         We evaluate the gradient on these fields using the derivative-grad method.
@@ -316,6 +329,8 @@ class sTriMesh(_CommonMesh):
             array of first partial derivatives in x direction
         PHIy : ndarray of floats, shape (n,)
             array of first partial derivatives in y direction
+        PHIz : ndarray of floats, shape (n,)
+            array of first partial derivatives in z direction
         kwargs : optional keyword-argument specifiers
             keyword arguments to be passed onto derivative_grad
             e.g. nit=5, tol=1e-3
@@ -325,10 +340,11 @@ class sTriMesh(_CommonMesh):
         del2PHI : ndarray of floats, shape (n,)
             second derivative of PHI
         &#34;&#34;&#34;
-        u_xx, u_xy = self.derivative_grad(PHIx, **kwargs)
-        u_yx, u_yy = self.derivative_grad(PHIy, **kwargs)
+        u_xx, u_xy, u_zz = self.derivative_grad(PHIx, **kwargs)
+        u_yx, u_yy, u_zz = self.derivative_grad(PHIy, **kwargs)
+        u_zx, u_zy, u_zz = self.derivative_grad(PHIz, **kwargs)
 
-        return u_xx + u_yy
+        return u_xx + u_yy + u_zz
 
 
     def get_edge_lengths(self):
@@ -660,7 +676,33 @@ class sTriMesh(_CommonMesh):
             vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
             vector = self.sync(vector_smoothed)
 
-        return vector</code></pre>
+        return vector
+
+
+
+def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
+    &#34;&#34;&#34;
+    Calculate the radius of an oblate spheroid (like the earth)
+
+    Parameters
+    ----------
+    lat : array of floats
+        latitudinal coordinates in radians
+    r1 : float
+        radius at the equator (in metres)
+    r2 : float
+        radius at the poles (in metres)
+
+    Returns
+    -------
+    r : array of floats
+        radius at provided latitudes `lat` in metres
+    &#34;&#34;&#34;
+    coslat = np.cos(lat)
+    sinlat = np.sin(lat)
+    num = (r1**2*coslat)**2 + (r2**2*sinlat)**2
+    den = (r1*coslat)**2 + (r2*sinlat)**2
+    return np.sqrt(num/den)</code></pre>
 </details>
 </section>
 <section>
@@ -668,13 +710,64 @@ class sTriMesh(_CommonMesh):
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="quagmire.mesh.strimesh.geocentric_radius"><code class="name flex">
+<span>def <span class="ident">geocentric_radius</span></span>(<span>lat, r1=6384400.0, r2=6352800.0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate the radius of an oblate spheroid (like the earth)</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>lat</code></strong> :&ensp;<code>array</code> of <code>floats</code></dt>
+<dd>latitudinal coordinates in radians</dd>
+<dt><strong><code>r1</code></strong> :&ensp;<code>float</code></dt>
+<dd>radius at the equator (in metres)</dd>
+<dt><strong><code>r2</code></strong> :&ensp;<code>float</code></dt>
+<dd>radius at the poles (in metres)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>r</code></strong> :&ensp;<code>array</code> of <code>floats</code></dt>
+<dd>radius at provided latitudes <code>lat</code> in metres</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
+    &#34;&#34;&#34;
+    Calculate the radius of an oblate spheroid (like the earth)
+
+    Parameters
+    ----------
+    lat : array of floats
+        latitudinal coordinates in radians
+    r1 : float
+        radius at the equator (in metres)
+    r2 : float
+        radius at the poles (in metres)
+
+    Returns
+    -------
+    r : array of floats
+        radius at provided latitudes `lat` in metres
+    &#34;&#34;&#34;
+    coslat = np.cos(lat)
+    sinlat = np.sin(lat)
+    num = (r1**2*coslat)**2 + (r2**2*sinlat)**2
+    den = (r1*coslat)**2 + (r2*sinlat)**2
+    return np.sqrt(num/den)</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
 <dt id="quagmire.mesh.strimesh.sTriMesh"><code class="flex name class">
 <span>class <span class="ident">sTriMesh</span></span>
-<span>(</span><span>dm, verbose=True, *args, **kwargs)</span>
+<span>(</span><span>dm, r1=6384400.0, r2=6352800.0, verbose=True, *args, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Build spatial data structures on an <strong>unstructured spherical mesh</strong>.</p>
@@ -790,7 +883,7 @@ class sTriMesh(_CommonMesh):
     def id(self):
         return self.__id
 
-    def __init__(self, dm, verbose=True, *args, **kwargs):
+    def __init__(self, dm, r1=6384.4e3, r2=6352.8e3, verbose=True, *args, **kwargs):
         import stripy
         from scipy.spatial import cKDTree as _cKDTree
 
@@ -821,6 +914,11 @@ class sTriMesh(_CommonMesh):
         if self.rank == 0 and self.verbose:
             print(&#34;{} - Delaunay triangulation {}s&#34;.format(self.dm.comm.rank, perf_counter()-t))
 
+
+        # Calculate geocentric radius
+        self._r1 = r1
+        self._r2 = r2
+        self._radius = geocentric_radius(self.tri.lats, r1, r2)
 
         # Calculate weigths and pointwise area
         t = perf_counter()
@@ -870,8 +968,8 @@ class sTriMesh(_CommonMesh):
 
 
         self.root = False
-        self.coords = self.tri.points
-        self.data = self.coords
+        self.coords = np.c_[self.tri.lons, self.tri.lats]
+        self.data = self.tri.points
         self.interpolate = self.tri.interpolate
 
 
@@ -913,17 +1011,19 @@ class sTriMesh(_CommonMesh):
         Notes
         -----
         This calls a fortran 90 routine which computes the weight and area
-        for each point in the mesh.
-
-        The area is calculated using a Lambert azimuthal equal-area projection
-        https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection
-        where the geocentric radius uses the radius of the sphere at the
-        equator and the poles (defaults to Earth values: 6384.4km and 6352.8km)
+        for each point in the mesh using the geocentric radius of the sphere
+        at the equator `r1` and the poles `r2` (defaults to Earth values:
+        6384.4km and 6352.8km, respectively).
         &#34;&#34;&#34;
 
-        from quagmire._fortran import ntriw_s
+        from quagmire._fortran import ntriw
 
-        area, weight = ntriw_s(self.tri.lons, self.tri.lats, self.tri.simplices.T+1, r1, r2)
+        R = self._radius
+
+        xs = R*self.tri.x
+        ys = R*self.tri.y
+
+        area, weight = ntriw(xs, ys, self.tri.simplices.T+1)
         
         return area, weight
 
@@ -969,11 +1069,17 @@ class sTriMesh(_CommonMesh):
         PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         &#34;&#34;&#34;
-        PHIx, PHIy, PHIz = self.tri.gradient(PHI, nit, tol)
-        return self.tri.transform_to_spherical(PHIx, PHIy, PHIz)
+        PHIx, PHIy, PHIz = self.tri.gradient_xyz(PHI, nit, tol)
+
+        R = self._radius
+
+        PHIx *= R
+        PHIy *= R
+        PHIz *= R
+        return PHIx, PHIy, PHIz
 
 
-    def derivative_div(self, PHIx, PHIy, **kwargs):
+    def derivative_div(self, PHIx, PHIy, PHIz, **kwargs):
         &#34;&#34;&#34;
         Compute second order derivative from flux fields PHIx, PHIy
         We evaluate the gradient on these fields using the derivative-grad method.
@@ -984,6 +1090,8 @@ class sTriMesh(_CommonMesh):
             array of first partial derivatives in x direction
         PHIy : ndarray of floats, shape (n,)
             array of first partial derivatives in y direction
+        PHIz : ndarray of floats, shape (n,)
+            array of first partial derivatives in z direction
         kwargs : optional keyword-argument specifiers
             keyword arguments to be passed onto derivative_grad
             e.g. nit=5, tol=1e-3
@@ -993,10 +1101,11 @@ class sTriMesh(_CommonMesh):
         del2PHI : ndarray of floats, shape (n,)
             second derivative of PHI
         &#34;&#34;&#34;
-        u_xx, u_xy = self.derivative_grad(PHIx, **kwargs)
-        u_yx, u_yy = self.derivative_grad(PHIy, **kwargs)
+        u_xx, u_xy, u_zz = self.derivative_grad(PHIx, **kwargs)
+        u_yx, u_yy, u_zz = self.derivative_grad(PHIy, **kwargs)
+        u_zx, u_zy, u_zz = self.derivative_grad(PHIz, **kwargs)
 
-        return u_xx + u_yy
+        return u_xx + u_yy + u_zz
 
 
     def get_edge_lengths(self):
@@ -1372,11 +1481,9 @@ def id(self):
 </dl>
 <h2 id="notes">Notes</h2>
 <p>This calls a fortran 90 routine which computes the weight and area
-for each point in the mesh.</p>
-<p>The area is calculated using a Lambert azimuthal equal-area projection
-<a href="https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection">https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection</a>
-where the geocentric radius uses the radius of the sphere at the
-equator and the poles (defaults to Earth values: 6384.4km and 6352.8km)</p></div>
+for each point in the mesh using the geocentric radius of the sphere
+at the equator <code>r1</code> and the poles <code>r2</code> (defaults to Earth values:
+6384.4km and 6352.8km, respectively).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1402,17 +1509,19 @@ equator and the poles (defaults to Earth values: 6384.4km and 6352.8km)</p></div
     Notes
     -----
     This calls a fortran 90 routine which computes the weight and area
-    for each point in the mesh.
-
-    The area is calculated using a Lambert azimuthal equal-area projection
-    https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection
-    where the geocentric radius uses the radius of the sphere at the
-    equator and the poles (defaults to Earth values: 6384.4km and 6352.8km)
+    for each point in the mesh using the geocentric radius of the sphere
+    at the equator `r1` and the poles `r2` (defaults to Earth values:
+    6384.4km and 6352.8km, respectively).
     &#34;&#34;&#34;
 
-    from quagmire._fortran import ntriw_s
+    from quagmire._fortran import ntriw
 
-    area, weight = ntriw_s(self.tri.lons, self.tri.lats, self.tri.simplices.T+1, r1, r2)
+    R = self._radius
+
+    xs = R*self.tri.x
+    ys = R*self.tri.y
+
+    area, weight = ntriw(xs, ys, self.tri.simplices.T+1)
     
     return area, weight</code></pre>
 </details>
@@ -1612,7 +1721,7 @@ by a line segment. For extended neighbour searches, refer to
 </details>
 </dd>
 <dt id="quagmire.mesh.strimesh.sTriMesh.derivative_div"><code class="name flex">
-<span>def <span class="ident">derivative_div</span></span>(<span>self, PHIx, PHIy, **kwargs)</span>
+<span>def <span class="ident">derivative_div</span></span>(<span>self, PHIx, PHIy, PHIz, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Compute second order derivative from flux fields PHIx, PHIy
@@ -1623,6 +1732,8 @@ We evaluate the gradient on these fields using the derivative-grad method.</p>
 <dd>array of first partial derivatives in x direction</dd>
 <dt><strong><code>PHIy</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape (n,)</code></dt>
 <dd>array of first partial derivatives in y direction</dd>
+<dt><strong><code>PHIz</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape (n,)</code></dt>
+<dd>array of first partial derivatives in z direction</dd>
 <dt><strong><code>kwargs</code></strong> :&ensp;<code>optional keyword-argument specifiers</code></dt>
 <dd>keyword arguments to be passed onto derivative_grad
 e.g. nit=5, tol=1e-3</dd>
@@ -1636,7 +1747,7 @@ e.g. nit=5, tol=1e-3</dd>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def derivative_div(self, PHIx, PHIy, **kwargs):
+<pre><code class="python">def derivative_div(self, PHIx, PHIy, PHIz, **kwargs):
     &#34;&#34;&#34;
     Compute second order derivative from flux fields PHIx, PHIy
     We evaluate the gradient on these fields using the derivative-grad method.
@@ -1647,6 +1758,8 @@ e.g. nit=5, tol=1e-3</dd>
         array of first partial derivatives in x direction
     PHIy : ndarray of floats, shape (n,)
         array of first partial derivatives in y direction
+    PHIz : ndarray of floats, shape (n,)
+        array of first partial derivatives in z direction
     kwargs : optional keyword-argument specifiers
         keyword arguments to be passed onto derivative_grad
         e.g. nit=5, tol=1e-3
@@ -1656,10 +1769,11 @@ e.g. nit=5, tol=1e-3</dd>
     del2PHI : ndarray of floats, shape (n,)
         second derivative of PHI
     &#34;&#34;&#34;
-    u_xx, u_xy = self.derivative_grad(PHIx, **kwargs)
-    u_yx, u_yy = self.derivative_grad(PHIy, **kwargs)
+    u_xx, u_xy, u_zz = self.derivative_grad(PHIx, **kwargs)
+    u_yx, u_yy, u_zz = self.derivative_grad(PHIy, **kwargs)
+    u_zx, u_zy, u_zz = self.derivative_grad(PHIz, **kwargs)
 
-    return u_xx + u_yy</code></pre>
+    return u_xx + u_yy + u_zz</code></pre>
 </details>
 </dd>
 <dt id="quagmire.mesh.strimesh.sTriMesh.derivative_grad"><code class="name flex">
@@ -1709,8 +1823,14 @@ This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.</p
     PHIy : ndarray of floats, shape(n,)
         first partial derivative of PHI in y direction
     &#34;&#34;&#34;
-    PHIx, PHIy, PHIz = self.tri.gradient(PHI, nit, tol)
-    return self.tri.transform_to_spherical(PHIx, PHIy, PHIz)</code></pre>
+    PHIx, PHIy, PHIz = self.tri.gradient_xyz(PHI, nit, tol)
+
+    R = self._radius
+
+    PHIx *= R
+    PHIy *= R
+    PHIz *= R
+    return PHIx, PHIy, PHIz</code></pre>
 </details>
 </dd>
 <dt id="quagmire.mesh.strimesh.sTriMesh.get_edge_lengths"><code class="name flex">
@@ -2042,6 +2162,11 @@ to the specified <code>point</code></dd>
 <li><h3>Super-module</h3>
 <ul>
 <li><code><a title="quagmire.mesh" href="index.html">quagmire.mesh</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="quagmire.mesh.strimesh.geocentric_radius" href="#quagmire.mesh.strimesh.geocentric_radius">geocentric_radius</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
