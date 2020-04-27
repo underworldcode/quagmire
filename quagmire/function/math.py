@@ -113,14 +113,22 @@ def sqrt(lazyFn):
 # grad
 
 def grad(lazyFn):
-    """Lazy evaluation of 2D gradient operator on a scalar field"""
-
-    return lazyFn.fn_gradient(0), lazyFn.fn_gradient(1)
+    """Lazy evaluation of gradient operator on a scalar field"""
+    return lazyFn.fn_gradient()
 
 def div(lazyFn_x, lazyFn_y):
-    """Lazy evaluation of divergence operator on a 2D vector field"""
-    if lazyFn_x._mesh.id != lazyFn_y._mesh.id:
-        raise ValueError("Both meshes must be identical")
+    """Lazy evaluation of divergence operator on a N-D vector field"""
+    mesh_id = set()
+    mesh_description = ""
+    mesh_dependency = set()
+    for lazyFn in args:
+        mesh_id.add(lazyFn._mesh.id)
+        mesh_description += "{}^2 + ".format(lazyFn.description)
+        mesh_dependency.union(lazyFn.dependency_list)
+    mesh_description = mesh_description[:-3]
+    if len(mesh_id) > 1:
+        raise ValueError("Meshes must be identical")
+
     newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
     fn_dx = lazyFn_x.fn_gradient(0)
     fn_dy = lazyFn_y.fn_gradient(1)
@@ -140,6 +148,33 @@ def curl(lazyFn_x, lazyFn_y):
     newLazyFn.evaluate = lambda *args, **kwargs : fn_dvydx.evaluate(*args, **kwargs) - fn_dvxdy.evaluate(*args, **kwargs)
     newLazyFn.description = "diff({},X) - diff({},Y)".format(lazyFn_y.description, lazyFn_x.description)
     newLazyFn.dependency_list = lazyFn_x.dependency_list | lazyFn_y.dependency_list
+
+    return newLazyFn
+
+def hypot(*args, **kwargs):
+    """Lazy evaluation of hypot operator on N fields"""
+    def _hyp(lazy_list, *args, **kwargs):
+        lazy_ev = []
+        for lazyFn in lazy_list:
+            lazy_ev.append( lazyFn.evaluate(*args, **kwargs) )
+        return _np.hypot(*lazy_ev)
+    mesh_id = set()
+    mesh_description = ""
+    mesh_dependency = set()
+    for lazyFn in args:
+        mesh_id.add(lazyFn._mesh.id)
+        mesh_description += "{}^2 + ".format(lazyFn.description)
+        mesh_dependency.union(lazyFn.dependency_list)
+    mesh_description = mesh_description[:-3]
+    if len(mesh_id) > 1:
+        raise ValueError("Meshes must be identical")
+    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+    lazy_list = []
+    for lazyFn in args:
+        lazy_list.append(lazyFn)
+    newLazyFn.evaluate = lambda *args, **kwargs : _hyp(lazy_list, *args, **kwargs)
+    newLazyFn.description = "sqrt({})".format(mesh_description)
+    newLazyFn.dependency_list = mesh_dependency
 
     return newLazyFn
 

@@ -51,7 +51,7 @@ class LazyEvaluation(object):
     def evaluate(self, *args, **kwargs):
         raise(NotImplementedError)
 
-    def fn_gradient(self, dirn, mesh=None):
+    def fn_gradient(self, dirn=None, mesh=None):
         """
         The generic mechanism for obtaining the gradient of a lazy variable is
         to evaluate the values on the mesh at the time in question and use the mesh gradient
@@ -74,9 +74,12 @@ class LazyEvaluation(object):
             quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
             diff_mesh = mesh
 
+        ndim = np.shape(diff_mesh.data)[1]
+
         def new_fn_x(*args, **kwargs):
             local_array = self.evaluate(diff_mesh)
-            dx, dy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            dx = df_tuple[0]
 
             if len(args) == 1 and args[0] == diff_mesh:
                 return dx
@@ -92,7 +95,8 @@ class LazyEvaluation(object):
 
         def new_fn_y(*args, **kwargs):
             local_array = self.evaluate(diff_mesh)
-            dx, dy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            dy = df_tuple[1]
 
             if len(args) == 1 and args[0] == diff_mesh:
                 return dy
@@ -105,17 +109,63 @@ class LazyEvaluation(object):
                 i, e = diff_mesh.interpolate(xi, yi, zdata=dy, **kwargs)
                 return i
 
+        def new_fn_z(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            dz = df_tuple[2]
+
+            if len(args) == 1 and args[0] == diff_mesh:
+                return dz
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dz, **kwargs)
+            else:
+                xi = np.atleast_1d(args[0])  # .resize(-1,1)
+                yi = np.atleast_1d(args[1])  # .resize(-1,1)
+                i, e = diff_mesh.interpolate(xi, yi, zdata=dz, **kwargs)
+                return i
+
+        # Should this be made into a vector mesh variable ?
+        def new_fn_grad(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            ndim = len(df_tuple)
+
+            if len(args) == 1 and args[0] == diff_mesh:
+                return df_tuple
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+                mesh = args[0]
+                df_interp = []
+                for df in df_tuple:
+                    result = diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=df, **kwargs)
+                    df_interp.append(result)
+                return df_interp
+            else:
+                xi = np.atleast_1d(args[0])  # .resize(-1,1)
+                yi = np.atleast_1d(args[1])  # .resize(-1,1)
+                df_interp = []
+                for df in df_tuple:
+                    i, e = diff_mesh.interpolate(xi, yi, zdata=df, **kwargs)
+                    df_interp.append(i)
+                return df_interp
+
         newLazyFn_dx = LazyEvaluation(mesh=diff_mesh)
         newLazyFn_dx.evaluate = new_fn_x
         newLazyFn_dx.description = "d({})/dX".format(self.description)
         newLazyFn_dy = LazyEvaluation(mesh=diff_mesh)
         newLazyFn_dy.evaluate = new_fn_y
         newLazyFn_dy.description = "d({})/dY".format(self.description)
+        newLazyFn_dz = LazyEvaluation(mesh=diff_mesh)
+        newLazyFn_dz.evaluate = new_fn_z
+        newLazyFn_dz.description = "d({})/dZ".format(self.description)
 
-        if dirn == 0:
-            return newLazyFn_dx
+        fn_dir = [newLazyFn_dx, newLazyFn_dy, newLazyFn_dz][0:ndim]
+
+        if dirn is None:
+            # return a vector mesh variable ?
+            return fn_dir
         else:
-            return newLazyFn_dy
+            return fn_dir[dirn]
 
 
     @property
