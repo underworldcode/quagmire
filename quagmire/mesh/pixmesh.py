@@ -16,6 +16,18 @@
 
 """
 For structured data on a regular grid.
+
+<img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart-pixmesh.png" style="width: 321px; float:right">
+
+`PixMesh` implements the following functionality:
+
+- calculating spatial derivatives
+- identifying node neighbour relationships
+- interpolation / extrapolation
+- smoothing operators
+- importing and saving mesh information
+
+Supply a `PETSc DM` object (created from `quagmire.tools.meshtools`) to initialise the object.
 """
 
 import numpy as np

@@ -16,6 +16,17 @@
 
 """
 Routines common to all mesh types.
+
+<img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart-commonmesh.png" style="width: 321px; float:right">
+
+`CommonMesh` implements the following functionality:
+
+- creating Quagmire mesh variables
+- setting and reading node labels on the PETSc DM
+- saving the mesh and mesh variables to HDF5 files
+- handling global and local synchronisation operations
+
+Supply a `PETSc DM` object (created from `quagmire.tools.meshtools`) to initialise the object.
 """
 
 import numpy as np

@@ -19,11 +19,31 @@
 
 **Quagmire is a Python surface process framework for building erosion and deposition models on highly parallel, decomposed structured and unstructured meshes.**
 
-<img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/hierarchy_chart.png" style="width: 400px; float:right">
+Quagmire is structured into three major tiers that inherit methods and attributes from different classes:
 
-Quagmire is structured into three major classes that inherit methods and attributes from lower tiers.
+<img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart.png" style="width: 321px; float:right">
 
-The Surface Processes class inherits from the Topography class, which in turn inherits from TriMesh or PixMesh depending on the type of mesh.
+1. `SurfaceProcessMesh`
+    - Calculate erosion-deposition rates
+    - Landscape analysis
+    - Long range flow models
+2. `TopoMesh`
+    - Assemble downhill connectivity matrix
+    - Calculate upstream area
+    - Compute slope
+    - Identify flat spots, low points, high points.
+3. `FlatMesh`
+    - calculating spatial derivatives
+    - identifying node neighbour relationships
+    - interpolation / extrapolation
+    - smoothing operators
+    - importing and saving mesh information
+
+The `quagmire.surfmesh.surfmesh.SurfMesh` class (1) inherits from
+the `quagmire.topomesh.topomesh.TopoMesh` class (2), which in turn inherits from
+the `quagmire.mesh.pixmesh.PixMesh`, `quagmire.mesh.trimesh.TriMesh`, or
+`quagmire.mesh.strimesh.sTriMesh` class (3) depending on the type of mesh.
+
 
 ## Installation
 
@@ -53,7 +73,7 @@ Running this code requires the following packages to be installed. The visualisa
 
 PETSc is used extensively via the Python frontend, petsc4py. It is required that PETSc be configured and installed on your local machine prior to using Quagmire. You can use pip or petsc to install petsc4py and its dependencies with consistent versions.
 
-```
+```sh
 [sudo] pip install numpy mpi4py
 [sudo] pip install petsc petsc4py
 ```
@@ -64,7 +84,7 @@ If that fails you must compile these manually.
 
 This is an optional installation, but it is very useful for saving data that is distributed across multiple processes. If you are compiling HDF5 from [source](https://support.hdfgroup.org/downloads/index.html) it should be configured with the `--enable-parallel` flag:
 
-```
+```sh
 CC=/usr/local/mpi/bin/mpicc ./configure --enable-parallel --enable-shared --prefix=<install-directory>
 make    # build the library
 make check  # verify the correctness
@@ -77,7 +97,7 @@ You can then point to this install directory when you install [h5py](http://docs
 
 Quagmire is scalable in parallel. All of the python scripts in the *tests* subdirectory can be run in parallel, e.g.
 
-```
+```sh
 mpirun -np 4 python stream_power.py
 ```
 
