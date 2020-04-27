@@ -16,6 +16,18 @@
 
 """
 For unstructured data in Cartesian coordinates.
+
+<img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart-trimesh.png" style="width: 321px; float:right">
+
+`TriMesh` implements the following functionality:
+
+- calculating spatial derivatives
+- identifying node neighbour relationships
+- interpolation / extrapolation
+- smoothing operators
+- importing and saving mesh information
+
+Supply a `PETSc DM` object (created from `quagmire.tools.meshtools`) to initialise the object.
 """
 
 import numpy as np
@@ -453,9 +465,9 @@ class TriMesh(_CommonMesh):
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
 
-        unique, neighbours = np.unique(self.tri.simplices.ravel(), return_counts=True)
+        neighbours = np.bincount(self.tri.simplices.ravel(), minlength=self.npoints)
         self.near_neighbours = neighbours + 2
-        self.extended_neighbours = np.empty_like(neighbours).fill(size)
+        self.extended_neighbours = np.full_like(neighbours, size)
 
         self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
 
