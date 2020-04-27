@@ -79,7 +79,6 @@ class SurfMesh(_TopoMesh):
 
     def _update_height_for_surface_flows(self):
 
-        from time import clock
         #self.rainfall_pattern = rainfall_pattern.copy()
         #self.sediment_distribution = sediment_distribution.copy()
 
