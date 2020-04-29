@@ -174,6 +174,10 @@ class TriMesh(_CommonMesh):
         self.data = self.coords
         self.interpolate = self.tri.interpolate
 
+        # functions / parameters that are required for compatibility among FlatMesh types
+        self._derivative_grad_cartesian = self.derivative_grad
+        self._radius = 1.0
+
 
 
     def get_local_mesh(self):

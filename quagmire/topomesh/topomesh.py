@@ -56,7 +56,7 @@ class TopoMesh(object):
         self._downhill_neighbours = downhill_neighbours
 
         # Slope (function)
-        self.slope = fn.math.hypot(*self.topography.fn_gradient())
+        self.slope = fn.math.slope(self.topography)
 
         self._heightVariable = self.topography
 

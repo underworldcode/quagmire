@@ -183,6 +183,9 @@ class sTriMesh(_CommonMesh):
         self.data = self.tri.points
         self.interpolate = self.tri.interpolate
 
+        # functions / parameters that are required for compatibility among FlatMesh types
+        self._derivative_grad_cartesian = self.tri.gradient_xyz
+
 
     def get_local_mesh(self):
         """
@@ -280,14 +283,7 @@ class sTriMesh(_CommonMesh):
         PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         """
-        PHIx, PHIy, PHIz = self.tri.gradient_xyz(PHI, nit, tol)
-
-        R = self._radius
-
-        PHIx *= R
-        PHIy *= R
-        PHIz *= R
-        return PHIx, PHIy, PHIz
+        return self.tri.gradient_lonlat(PHI, nit, tol)
 
 
     def derivative_div(self, PHIx, PHIy, PHIz, **kwargs):

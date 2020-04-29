@@ -244,6 +244,55 @@ def arctan2(*args):
 
     return newLazyFn
 
+
+def slope(lazyFn):
+    """Lazy evaluation of the slope of a scalar field"""
+    
+    # need to take a few lines from `function_classes` gradient method
+
+    if lazyFn._mesh is None:
+        raise RuntimeError("fn_gradient is a numerical differentiation routine based on " + \
+            "derivatives of a fitted spline function on a mesh. " + \
+            "The function {} has no associated mesh. ".format(lazyFn.__repr__())) + \
+            "To obtain *numerical* derivatives of this function, " + \
+            "you can provide a mesh to the gradient function. " + \
+            "The usual reason for this error is that your function is not based upon " + \
+            "mesh variables and can, perhaps, be differentiated without resort to interpolating splines. "
+
+    elif lazyFn._mesh is not None:
+        diff_mesh = lazyFn._mesh
+    else:
+        import quagmire
+        quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
+        diff_mesh = mesh
+
+    def new_fn_slope(*args, **kwargs):
+        local_array = lazyFn.evaluate(diff_mesh)
+        df_tuple = diff_mesh._derivative_grad_cartesian(local_array, nit=10, tol=1e-8)
+
+        grad_f = _np.hypot(*df_tuple)/diff_mesh._radius
+
+        if len(args) == 1 and args[0] == diff_mesh:
+            return grad_f
+        elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+            mesh = args[0]
+            return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=grad_f, **kwargs)
+        elif len(args) > 1:
+            xi = np.atleast_1d(args[0])  # .resize(-1,1)
+            yi = np.atleast_1d(args[1])  # .resize(-1,1)
+            i, e = diff_mesh.interpolate(xi, yi, zdata=grad_f, **kwargs)
+            return i
+        else:
+            err_msg = "Invalid number of arguments\n"
+            err_msg += "Input a valid mesh or coordinates in x,y directions"
+            raise ValueError(err_msg)
+
+    newLazyFn = _LazyEvaluation(mesh=diff_mesh)
+    newLazyFn.evaluate = new_fn_slope
+    newLazyFn.description = "sqrt(d({0})/dX^2 + d({0})/dY^2)".format(lazyFn.description)
+    newLazyFn.dependency_list = lazyFn.dependency_list
+    return newLazyFn
+
 ## These are not defined yet (LM)
 
 # unwrap(p[, discont, axis])	Unwrap by changing deltas between values to 2*pi complement.

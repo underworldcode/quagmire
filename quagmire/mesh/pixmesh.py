@@ -189,6 +189,9 @@ class PixMesh(_CommonMesh):
 
         self.root = False
 
+        # functions / parameters that are required for compatibility among FlatMesh types
+        self._radius = 1.0
+
 
     def derivative_grad(self, PHI):
         """
