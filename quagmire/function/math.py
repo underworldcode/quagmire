@@ -108,6 +108,17 @@ def fabs(lazyFn):
 def sqrt(lazyFn):
     return _make_npmath_op(_np.sqrt, "sqrt", lazyFn)
 
+def degrees(lazyFn):
+    return _make_npmath_op(_np.degrees, "180/pi*", lazyFn)
+
+def radians(lazyFn):
+    return _make_npmath_op(_np.radians, "pi/180*", lazyFn)
+
+def rad2deg(lazyFn):
+    return degrees(lazyFn)
+
+def deg2rad(lazyFn):
+    return radians(lazyFn)
 
 
 # grad
@@ -210,11 +221,29 @@ def hypot(*args):
     return newLazyFn
 
 
+def arctan2(*args):
+    """Lazy evaluation of arctan2 operator on N fields"""
+    def _arctan2(lazyFn_list, *args, **kwargs):
+        lazy_ev = []
+        for lazyFn in lazyFn_list:
+            lazy_ev.append( lazyFn.evaluate(*args, **kwargs) )
+        return _np.arctan2(*lazy_ev)
+    lazyFn_list = []
+    lazyFn_description = ""
+    lazyFn_dependency = set()
+    for lazyFn in args:
+        lazyFn_list.append(lazyFn)
+        lazyFn_description += "{},".format(lazyFn.description)
+        lazyFn_dependency.union(lazyFn.dependency_list)
+    lazyFn_description = lazyFn_description[:-1]
+
+    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+    newLazyFn.evaluate = lambda *args, **kwargs : _arctan2(lazyFn_list, *args, **kwargs)
+    newLazyFn.description = "arctan2({})".format(lazyFn_description)
+    newLazyFn.dependency_list = lazyFn_dependency
+
+    return newLazyFn
+
 ## These are not defined yet (LM)
 
-# arctan2(x1, x2, /[, out, where, casting, …])	Element-wise arc tangent of x1/x2 choosing the quadrant correctly.
-# degrees(x, /[, out, where, casting, order, …])	Convert angles from radians to degrees.
-# radians(x, /[, out, where, casting, order, …])	Convert angles from degrees to radians.
 # unwrap(p[, discont, axis])	Unwrap by changing deltas between values to 2*pi complement.
-# deg2rad(x, /[, out, where, casting, order, …])	Convert angles from degrees to radians.
-# rad2deg(x, /[, out, where, casting, order, …])	Convert angles from radians to degrees.
