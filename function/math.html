@@ -148,6 +148,17 @@ def fabs(lazyFn):
 def sqrt(lazyFn):
     return _make_npmath_op(_np.sqrt, &#34;sqrt&#34;, lazyFn)
 
+def degrees(lazyFn):
+    return _make_npmath_op(_np.degrees, &#34;180/pi*&#34;, lazyFn)
+
+def radians(lazyFn):
+    return _make_npmath_op(_np.radians, &#34;pi/180*&#34;, lazyFn)
+
+def rad2deg(lazyFn):
+    return degrees(lazyFn)
+
+def deg2rad(lazyFn):
+    return radians(lazyFn)
 
 
 # grad
@@ -250,14 +261,32 @@ def hypot(*args):
     return newLazyFn
 
 
+def arctan2(*args):
+    &#34;&#34;&#34;Lazy evaluation of arctan2 operator on N fields&#34;&#34;&#34;
+    def _arctan2(lazyFn_list, *args, **kwargs):
+        lazy_ev = []
+        for lazyFn in lazyFn_list:
+            lazy_ev.append( lazyFn.evaluate(*args, **kwargs) )
+        return _np.arctan2(*lazy_ev)
+    lazyFn_list = []
+    lazyFn_description = &#34;&#34;
+    lazyFn_dependency = set()
+    for lazyFn in args:
+        lazyFn_list.append(lazyFn)
+        lazyFn_description += &#34;{},&#34;.format(lazyFn.description)
+        lazyFn_dependency.union(lazyFn.dependency_list)
+    lazyFn_description = lazyFn_description[:-1]
+
+    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+    newLazyFn.evaluate = lambda *args, **kwargs : _arctan2(lazyFn_list, *args, **kwargs)
+    newLazyFn.description = &#34;arctan2({})&#34;.format(lazyFn_description)
+    newLazyFn.dependency_list = lazyFn_dependency
+
+    return newLazyFn
+
 ## These are not defined yet (LM)
 
-# arctan2(x1, x2, /[, out, where, casting, …])  Element-wise arc tangent of x1/x2 choosing the quadrant correctly.
-# degrees(x, /[, out, where, casting, order, …])        Convert angles from radians to degrees.
-# radians(x, /[, out, where, casting, order, …])        Convert angles from degrees to radians.
-# unwrap(p[, discont, axis])    Unwrap by changing deltas between values to 2*pi complement.
-# deg2rad(x, /[, out, where, casting, order, …])        Convert angles from degrees to radians.
-# rad2deg(x, /[, out, where, casting, order, …])        Convert angles from radians to degrees.</code></pre>
+# unwrap(p[, discont, axis])    Unwrap by changing deltas between values to 2*pi complement.</code></pre>
 </details>
 </section>
 <section>
@@ -356,6 +385,39 @@ def hypot(*args):
 </summary>
 <pre><code class="python">def arctan(lazyFn):
     return _make_npmath_op(_np.arctan, &#34;arctan&#34;, lazyFn)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.function.math.arctan2"><code class="name flex">
+<span>def <span class="ident">arctan2</span></span>(<span>*args)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Lazy evaluation of arctan2 operator on N fields</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def arctan2(*args):
+    &#34;&#34;&#34;Lazy evaluation of arctan2 operator on N fields&#34;&#34;&#34;
+    def _arctan2(lazyFn_list, *args, **kwargs):
+        lazy_ev = []
+        for lazyFn in lazyFn_list:
+            lazy_ev.append( lazyFn.evaluate(*args, **kwargs) )
+        return _np.arctan2(*lazy_ev)
+    lazyFn_list = []
+    lazyFn_description = &#34;&#34;
+    lazyFn_dependency = set()
+    for lazyFn in args:
+        lazyFn_list.append(lazyFn)
+        lazyFn_description += &#34;{},&#34;.format(lazyFn.description)
+        lazyFn_dependency.union(lazyFn.dependency_list)
+    lazyFn_description = lazyFn_description[:-1]
+
+    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+    newLazyFn.evaluate = lambda *args, **kwargs : _arctan2(lazyFn_list, *args, **kwargs)
+    newLazyFn.description = &#34;arctan2({})&#34;.format(lazyFn_description)
+    newLazyFn.dependency_list = lazyFn_dependency
+
+    return newLazyFn</code></pre>
 </details>
 </dd>
 <dt id="quagmire.function.math.arctanh"><code class="name flex">
@@ -500,6 +562,32 @@ def hypot(*args):
     return newLazyFn</code></pre>
 </details>
 </dd>
+<dt id="quagmire.function.math.deg2rad"><code class="name flex">
+<span>def <span class="ident">deg2rad</span></span>(<span>lazyFn)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deg2rad(lazyFn):
+    return radians(lazyFn)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.function.math.degrees"><code class="name flex">
+<span>def <span class="ident">degrees</span></span>(<span>lazyFn)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def degrees(lazyFn):
+    return _make_npmath_op(_np.degrees, &#34;180/pi*&#34;, lazyFn)</code></pre>
+</details>
+</dd>
 <dt id="quagmire.function.math.div"><code class="name flex">
 <span>def <span class="ident">div</span></span>(<span>*args)</span>
 </code></dt>
@@ -638,6 +726,32 @@ def hypot(*args):
     return _make_npmath_op(_np.log10, &#34;log10&#34;, lazyFn)</code></pre>
 </details>
 </dd>
+<dt id="quagmire.function.math.rad2deg"><code class="name flex">
+<span>def <span class="ident">rad2deg</span></span>(<span>lazyFn)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rad2deg(lazyFn):
+    return degrees(lazyFn)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.function.math.radians"><code class="name flex">
+<span>def <span class="ident">radians</span></span>(<span>lazyFn)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def radians(lazyFn):
+    return _make_npmath_op(_np.radians, &#34;pi/180*&#34;, lazyFn)</code></pre>
+</details>
+</dd>
 <dt id="quagmire.function.math.sin"><code class="name flex">
 <span>def <span class="ident">sin</span></span>(<span>lazyFn)</span>
 </code></dt>
@@ -728,6 +842,7 @@ def hypot(*args):
 <li><code><a title="quagmire.function.math.arcsin" href="#quagmire.function.math.arcsin">arcsin</a></code></li>
 <li><code><a title="quagmire.function.math.arcsinh" href="#quagmire.function.math.arcsinh">arcsinh</a></code></li>
 <li><code><a title="quagmire.function.math.arctan" href="#quagmire.function.math.arctan">arctan</a></code></li>
+<li><code><a title="quagmire.function.math.arctan2" href="#quagmire.function.math.arctan2">arctan2</a></code></li>
 <li><code><a title="quagmire.function.math.arctanh" href="#quagmire.function.math.arctanh">arctanh</a></code></li>
 <li><code><a title="quagmire.function.math.asin" href="#quagmire.function.math.asin">asin</a></code></li>
 <li><code><a title="quagmire.function.math.asinh" href="#quagmire.function.math.asinh">asinh</a></code></li>
@@ -736,6 +851,8 @@ def hypot(*args):
 <li><code><a title="quagmire.function.math.cos" href="#quagmire.function.math.cos">cos</a></code></li>
 <li><code><a title="quagmire.function.math.cosh" href="#quagmire.function.math.cosh">cosh</a></code></li>
 <li><code><a title="quagmire.function.math.curl" href="#quagmire.function.math.curl">curl</a></code></li>
+<li><code><a title="quagmire.function.math.deg2rad" href="#quagmire.function.math.deg2rad">deg2rad</a></code></li>
+<li><code><a title="quagmire.function.math.degrees" href="#quagmire.function.math.degrees">degrees</a></code></li>
 <li><code><a title="quagmire.function.math.div" href="#quagmire.function.math.div">div</a></code></li>
 <li><code><a title="quagmire.function.math.exp" href="#quagmire.function.math.exp">exp</a></code></li>
 <li><code><a title="quagmire.function.math.fabs" href="#quagmire.function.math.fabs">fabs</a></code></li>
@@ -743,6 +860,8 @@ def hypot(*args):
 <li><code><a title="quagmire.function.math.hypot" href="#quagmire.function.math.hypot">hypot</a></code></li>
 <li><code><a title="quagmire.function.math.log" href="#quagmire.function.math.log">log</a></code></li>
 <li><code><a title="quagmire.function.math.log10" href="#quagmire.function.math.log10">log10</a></code></li>
+<li><code><a title="quagmire.function.math.rad2deg" href="#quagmire.function.math.rad2deg">rad2deg</a></code></li>
+<li><code><a title="quagmire.function.math.radians" href="#quagmire.function.math.radians">radians</a></code></li>
 <li><code><a title="quagmire.function.math.sin" href="#quagmire.function.math.sin">sin</a></code></li>
 <li><code><a title="quagmire.function.math.sinh" href="#quagmire.function.math.sinh">sinh</a></code></li>
 <li><code><a title="quagmire.function.math.sqrt" href="#quagmire.function.math.sqrt">sqrt</a></code></li>
