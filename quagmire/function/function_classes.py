@@ -87,11 +87,15 @@ class LazyEvaluation(object):
             elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dx, **kwargs)
-            else:
+            elif len(args) > 1:
                 xi = np.atleast_1d(args[0])
                 yi = np.atleast_1d(args[1])
                 i, e = diff_mesh.interpolate(xi, yi, zdata=dx, **kwargs)
                 return i
+            else:
+                err_msg = "Invalid number of arguments\n"
+                err_msg += "Input a valid mesh or coordinates in x,y directions"
+                raise ValueError(err_msg)
 
         def new_fn_y(*args, **kwargs):
             local_array = self.evaluate(diff_mesh)
@@ -103,11 +107,15 @@ class LazyEvaluation(object):
             elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dy, **kwargs)
-            else:
+            elif len(args) > 1:
                 xi = np.atleast_1d(args[0])  # .resize(-1,1)
                 yi = np.atleast_1d(args[1])  # .resize(-1,1)
                 i, e = diff_mesh.interpolate(xi, yi, zdata=dy, **kwargs)
                 return i
+            else:
+                err_msg = "Invalid number of arguments\n"
+                err_msg += "Input a valid mesh or coordinates in x,y directions"
+                raise ValueError(err_msg)
 
         def new_fn_z(*args, **kwargs):
             local_array = self.evaluate(diff_mesh)
@@ -119,11 +127,15 @@ class LazyEvaluation(object):
             elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dz, **kwargs)
-            else:
+            elif len(args) > 1:
                 xi = np.atleast_1d(args[0])  # .resize(-1,1)
                 yi = np.atleast_1d(args[1])  # .resize(-1,1)
                 i, e = diff_mesh.interpolate(xi, yi, zdata=dz, **kwargs)
                 return i
+            else:
+                err_msg = "Invalid number of arguments\n"
+                err_msg += "Input a valid mesh or coordinates in x,y directions"
+                raise ValueError(err_msg)
 
         # Should this be made into a vector mesh variable ?
         def new_fn_grad(*args, **kwargs):
@@ -140,7 +152,7 @@ class LazyEvaluation(object):
                     result = diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=df, **kwargs)
                     df_interp.append(result)
                 return df_interp
-            else:
+            elif len(args) > 1:
                 xi = np.atleast_1d(args[0])  # .resize(-1,1)
                 yi = np.atleast_1d(args[1])  # .resize(-1,1)
                 df_interp = []
@@ -148,6 +160,10 @@ class LazyEvaluation(object):
                     i, e = diff_mesh.interpolate(xi, yi, zdata=df, **kwargs)
                     df_interp.append(i)
                 return df_interp
+            else:
+                err_msg = "Invalid number of arguments\n"
+                err_msg += "Input a valid mesh or coordinates in x,y directions"
+                raise ValueError(err_msg)
 
         newLazyFn_dx = LazyEvaluation(mesh=diff_mesh)
         newLazyFn_dx.evaluate = new_fn_x
@@ -261,7 +277,7 @@ class parameter(LazyEvaluation):
         self.value = value
         return
 
-    def fn_gradient(self, dirn):
+    def fn_gradient(self, dirn=None):
         """Gradients information is not provided by default for lazy evaluation objects:
            it is necessary to implement the gradient method"""
 
@@ -269,11 +285,17 @@ class parameter(LazyEvaluation):
         px.description = "d({})/dX===0.0".format(self.description)
         py = parameter(0.0)
         py.description = "d({})/dY===0.0".format(self.description)
+        pz = parameter(0.0)
+        pz.description = "d({})/dZ===0.0".format(self.description)
 
-        if dirn == 0:
+        p = [px, py, pz]
+
+        if dirn is None:
+            # not sure about dimensions here, a parameter is always 1-d so it should
+            # always return the same derivative
             return px
         else:
-            return py
+            return p[dirn]
 
     def __call__(self, value=None):
         """Set value (X) of this parameter (equivalent to Parameter.value=X)"""
