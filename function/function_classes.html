@@ -78,7 +78,7 @@ class LazyEvaluation(object):
     def evaluate(self, *args, **kwargs):
         raise(NotImplementedError)
 
-    def fn_gradient(self, dirn, mesh=None):
+    def fn_gradient(self, dirn=None, mesh=None):
         &#34;&#34;&#34;
         The generic mechanism for obtaining the gradient of a lazy variable is
         to evaluate the values on the mesh at the time in question and use the mesh gradient
@@ -101,9 +101,12 @@ class LazyEvaluation(object):
             quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
             diff_mesh = mesh
 
+        ndim = np.shape(diff_mesh.data)[1]
+
         def new_fn_x(*args, **kwargs):
             local_array = self.evaluate(diff_mesh)
-            dx, dy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            dx = df_tuple[0]
 
             if len(args) == 1 and args[0] == diff_mesh:
                 return dx
@@ -111,26 +114,83 @@ class LazyEvaluation(object):
             elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dx, **kwargs)
-            else:
+            elif len(args) &gt; 1:
                 xi = np.atleast_1d(args[0])
                 yi = np.atleast_1d(args[1])
                 i, e = diff_mesh.interpolate(xi, yi, zdata=dx, **kwargs)
                 return i
+            else:
+                err_msg = &#34;Invalid number of arguments\n&#34;
+                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+                raise ValueError(err_msg)
 
         def new_fn_y(*args, **kwargs):
             local_array = self.evaluate(diff_mesh)
-            dx, dy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            dy = df_tuple[1]
 
             if len(args) == 1 and args[0] == diff_mesh:
                 return dy
             elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dy, **kwargs)
-            else:
+            elif len(args) &gt; 1:
                 xi = np.atleast_1d(args[0])  # .resize(-1,1)
                 yi = np.atleast_1d(args[1])  # .resize(-1,1)
                 i, e = diff_mesh.interpolate(xi, yi, zdata=dy, **kwargs)
                 return i
+            else:
+                err_msg = &#34;Invalid number of arguments\n&#34;
+                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+                raise ValueError(err_msg)
+
+        def new_fn_z(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            dz = df_tuple[2]
+
+            if len(args) == 1 and args[0] == diff_mesh:
+                return dz
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dz, **kwargs)
+            elif len(args) &gt; 1:
+                xi = np.atleast_1d(args[0])  # .resize(-1,1)
+                yi = np.atleast_1d(args[1])  # .resize(-1,1)
+                i, e = diff_mesh.interpolate(xi, yi, zdata=dz, **kwargs)
+                return i
+            else:
+                err_msg = &#34;Invalid number of arguments\n&#34;
+                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+                raise ValueError(err_msg)
+
+        # Should this be made into a vector mesh variable ?
+        def new_fn_grad(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            ndim = len(df_tuple)
+
+            if len(args) == 1 and args[0] == diff_mesh:
+                return df_tuple
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+                mesh = args[0]
+                df_interp = []
+                for df in df_tuple:
+                    result = diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=df, **kwargs)
+                    df_interp.append(result)
+                return df_interp
+            elif len(args) &gt; 1:
+                xi = np.atleast_1d(args[0])  # .resize(-1,1)
+                yi = np.atleast_1d(args[1])  # .resize(-1,1)
+                df_interp = []
+                for df in df_tuple:
+                    i, e = diff_mesh.interpolate(xi, yi, zdata=df, **kwargs)
+                    df_interp.append(i)
+                return df_interp
+            else:
+                err_msg = &#34;Invalid number of arguments\n&#34;
+                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+                raise ValueError(err_msg)
 
         newLazyFn_dx = LazyEvaluation(mesh=diff_mesh)
         newLazyFn_dx.evaluate = new_fn_x
@@ -138,11 +198,17 @@ class LazyEvaluation(object):
         newLazyFn_dy = LazyEvaluation(mesh=diff_mesh)
         newLazyFn_dy.evaluate = new_fn_y
         newLazyFn_dy.description = &#34;d({})/dY&#34;.format(self.description)
+        newLazyFn_dz = LazyEvaluation(mesh=diff_mesh)
+        newLazyFn_dz.evaluate = new_fn_z
+        newLazyFn_dz.description = &#34;d({})/dZ&#34;.format(self.description)
 
-        if dirn == 0:
-            return newLazyFn_dx
+        fn_dir = [newLazyFn_dx, newLazyFn_dy, newLazyFn_dz][0:ndim]
+
+        if dirn is None:
+            # return a vector mesh variable ?
+            return fn_dir
         else:
-            return newLazyFn_dy
+            return fn_dir[dirn]
 
 
     @property
@@ -238,7 +304,7 @@ class parameter(LazyEvaluation):
         self.value = value
         return
 
-    def fn_gradient(self, dirn):
+    def fn_gradient(self, dirn=None):
         &#34;&#34;&#34;Gradients information is not provided by default for lazy evaluation objects:
            it is necessary to implement the gradient method&#34;&#34;&#34;
 
@@ -246,11 +312,17 @@ class parameter(LazyEvaluation):
         px.description = &#34;d({})/dX===0.0&#34;.format(self.description)
         py = parameter(0.0)
         py.description = &#34;d({})/dY===0.0&#34;.format(self.description)
+        pz = parameter(0.0)
+        pz.description = &#34;d({})/dZ===0.0&#34;.format(self.description)
 
-        if dirn == 0:
+        p = [px, py, pz]
+
+        if dirn is None:
+            # not sure about dimensions here, a parameter is always 1-d so it should
+            # always return the same derivative
             return px
         else:
-            return py
+            return p[dirn]
 
     def __call__(self, value=None):
         &#34;&#34;&#34;Set value (X) of this parameter (equivalent to Parameter.value=X)&#34;&#34;&#34;
@@ -339,7 +411,7 @@ If no mesh is provided then no gradient function can be implemented</p></div>
     def evaluate(self, *args, **kwargs):
         raise(NotImplementedError)
 
-    def fn_gradient(self, dirn, mesh=None):
+    def fn_gradient(self, dirn=None, mesh=None):
         &#34;&#34;&#34;
         The generic mechanism for obtaining the gradient of a lazy variable is
         to evaluate the values on the mesh at the time in question and use the mesh gradient
@@ -362,9 +434,12 @@ If no mesh is provided then no gradient function can be implemented</p></div>
             quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
             diff_mesh = mesh
 
+        ndim = np.shape(diff_mesh.data)[1]
+
         def new_fn_x(*args, **kwargs):
             local_array = self.evaluate(diff_mesh)
-            dx, dy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            dx = df_tuple[0]
 
             if len(args) == 1 and args[0] == diff_mesh:
                 return dx
@@ -372,26 +447,83 @@ If no mesh is provided then no gradient function can be implemented</p></div>
             elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dx, **kwargs)
-            else:
+            elif len(args) &gt; 1:
                 xi = np.atleast_1d(args[0])
                 yi = np.atleast_1d(args[1])
                 i, e = diff_mesh.interpolate(xi, yi, zdata=dx, **kwargs)
                 return i
+            else:
+                err_msg = &#34;Invalid number of arguments\n&#34;
+                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+                raise ValueError(err_msg)
 
         def new_fn_y(*args, **kwargs):
             local_array = self.evaluate(diff_mesh)
-            dx, dy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            dy = df_tuple[1]
 
             if len(args) == 1 and args[0] == diff_mesh:
                 return dy
             elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
                 return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dy, **kwargs)
-            else:
+            elif len(args) &gt; 1:
                 xi = np.atleast_1d(args[0])  # .resize(-1,1)
                 yi = np.atleast_1d(args[1])  # .resize(-1,1)
                 i, e = diff_mesh.interpolate(xi, yi, zdata=dy, **kwargs)
                 return i
+            else:
+                err_msg = &#34;Invalid number of arguments\n&#34;
+                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+                raise ValueError(err_msg)
+
+        def new_fn_z(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            dz = df_tuple[2]
+
+            if len(args) == 1 and args[0] == diff_mesh:
+                return dz
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dz, **kwargs)
+            elif len(args) &gt; 1:
+                xi = np.atleast_1d(args[0])  # .resize(-1,1)
+                yi = np.atleast_1d(args[1])  # .resize(-1,1)
+                i, e = diff_mesh.interpolate(xi, yi, zdata=dz, **kwargs)
+                return i
+            else:
+                err_msg = &#34;Invalid number of arguments\n&#34;
+                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+                raise ValueError(err_msg)
+
+        # Should this be made into a vector mesh variable ?
+        def new_fn_grad(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            ndim = len(df_tuple)
+
+            if len(args) == 1 and args[0] == diff_mesh:
+                return df_tuple
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+                mesh = args[0]
+                df_interp = []
+                for df in df_tuple:
+                    result = diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=df, **kwargs)
+                    df_interp.append(result)
+                return df_interp
+            elif len(args) &gt; 1:
+                xi = np.atleast_1d(args[0])  # .resize(-1,1)
+                yi = np.atleast_1d(args[1])  # .resize(-1,1)
+                df_interp = []
+                for df in df_tuple:
+                    i, e = diff_mesh.interpolate(xi, yi, zdata=df, **kwargs)
+                    df_interp.append(i)
+                return df_interp
+            else:
+                err_msg = &#34;Invalid number of arguments\n&#34;
+                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+                raise ValueError(err_msg)
 
         newLazyFn_dx = LazyEvaluation(mesh=diff_mesh)
         newLazyFn_dx.evaluate = new_fn_x
@@ -399,11 +531,17 @@ If no mesh is provided then no gradient function can be implemented</p></div>
         newLazyFn_dy = LazyEvaluation(mesh=diff_mesh)
         newLazyFn_dy.evaluate = new_fn_y
         newLazyFn_dy.description = &#34;d({})/dY&#34;.format(self.description)
+        newLazyFn_dz = LazyEvaluation(mesh=diff_mesh)
+        newLazyFn_dz.evaluate = new_fn_z
+        newLazyFn_dz.description = &#34;d({})/dZ&#34;.format(self.description)
 
-        if dirn == 0:
-            return newLazyFn_dx
+        fn_dir = [newLazyFn_dx, newLazyFn_dy, newLazyFn_dz][0:ndim]
+
+        if dirn is None:
+            # return a vector mesh variable ?
+            return fn_dir
         else:
-            return newLazyFn_dy
+            return fn_dir[dirn]
 
 
     @property
@@ -525,7 +663,7 @@ def id(self):
 </details>
 </dd>
 <dt id="quagmire.function.function_classes.LazyEvaluation.fn_gradient"><code class="name flex">
-<span>def <span class="ident">fn_gradient</span></span>(<span>self, dirn, mesh=None)</span>
+<span>def <span class="ident">fn_gradient</span></span>(<span>self, dirn=None, mesh=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>The generic mechanism for obtaining the gradient of a lazy variable is
@@ -538,7 +676,7 @@ that are identically zero &hellip; etc</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def fn_gradient(self, dirn, mesh=None):
+<pre><code class="python">def fn_gradient(self, dirn=None, mesh=None):
     &#34;&#34;&#34;
     The generic mechanism for obtaining the gradient of a lazy variable is
     to evaluate the values on the mesh at the time in question and use the mesh gradient
@@ -561,9 +699,12 @@ that are identically zero &hellip; etc</p></div>
         quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
         diff_mesh = mesh
 
+    ndim = np.shape(diff_mesh.data)[1]
+
     def new_fn_x(*args, **kwargs):
         local_array = self.evaluate(diff_mesh)
-        dx, dy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+        df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+        dx = df_tuple[0]
 
         if len(args) == 1 and args[0] == diff_mesh:
             return dx
@@ -571,26 +712,83 @@ that are identically zero &hellip; etc</p></div>
         elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
             mesh = args[0]
             return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dx, **kwargs)
-        else:
+        elif len(args) &gt; 1:
             xi = np.atleast_1d(args[0])
             yi = np.atleast_1d(args[1])
             i, e = diff_mesh.interpolate(xi, yi, zdata=dx, **kwargs)
             return i
+        else:
+            err_msg = &#34;Invalid number of arguments\n&#34;
+            err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+            raise ValueError(err_msg)
 
     def new_fn_y(*args, **kwargs):
         local_array = self.evaluate(diff_mesh)
-        dx, dy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+        df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+        dy = df_tuple[1]
 
         if len(args) == 1 and args[0] == diff_mesh:
             return dy
         elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
             mesh = args[0]
             return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dy, **kwargs)
-        else:
+        elif len(args) &gt; 1:
             xi = np.atleast_1d(args[0])  # .resize(-1,1)
             yi = np.atleast_1d(args[1])  # .resize(-1,1)
             i, e = diff_mesh.interpolate(xi, yi, zdata=dy, **kwargs)
             return i
+        else:
+            err_msg = &#34;Invalid number of arguments\n&#34;
+            err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+            raise ValueError(err_msg)
+
+    def new_fn_z(*args, **kwargs):
+        local_array = self.evaluate(diff_mesh)
+        df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+        dz = df_tuple[2]
+
+        if len(args) == 1 and args[0] == diff_mesh:
+            return dz
+        elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+            mesh = args[0]
+            return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dz, **kwargs)
+        elif len(args) &gt; 1:
+            xi = np.atleast_1d(args[0])  # .resize(-1,1)
+            yi = np.atleast_1d(args[1])  # .resize(-1,1)
+            i, e = diff_mesh.interpolate(xi, yi, zdata=dz, **kwargs)
+            return i
+        else:
+            err_msg = &#34;Invalid number of arguments\n&#34;
+            err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+            raise ValueError(err_msg)
+
+    # Should this be made into a vector mesh variable ?
+    def new_fn_grad(*args, **kwargs):
+        local_array = self.evaluate(diff_mesh)
+        df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+        ndim = len(df_tuple)
+
+        if len(args) == 1 and args[0] == diff_mesh:
+            return df_tuple
+        elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+            mesh = args[0]
+            df_interp = []
+            for df in df_tuple:
+                result = diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=df, **kwargs)
+                df_interp.append(result)
+            return df_interp
+        elif len(args) &gt; 1:
+            xi = np.atleast_1d(args[0])  # .resize(-1,1)
+            yi = np.atleast_1d(args[1])  # .resize(-1,1)
+            df_interp = []
+            for df in df_tuple:
+                i, e = diff_mesh.interpolate(xi, yi, zdata=df, **kwargs)
+                df_interp.append(i)
+            return df_interp
+        else:
+            err_msg = &#34;Invalid number of arguments\n&#34;
+            err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+            raise ValueError(err_msg)
 
     newLazyFn_dx = LazyEvaluation(mesh=diff_mesh)
     newLazyFn_dx.evaluate = new_fn_x
@@ -598,11 +796,17 @@ that are identically zero &hellip; etc</p></div>
     newLazyFn_dy = LazyEvaluation(mesh=diff_mesh)
     newLazyFn_dy.evaluate = new_fn_y
     newLazyFn_dy.description = &#34;d({})/dY&#34;.format(self.description)
+    newLazyFn_dz = LazyEvaluation(mesh=diff_mesh)
+    newLazyFn_dz.evaluate = new_fn_z
+    newLazyFn_dz.description = &#34;d({})/dZ&#34;.format(self.description)
 
-    if dirn == 0:
-        return newLazyFn_dx
+    fn_dir = [newLazyFn_dx, newLazyFn_dy, newLazyFn_dz][0:ndim]
+
+    if dirn is None:
+        # return a vector mesh variable ?
+        return fn_dir
     else:
-        return newLazyFn_dy</code></pre>
+        return fn_dir[dirn]</code></pre>
 </details>
 </dd>
 </dl>
@@ -627,7 +831,7 @@ If no mesh is provided then no gradient function can be implemented</p></div>
         self.value = value
         return
 
-    def fn_gradient(self, dirn):
+    def fn_gradient(self, dirn=None):
         &#34;&#34;&#34;Gradients information is not provided by default for lazy evaluation objects:
            it is necessary to implement the gradient method&#34;&#34;&#34;
 
@@ -635,11 +839,17 @@ If no mesh is provided then no gradient function can be implemented</p></div>
         px.description = &#34;d({})/dX===0.0&#34;.format(self.description)
         py = parameter(0.0)
         py.description = &#34;d({})/dY===0.0&#34;.format(self.description)
+        pz = parameter(0.0)
+        pz.description = &#34;d({})/dZ===0.0&#34;.format(self.description)
 
-        if dirn == 0:
+        p = [px, py, pz]
+
+        if dirn is None:
+            # not sure about dimensions here, a parameter is always 1-d so it should
+            # always return the same derivative
             return px
         else:
-            return py
+            return p[dirn]
 
     def __call__(self, value=None):
         &#34;&#34;&#34;Set value (X) of this parameter (equivalent to Parameter.value=X)&#34;&#34;&#34;
@@ -721,7 +931,7 @@ def value(self):
 </details>
 </dd>
 <dt id="quagmire.function.function_classes.parameter.fn_gradient"><code class="name flex">
-<span>def <span class="ident">fn_gradient</span></span>(<span>self, dirn)</span>
+<span>def <span class="ident">fn_gradient</span></span>(<span>self, dirn=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Gradients information is not provided by default for lazy evaluation objects:
@@ -730,7 +940,7 @@ it is necessary to implement the gradient method</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def fn_gradient(self, dirn):
+<pre><code class="python">def fn_gradient(self, dirn=None):
     &#34;&#34;&#34;Gradients information is not provided by default for lazy evaluation objects:
        it is necessary to implement the gradient method&#34;&#34;&#34;
 
@@ -738,11 +948,17 @@ it is necessary to implement the gradient method</p></div>
     px.description = &#34;d({})/dX===0.0&#34;.format(self.description)
     py = parameter(0.0)
     py.description = &#34;d({})/dY===0.0&#34;.format(self.description)
+    pz = parameter(0.0)
+    pz.description = &#34;d({})/dZ===0.0&#34;.format(self.description)
 
-    if dirn == 0:
+    p = [px, py, pz]
+
+    if dirn is None:
+        # not sure about dimensions here, a parameter is always 1-d so it should
+        # always return the same derivative
         return px
     else:
-        return py</code></pre>
+        return p[dirn]</code></pre>
 </details>
 </dd>
 </dl>

@@ -23,35 +23,9 @@
 <section id="section-intro">
 <p><img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/AusFlow.png" style="display: block; margin: 0 auto"></p>
 <p><strong>Quagmire is a Python surface process framework for building erosion and deposition models on highly parallel, decomposed structured and unstructured meshes.</strong></p>
-<p>Quagmire is structured into three major tiers that inherit methods and attributes from different classes:</p>
-<p><img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart.png" style="width: 321px; float:right"></p>
-<ol>
-<li><code><a title="quagmire.SurfaceProcessMesh" href="#quagmire.SurfaceProcessMesh">SurfaceProcessMesh()</a></code><ul>
-<li>Calculate erosion-deposition rates</li>
-<li>Landscape analysis</li>
-<li>Long range flow models</li>
-</ul>
-</li>
-<li><code><a title="quagmire.TopoMesh" href="#quagmire.TopoMesh">TopoMesh()</a></code><ul>
-<li>Assemble downhill connectivity matrix</li>
-<li>Calculate upstream area</li>
-<li>Compute slope</li>
-<li>Identify flat spots, low points, high points.</li>
-</ul>
-</li>
-<li><code><a title="quagmire.FlatMesh" href="#quagmire.FlatMesh">FlatMesh()</a></code><ul>
-<li>calculating spatial derivatives</li>
-<li>identifying node neighbour relationships</li>
-<li>interpolation / extrapolation</li>
-<li>smoothing operators</li>
-<li>importing and saving mesh information</li>
-</ul>
-</li>
-</ol>
-<p>The <code><a title="quagmire.surfmesh.surfmesh.SurfMesh" href="surfmesh/surfmesh.html#quagmire.surfmesh.surfmesh.SurfMesh">SurfMesh</a></code> class (1) inherits from
-the <code><a title="quagmire.topomesh.topomesh.TopoMesh" href="topomesh/topomesh.html#quagmire.topomesh.topomesh.TopoMesh">TopoMesh</a></code> class (2), which in turn inherits from
-the <code><a title="quagmire.mesh.pixmesh.PixMesh" href="mesh/pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code>, <code><a title="quagmire.mesh.trimesh.TriMesh" href="mesh/trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code>, or
-<code><a title="quagmire.mesh.strimesh.sTriMesh" href="mesh/strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code> class (3) depending on the type of mesh.</p>
+<p><img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/hierarchy_chart.png" style="width: 400px; float:right"></p>
+<p>Quagmire is structured into three major classes that inherit methods and attributes from lower tiers.</p>
+<p>The Surface Processes class inherits from the Topography class, which in turn inherits from TriMesh or PixMesh depending on the type of mesh.</p>
 <h2 id="installation">Installation</h2>
 <p>Numpy and a fortran compiler, preferably <a href="https://gcc.gnu.org/wiki/GFortran">gfortran</a>, are required to install Quagmire.</p>
 <ul>
@@ -76,13 +50,13 @@ flags <code>config_fc --fcompiler=&lt;compiler name&gt;</code> when setup.py is 
 </ul>
 <h3 id="petsc-installation">PETSc installation</h3>
 <p>PETSc is used extensively via the Python frontend, petsc4py. It is required that PETSc be configured and installed on your local machine prior to using Quagmire. You can use pip or petsc to install petsc4py and its dependencies with consistent versions.</p>
-<pre><code class="sh">[sudo] pip install numpy mpi4py
+<pre><code>[sudo] pip install numpy mpi4py
 [sudo] pip install petsc petsc4py
 </code></pre>
 <p>If that fails you must compile these manually.</p>
 <h3 id="hdf5-installation">HDF5 installation</h3>
 <p>This is an optional installation, but it is very useful for saving data that is distributed across multiple processes. If you are compiling HDF5 from <a href="https://support.hdfgroup.org/downloads/index.html">source</a> it should be configured with the <code>--enable-parallel</code> flag:</p>
-<pre><code class="sh">CC=/usr/local/mpi/bin/mpicc ./configure --enable-parallel --enable-shared --prefix=&lt;install-directory&gt;
+<pre><code>CC=/usr/local/mpi/bin/mpicc ./configure --enable-parallel --enable-shared --prefix=&lt;install-directory&gt;
 make    # build the library
 make check  # verify the correctness
 make install
@@ -90,7 +64,7 @@ make install
 <p>You can then point to this install directory when you install <a href="http://docs.h5py.org/en/latest/mpi.html#building-against-parallel-hdf5">h5py</a>.</p>
 <h2 id="usage">Usage</h2>
 <p>Quagmire is scalable in parallel. All of the python scripts in the <em>tests</em> subdirectory can be run in parallel, e.g.</p>
-<pre><code class="sh">mpirun -np 4 python stream_power.py
+<pre><code>mpirun -np 4 python stream_power.py
 </code></pre>
 <p>where the number after the <code>-np</code> flag specifies the number of processors.</p>
 <h2 id="tutorials">Tutorials</h2>
@@ -149,31 +123,11 @@ We recommend installing <a href="https://ffmpeg.org/">FFmpeg</a> to create video
 
 **Quagmire is a Python surface process framework for building erosion and deposition models on highly parallel, decomposed structured and unstructured meshes.**
 
-Quagmire is structured into three major tiers that inherit methods and attributes from different classes:
+&lt;img src=&#34;https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/hierarchy_chart.png&#34; style=&#34;width: 400px; float:right&#34;&gt;
 
-&lt;img src=&#34;https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart.png&#34; style=&#34;width: 321px; float:right&#34;&gt;
+Quagmire is structured into three major classes that inherit methods and attributes from lower tiers.
 
-1. `SurfaceProcessMesh`
-    - Calculate erosion-deposition rates
-    - Landscape analysis
-    - Long range flow models
-2. `TopoMesh`
-    - Assemble downhill connectivity matrix
-    - Calculate upstream area
-    - Compute slope
-    - Identify flat spots, low points, high points.
-3. `FlatMesh`
-    - calculating spatial derivatives
-    - identifying node neighbour relationships
-    - interpolation / extrapolation
-    - smoothing operators
-    - importing and saving mesh information
-
-The `quagmire.surfmesh.surfmesh.SurfMesh` class (1) inherits from
-the `quagmire.topomesh.topomesh.TopoMesh` class (2), which in turn inherits from
-the `quagmire.mesh.pixmesh.PixMesh`, `quagmire.mesh.trimesh.TriMesh`, or
-`quagmire.mesh.strimesh.sTriMesh` class (3) depending on the type of mesh.
-
+The Surface Processes class inherits from the Topography class, which in turn inherits from TriMesh or PixMesh depending on the type of mesh.
 
 ## Installation
 
@@ -203,7 +157,7 @@ Running this code requires the following packages to be installed. The visualisa
 
 PETSc is used extensively via the Python frontend, petsc4py. It is required that PETSc be configured and installed on your local machine prior to using Quagmire. You can use pip or petsc to install petsc4py and its dependencies with consistent versions.
 
-```sh
+```
 [sudo] pip install numpy mpi4py
 [sudo] pip install petsc petsc4py
 ```
@@ -214,7 +168,7 @@ If that fails you must compile these manually.
 
 This is an optional installation, but it is very useful for saving data that is distributed across multiple processes. If you are compiling HDF5 from [source](https://support.hdfgroup.org/downloads/index.html) it should be configured with the `--enable-parallel` flag:
 
-```sh
+```
 CC=/usr/local/mpi/bin/mpicc ./configure --enable-parallel --enable-shared --prefix=&lt;install-directory&gt;
 make    # build the library
 make check  # verify the correctness
@@ -227,7 +181,7 @@ You can then point to this install directory when you install [h5py](http://docs
 
 Quagmire is scalable in parallel. All of the python scripts in the *tests* subdirectory can be run in parallel, e.g.
 
-```sh
+```
 mpirun -np 4 python stream_power.py
 ```
 

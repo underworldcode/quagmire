@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
 <title>quagmire.mesh.pixmesh API documentation</title>
-<meta name="description" content="For structured data on a regular grid …" />
+<meta name="description" content="For structured data on a regular grid." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -22,16 +22,6 @@
 </header>
 <section id="section-intro">
 <p>For structured data on a regular grid.</p>
-<p><img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart-pixmesh.png" style="width: 321px; float:right"></p>
-<p><code><a title="quagmire.mesh.pixmesh.PixMesh" href="#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code> implements the following functionality:</p>
-<ul>
-<li>calculating spatial derivatives</li>
-<li>identifying node neighbour relationships</li>
-<li>interpolation / extrapolation</li>
-<li>smoothing operators</li>
-<li>importing and saving mesh information</li>
-</ul>
-<p>Supply a <code>PETSc DM</code> object (created from <code><a title="quagmire.tools.meshtools" href="../tools/meshtools.html">quagmire.tools.meshtools</a></code>) to initialise the object.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -54,18 +44,6 @@
 
 &#34;&#34;&#34;
 For structured data on a regular grid.
-
-&lt;img src=&#34;https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart-pixmesh.png&#34; style=&#34;width: 321px; float:right&#34;&gt;
-
-`PixMesh` implements the following functionality:
-
-- calculating spatial derivatives
-- identifying node neighbour relationships
-- interpolation / extrapolation
-- smoothing operators
-- importing and saving mesh information
-
-Supply a `PETSc DM` object (created from `quagmire.tools.meshtools`) to initialise the object.
 &#34;&#34;&#34;
 
 import numpy as np

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
 <title>quagmire.mesh.commonmesh API documentation</title>
-<meta name="description" content="Routines common to all mesh types …" />
+<meta name="description" content="Routines common to all mesh types." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -22,15 +22,6 @@
 </header>
 <section id="section-intro">
 <p>Routines common to all mesh types.</p>
-<p><img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart-commonmesh.png" style="width: 321px; float:right"></p>
-<p><code><a title="quagmire.mesh.commonmesh.CommonMesh" href="#quagmire.mesh.commonmesh.CommonMesh">CommonMesh</a></code> implements the following functionality:</p>
-<ul>
-<li>creating Quagmire mesh variables</li>
-<li>setting and reading node labels on the PETSc DM</li>
-<li>saving the mesh and mesh variables to HDF5 files</li>
-<li>handling global and local synchronisation operations</li>
-</ul>
-<p>Supply a <code>PETSc DM</code> object (created from <code><a title="quagmire.tools.meshtools" href="../tools/meshtools.html">quagmire.tools.meshtools</a></code>) to initialise the object.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -53,17 +44,6 @@
 
 &#34;&#34;&#34;
 Routines common to all mesh types.
-
-&lt;img src=&#34;https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart-commonmesh.png&#34; style=&#34;width: 321px; float:right&#34;&gt;
-
-`CommonMesh` implements the following functionality:
-
-- creating Quagmire mesh variables
-- setting and reading node labels on the PETSc DM
-- saving the mesh and mesh variables to HDF5 files
-- handling global and local synchronisation operations
-
-Supply a `PETSc DM` object (created from `quagmire.tools.meshtools`) to initialise the object.
 &#34;&#34;&#34;
 
 import numpy as np
