@@ -284,6 +284,55 @@ def arctan2(*args):
 
     return newLazyFn
 
+
+def slope(lazyFn):
+    &#34;&#34;&#34;Lazy evaluation of the slope of a scalar field&#34;&#34;&#34;
+    
+    # need to take a few lines from `function_classes` gradient method
+
+    if lazyFn._mesh is None:
+        raise RuntimeError(&#34;fn_gradient is a numerical differentiation routine based on &#34; + \
+            &#34;derivatives of a fitted spline function on a mesh. &#34; + \
+            &#34;The function {} has no associated mesh. &#34;.format(lazyFn.__repr__())) + \
+            &#34;To obtain *numerical* derivatives of this function, &#34; + \
+            &#34;you can provide a mesh to the gradient function. &#34; + \
+            &#34;The usual reason for this error is that your function is not based upon &#34; + \
+            &#34;mesh variables and can, perhaps, be differentiated without resort to interpolating splines. &#34;
+
+    elif lazyFn._mesh is not None:
+        diff_mesh = lazyFn._mesh
+    else:
+        import quagmire
+        quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
+        diff_mesh = mesh
+
+    def new_fn_slope(*args, **kwargs):
+        local_array = lazyFn.evaluate(diff_mesh)
+        df_tuple = diff_mesh._derivative_grad_cartesian(local_array, nit=10, tol=1e-8)
+
+        grad_f = _np.hypot(*df_tuple)/diff_mesh._radius
+
+        if len(args) == 1 and args[0] == diff_mesh:
+            return grad_f
+        elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+            mesh = args[0]
+            return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=grad_f, **kwargs)
+        elif len(args) &gt; 1:
+            xi = np.atleast_1d(args[0])  # .resize(-1,1)
+            yi = np.atleast_1d(args[1])  # .resize(-1,1)
+            i, e = diff_mesh.interpolate(xi, yi, zdata=grad_f, **kwargs)
+            return i
+        else:
+            err_msg = &#34;Invalid number of arguments\n&#34;
+            err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+            raise ValueError(err_msg)
+
+    newLazyFn = _LazyEvaluation(mesh=diff_mesh)
+    newLazyFn.evaluate = new_fn_slope
+    newLazyFn.description = &#34;sqrt(d({0})/dX^2 + d({0})/dY^2)&#34;.format(lazyFn.description)
+    newLazyFn.dependency_list = lazyFn.dependency_list
+    return newLazyFn
+
 ## These are not defined yet (LM)
 
 # unwrap(p[, discont, axis])    Unwrap by changing deltas between values to 2*pi complement.</code></pre>
@@ -778,6 +827,64 @@ def arctan2(*args):
     return _make_npmath_op(_np.sinh, &#34;sinh&#34;, lazyFn)</code></pre>
 </details>
 </dd>
+<dt id="quagmire.function.math.slope"><code class="name flex">
+<span>def <span class="ident">slope</span></span>(<span>lazyFn)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Lazy evaluation of the slope of a scalar field</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def slope(lazyFn):
+    &#34;&#34;&#34;Lazy evaluation of the slope of a scalar field&#34;&#34;&#34;
+    
+    # need to take a few lines from `function_classes` gradient method
+
+    if lazyFn._mesh is None:
+        raise RuntimeError(&#34;fn_gradient is a numerical differentiation routine based on &#34; + \
+            &#34;derivatives of a fitted spline function on a mesh. &#34; + \
+            &#34;The function {} has no associated mesh. &#34;.format(lazyFn.__repr__())) + \
+            &#34;To obtain *numerical* derivatives of this function, &#34; + \
+            &#34;you can provide a mesh to the gradient function. &#34; + \
+            &#34;The usual reason for this error is that your function is not based upon &#34; + \
+            &#34;mesh variables and can, perhaps, be differentiated without resort to interpolating splines. &#34;
+
+    elif lazyFn._mesh is not None:
+        diff_mesh = lazyFn._mesh
+    else:
+        import quagmire
+        quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
+        diff_mesh = mesh
+
+    def new_fn_slope(*args, **kwargs):
+        local_array = lazyFn.evaluate(diff_mesh)
+        df_tuple = diff_mesh._derivative_grad_cartesian(local_array, nit=10, tol=1e-8)
+
+        grad_f = _np.hypot(*df_tuple)/diff_mesh._radius
+
+        if len(args) == 1 and args[0] == diff_mesh:
+            return grad_f
+        elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+            mesh = args[0]
+            return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=grad_f, **kwargs)
+        elif len(args) &gt; 1:
+            xi = np.atleast_1d(args[0])  # .resize(-1,1)
+            yi = np.atleast_1d(args[1])  # .resize(-1,1)
+            i, e = diff_mesh.interpolate(xi, yi, zdata=grad_f, **kwargs)
+            return i
+        else:
+            err_msg = &#34;Invalid number of arguments\n&#34;
+            err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+            raise ValueError(err_msg)
+
+    newLazyFn = _LazyEvaluation(mesh=diff_mesh)
+    newLazyFn.evaluate = new_fn_slope
+    newLazyFn.description = &#34;sqrt(d({0})/dX^2 + d({0})/dY^2)&#34;.format(lazyFn.description)
+    newLazyFn.dependency_list = lazyFn.dependency_list
+    return newLazyFn</code></pre>
+</details>
+</dd>
 <dt id="quagmire.function.math.sqrt"><code class="name flex">
 <span>def <span class="ident">sqrt</span></span>(<span>lazyFn)</span>
 </code></dt>
@@ -864,6 +971,7 @@ def arctan2(*args):
 <li><code><a title="quagmire.function.math.radians" href="#quagmire.function.math.radians">radians</a></code></li>
 <li><code><a title="quagmire.function.math.sin" href="#quagmire.function.math.sin">sin</a></code></li>
 <li><code><a title="quagmire.function.math.sinh" href="#quagmire.function.math.sinh">sinh</a></code></li>
+<li><code><a title="quagmire.function.math.slope" href="#quagmire.function.math.slope">slope</a></code></li>
 <li><code><a title="quagmire.function.math.sqrt" href="#quagmire.function.math.sqrt">sqrt</a></code></li>
 <li><code><a title="quagmire.function.math.tan" href="#quagmire.function.math.tan">tan</a></code></li>
 <li><code><a title="quagmire.function.math.tanh" href="#quagmire.function.math.tanh">tanh</a></code></li>

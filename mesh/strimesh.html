@@ -211,6 +211,9 @@ class sTriMesh(_CommonMesh):
         self.data = self.tri.points
         self.interpolate = self.tri.interpolate
 
+        # functions / parameters that are required for compatibility among FlatMesh types
+        self._derivative_grad_cartesian = self.tri.gradient_xyz
+
 
     def get_local_mesh(self):
         &#34;&#34;&#34;
@@ -308,14 +311,7 @@ class sTriMesh(_CommonMesh):
         PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         &#34;&#34;&#34;
-        PHIx, PHIy, PHIz = self.tri.gradient_xyz(PHI, nit, tol)
-
-        R = self._radius
-
-        PHIx *= R
-        PHIy *= R
-        PHIz *= R
-        return PHIx, PHIy, PHIz
+        return self.tri.gradient_lonlat(PHI, nit, tol)
 
 
     def derivative_div(self, PHIx, PHIy, PHIz, **kwargs):
@@ -972,6 +968,9 @@ def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
         self.data = self.tri.points
         self.interpolate = self.tri.interpolate
 
+        # functions / parameters that are required for compatibility among FlatMesh types
+        self._derivative_grad_cartesian = self.tri.gradient_xyz
+
 
     def get_local_mesh(self):
         &#34;&#34;&#34;
@@ -1069,14 +1068,7 @@ def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
         PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         &#34;&#34;&#34;
-        PHIx, PHIy, PHIz = self.tri.gradient_xyz(PHI, nit, tol)
-
-        R = self._radius
-
-        PHIx *= R
-        PHIy *= R
-        PHIz *= R
-        return PHIx, PHIy, PHIz
+        return self.tri.gradient_lonlat(PHI, nit, tol)
 
 
     def derivative_div(self, PHIx, PHIy, PHIz, **kwargs):
@@ -1823,14 +1815,7 @@ This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.</p
     PHIy : ndarray of floats, shape(n,)
         first partial derivative of PHI in y direction
     &#34;&#34;&#34;
-    PHIx, PHIy, PHIz = self.tri.gradient_xyz(PHI, nit, tol)
-
-    R = self._radius
-
-    PHIx *= R
-    PHIy *= R
-    PHIz *= R
-    return PHIx, PHIy, PHIz</code></pre>
+    return self.tri.gradient_lonlat(PHI, nit, tol)</code></pre>
 </details>
 </dd>
 <dt id="quagmire.mesh.strimesh.sTriMesh.get_edge_lengths"><code class="name flex">
