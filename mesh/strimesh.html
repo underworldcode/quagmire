@@ -177,9 +177,8 @@ class sTriMesh(_CommonMesh):
 
 
         # Calculate geocentric radius
-        self._r1 = r1
-        self._r2 = r2
         self._radius = geocentric_radius(self.tri.lats, r1, r2)
+
 
         # Calculate weigths and pointwise area
         t = perf_counter()
@@ -199,10 +198,10 @@ class sTriMesh(_CommonMesh):
         self.mask = self.add_variable(name=&#34;Mask&#34;)
         self.mask.data = self.bmask.astype(PETSc.ScalarType)
         self.mask.lock()
-
         self.timings[&#39;find boundaries&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank == 0 and self.verbose:
             print(&#34;{} - Find boundaries {}s&#34;.format(self.dm.comm.rank, perf_counter()-t))
+
 
         # cKDTree
         t = perf_counter()
@@ -237,6 +236,34 @@ class sTriMesh(_CommonMesh):
         self._derivative_grad_cartesian = self.tri.gradient_xyz
 
 
+
+    @property
+    def radius(self):
+        &#34;&#34;&#34;
+        The radius of the sphere.
+
+        Use `geocentric_radius` to compute the radius with distortion between the poles
+        and the equator, otherwise Quagmire uses Earth values by default. i.e.
+
+        ```
+        radius = geocentric_radius(r1=6384.4e3, r2=6352.8e3)
+        ```
+
+        Setting a new value of radius updates the point-wise area calculation.
+        &#34;&#34;&#34;
+        return self._radius
+
+    @radius.setter
+    def radius(self, value):
+        self._radius = value
+
+        # re-evalutate mesh area
+        self.area, self.weight = self.calculate_area_weights()
+        self.pointwise_area.unlock()
+        self.pointwise_area.data = self.area
+        self.pointwise_area.lock()
+
+
     def get_local_mesh(self):
         &#34;&#34;&#34;
         Retrieves the local mesh information
@@ -254,16 +281,9 @@ class sTriMesh(_CommonMesh):
         return self.tri.lons, self.tri.lats, self.tri.simplices, self.bmask
 
 
-    def calculate_area_weights(self, r1=6384.4e3, r2=6352.8e3):
+    def calculate_area_weights(self):
         &#34;&#34;&#34;
         Calculate pointwise weights and area
-
-        Parameters
-        ----------
-        r1 : float
-            radius of the sphere at the equator
-        r2 : float
-            radius of the sphere at the poles
 
         Returns
         -------
@@ -280,14 +300,16 @@ class sTriMesh(_CommonMesh):
         6384.4km and 6352.8km, respectively).
         &#34;&#34;&#34;
 
-        from quagmire._fortran import ntriw
+        from quagmire._fortran import ntriw_s
 
         R = self._radius
+        tri_area = self.tri.areas()
 
-        xs = R*self.tri.x
-        ys = R*self.tri.y
+        # find surface area and weights on the unit sphere
+        area, weight = ntriw_s(self.npoints, self.tri.simplices.T+1, tri_area)
 
-        area, weight = ntriw(xs, ys, self.tri.simplices.T+1)
+        # project to the radius of the sphere
+        area *= R**2
         
         return area, weight
 
@@ -934,9 +956,8 @@ def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
 
 
         # Calculate geocentric radius
-        self._r1 = r1
-        self._r2 = r2
         self._radius = geocentric_radius(self.tri.lats, r1, r2)
+
 
         # Calculate weigths and pointwise area
         t = perf_counter()
@@ -956,10 +977,10 @@ def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
         self.mask = self.add_variable(name=&#34;Mask&#34;)
         self.mask.data = self.bmask.astype(PETSc.ScalarType)
         self.mask.lock()
-
         self.timings[&#39;find boundaries&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank == 0 and self.verbose:
             print(&#34;{} - Find boundaries {}s&#34;.format(self.dm.comm.rank, perf_counter()-t))
+
 
         # cKDTree
         t = perf_counter()
@@ -994,6 +1015,34 @@ def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
         self._derivative_grad_cartesian = self.tri.gradient_xyz
 
 
+
+    @property
+    def radius(self):
+        &#34;&#34;&#34;
+        The radius of the sphere.
+
+        Use `geocentric_radius` to compute the radius with distortion between the poles
+        and the equator, otherwise Quagmire uses Earth values by default. i.e.
+
+        ```
+        radius = geocentric_radius(r1=6384.4e3, r2=6352.8e3)
+        ```
+
+        Setting a new value of radius updates the point-wise area calculation.
+        &#34;&#34;&#34;
+        return self._radius
+
+    @radius.setter
+    def radius(self, value):
+        self._radius = value
+
+        # re-evalutate mesh area
+        self.area, self.weight = self.calculate_area_weights()
+        self.pointwise_area.unlock()
+        self.pointwise_area.data = self.area
+        self.pointwise_area.lock()
+
+
     def get_local_mesh(self):
         &#34;&#34;&#34;
         Retrieves the local mesh information
@@ -1011,16 +1060,9 @@ def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
         return self.tri.lons, self.tri.lats, self.tri.simplices, self.bmask
 
 
-    def calculate_area_weights(self, r1=6384.4e3, r2=6352.8e3):
+    def calculate_area_weights(self):
         &#34;&#34;&#34;
         Calculate pointwise weights and area
-
-        Parameters
-        ----------
-        r1 : float
-            radius of the sphere at the equator
-        r2 : float
-            radius of the sphere at the poles
 
         Returns
         -------
@@ -1037,14 +1079,16 @@ def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
         6384.4km and 6352.8km, respectively).
         &#34;&#34;&#34;
 
-        from quagmire._fortran import ntriw
+        from quagmire._fortran import ntriw_s
 
         R = self._radius
+        tri_area = self.tri.areas()
 
-        xs = R*self.tri.x
-        ys = R*self.tri.y
+        # find surface area and weights on the unit sphere
+        area, weight = ntriw_s(self.npoints, self.tri.simplices.T+1, tri_area)
 
-        area, weight = ntriw(xs, ys, self.tri.simplices.T+1)
+        # project to the radius of the sphere
+        area *= R**2
         
         return area, weight
 
@@ -1471,21 +1515,43 @@ def id(self):
     return self.__id</code></pre>
 </details>
 </dd>
+<dt id="quagmire.mesh.strimesh.sTriMesh.radius"><code class="name">var <span class="ident">radius</span></code></dt>
+<dd>
+<div class="desc"><p>The radius of the sphere.</p>
+<p>Use <code><a title="quagmire.mesh.strimesh.geocentric_radius" href="#quagmire.mesh.strimesh.geocentric_radius">geocentric_radius()</a></code> to compute the radius with distortion between the poles
+and the equator, otherwise Quagmire uses Earth values by default. i.e.</p>
+<pre><code>radius = geocentric_radius(r1=6384.4e3, r2=6352.8e3)
+</code></pre>
+<p>Setting a new value of radius updates the point-wise area calculation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def radius(self):
+    &#34;&#34;&#34;
+    The radius of the sphere.
+
+    Use `geocentric_radius` to compute the radius with distortion between the poles
+    and the equator, otherwise Quagmire uses Earth values by default. i.e.
+
+    ```
+    radius = geocentric_radius(r1=6384.4e3, r2=6352.8e3)
+    ```
+
+    Setting a new value of radius updates the point-wise area calculation.
+    &#34;&#34;&#34;
+    return self._radius</code></pre>
+</details>
+</dd>
 </dl>
 <h3>Methods</h3>
 <dl>
 <dt id="quagmire.mesh.strimesh.sTriMesh.calculate_area_weights"><code class="name flex">
-<span>def <span class="ident">calculate_area_weights</span></span>(<span>self, r1=6384400.0, r2=6352800.0)</span>
+<span>def <span class="ident">calculate_area_weights</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Calculate pointwise weights and area</p>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>r1</code></strong> :&ensp;<code>float</code></dt>
-<dd>radius of the sphere at the equator</dd>
-<dt><strong><code>r2</code></strong> :&ensp;<code>float</code></dt>
-<dd>radius of the sphere at the poles</dd>
-</dl>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><strong><code>area</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,)</code></dt>
@@ -1502,16 +1568,9 @@ at the equator <code>r1</code> and the poles <code>r2</code> (defaults to Earth 
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def calculate_area_weights(self, r1=6384.4e3, r2=6352.8e3):
+<pre><code class="python">def calculate_area_weights(self):
     &#34;&#34;&#34;
     Calculate pointwise weights and area
-
-    Parameters
-    ----------
-    r1 : float
-        radius of the sphere at the equator
-    r2 : float
-        radius of the sphere at the poles
 
     Returns
     -------
@@ -1528,14 +1587,16 @@ at the equator <code>r1</code> and the poles <code>r2</code> (defaults to Earth 
     6384.4km and 6352.8km, respectively).
     &#34;&#34;&#34;
 
-    from quagmire._fortran import ntriw
+    from quagmire._fortran import ntriw_s
 
     R = self._radius
+    tri_area = self.tri.areas()
 
-    xs = R*self.tri.x
-    ys = R*self.tri.y
+    # find surface area and weights on the unit sphere
+    area, weight = ntriw_s(self.npoints, self.tri.simplices.T+1, tri_area)
 
-    area, weight = ntriw(xs, ys, self.tri.simplices.T+1)
+    # project to the radius of the sphere
+    area *= R**2
     
     return area, weight</code></pre>
 </details>
@@ -2193,6 +2254,7 @@ to the specified <code>point</code></dd>
 <li><code><a title="quagmire.mesh.strimesh.sTriMesh.local_area_smoothing" href="#quagmire.mesh.strimesh.sTriMesh.local_area_smoothing">local_area_smoothing</a></code></li>
 <li><code><a title="quagmire.mesh.strimesh.sTriMesh.local_area_smoothing_old" href="#quagmire.mesh.strimesh.sTriMesh.local_area_smoothing_old">local_area_smoothing_old</a></code></li>
 <li><code><a title="quagmire.mesh.strimesh.sTriMesh.node_neighbours" href="#quagmire.mesh.strimesh.sTriMesh.node_neighbours">node_neighbours</a></code></li>
+<li><code><a title="quagmire.mesh.strimesh.sTriMesh.radius" href="#quagmire.mesh.strimesh.sTriMesh.radius">radius</a></code></li>
 <li><code><a title="quagmire.mesh.strimesh.sTriMesh.rbf_smoother" href="#quagmire.mesh.strimesh.sTriMesh.rbf_smoother">rbf_smoother</a></code></li>
 </ul>
 </li>
