@@ -60,5 +60,3 @@ def test_spherical_area():
     mesh.radius = R2
     area2 = mesh.pointwise_area.sum()
     assert np.isclose(area2,4.*np.pi*R2**2), "Area of sphere with r=2 is incorrect, {}".format(area2)
-
-    raise ValueError(area1, area2)
