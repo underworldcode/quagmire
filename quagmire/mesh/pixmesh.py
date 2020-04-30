@@ -192,6 +192,7 @@ class PixMesh(_CommonMesh):
         self.root = False
 
         # functions / parameters that are required for compatibility among FlatMesh types
+        self._derivative_grad_cartesian = self.derivative_grad
         self._radius = 1.0
 
 

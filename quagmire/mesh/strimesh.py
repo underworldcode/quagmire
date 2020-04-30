@@ -139,9 +139,8 @@ class sTriMesh(_CommonMesh):
 
 
         # Calculate geocentric radius
-        self._r1 = r1
-        self._r2 = r2
         self._radius = geocentric_radius(self.tri.lats, r1, r2)
+
 
         # Calculate weigths and pointwise area
         t = perf_counter()
@@ -161,10 +160,10 @@ class sTriMesh(_CommonMesh):
         self.mask = self.add_variable(name="Mask")
         self.mask.data = self.bmask.astype(PETSc.ScalarType)
         self.mask.lock()
-
         self.timings['find boundaries'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank == 0 and self.verbose:
             print("{} - Find boundaries {}s".format(self.dm.comm.rank, perf_counter()-t))
+
 
         # cKDTree
         t = perf_counter()
@@ -199,6 +198,34 @@ class sTriMesh(_CommonMesh):
         self._derivative_grad_cartesian = self.tri.gradient_xyz
 
 
+
+    @property
+    def radius(self):
+        """
+        The radius of the sphere.
+
+        Use `geocentric_radius` to compute the radius with distortion between the poles
+        and the equator, otherwise Quagmire uses Earth values by default. i.e.
+
+        ```
+        radius = geocentric_radius(r1=6384.4e3, r2=6352.8e3)
+        ```
+
+        Setting a new value of radius updates the point-wise area calculation.
+        """
+        return self._radius
+
+    @radius.setter
+    def radius(self, value):
+        self._radius = value
+
+        # re-evalutate mesh area
+        self.area, self.weight = self.calculate_area_weights()
+        self.pointwise_area.unlock()
+        self.pointwise_area.data = self.area
+        self.pointwise_area.lock()
+
+
     def get_local_mesh(self):
         """
         Retrieves the local mesh information
@@ -216,16 +243,9 @@ class sTriMesh(_CommonMesh):
         return self.tri.lons, self.tri.lats, self.tri.simplices, self.bmask
 
 
-    def calculate_area_weights(self, r1=6384.4e3, r2=6352.8e3):
+    def calculate_area_weights(self):
         """
         Calculate pointwise weights and area
-
-        Parameters
-        ----------
-        r1 : float
-            radius of the sphere at the equator
-        r2 : float
-            radius of the sphere at the poles
 
         Returns
         -------
@@ -242,14 +262,16 @@ class sTriMesh(_CommonMesh):
         6384.4km and 6352.8km, respectively).
         """
 
-        from quagmire._fortran import ntriw
+        from quagmire._fortran import ntriw_s
 
         R = self._radius
+        tri_area = self.tri.areas()
 
-        xs = R*self.tri.x
-        ys = R*self.tri.y
+        # find surface area and weights on the unit sphere
+        area, weight = ntriw_s(self.npoints, self.tri.simplices.T+1, tri_area)
 
-        area, weight = ntriw(xs, ys, self.tri.simplices.T+1)
+        # project to the radius of the sphere
+        area *= R**2
         
         return area, weight
 

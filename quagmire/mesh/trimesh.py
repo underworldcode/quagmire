@@ -135,6 +135,7 @@ class TriMesh(_CommonMesh):
         if self.rank==0 and self.verbose:
             print(("{} - Delaunay triangulation {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
+
         # Calculate weigths and pointwise area
         t = perf_counter()
         self.area, self.weight = self.calculate_area_weights()
@@ -146,17 +147,17 @@ class TriMesh(_CommonMesh):
         if self.rank==0 and self.verbose:
             print(("{} - Calculate node weights and area {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
-        # Find boundary points
 
+        # Find boundary points
         t = perf_counter()
         self.bmask = self.get_boundary()
         self.mask = self.add_variable(name="Mask")
         self.mask.data = self.bmask.astype(PETSc.ScalarType)
         self.mask.lock()
-
         self.timings['find boundaries'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
             print(("{} - Find boundaries {}s".format(self.dm.comm.rank, perf_counter()-t)))
+
 
         # cKDTree
         t = perf_counter()
@@ -165,14 +166,14 @@ class TriMesh(_CommonMesh):
         if self.rank==0 and self.verbose:
             print(("{} - cKDTree {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
+
         # Find neighbours
         t = perf_counter()
-
         self.construct_neighbour_cloud()
-
         self.timings['construct neighbour cloud'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank==0 and self.verbose:
             print(("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, perf_counter()-t)))
+
 
         # sync smoothing operator
         t = perf_counter()
