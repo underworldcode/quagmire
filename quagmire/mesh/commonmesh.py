@@ -232,6 +232,44 @@ class CommonMesh(object):
         return bmask
 
 
+    def save_quagmire_project(self, file):
+
+        import h5py
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+
+        file = str(file)
+        if not file.endswith('.h5'):
+            file += '.h5'
+
+        # first save the mesh
+        self.save_mesh_to_hdf5(file)
+
+        if np.array(self._radius).size == self.npoints:
+            radius = self.add_variable('radius')
+            radius.data = self._radius
+            radius.save(file)
+            rad_scalar = False
+        else:
+            rad_scalar = True
+
+        # now save important parameters we need to reconstruct
+        # data structures. For this we need to crack open the HDF5
+        # file we just saved and write attributes on a 'quagmire' group
+
+        with h5py.File(file, mode='r+', driver='mpio', comm=comm) as h5:
+            quag = h5.create_group('quagmire')
+            quag.attrs['id'] = self.id
+            quag.attrs['verbose'] = self.verbose
+            quag.attrs['mesh_type'] = 'FlatMesh'
+            quag.attrs['downhill_neighbours'] = 0
+            if rad_scalar:
+                quag.attrs['radius'] = self._radius
+            else:
+                quag.attrs['radius'] = False
+
+        return
+
 
     def save_mesh_to_hdf5(self, file):
         """
