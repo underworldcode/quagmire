@@ -123,6 +123,7 @@ class CommonMesh(object):
     &#34;&#34;&#34;
 
     def __init__(self, dm, verbose=True,  *args, **kwargs):
+        self.mesh_type = &#39;FlatMesh&#39;
 
         self.timings = dict() # store times
 
@@ -282,13 +283,14 @@ class CommonMesh(object):
         # first save the mesh
         self.save_mesh_to_hdf5(file)
 
+        # handle saving radius to file for spherical mesh
         if np.array(self._radius).size == self.npoints:
-            radius = self.add_variable(&#39;radius&#39;)
-            radius.data = self._radius
-            radius.save(file)
-            rad_scalar = False
+            radius_meshVariable = self.add_variable(&#39;radius&#39;)
+            radius_meshVariable.data = self._radius
+            radius_meshVariable.save(file, append=True)
+            radius = False
         else:
-            rad_scalar = True
+            radius = self._radius
 
         # now save important parameters we need to reconstruct
         # data structures. For this we need to crack open the HDF5
@@ -296,14 +298,16 @@ class CommonMesh(object):
 
         with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
             quag = h5.create_group(&#39;quagmire&#39;)
-            quag.attrs[&#39;id&#39;] = self.id
-            quag.attrs[&#39;verbose&#39;] = self.verbose
-            quag.attrs[&#39;mesh_type&#39;] = &#39;FlatMesh&#39;
-            quag.attrs[&#39;downhill_neighbours&#39;] = 0
-            if rad_scalar:
-                quag.attrs[&#39;radius&#39;] = self._radius
-            else:
-                quag.attrs[&#39;radius&#39;] = False
+            quag.attrs[&#39;id&#39;]        = self.id
+            quag.attrs[&#39;verbose&#39;]   = self.verbose
+            quag.attrs[&#39;mesh_type&#39;] = self.mesh_type
+            quag.attrs[&#39;radius&#39;]    = radius
+
+            if self.mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
+                quag.attrs[&#39;downhill_neighbours&#39;] = self.downhill_neighbours
+
+        if self.mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
+            self.topography.save(file, append=True)
 
         return
 
@@ -578,6 +582,7 @@ spherical mesh object</dd>
     &#34;&#34;&#34;
 
     def __init__(self, dm, verbose=True,  *args, **kwargs):
+        self.mesh_type = &#39;FlatMesh&#39;
 
         self.timings = dict() # store times
 
@@ -737,13 +742,14 @@ spherical mesh object</dd>
         # first save the mesh
         self.save_mesh_to_hdf5(file)
 
+        # handle saving radius to file for spherical mesh
         if np.array(self._radius).size == self.npoints:
-            radius = self.add_variable(&#39;radius&#39;)
-            radius.data = self._radius
-            radius.save(file)
-            rad_scalar = False
+            radius_meshVariable = self.add_variable(&#39;radius&#39;)
+            radius_meshVariable.data = self._radius
+            radius_meshVariable.save(file, append=True)
+            radius = False
         else:
-            rad_scalar = True
+            radius = self._radius
 
         # now save important parameters we need to reconstruct
         # data structures. For this we need to crack open the HDF5
@@ -751,14 +757,16 @@ spherical mesh object</dd>
 
         with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
             quag = h5.create_group(&#39;quagmire&#39;)
-            quag.attrs[&#39;id&#39;] = self.id
-            quag.attrs[&#39;verbose&#39;] = self.verbose
-            quag.attrs[&#39;mesh_type&#39;] = &#39;FlatMesh&#39;
-            quag.attrs[&#39;downhill_neighbours&#39;] = 0
-            if rad_scalar:
-                quag.attrs[&#39;radius&#39;] = self._radius
-            else:
-                quag.attrs[&#39;radius&#39;] = False
+            quag.attrs[&#39;id&#39;]        = self.id
+            quag.attrs[&#39;verbose&#39;]   = self.verbose
+            quag.attrs[&#39;mesh_type&#39;] = self.mesh_type
+            quag.attrs[&#39;radius&#39;]    = radius
+
+            if self.mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
+                quag.attrs[&#39;downhill_neighbours&#39;] = self.downhill_neighbours
+
+        if self.mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
+            self.topography.save(file, append=True)
 
         return
 
@@ -1252,13 +1260,14 @@ If the file already exists, it is overwritten.</p>
     # first save the mesh
     self.save_mesh_to_hdf5(file)
 
+    # handle saving radius to file for spherical mesh
     if np.array(self._radius).size == self.npoints:
-        radius = self.add_variable(&#39;radius&#39;)
-        radius.data = self._radius
-        radius.save(file)
-        rad_scalar = False
+        radius_meshVariable = self.add_variable(&#39;radius&#39;)
+        radius_meshVariable.data = self._radius
+        radius_meshVariable.save(file, append=True)
+        radius = False
     else:
-        rad_scalar = True
+        radius = self._radius
 
     # now save important parameters we need to reconstruct
     # data structures. For this we need to crack open the HDF5
@@ -1266,14 +1275,16 @@ If the file already exists, it is overwritten.</p>
 
     with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
         quag = h5.create_group(&#39;quagmire&#39;)
-        quag.attrs[&#39;id&#39;] = self.id
-        quag.attrs[&#39;verbose&#39;] = self.verbose
-        quag.attrs[&#39;mesh_type&#39;] = &#39;FlatMesh&#39;
-        quag.attrs[&#39;downhill_neighbours&#39;] = 0
-        if rad_scalar:
-            quag.attrs[&#39;radius&#39;] = self._radius
-        else:
-            quag.attrs[&#39;radius&#39;] = False
+        quag.attrs[&#39;id&#39;]        = self.id
+        quag.attrs[&#39;verbose&#39;]   = self.verbose
+        quag.attrs[&#39;mesh_type&#39;] = self.mesh_type
+        quag.attrs[&#39;radius&#39;]    = radius
+
+        if self.mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
+            quag.attrs[&#39;downhill_neighbours&#39;] = self.downhill_neighbours
+
+    if self.mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
+        self.topography.save(file, append=True)
 
     return</code></pre>
 </details>

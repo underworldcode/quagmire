@@ -81,12 +81,16 @@ def load_quagmire_project(filename):
 
     mesh = BaseMeshClass(DM, verbose=verbose)
     mesh.__id = mesh_id
-    if not radius:
-        radius = mesh.add_variable(&#34;radius&#34;)
-        radius.load(filename)
-    mesh.radius = radius
+    if mesh.id.startswith(&#39;strimesh&#39;):    
+        if not radius and &#39;radius&#39; in field_variable_list:
+            field_variable_list.remove(&#39;radius&#39;)
+            radius_meshVariable = mesh.add_variable(&#34;radius&#34;)
+            radius_meshVariable.load(filename)
+            radius = radius_meshVariable.data
+        mesh.radius = radius
 
-    if mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
+    if mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;] and &#39;h(x,y)&#39; in field_variable_list:
+        field_variable_list.remove(&#39;h(x,y)&#39;)
         mesh.topography.unlock()
         mesh.topography.load(filename)
         mesh.topography.lock()
@@ -177,12 +181,16 @@ def load_saved_MeshVariables(mesh, filename):
 
     mesh = BaseMeshClass(DM, verbose=verbose)
     mesh.__id = mesh_id
-    if not radius:
-        radius = mesh.add_variable(&#34;radius&#34;)
-        radius.load(filename)
-    mesh.radius = radius
+    if mesh.id.startswith(&#39;strimesh&#39;):    
+        if not radius and &#39;radius&#39; in field_variable_list:
+            field_variable_list.remove(&#39;radius&#39;)
+            radius_meshVariable = mesh.add_variable(&#34;radius&#34;)
+            radius_meshVariable.load(filename)
+            radius = radius_meshVariable.data
+        mesh.radius = radius
 
-    if mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
+    if mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;] and &#39;h(x,y)&#39; in field_variable_list:
+        field_variable_list.remove(&#39;h(x,y)&#39;)
         mesh.topography.unlock()
         mesh.topography.load(filename)
         mesh.topography.lock()
