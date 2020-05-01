@@ -132,7 +132,7 @@ function geocentric_radius( lat, r1, r2 )
   return
 end function
 
-subroutine ntriw_s( n, lon, lat, nt, ltri, r1, r2, area, weight)
+subroutine ntriw_proj( n, lon, lat, nt, ltri, r1, r2, area, weight)
 !*****************************************************************************
 !! NTRIW_S computes the pointwise area to calculate local areas
 !! on a spherical mesh
@@ -193,6 +193,52 @@ subroutine ntriw_s( n, lon, lat, nt, ltri, r1, r2, area, weight)
   end do
 
   area = area / 6
+  return
+end subroutine
+
+subroutine ntriw_s( n, nt, ltri, tri_area, area, weight)
+!*****************************************************************************
+!! NTRIW_S computes the pointwise area to calculate local areas
+!! on a spherical mesh
+!
+! Parameters:
+!
+!   Input, integer ( kind = 4 ), n
+!   number of points in the triangulation
+!
+!   Input, real ( kind = 8 ), x(n), y(n)
+!   lon and lat coordinates that make up the triangulation
+!
+!   Input, integer ( kind = 4 ), n
+!   number of points in the triangulation
+!
+!   Input, integer ( kind = 4 ), nt
+!   number of triangles in the triangulation
+!
+!   Input, integer ( kind = 4 ), ltri(nt)
+!   list of triangles in the triangulation
+!
+!   Ouput, real ( kind = 8 ), area(n), weight(n)
+!   areas and weights for each point
+
+  implicit none
+
+  integer ( kind = 4 ) n, nt, i
+  real ( kind = 8 ) area(n)
+  real ( kind = 8 ) tri_area(nt)
+  integer ( kind = 4 ) weight(n)
+  integer ( kind = 4 ) ltri(3,nt)
+  integer ( kind = 4 ) tri(3)
+
+  area(:) = 0
+  weight(:) = 0
+
+  do i = 1, nt
+    tri = ltri(:,i)
+    area(tri) = area(tri) + tri_area(i)
+    weight(tri) = weight(tri) + 1
+  end do
+  area = area / 3
   return
 end subroutine
 

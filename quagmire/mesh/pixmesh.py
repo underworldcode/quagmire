@@ -98,8 +98,8 @@ class PixMesh(_CommonMesh):
 
     @classmethod
     def _count(cls):
-        TriMesh.__count += 1
-        return TriMesh.__count
+        PixMesh.__count += 1
+        return PixMesh.__count
 
     @property
     def id(self):
@@ -112,6 +112,7 @@ class PixMesh(_CommonMesh):
         # initialise base mesh class
         super(PixMesh, self).__init__(dm, verbose)
 
+        self.__id = "pixmesh_{}".format(self._count())
 
         (minX, maxX), (minY, maxY) = dm.getBoundingBox()
         Nx, Ny = dm.getSizes()
@@ -122,6 +123,9 @@ class PixMesh(_CommonMesh):
 
         self.area = np.array(dx*dy)
         self.adjacency_weight = 0.5
+        self.pointwise_area = self.add_variable(name="area")
+        self.pointwise_area.data = self.area
+        self.pointwise_area.lock()
 
         self.bc = dict()
         self.bc["top"]    = (1,maxY)
@@ -150,58 +154,45 @@ class PixMesh(_CommonMesh):
         self.npoints = nx*ny
 
 
-        # Find neighbours
-        t = perf_counter()
-        self.construct_neighbours()
-        self.timings['construct neighbours'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print((" - Construct neighbour array {}s".format(perf_counter()-t)))
-
         # cKDTree
         t = perf_counter()
         self.cKDTree = _cKDTree(self.coords)
         self.timings['cKDTree'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print((" - cKDTree {}s".format(perf_counter()-t)))
+        if self.rank == 0 and self.verbose:
+            print("{} - cKDTree {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
         # Find boundary points
         t = perf_counter()
         self.bmask = self.get_boundary()
+        self.mask = self.add_variable(name="Mask")
+        self.mask.data = self.bmask.astype(PETSc.ScalarType)
+        self.mask.lock()
         self.timings['find boundaries'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print((" - Find boundaries {}s".format(perf_counter()-t)))
-
-
-        # Build smoothing operator
-        t = perf_counter()
-        self._build_smoothing_matrix()
-        self.timings['smoothing matrix'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print((" - Build smoothing matrix {}s".format(perf_counter()-t)))
-
+        if self.rank == 0 and self.verbose:
+            print("{} - Find boundaries {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
         # Find neighbours
         t = perf_counter()
         self.construct_neighbour_cloud()
         self.timings['construct neighbour cloud'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print((" - Construct neighbour cloud array {}s".format(perf_counter()-t)))
+        if self.rank == 0 and self.verbose:
+            print("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
         # RBF smoothing operator
         t = perf_counter()
         self._construct_rbf_weights()
         self.timings['construct rbf weights'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print((" - Construct rbf weights {}s".format(perf_counter()-t)))
-
+        if self.rank == 0 and self.verbose:
+            print("{} - Construct rbf weights {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
         self.root = False
 
         # functions / parameters that are required for compatibility among FlatMesh types
+        self._derivative_grad_cartesian = self.derivative_grad
         self._radius = 1.0
 
 
@@ -374,6 +365,22 @@ class PixMesh(_CommonMesh):
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
 
+        # identify corner nodes
+        corners = [0, self.nx-1, -self.nx, -1]
+
+        # interior nodes have 3*3 neighbours (including self)
+        neighbours = np.full(self.npoints, 9, dtype=np.int)
+        neighbours[~self.bmask] = 6 # walls have 3*2 neighbours
+        neighbours[corners] = 4 # corners have 4 neighbours
+
+        self.near_neighbours = neighbours + 2
+        self.extended_neighbours = np.full_like(neighbours, size)
+
+        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+        for node in range(0,self.npoints):
+            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+
         return
 
     def _build_smoothing_matrix(self):
@@ -426,17 +433,17 @@ class PixMesh(_CommonMesh):
         sm : array of floats, shape (n,)
             smoothed field variable
         """
-        self.lvec.setArray(data)
-        self.dm.localToGlobal(self.lvec, self.gvec)
-        smooth_data = self.gvec.copy()
+
+        smooth_data = data.copy()
+        smooth_data_old = data.copy()
 
         for i in range(0, its):
-            self.localSmoothMat.mult(smooth_data, self.gvec)
-            smooth_data = centre_weight*smooth_data + (1.0 - centre_weight)*self.gvec
+            smooth_data_old[:] = smooth_data
+            smooth_data = centre_weight*smooth_data_old + \
+                          (1.0 - centre_weight)*self.rbf_smoother(smooth_data)
+            smooth_data[:] = self.sync(smooth_data)
 
-        self.dm.globalToLocal(smooth_data, self.lvec)
-
-        return self.lvec.array
+        return smooth_data
 
 
     def get_boundary(self):
@@ -461,22 +468,30 @@ class PixMesh(_CommonMesh):
 
     def _construct_rbf_weights(self, delta=None):
 
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
+
         self.delta  = delta
-
-        if self.delta == None:
-            self.delta = self.neighbour_cloud_distances[:,1].mean() # * 0.75
-
-        # Initialise the interpolants
-
-        gaussian_dist_w       = np.zeros_like(self.neighbour_cloud_distances)
-        gaussian_dist_w[:,:]  = np.exp(-np.power(self.neighbour_cloud_distances[:,:]/self.delta, 2.0))
-        gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
-
-        self.gaussian_dist_w = gaussian_dist_w
+        self.gaussian_dist_w = self._rbf_weights(delta)
 
         return
 
-    def rbf_smoother(self, field):
+    def _rbf_weights(self, delta=None):
+
+        neighbour_cloud_distances = self.neighbour_cloud_distances
+
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
+
+        # Initialise the interpolants
+
+        gaussian_dist_w       = np.zeros_like(neighbour_cloud_distances)
+        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/delta, 2.0))
+        gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
+
+        return gaussian_dist_w
+
+    def rbf_smoother(self, vector, iterations=1, delta=None):
         """
         Smoothing using a radial-basis function smoothing kernel
 
@@ -495,8 +510,16 @@ class PixMesh(_CommonMesh):
             smoothed version of input vector
         """
 
-        # Should do some error checking here to ensure the field and point cloud are compatible
 
-        smoothfield = (field[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+        if type(delta) != type(None):
+            self._construct_rbf_weights(delta)
 
-        return smoothfield
+        vector = self.sync(vector)
+
+        for i in range(0, iterations):
+            # print self.dm.comm.rank, ": RBF ",vector.max(), vector.min()
+
+            vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+            vector = self.sync(vector_smoothed)
+
+        return vector

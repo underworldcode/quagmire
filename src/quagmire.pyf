@@ -50,7 +50,7 @@ python module _fortran ! in
             real(kind=8), intent(in) :: r2
             real(kind=8), intent(out) :: geocentric_radius
         end function geocentric_radius
-        subroutine ntriw_s(n,lon,lat,nt,ltri,r1,r2,area,weight) ! in :fib1:trimesh.f90
+        subroutine ntriw_proj(n,lon,lat,nt,ltri,r1,r2,area,weight) ! in :fib1:trimesh.f90
             integer(kind=4), depend(lon), intent(hide) :: n=len(lon)
             real(kind=8) dimension(n), intent(in) :: lon
             real(kind=8) dimension(n), intent(in) :: lat
@@ -58,6 +58,14 @@ python module _fortran ! in
             integer(kind=4) dimension(3,nt), intent(in) :: ltri
             real(kind=8), intent(in) :: r1
             real(kind=8), intent(in) :: r2
+            real(kind=8) dimension(n), intent(out) :: area
+            integer(kind=4) dimension(n), intent(out) :: weight
+        end subroutine ntriw_proj
+        subroutine ntriw_s(n,nt,ltri,tri_area,area,weight) ! in :fib1:trimesh.f90
+            integer(kind=4), intent(in) :: n
+            integer(kind=4), depend(ltri), intent(hide) :: nt=shape(ltri,1)
+            integer(kind=4) dimension(3,nt), intent(in) :: ltri
+            real(kind=8) dimension(nt), intent(in) :: tri_area
             real(kind=8) dimension(n), intent(out) :: area
             integer(kind=4) dimension(n), intent(out) :: weight
         end subroutine ntriw_s
