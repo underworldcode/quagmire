@@ -34,7 +34,7 @@ class SurfMesh(_TopoMesh):
 
     def __init__(self, *args, **kwargs):
         super(SurfMesh,self).__init__(*args, **kwargs)
-
+        self.mesh_type = 'SurfaceProcessMesh'
         # self.kappa = 1.0 # dummy value
 
         # new context manager ...

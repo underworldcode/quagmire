@@ -86,6 +86,7 @@ class CommonMesh(object):
     """
 
     def __init__(self, dm, verbose=True,  *args, **kwargs):
+        self.mesh_type = 'FlatMesh'
 
         self.timings = dict() # store times
 
@@ -245,13 +246,14 @@ class CommonMesh(object):
         # first save the mesh
         self.save_mesh_to_hdf5(file)
 
+        # handle saving radius to file for spherical mesh
         if np.array(self._radius).size == self.npoints:
-            radius = self.add_variable('radius')
-            radius.data = self._radius
-            radius.save(file)
-            rad_scalar = False
+            radius_meshVariable = self.add_variable('radius')
+            radius_meshVariable.data = self._radius
+            radius_meshVariable.save(file, append=True)
+            radius = False
         else:
-            rad_scalar = True
+            radius = self._radius
 
         # now save important parameters we need to reconstruct
         # data structures. For this we need to crack open the HDF5
@@ -259,14 +261,16 @@ class CommonMesh(object):
 
         with h5py.File(file, mode='r+', driver='mpio', comm=comm) as h5:
             quag = h5.create_group('quagmire')
-            quag.attrs['id'] = self.id
-            quag.attrs['verbose'] = self.verbose
-            quag.attrs['mesh_type'] = 'FlatMesh'
-            quag.attrs['downhill_neighbours'] = 0
-            if rad_scalar:
-                quag.attrs['radius'] = self._radius
-            else:
-                quag.attrs['radius'] = False
+            quag.attrs['id']        = self.id
+            quag.attrs['verbose']   = self.verbose
+            quag.attrs['mesh_type'] = self.mesh_type
+            quag.attrs['radius']    = radius
+
+            if self.mesh_type in ['TopoMesh', 'SurfaceProcessMesh']:
+                quag.attrs['downhill_neighbours'] = self.downhill_neighbours
+
+        if self.mesh_type in ['TopoMesh', 'SurfaceProcessMesh']:
+            self.topography.save(file, append=True)
 
         return
 

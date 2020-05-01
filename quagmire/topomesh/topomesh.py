@@ -32,7 +32,7 @@ from quagmire.function import LazyEvaluation as _LazyEvaluation
 
 class TopoMesh(object):
     def __init__(self, downhill_neighbours=2, *args, **kwargs):
-
+        self.mesh_type = 'TopoMesh'
 
         # Initialise cumulative flow vectors
         self._DX0 = self.gvec.duplicate()
@@ -717,22 +717,3 @@ class TopoMesh(object):
             else:
                 self.node_chain_list[0].append(this_chain[0])
                 self.node_chain_lookup[this_chain[0]] = 0
-
-
-    def save_quagmire_project(self, file):
-
-        import h5py
-
-        file = str(file)
-        if not file.endswith('.h5'):
-            file += '.h5'
-
-        # do all the stuff from the FlatMesh class
-        super(TopoMesh, self).save_quagmire_project(file)
-
-        # in addition to this extra stuff
-        mesh.topography.save(file)
-
-        with h5py.File(file, mode='r+', driver='mpio', comm=comm) as h5:
-            quag = h5['quagmire']
-            quag.attrs['downhill_neighbours'] = self.downhill_neighbours
