@@ -743,7 +743,26 @@ class TopoMesh(object):
 
             else:
                 self.node_chain_list[0].append(this_chain[0])
-                self.node_chain_lookup[this_chain[0]] = 0</code></pre>
+                self.node_chain_lookup[this_chain[0]] = 0
+
+
+    def save_quagmire_project(self, file):
+
+        import h5py
+
+        file = str(file)
+        if not file.endswith(&#39;.h5&#39;):
+            file += &#39;.h5&#39;
+
+        # do all the stuff from the FlatMesh class
+        super(TopoMesh, self).save_quagmire_project(file)
+
+        # in addition to this extra stuff
+        mesh.topography.save(file)
+
+        with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
+            quag = h5[&#39;quagmire&#39;]
+            quag.attrs[&#39;downhill_neighbours&#39;] = self.downhill_neighbours</code></pre>
 </details>
 </section>
 <section>
@@ -1451,7 +1470,26 @@ class TopoMesh(object):
 
             else:
                 self.node_chain_list[0].append(this_chain[0])
-                self.node_chain_lookup[this_chain[0]] = 0</code></pre>
+                self.node_chain_lookup[this_chain[0]] = 0
+
+
+    def save_quagmire_project(self, file):
+
+        import h5py
+
+        file = str(file)
+        if not file.endswith(&#39;.h5&#39;):
+            file += &#39;.h5&#39;
+
+        # do all the stuff from the FlatMesh class
+        super(TopoMesh, self).save_quagmire_project(file)
+
+        # in addition to this extra stuff
+        mesh.topography.save(file)
+
+        with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
+            quag = h5[&#39;quagmire&#39;]
+            quag.attrs[&#39;downhill_neighbours&#39;] = self.downhill_neighbours</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -1660,6 +1698,34 @@ into chain number 0.</p></div>
     return newLazyFn</code></pre>
 </details>
 </dd>
+<dt id="quagmire.topomesh.topomesh.TopoMesh.save_quagmire_project"><code class="name flex">
+<span>def <span class="ident">save_quagmire_project</span></span>(<span>self, file)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_quagmire_project(self, file):
+
+    import h5py
+
+    file = str(file)
+    if not file.endswith(&#39;.h5&#39;):
+        file += &#39;.h5&#39;
+
+    # do all the stuff from the FlatMesh class
+    super(TopoMesh, self).save_quagmire_project(file)
+
+    # in addition to this extra stuff
+    mesh.topography.save(file)
+
+    with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
+        quag = h5[&#39;quagmire&#39;]
+        quag.attrs[&#39;downhill_neighbours&#39;] = self.downhill_neighbours</code></pre>
+</details>
+</dd>
 <dt id="quagmire.topomesh.topomesh.TopoMesh.streamwise_smoothing_fn"><code class="name flex">
 <span>def <span class="ident">streamwise_smoothing_fn</span></span>(<span>self, lazyFn, its=1, centre_weight=0.75)</span>
 </code></dt>
@@ -1799,6 +1865,7 @@ into chain number 0.</p></div>
 <li><code><a title="quagmire.topomesh.topomesh.TopoMesh.cumulative_flow" href="#quagmire.topomesh.topomesh.TopoMesh.cumulative_flow">cumulative_flow</a></code></li>
 <li><code><a title="quagmire.topomesh.topomesh.TopoMesh.downhill_neighbours" href="#quagmire.topomesh.topomesh.TopoMesh.downhill_neighbours">downhill_neighbours</a></code></li>
 <li><code><a title="quagmire.topomesh.topomesh.TopoMesh.downhill_smoothing_fn" href="#quagmire.topomesh.topomesh.TopoMesh.downhill_smoothing_fn">downhill_smoothing_fn</a></code></li>
+<li><code><a title="quagmire.topomesh.topomesh.TopoMesh.save_quagmire_project" href="#quagmire.topomesh.topomesh.TopoMesh.save_quagmire_project">save_quagmire_project</a></code></li>
 <li><code><a title="quagmire.topomesh.topomesh.TopoMesh.streamwise_smoothing_fn" href="#quagmire.topomesh.topomesh.TopoMesh.streamwise_smoothing_fn">streamwise_smoothing_fn</a></code></li>
 <li><code><a title="quagmire.topomesh.topomesh.TopoMesh.uphill_smoothing_fn" href="#quagmire.topomesh.topomesh.TopoMesh.uphill_smoothing_fn">uphill_smoothing_fn</a></code></li>
 <li><code><a title="quagmire.topomesh.topomesh.TopoMesh.upstream_integral_fn" href="#quagmire.topomesh.topomesh.TopoMesh.upstream_integral_fn">upstream_integral_fn</a></code></li>

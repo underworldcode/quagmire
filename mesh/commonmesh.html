@@ -269,6 +269,44 @@ class CommonMesh(object):
         return bmask
 
 
+    def save_quagmire_project(self, file):
+
+        import h5py
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+
+        file = str(file)
+        if not file.endswith(&#39;.h5&#39;):
+            file += &#39;.h5&#39;
+
+        # first save the mesh
+        self.save_mesh_to_hdf5(file)
+
+        if np.array(self._radius).size == self.npoints:
+            radius = self.add_variable(&#39;radius&#39;)
+            radius.data = self._radius
+            radius.save(file)
+            rad_scalar = False
+        else:
+            rad_scalar = True
+
+        # now save important parameters we need to reconstruct
+        # data structures. For this we need to crack open the HDF5
+        # file we just saved and write attributes on a &#39;quagmire&#39; group
+
+        with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
+            quag = h5.create_group(&#39;quagmire&#39;)
+            quag.attrs[&#39;id&#39;] = self.id
+            quag.attrs[&#39;verbose&#39;] = self.verbose
+            quag.attrs[&#39;mesh_type&#39;] = &#39;FlatMesh&#39;
+            quag.attrs[&#39;downhill_neighbours&#39;] = 0
+            if rad_scalar:
+                quag.attrs[&#39;radius&#39;] = self._radius
+            else:
+                quag.attrs[&#39;radius&#39;] = False
+
+        return
+
 
     def save_mesh_to_hdf5(self, file):
         &#34;&#34;&#34;
@@ -685,6 +723,44 @@ spherical mesh object</dd>
         bmask[boundary_indices] = False
         return bmask
 
+
+    def save_quagmire_project(self, file):
+
+        import h5py
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+
+        file = str(file)
+        if not file.endswith(&#39;.h5&#39;):
+            file += &#39;.h5&#39;
+
+        # first save the mesh
+        self.save_mesh_to_hdf5(file)
+
+        if np.array(self._radius).size == self.npoints:
+            radius = self.add_variable(&#39;radius&#39;)
+            radius.data = self._radius
+            radius.save(file)
+            rad_scalar = False
+        else:
+            rad_scalar = True
+
+        # now save important parameters we need to reconstruct
+        # data structures. For this we need to crack open the HDF5
+        # file we just saved and write attributes on a &#39;quagmire&#39; group
+
+        with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
+            quag = h5.create_group(&#39;quagmire&#39;)
+            quag.attrs[&#39;id&#39;] = self.id
+            quag.attrs[&#39;verbose&#39;] = self.verbose
+            quag.attrs[&#39;mesh_type&#39;] = &#39;FlatMesh&#39;
+            quag.attrs[&#39;downhill_neighbours&#39;] = 0
+            if rad_scalar:
+                quag.attrs[&#39;radius&#39;] = self._radius
+            else:
+                quag.attrs[&#39;radius&#39;] = False
+
+        return
 
 
     def save_mesh_to_hdf5(self, file):
@@ -1154,6 +1230,54 @@ If the file already exists, it is overwritten.</p>
     ViewHDF5.destroy()</code></pre>
 </details>
 </dd>
+<dt id="quagmire.mesh.commonmesh.CommonMesh.save_quagmire_project"><code class="name flex">
+<span>def <span class="ident">save_quagmire_project</span></span>(<span>self, file)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_quagmire_project(self, file):
+
+    import h5py
+    from mpi4py import MPI
+    comm = MPI.COMM_WORLD
+
+    file = str(file)
+    if not file.endswith(&#39;.h5&#39;):
+        file += &#39;.h5&#39;
+
+    # first save the mesh
+    self.save_mesh_to_hdf5(file)
+
+    if np.array(self._radius).size == self.npoints:
+        radius = self.add_variable(&#39;radius&#39;)
+        radius.data = self._radius
+        radius.save(file)
+        rad_scalar = False
+    else:
+        rad_scalar = True
+
+    # now save important parameters we need to reconstruct
+    # data structures. For this we need to crack open the HDF5
+    # file we just saved and write attributes on a &#39;quagmire&#39; group
+
+    with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
+        quag = h5.create_group(&#39;quagmire&#39;)
+        quag.attrs[&#39;id&#39;] = self.id
+        quag.attrs[&#39;verbose&#39;] = self.verbose
+        quag.attrs[&#39;mesh_type&#39;] = &#39;FlatMesh&#39;
+        quag.attrs[&#39;downhill_neighbours&#39;] = 0
+        if rad_scalar:
+            quag.attrs[&#39;radius&#39;] = self._radius
+        else:
+            quag.attrs[&#39;radius&#39;] = False
+
+    return</code></pre>
+</details>
+</dd>
 <dt id="quagmire.mesh.commonmesh.CommonMesh.scatter_data"><code class="name flex">
 <span>def <span class="ident">scatter_data</span></span>(<span>self, data)</span>
 </code></dt>
@@ -1286,13 +1410,14 @@ If the file already exists, it is overwritten.</p>
 <ul>
 <li>
 <h4><code><a title="quagmire.mesh.commonmesh.CommonMesh" href="#quagmire.mesh.commonmesh.CommonMesh">CommonMesh</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.add_variable" href="#quagmire.mesh.commonmesh.CommonMesh.add_variable">add_variable</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.gather_data" href="#quagmire.mesh.commonmesh.CommonMesh.gather_data">gather_data</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.get_boundary" href="#quagmire.mesh.commonmesh.CommonMesh.get_boundary">get_boundary</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.get_label" href="#quagmire.mesh.commonmesh.CommonMesh.get_label">get_label</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.save_field_to_hdf5" href="#quagmire.mesh.commonmesh.CommonMesh.save_field_to_hdf5">save_field_to_hdf5</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.save_mesh_to_hdf5" href="#quagmire.mesh.commonmesh.CommonMesh.save_mesh_to_hdf5">save_mesh_to_hdf5</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.save_quagmire_project" href="#quagmire.mesh.commonmesh.CommonMesh.save_quagmire_project">save_quagmire_project</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.scatter_data" href="#quagmire.mesh.commonmesh.CommonMesh.scatter_data">scatter_data</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.set_label" href="#quagmire.mesh.commonmesh.CommonMesh.set_label">set_label</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.sync" href="#quagmire.mesh.commonmesh.CommonMesh.sync">sync</a></code></li>
