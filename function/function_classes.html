@@ -299,8 +299,8 @@ class LazyEvaluation(object):
 class parameter(LazyEvaluation):
     &#34;&#34;&#34;Floating point parameter / coefficient for lazy evaluation of functions&#34;&#34;&#34;
 
-    def __init__(self, value):
-        super(parameter, self).__init__()
+    def __init__(self, value, *args, **kwargs):
+        super(parameter, self).__init__(*args, **kwargs)
         self.value = value
         return
 
@@ -813,7 +813,7 @@ that are identically zero &hellip; etc</p></div>
 </dd>
 <dt id="quagmire.function.function_classes.parameter"><code class="flex name class">
 <span>class <span class="ident">parameter</span></span>
-<span>(</span><span>value)</span>
+<span>(</span><span>value, *args, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Floating point parameter / coefficient for lazy evaluation of functions</p>
@@ -826,8 +826,8 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 <pre><code class="python">class parameter(LazyEvaluation):
     &#34;&#34;&#34;Floating point parameter / coefficient for lazy evaluation of functions&#34;&#34;&#34;
 
-    def __init__(self, value):
-        super(parameter, self).__init__()
+    def __init__(self, value, *args, **kwargs):
+        super(parameter, self).__init__(*args, **kwargs)
         self.value = value
         return
 
