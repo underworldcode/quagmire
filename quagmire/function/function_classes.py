@@ -51,7 +51,13 @@ class LazyEvaluation(object):
     def evaluate(self, *args, **kwargs):
         raise(NotImplementedError)
 
-    def fn_gradient(self, dirn=None, mesh=None):
+
+    @property
+    def fn_gradient(self):
+        return self._fn_gradient()
+    
+
+    def _fn_gradient(self, dirn=None, mesh=None):
         """
         The generic mechanism for obtaining the gradient of a lazy variable is
         to evaluate the values on the mesh at the time in question and use the mesh gradient
@@ -73,8 +79,6 @@ class LazyEvaluation(object):
         else:
             quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
             diff_mesh = mesh
-
-        ndim = np.shape(diff_mesh.data)[1]
 
         def new_fn_x(*args, **kwargs):
             local_array = self.evaluate(diff_mesh)
@@ -117,26 +121,6 @@ class LazyEvaluation(object):
                 err_msg += "Input a valid mesh or coordinates in x,y directions"
                 raise ValueError(err_msg)
 
-        def new_fn_z(*args, **kwargs):
-            local_array = self.evaluate(diff_mesh)
-            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
-            dz = df_tuple[2]
-
-            if len(args) == 1 and args[0] == diff_mesh:
-                return dz
-            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
-                mesh = args[0]
-                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dz, **kwargs)
-            elif len(args) > 1:
-                xi = np.atleast_1d(args[0])  # .resize(-1,1)
-                yi = np.atleast_1d(args[1])  # .resize(-1,1)
-                i, e = diff_mesh.interpolate(xi, yi, zdata=dz, **kwargs)
-                return i
-            else:
-                err_msg = "Invalid number of arguments\n"
-                err_msg += "Input a valid mesh or coordinates in x,y directions"
-                raise ValueError(err_msg)
-
         # Should this be made into a vector mesh variable ?
         def new_fn_grad(*args, **kwargs):
             local_array = self.evaluate(diff_mesh)
@@ -171,11 +155,8 @@ class LazyEvaluation(object):
         newLazyFn_dy = LazyEvaluation(mesh=diff_mesh)
         newLazyFn_dy.evaluate = new_fn_y
         newLazyFn_dy.description = "d({})/dY".format(self.description)
-        newLazyFn_dz = LazyEvaluation(mesh=diff_mesh)
-        newLazyFn_dz.evaluate = new_fn_z
-        newLazyFn_dz.description = "d({})/dZ".format(self.description)
 
-        fn_dir = [newLazyFn_dx, newLazyFn_dy, newLazyFn_dz][0:ndim]
+        fn_dir = [newLazyFn_dx, newLazyFn_dy]
 
         if dirn is None:
             # return a vector mesh variable ?
