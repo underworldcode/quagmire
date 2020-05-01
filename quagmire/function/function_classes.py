@@ -272,8 +272,8 @@ class LazyEvaluation(object):
 class parameter(LazyEvaluation):
     """Floating point parameter / coefficient for lazy evaluation of functions"""
 
-    def __init__(self, value):
-        super(parameter, self).__init__()
+    def __init__(self, value, *args, **kwargs):
+        super(parameter, self).__init__(*args, **kwargs)
         self.value = value
         return
 
