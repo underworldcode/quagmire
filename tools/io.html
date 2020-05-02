@@ -46,6 +46,31 @@ from mpi4py import MPI as _MPI
 _comm = _MPI.COMM_WORLD
 
 def load_quagmire_project(filename):
+    &#34;&#34;&#34;
+    Load a Quagmire project from a HDF5 file.
+
+    Detects which mesh object was saved, i.e.
+
+    - `quagmire.FlatMesh`
+    - `quagmire.TopoMesh`
+    - `quagmire.SurfaceProcessMesh`
+
+    and rebuilds all data structures onto the mesh object.
+
+    Parameters
+    ----------
+    filename : str
+        path of the HDF5 from which to load the Quagmire project.
+
+    Returns
+    -------
+    mesh : object
+        Quagmire mesh object. One of:
+
+        - `quagmire.FlatMesh`
+        - `quagmire.TopoMesh`
+        - `quagmire.SurfaceProcessMesh`
+    &#34;&#34;&#34;
 
     from quagmire import FlatMesh as _FlatMesh
     from quagmire import TopoMesh as _TopoMesh
@@ -53,6 +78,8 @@ def load_quagmire_project(filename):
     import h5py
 
     filename = str(filename)
+    if not filename.endswith(&#39;.h5&#39;):
+        filename += &#39;.h5&#39;
 
     DM = _create_DMPlex_from_hdf5(filename)
 
@@ -109,20 +136,45 @@ def load_quagmire_project(filename):
     return mesh
 
 
-def load_saved_MeshVariables(mesh, filename):
+def load_saved_MeshVariables(mesh, filename, ignore_loaded_fields=True):
+    &#34;&#34;&#34;
+    Loads all mesh variables saved onto the HDF5 file.
+
+    Parameters
+    ----------
+    mesh : object
+        Quagmire mesh object
+    filename : str
+        path of the HDF5 from which to load the mesh variables.
+    ignore_loaded_fields : bool
+        ignore fields already on the `mesh`
+
+    Notes
+    -----
+    Imports all fields within the &#39;fields&#39; group on the HDF5 file
+    and imports all fields contained within - except for fields
+    that are automatically loaded onto `mesh`. 
+    &#34;&#34;&#34;
 
     import h5py
 
+    ignore_fields = []
+    if ignore_loaded_fields:
+        # these shoul
+        ignore_fields = [&#39;h(x,y)&#39;, &#39;radius&#39;]
+
+
     with h5py.File(filename, mode=&#39;r&#39;, driver=&#39;mpio&#39;, comm=_comm) as h5:
+        field_variable_list = []
         if &#39;fields&#39; in h5:
-            field_variable_list = []
-            for field in h5[&#39;fields&#39;]:
-                field_variable_list.append(field)
+            for field_name in h5[&#39;fields&#39;]:
+                if field_name not in ignore_fields:
+                    field_variable_list.append(field_name)
 
 
     MeshVariable_list = []
-    for field in field_variable_list:
-        mvar = mesh.add_variable(field)
+    for field_name in field_variable_list:
+        mvar = mesh.add_variable(field_name)
         mvar.load(filename)
         MeshVariable_list.append(mvar)
 
@@ -140,12 +192,61 @@ def load_saved_MeshVariables(mesh, filename):
 <span>def <span class="ident">load_quagmire_project</span></span>(<span>filename)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Load a Quagmire project from a HDF5 file.</p>
+<p>Detects which mesh object was saved, i.e.</p>
+<ul>
+<li><code><a title="quagmire.FlatMesh" href="../index.html#quagmire.FlatMesh">FlatMesh()</a></code></li>
+<li><code><a title="quagmire.TopoMesh" href="../index.html#quagmire.TopoMesh">TopoMesh()</a></code></li>
+<li><code><a title="quagmire.SurfaceProcessMesh" href="../index.html#quagmire.SurfaceProcessMesh">SurfaceProcessMesh()</a></code></li>
+</ul>
+<p>and rebuilds all data structures onto the mesh object.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>path of the HDF5 from which to load the Quagmire project.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>mesh</code></strong> :&ensp;<code>object</code></dt>
+<dd>
+<p>Quagmire mesh object. One of:</p>
+<ul>
+<li><code><a title="quagmire.FlatMesh" href="../index.html#quagmire.FlatMesh">FlatMesh()</a></code></li>
+<li><code><a title="quagmire.TopoMesh" href="../index.html#quagmire.TopoMesh">TopoMesh()</a></code></li>
+<li><code><a title="quagmire.SurfaceProcessMesh" href="../index.html#quagmire.SurfaceProcessMesh">SurfaceProcessMesh()</a></code></li>
+</ul>
+</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def load_quagmire_project(filename):
+    &#34;&#34;&#34;
+    Load a Quagmire project from a HDF5 file.
+
+    Detects which mesh object was saved, i.e.
+
+    - `quagmire.FlatMesh`
+    - `quagmire.TopoMesh`
+    - `quagmire.SurfaceProcessMesh`
+
+    and rebuilds all data structures onto the mesh object.
+
+    Parameters
+    ----------
+    filename : str
+        path of the HDF5 from which to load the Quagmire project.
+
+    Returns
+    -------
+    mesh : object
+        Quagmire mesh object. One of:
+
+        - `quagmire.FlatMesh`
+        - `quagmire.TopoMesh`
+        - `quagmire.SurfaceProcessMesh`
+    &#34;&#34;&#34;
 
     from quagmire import FlatMesh as _FlatMesh
     from quagmire import TopoMesh as _TopoMesh
@@ -153,6 +254,8 @@ def load_saved_MeshVariables(mesh, filename):
     import h5py
 
     filename = str(filename)
+    if not filename.endswith(&#39;.h5&#39;):
+        filename += &#39;.h5&#39;
 
     DM = _create_DMPlex_from_hdf5(filename)
 
@@ -210,28 +313,66 @@ def load_saved_MeshVariables(mesh, filename):
 </details>
 </dd>
 <dt id="quagmire.tools.io.load_saved_MeshVariables"><code class="name flex">
-<span>def <span class="ident">load_saved_MeshVariables</span></span>(<span>mesh, filename)</span>
+<span>def <span class="ident">load_saved_MeshVariables</span></span>(<span>mesh, filename, ignore_loaded_fields=True)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Loads all mesh variables saved onto the HDF5 file.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>mesh</code></strong> :&ensp;<code>object</code></dt>
+<dd>Quagmire mesh object</dd>
+<dt><strong><code>filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>path of the HDF5 from which to load the mesh variables.</dd>
+<dt><strong><code>ignore_loaded_fields</code></strong> :&ensp;<code>bool</code></dt>
+<dd>ignore fields already on the <code>mesh</code></dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>Imports all fields within the 'fields' group on the HDF5 file
+and imports all fields contained within - except for fields
+that are automatically loaded onto <code>mesh</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def load_saved_MeshVariables(mesh, filename):
+<pre><code class="python">def load_saved_MeshVariables(mesh, filename, ignore_loaded_fields=True):
+    &#34;&#34;&#34;
+    Loads all mesh variables saved onto the HDF5 file.
+
+    Parameters
+    ----------
+    mesh : object
+        Quagmire mesh object
+    filename : str
+        path of the HDF5 from which to load the mesh variables.
+    ignore_loaded_fields : bool
+        ignore fields already on the `mesh`
+
+    Notes
+    -----
+    Imports all fields within the &#39;fields&#39; group on the HDF5 file
+    and imports all fields contained within - except for fields
+    that are automatically loaded onto `mesh`. 
+    &#34;&#34;&#34;
 
     import h5py
 
+    ignore_fields = []
+    if ignore_loaded_fields:
+        # these shoul
+        ignore_fields = [&#39;h(x,y)&#39;, &#39;radius&#39;]
+
+
     with h5py.File(filename, mode=&#39;r&#39;, driver=&#39;mpio&#39;, comm=_comm) as h5:
+        field_variable_list = []
         if &#39;fields&#39; in h5:
-            field_variable_list = []
-            for field in h5[&#39;fields&#39;]:
-                field_variable_list.append(field)
+            for field_name in h5[&#39;fields&#39;]:
+                if field_name not in ignore_fields:
+                    field_variable_list.append(field_name)
 
 
     MeshVariable_list = []
-    for field in field_variable_list:
-        mvar = mesh.add_variable(field)
+    for field_name in field_variable_list:
+        mvar = mesh.add_variable(field_name)
         mvar.load(filename)
         MeshVariable_list.append(mvar)
 
