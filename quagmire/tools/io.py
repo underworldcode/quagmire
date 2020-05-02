@@ -19,6 +19,31 @@ from mpi4py import MPI as _MPI
 _comm = _MPI.COMM_WORLD
 
 def load_quagmire_project(filename):
+    """
+    Load a Quagmire project from a HDF5 file.
+
+    Detects which mesh object was saved, i.e.
+
+    - `quagmire.FlatMesh`
+    - `quagmire.TopoMesh`
+    - `quagmire.SurfaceProcessMesh`
+
+    and rebuilds all data structures onto the mesh object.
+
+    Parameters
+    ----------
+    filename : str
+        path of the HDF5 from which to load the Quagmire project.
+
+    Returns
+    -------
+    mesh : object
+        Quagmire mesh object. One of:
+
+        - `quagmire.FlatMesh`
+        - `quagmire.TopoMesh`
+        - `quagmire.SurfaceProcessMesh`
+    """
 
     from quagmire import FlatMesh as _FlatMesh
     from quagmire import TopoMesh as _TopoMesh
@@ -26,6 +51,8 @@ def load_quagmire_project(filename):
     import h5py
 
     filename = str(filename)
+    if not filename.endswith('.h5'):
+        filename += '.h5'
 
     DM = _create_DMPlex_from_hdf5(filename)
 
@@ -82,20 +109,45 @@ def load_quagmire_project(filename):
     return mesh
 
 
-def load_saved_MeshVariables(mesh, filename):
+def load_saved_MeshVariables(mesh, filename, ignore_loaded_fields=True):
+    """
+    Loads all mesh variables saved onto the HDF5 file.
+
+    Parameters
+    ----------
+    mesh : object
+        Quagmire mesh object
+    filename : str
+        path of the HDF5 from which to load the mesh variables.
+    ignore_loaded_fields : bool
+        ignore fields already on the `mesh`
+
+    Notes
+    -----
+    Imports all fields within the 'fields' group on the HDF5 file
+    and imports all fields contained within - except for fields
+    that are automatically loaded onto `mesh`. 
+    """
 
     import h5py
 
+    ignore_fields = []
+    if ignore_loaded_fields:
+        # these shoul
+        ignore_fields = ['h(x,y)', 'radius']
+
+
     with h5py.File(filename, mode='r', driver='mpio', comm=_comm) as h5:
+        field_variable_list = []
         if 'fields' in h5:
-            field_variable_list = []
-            for field in h5['fields']:
-                field_variable_list.append(field)
+            for field_name in h5['fields']:
+                if field_name not in ignore_fields:
+                    field_variable_list.append(field_name)
 
 
     MeshVariable_list = []
-    for field in field_variable_list:
-        mvar = mesh.add_variable(field)
+    for field_name in field_variable_list:
+        mvar = mesh.add_variable(field_name)
         mvar.load(filename)
         MeshVariable_list.append(mvar)
 
