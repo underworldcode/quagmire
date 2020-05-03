@@ -165,7 +165,7 @@ def deg2rad(lazyFn):
 
 def grad(lazyFn):
     &#34;&#34;&#34;Lazy evaluation of gradient operator on a scalar field&#34;&#34;&#34;
-    return lazyFn.fn_gradient()
+    return lazyFn.fn_gradient
 
 def div(*args):
     &#34;&#34;&#34;Lazy evaluation of divergence operator on a N-D vector field&#34;&#34;&#34;
@@ -182,7 +182,7 @@ def div(*args):
     lazyFn_dependency = set()
     for f, lazyFn in enumerate(args):
         lazyFn_id.add(lazyFn._mesh.id)
-        lazyFn_list.append(lazyFn.fn_gradient(f))
+        lazyFn_list.append(lazyFn.fn_gradient[f])
         lazyFn_description += &#34;diff({},{}) + &#34;.format(lazyFn.description, dims[f])
         lazyFn_dependency.union(lazyFn.dependency_list)
     lazyFn_description = lazyFn_description[:-3]
@@ -206,8 +206,8 @@ def curl(*args):
             raise ValueError(&#34;Both meshes must be identical&#34;)
         
         newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
-        fn_dvydx = lazyFn_y.fn_gradient(0)
-        fn_dvxdy = lazyFn_x.fn_gradient(1)
+        fn_dvydx = lazyFn_y.fn_gradient[0]
+        fn_dvxdy = lazyFn_x.fn_gradient[1]
         newLazyFn.evaluate = lambda *args, **kwargs : fn_dvydx.evaluate(*args, **kwargs) - fn_dvxdy.evaluate(*args, **kwargs)
         newLazyFn.description = &#34;diff({},X) - diff({},Y)&#34;.format(lazyFn_y.description, lazyFn_x.description)
         newLazyFn.dependency_list = lazyFn_x.dependency_list | lazyFn_y.dependency_list
@@ -220,9 +220,9 @@ def curl(*args):
             raise ValueError(&#34;All meshes must be identical&#34;)
         
         newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
-        fn_dvxdx, fn_dvxdy, fn_dvxdz = lazyFn_x.fn_gradient()
-        fn_dvydx, fn_dvydy, fn_dvydz = lazyFn_y.fn_gradient()
-        fn_dvzdx, fn_dvzdy, fn_dvzdz = lazyFn_z.fn_gradient()
+        fn_dvxdx, fn_dvxdy, fn_dvxdz = lazyFn_x.fn_gradient
+        fn_dvydx, fn_dvydy, fn_dvydz = lazyFn_y.fn_gradient
+        fn_dvzdx, fn_dvzdy, fn_dvzdz = lazyFn_z.fn_gradient
         fn_curl = (fn_dvzdy-fn_dvydz) + (fn_dvxdz-fn_dvzdx) + (fn_dvydx-fn_dvxdy)
         newLazyFn.evaluate = lambda *args, **kwargs : fn_curl.evaluate(*args, **kwargs)
         desc = &#34;(diff({},dy) - diff({},dz)) + (diff({},dz) - diff({},dx)) + (diff({},dx) - diff({},dy))&#34;
@@ -579,8 +579,8 @@ def slope(lazyFn):
             raise ValueError(&#34;Both meshes must be identical&#34;)
         
         newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
-        fn_dvydx = lazyFn_y.fn_gradient(0)
-        fn_dvxdy = lazyFn_x.fn_gradient(1)
+        fn_dvydx = lazyFn_y.fn_gradient[0]
+        fn_dvxdy = lazyFn_x.fn_gradient[1]
         newLazyFn.evaluate = lambda *args, **kwargs : fn_dvydx.evaluate(*args, **kwargs) - fn_dvxdy.evaluate(*args, **kwargs)
         newLazyFn.description = &#34;diff({},X) - diff({},Y)&#34;.format(lazyFn_y.description, lazyFn_x.description)
         newLazyFn.dependency_list = lazyFn_x.dependency_list | lazyFn_y.dependency_list
@@ -593,9 +593,9 @@ def slope(lazyFn):
             raise ValueError(&#34;All meshes must be identical&#34;)
         
         newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
-        fn_dvxdx, fn_dvxdy, fn_dvxdz = lazyFn_x.fn_gradient()
-        fn_dvydx, fn_dvydy, fn_dvydz = lazyFn_y.fn_gradient()
-        fn_dvzdx, fn_dvzdy, fn_dvzdz = lazyFn_z.fn_gradient()
+        fn_dvxdx, fn_dvxdy, fn_dvxdz = lazyFn_x.fn_gradient
+        fn_dvydx, fn_dvydy, fn_dvydz = lazyFn_y.fn_gradient
+        fn_dvzdx, fn_dvzdy, fn_dvzdz = lazyFn_z.fn_gradient
         fn_curl = (fn_dvzdy-fn_dvydz) + (fn_dvxdz-fn_dvzdx) + (fn_dvydx-fn_dvxdy)
         newLazyFn.evaluate = lambda *args, **kwargs : fn_curl.evaluate(*args, **kwargs)
         desc = &#34;(diff({},dy) - diff({},dz)) + (diff({},dz) - diff({},dx)) + (diff({},dx) - diff({},dy))&#34;
@@ -661,7 +661,7 @@ def slope(lazyFn):
     lazyFn_dependency = set()
     for f, lazyFn in enumerate(args):
         lazyFn_id.add(lazyFn._mesh.id)
-        lazyFn_list.append(lazyFn.fn_gradient(f))
+        lazyFn_list.append(lazyFn.fn_gradient[f])
         lazyFn_description += &#34;diff({},{}) + &#34;.format(lazyFn.description, dims[f])
         lazyFn_dependency.union(lazyFn.dependency_list)
     lazyFn_description = lazyFn_description[:-3]
@@ -713,7 +713,7 @@ def slope(lazyFn):
 </summary>
 <pre><code class="python">def grad(lazyFn):
     &#34;&#34;&#34;Lazy evaluation of gradient operator on a scalar field&#34;&#34;&#34;
-    return lazyFn.fn_gradient()</code></pre>
+    return lazyFn.fn_gradient</code></pre>
 </details>
 </dd>
 <dt id="quagmire.function.math.hypot"><code class="name flex">

@@ -152,8 +152,7 @@ def load_saved_MeshVariables(mesh, filename, ignore_loaded_fields=True):
     Notes
     -----
     Imports all fields within the &#39;fields&#39; group on the HDF5 file
-    and imports all fields contained within - except for fields
-    that are automatically loaded onto `mesh`. 
+    except fields that are already on the mesh e.g. topography, radius.
     &#34;&#34;&#34;
 
     import h5py
@@ -328,8 +327,7 @@ def load_saved_MeshVariables(mesh, filename, ignore_loaded_fields=True):
 </dl>
 <h2 id="notes">Notes</h2>
 <p>Imports all fields within the 'fields' group on the HDF5 file
-and imports all fields contained within - except for fields
-that are automatically loaded onto <code>mesh</code>.</p></div>
+except fields that are already on the mesh e.g. topography, radius.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -350,8 +348,7 @@ that are automatically loaded onto <code>mesh</code>.</p></div>
     Notes
     -----
     Imports all fields within the &#39;fields&#39; group on the HDF5 file
-    and imports all fields contained within - except for fields
-    that are automatically loaded onto `mesh`. 
+    except fields that are already on the mesh e.g. topography, radius.
     &#34;&#34;&#34;
 
     import h5py
