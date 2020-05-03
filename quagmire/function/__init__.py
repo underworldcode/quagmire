@@ -1,4 +1,4 @@
-from .function_classes import *
+from .function_classes import LazyEvaluation, parameter
 from . import math
 from . import misc
 from . import stats
