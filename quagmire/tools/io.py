@@ -125,8 +125,7 @@ def load_saved_MeshVariables(mesh, filename, ignore_loaded_fields=True):
     Notes
     -----
     Imports all fields within the 'fields' group on the HDF5 file
-    and imports all fields contained within - except for fields
-    that are automatically loaded onto `mesh`. 
+    except fields that are already on the mesh e.g. topography, radius.
     """
 
     import h5py
