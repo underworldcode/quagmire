@@ -29,11 +29,11 @@ def test_DMDA():
 
 def test_flatmesh_from_DMDA():
 
-    from quagmire import FlatMesh
+    from quagmire import QuagMesh
 
     global DM
 
-    mesh = FlatMesh(DM)
+    mesh = QuagMesh(DM)
     assert mesh.sizes == ((5625, 5625), (5625, 5625))
 
     return
@@ -61,11 +61,11 @@ def test_DMPlex():
 
 def test_flatmesh_from_DMPlex():
 
-    from quagmire import FlatMesh
+    from quagmire import QuagMesh
 
     global DM
 
-    mesh = FlatMesh(DM)
+    mesh = QuagMesh(DM)
     assert mesh.sizes == ((2440, 2440), (2440, 2440))
 
     return

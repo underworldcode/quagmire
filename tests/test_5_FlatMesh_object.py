@@ -2,7 +2,7 @@
 import pytest
 import numpy as np
 import quagmire
-from quagmire import FlatMesh
+from quagmire import QuagMesh
 from quagmire import function as fn
 from quagmire.tools import meshtools
 
@@ -10,7 +10,7 @@ from conftest import load_triangulated_mesh_DM
 
 
 def test_derivatives_and_interpolation(load_triangulated_mesh_DM):
-    mesh = FlatMesh(load_triangulated_mesh_DM)
+    mesh = QuagMesh(load_triangulated_mesh_DM)
 
     height = mesh.add_variable(name="h(x,y)")
     height.data = mesh.tri.x**2 + mesh.tri.y**2
@@ -32,7 +32,7 @@ def test_derivatives_and_interpolation(load_triangulated_mesh_DM):
 
 
 def test_smoothing(load_triangulated_mesh_DM):
-    mesh = FlatMesh(load_triangulated_mesh_DM)
+    mesh = QuagMesh(load_triangulated_mesh_DM)
 
     noise = np.random.rand(mesh.npoints)
     smooth_noise = mesh.local_area_smoothing(noise, its=1)
@@ -46,7 +46,7 @@ def test_spherical_area():
     import stripy
     cm = stripy.spherical_meshes.icosahedral_mesh(refinement_levels=2)
     DM = meshtools.create_spherical_DMPlex(cm.lons, cm.lats, cm.simplices)
-    mesh = FlatMesh(DM)
+    mesh = QuagMesh(DM)
 
     # adjust radius of the sphere
     # this should re-calculate pointwise area and weights
