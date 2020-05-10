@@ -7,7 +7,7 @@ import pytest
 # This has already been tested by now
 
 from quagmire.tools import meshtools
-from quagmire import FlatMesh
+from quagmire import QuagMesh
 from quagmire.mesh import MeshVariable
 from quagmire import function as fn
 import numpy as np
@@ -55,7 +55,7 @@ def test_fn_description():
 
 def test_fn_mesh_variables(load_triangulated_mesh_DM):
 
-    mesh = FlatMesh(load_triangulated_mesh_DM, down_neighbours=2)
+    mesh = QuagMesh(load_triangulated_mesh_DM, down_neighbours=2)
 
     height = mesh.add_variable(name="h(X,Y)")
     height.data = np.ones(mesh.npoints)

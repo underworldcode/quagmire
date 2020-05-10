@@ -1,6 +1,11 @@
 name: Build
 
-on: [push, pull_request]
+# on: [push, pull_request]
+
+on: 
+  push:
+    branches:
+      - cibuildwheel-test
 
 env:
   CIBW_SKIP: "cp27-* cp38-win*"
@@ -10,8 +15,9 @@ jobs:
     name: Build wheel on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-18.04, windows-latest, macos-latest]
+        os: [ubuntu-18.04, macos-latest]
 
     steps:
     - uses: actions/checkout@v1

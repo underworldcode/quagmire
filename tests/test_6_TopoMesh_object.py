@@ -2,14 +2,14 @@ import pytest
 import numpy as np
 import quagmire
 from quagmire import function as fn
-from quagmire import TopoMesh
+from quagmire import QuagMesh
 from petsc4py import PETSc
 
 from conftest import load_triangulated_mesh_DM
 
 
 def test_height_mesh_variable(load_triangulated_mesh_DM):
-    mesh = TopoMesh(load_triangulated_mesh_DM)
+    mesh = QuagMesh(load_triangulated_mesh_DM)
     x, y = mesh.tri.x, mesh.tri.y
 
     radius  = np.sqrt((x**2 + y**2))
@@ -30,7 +30,7 @@ def test_height_mesh_variable(load_triangulated_mesh_DM):
 
 
 def test_downhill_neighbours(load_triangulated_mesh_DM):
-    mesh = TopoMesh(load_triangulated_mesh_DM, downhill_neighbours=1)
+    mesh = QuagMesh(load_triangulated_mesh_DM, downhill_neighbours=1)
     x, y = mesh.tri.x, mesh.tri.y
 
     radius  = np.sqrt((x**2 + y**2))
@@ -43,7 +43,7 @@ def test_downhill_neighbours(load_triangulated_mesh_DM):
 
     # increase number of downhill neighbours from 1-3
     for i in range(1,4):
-        mesh = TopoMesh(load_triangulated_mesh_DM, downhill_neighbours=i)
+        mesh = QuagMesh(load_triangulated_mesh_DM, downhill_neighbours=i)
 
         with mesh.deform_topography():
             mesh.topography.data = height
@@ -77,7 +77,7 @@ def test_cumulative_flow(load_triangulated_mesh_DM):
 
         return outflow_nodes
 
-    mesh = TopoMesh(load_triangulated_mesh_DM)
+    mesh = QuagMesh(load_triangulated_mesh_DM)
 
     x, y = mesh.tri.x, mesh.tri.y
 
@@ -105,7 +105,7 @@ def test_cumulative_flow(load_triangulated_mesh_DM):
 
 
 def test_streamwise_smoothing(load_triangulated_mesh_DM):
-    mesh = TopoMesh(load_triangulated_mesh_DM)
+    mesh = QuagMesh(load_triangulated_mesh_DM)
 
     x, y = mesh.tri.x, mesh.tri.y
 

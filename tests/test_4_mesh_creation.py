@@ -96,7 +96,7 @@ def test_DMDA_creation():
 
 
 def test_mesh_improvement(load_triangulated_mesh):
-    from quagmire import FlatMesh
+    from quagmire import QuagMesh
     from quagmire.tools import lloyd_mesh_improvement
 
     x = np.array([0., 0., 1., 1.])
@@ -107,14 +107,14 @@ def test_mesh_improvement(load_triangulated_mesh):
 
 
     DM = meshtools.create_DMPlex_from_points(x, y)
-    mesh = FlatMesh(DM)
+    mesh = QuagMesh(DM)
 
     bmask = mesh.bmask.copy()
 
     # perturb with Lloyd's mesh improvement algorithm
     x1, y1 = lloyd_mesh_improvement(x, y, bmask, 3)
     DM1 = meshtools.create_DMPlex_from_points(x1, y1)
-    mesh1 = FlatMesh(DM1)
+    mesh1 = QuagMesh(DM1)
 
     mesh_equant = mesh.neighbour_cloud_distances.mean(axis=1) / ( np.sqrt(mesh.area))
     mesh1_equant = mesh1.neighbour_cloud_distances.mean(axis=1) / ( np.sqrt(mesh1.area))
@@ -155,7 +155,7 @@ def test_mesh_save_to_hdf5(load_triangulated_mesh):
 # This fails in conda (we need our own PETSc build with hdf5)
 
 def test_mesh_load_from_hdf5():
-    from quagmire import FlatMesh
+    from quagmire import QuagMesh
     import petsc4py
 
     try:
@@ -165,7 +165,7 @@ def test_mesh_load_from_hdf5():
         print("This error means that PETSc was not installed with hdf5")
     
     else:
-        mesh = FlatMesh(DM)
+        mesh = QuagMesh(DM)
         assert mesh.npoints > 0, "mesh could not be successfully loaded"
 
  
