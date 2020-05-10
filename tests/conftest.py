@@ -51,3 +51,11 @@ def load_triangulated_spherical_mesh_DM():
     sm = stripy.spherical_meshes.icosahedral_mesh(refinement_levels=3)
 
     return meshtools.create_spherical_DMPlex(sm.lons, sm.lats, sm.simplices)
+
+
+@pytest.fixture(scope="module")
+def load_pixelated_mesh_DM():
+    minX, maxX = 0., 1.
+    minY, maxY = 0., 1.
+    resX, resY = 50, 50
+    return meshtools.create_DMDA(minX, maxX, minY, maxY, resX, resY)
