@@ -32,7 +32,6 @@ from quagmire.function import LazyEvaluation as _LazyEvaluation
 
 class TopoMesh(object):
     def __init__(self, downhill_neighbours=2, *args, **kwargs):
-        self.mesh_type = 'TopoMesh'
 
         # Initialise cumulative flow vectors
         self._DX0 = self.gvec.duplicate()
@@ -44,6 +43,7 @@ class TopoMesh(object):
         # There is no topography yet set, so we need to avoid
         # triggering the matrix rebuilding in the setter of this property
         self._downhill_neighbours = downhill_neighbours
+        self._topography_modified_count = 0
 
         # create a variable for the height (data) and fn_height
         # a context manager to ensure the matrices are updated when h(x,y) changes
@@ -144,6 +144,7 @@ class TopoMesh(object):
                 inner_self._topomesh._update_height()
                 inner_self._topomesh._update_height_for_surface_flows()
                 inner_self._topovar.lock()
+                inner_self._topomesh._topography_modified_count += 1
                 return
 
         return Topomesh_Height_Update_Manager

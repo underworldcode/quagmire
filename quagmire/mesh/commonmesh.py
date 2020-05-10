@@ -246,6 +246,9 @@ class CommonMesh(object):
         # first save the mesh
         self.save_mesh_to_hdf5(file)
 
+        # then save the topography
+        self.topography.save(file, append=True)
+
         # handle saving radius to file for spherical mesh
         if np.array(self._radius).size == self.npoints:
             radius_meshVariable = self.add_variable('radius')
@@ -261,16 +264,11 @@ class CommonMesh(object):
 
         with h5py.File(file, mode='r+', driver='mpio', comm=comm) as h5:
             quag = h5.create_group('quagmire')
-            quag.attrs['id']        = self.id
-            quag.attrs['verbose']   = self.verbose
-            quag.attrs['mesh_type'] = self.mesh_type
-            quag.attrs['radius']    = radius
-
-            if self.mesh_type in ['TopoMesh', 'SurfaceProcessMesh']:
-                quag.attrs['downhill_neighbours'] = self.downhill_neighbours
-
-        if self.mesh_type in ['TopoMesh', 'SurfaceProcessMesh']:
-            self.topography.save(file, append=True)
+            quag.attrs['id']                  = self.id
+            quag.attrs['verbose']             = self.verbose
+            quag.attrs['radius']              = radius
+            quag.attrs['downhill_neighbours'] = self.downhill_neighbours
+            quag.attrs['topography_modified'] = self._topography_modified_count
 
         return
 
@@ -293,6 +291,24 @@ class CommonMesh(object):
         ViewHDF5.createHDF5(file, mode='w')
         ViewHDF5.view(obj=self.dm)
         ViewHDF5.destroy()
+
+
+        if self.id.startswith("pixmesh"):
+            import h5py
+            from mpi4py import MPI
+            comm = MPI.COMM_WORLD
+
+            (minX, maxX), (minY, maxY) = self.dm.getBoundingBox()
+            resX, resY = self.dm.getSizes()
+
+            with h5py.File(file, mode='r+', driver='mpio', comm=comm) as h5:
+                geom = h5.create_group('geometry')
+                geom.attrs['minX'] = minX
+                geom.attrs['maxX'] = maxX
+                geom.attrs['minY'] = minY
+                geom.attrs['maxY'] = maxY
+                geom.attrs['resX'] = resX
+                geom.attrs['resY'] = resY
 
 
     def save_field_to_hdf5(self, file, *args, **kwargs):
