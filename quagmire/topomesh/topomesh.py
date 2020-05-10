@@ -32,7 +32,7 @@ from quagmire.function import LazyEvaluation as _LazyEvaluation
 
 class TopoMesh(object):
     def __init__(self, downhill_neighbours=2, *args, **kwargs):
-
+        self.mesh_type = 'TopoMesh'
 
         # Initialise cumulative flow vectors
         self._DX0 = self.gvec.duplicate()

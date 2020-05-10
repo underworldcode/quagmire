@@ -87,7 +87,7 @@ def test_mesh_variable_derivative():
     phi.data = np.sin(mesh.coords[:,0])
     psi.data = np.cos(mesh.coords[:,0])
 
-    assert(np.isclose(phi.fn_gradient(0).evaluate(0.0,0.0), psi.evaluate(0.0,0.0), rtol=1.0e-3))
+    assert(np.isclose(phi.fn_gradient[0].evaluate(0.0,0.0), psi.evaluate(0.0,0.0), rtol=1.0e-3))
 
 
     return

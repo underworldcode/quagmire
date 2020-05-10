@@ -54,10 +54,7 @@ Save any mesh to an HDF5 file with `save_DM_to_hdf5`.
 
 """
 
-import numpy as np
-
-from mpi4py import MPI
-comm = MPI.COMM_WORLD
+import numpy as _np
 
 try: range = xrange
 except: pass
@@ -67,17 +64,17 @@ def points_to_edges(tri, boundary):
     """
     Finds the edges connecting two boundary points
     """
-    i1 = np.sort([tri.simplices[:,0], tri.simplices[:,1]], axis=0)
-    i2 = np.sort([tri.simplices[:,0], tri.simplices[:,2]], axis=0)
-    i3 = np.sort([tri.simplices[:,1], tri.simplices[:,2]], axis=0)
+    i1 = _np.sort([tri.simplices[:,0], tri.simplices[:,1]], axis=0)
+    i2 = _np.sort([tri.simplices[:,0], tri.simplices[:,2]], axis=0)
+    i3 = _np.sort([tri.simplices[:,1], tri.simplices[:,2]], axis=0)
 
-    a = np.hstack([i1, i2, i3]).T
+    a = _np.hstack([i1, i2, i3]).T
 
     # find unique rows in numpy array
-    edges = np.unique(a, axis=0)
+    edges = _np.unique(a, axis=0)
 
     # label where boundary nodes are
-    ix = np.in1d(edges.ravel(), boundary).reshape(edges.shape)
+    ix = _np.in1d(edges.ravel(), boundary).reshape(edges.shape)
     boundary2 = ix.sum(axis=1)
 
     # both points are boundary points that share the line segment
@@ -107,14 +104,14 @@ def find_boundary_segments(simplices):
     Spherical meshes generated with stripy will not have any boundary
     segments, thus an empty list is returned.
     """
-    i1 = np.sort([simplices[:,0], simplices[:,1]], axis=0)
-    i2 = np.sort([simplices[:,0], simplices[:,2]], axis=0)
-    i3 = np.sort([simplices[:,1], simplices[:,2]], axis=0)
+    i1 = _np.sort([simplices[:,0], simplices[:,1]], axis=0)
+    i2 = _np.sort([simplices[:,0], simplices[:,2]], axis=0)
+    i3 = _np.sort([simplices[:,1], simplices[:,2]], axis=0)
     
-    a = np.hstack([i1, i2, i3]).T
+    a = _np.hstack([i1, i2, i3]).T
 
     # find unique rows in numpy array
-    edges, counts = np.unique(a, return_counts=True, axis=0)
+    edges, counts = _np.unique(a, return_counts=True, axis=0)
     return edges[counts < 2]
 
 
@@ -153,9 +150,9 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_levels=0):
 
     if bmask is None:
         hull = tri.convex_hull()
-        boundary_vertices = np.column_stack([hull, np.hstack([hull[1:], hull[0]])])
+        boundary_vertices = _np.column_stack([hull, _np.hstack([hull[1:], hull[0]])])
     else:
-        boundary_indices = np.nonzero(~bmask)[0]
+        boundary_indices = _np.nonzero(~bmask)[0]
         boundary_vertices = points_to_edges(tri, boundary_indices)
 
     return _create_DMPlex(tri.points, tri.simplices, boundary_vertices, refinement_levels)
@@ -198,7 +195,7 @@ def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_level
     if bmask is None:
         boundary_vertices = find_boundary_segments(tri.simplices)
     else:
-        boundary_indices = np.nonzero(~bmask)[0]
+        boundary_indices = _np.nonzero(~bmask)[0]
         boundary_vertices = points_to_edges(tri, boundary_indices)
 
     return _create_DMPlex(tri.points, tri.simplices, boundary_vertices, refinement_levels)
@@ -220,7 +217,7 @@ def set_DMPlex_boundary_points(dm):
         ## CAUTION: don't do this if any of the dm calls have barriers
         return
 
-    edge_mask = np.logical_and(edgeIS.indices >= eStart, edgeIS.indices < eEnd)
+    edge_mask = _np.logical_and(edgeIS.indices >= eStart, edgeIS.indices < eEnd)
     boundary_edges = edgeIS.indices[edge_mask]
 
     # query the DAG for points that join an edge
@@ -237,7 +234,7 @@ def set_DMPlex_boundary_points_and_edges(dm, boundary_vertices):
 
     from petsc4py import PETSc
 
-    if np.ndim(boundary_vertices) != 2 and np.shape(boundary_vertices)[1] != 2:
+    if _np.ndim(boundary_vertices) != 2 and _np.shape(boundary_vertices)[1] != 2:
         raise ValueError("boundary vertices must be of shape (n,2)")
 
     # points in DAG
@@ -248,8 +245,8 @@ def set_DMPlex_boundary_points_and_edges(dm, boundary_vertices):
         return
 
     # convert to DAG ordering
-    boundary_edges = np.array(boundary_vertices + pStart, dtype=PETSc.IntType)
-    boundary_indices = np.array(np.unique(boundary_edges), dtype=PETSc.IntType)
+    boundary_edges = _np.array(boundary_vertices + pStart, dtype=PETSc.IntType)
+    boundary_indices = _np.array(_np.unique(boundary_edges), dtype=PETSc.IntType)
 
     # mark edges
     for edge in boundary_edges:
@@ -268,10 +265,10 @@ def get_boundary_points(dm):
     eStart, eEnd = dm.getDepthStratum(1) # edges
     edgeIS = dm.getStratumIS('boundary', 1)
 
-    edge_mask = np.logical_and(edgeIS.indices >= eStart, edgeIS.indices < eEnd)
+    edge_mask = _np.logical_and(edgeIS.indices >= eStart, edgeIS.indices < eEnd)
     boundary_edges = edgeIS.indices[edge_mask]
 
-    boundary_vertices = np.empty((boundary_edges.size,2), dtype=PETSc.IntType)
+    boundary_vertices = _np.empty((boundary_edges.size,2), dtype=PETSc.IntType)
 
     # query the DAG for points that join an edge
     for idx, edge in enumerate(boundary_edges):
@@ -279,7 +276,7 @@ def get_boundary_points(dm):
 
     # convert to local point ordering
     boundary_vertices -= pStart
-    return np.unique(boundary_vertices)
+    return _np.unique(boundary_vertices)
 
 
 
@@ -448,15 +445,15 @@ def _create_DMPlex(points, simplices, boundary_vertices=None, refinement_levels=
     """
     from petsc4py import PETSc
 
-    ndim = np.shape(points)[1]
+    ndim = _np.shape(points)[1]
     mesh_type = {2: "TriMesh", 3: "sTriMesh"}
 
-    if comm.rank == 0:
-        coords = np.array(points, dtype=np.float)
+    if PETSc.COMM_WORLD.rank == 0:
+        coords = _np.array(points, dtype=_np.float)
         cells  = simplices.astype(PETSc.IntType)
     else:
-        coords = np.zeros((0,ndim), dtype=np.float)
-        cells  = np.zeros((0,3), dtype=PETSc.IntType)
+        coords = _np.zeros((0,ndim), dtype=_np.float)
+        cells  = _np.zeros((0,3), dtype=PETSc.IntType)
 
     dim = 2
     dm = PETSc.DMPlex().createFromCellList(dim, cells, coords)
@@ -527,7 +524,7 @@ def create_DMPlex(x, y, simplices, boundary_vertices=None, refinement_levels=0):
     -------
     DM : PETSc DMPlex object
     """
-    points = np.c_[x,y]
+    points = _np.c_[x,y]
     return _create_DMPlex(points, simplices, boundary_vertices, refinement_levels)
 
 
@@ -554,7 +551,7 @@ def create_spherical_DMPlex(lons, lats, simplices, boundary_vertices=None, refin
 
     # convert to xyz to construct the DM
     x,y,z = lonlat2xyz(lons, lats)
-    points = np.c_[x,y,z]
+    points = _np.c_[x,y,z]
 
     # PETSc's markBoundaryFaces routine cannot detect boundary segments
     # for our spherical implementation. We do it here instead.
@@ -621,7 +618,7 @@ def lloyd_mesh_improvement(x, y, bmask, iterations):
     from scipy.spatial import Voronoi  as __Voronoi
 
 
-    points = np.c_[x,y]
+    points = _np.c_[x,y]
 
     for i in range(0,iterations):
         vor = __Voronoi(points)
@@ -635,8 +632,8 @@ def lloyd_mesh_improvement(x, y, bmask, iterations):
 
         points = new_coords
 
-    x = np.array(new_coords[:,0])
-    y = np.array(new_coords[:,1])
+    x = _np.array(new_coords[:,0])
+    y = _np.array(new_coords[:,1])
 
     return x, y
 
@@ -670,45 +667,45 @@ def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0
 
 def generate_square_points(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples ):
 
-    lin_samples = int(np.sqrt(samples))
+    lin_samples = int(_np.sqrt(samples))
 
-    tiX = np.linspace(minX + 0.75 * spacingX, maxX - 0.75 * spacingX, lin_samples)
-    tiY = np.linspace(minY + 0.75 * spacingY, maxY - 0.75 * spacingY, lin_samples)
+    tiX = _np.linspace(minX + 0.75 * spacingX, maxX - 0.75 * spacingX, lin_samples)
+    tiY = _np.linspace(minY + 0.75 * spacingY, maxY - 0.75 * spacingY, lin_samples)
 
-    x,y = np.meshgrid(tiX, tiY)
+    x,y = _np.meshgrid(tiX, tiY)
 
     x = x.ravel()
     y = y.ravel()
 
-    xscale = (x.max()-x.min()) / (2.0 * np.sqrt(samples))
-    yscale = (y.max()-y.min()) / (2.0 * np.sqrt(samples))
+    xscale = (x.max()-x.min()) / (2.0 * _np.sqrt(samples))
+    yscale = (y.max()-y.min()) / (2.0 * _np.sqrt(samples))
 
-    x += xscale * (0.5 - np.random.rand(x.size))
-    y += yscale * (0.5 - np.random.rand(y.size))
+    x += xscale * (0.5 - _np.random.rand(x.size))
+    y += yscale * (0.5 - _np.random.rand(y.size))
 
 
-    bmask = np.ones_like(x, dtype=bool) # It's all true !
+    bmask = _np.ones_like(x, dtype=bool) # It's all true !
 
     # add boundary points too
 
-    xc = np.linspace(minX, maxX, boundary_samples)
-    yc = np.linspace(minY, maxY, boundary_samples)
+    xc = _np.linspace(minX, maxX, boundary_samples)
+    yc = _np.linspace(minY, maxY, boundary_samples)
 
-    i = 1.0 - np.linspace(-0.5, 0.5, boundary_samples)**2
+    i = 1.0 - _np.linspace(-0.5, 0.5, boundary_samples)**2
 
-    x = np.append(x, xc)
-    y = np.append(y, minY - spacingY*i)
+    x = _np.append(x, xc)
+    y = _np.append(y, minY - spacingY*i)
 
-    x = np.append(x, xc)
-    y = np.append(y, maxY + spacingY*i)
+    x = _np.append(x, xc)
+    y = _np.append(y, maxY + spacingY*i)
 
-    x = np.append(x, minX - spacingX*i[1:-1])
-    y = np.append(y, yc[1:-1])
+    x = _np.append(x, minX - spacingX*i[1:-1])
+    y = _np.append(y, yc[1:-1])
 
-    x = np.append(x, maxX + spacingX*i[1:-1])
-    y = np.append(y, yc[1:-1])
+    x = _np.append(x, maxX + spacingX*i[1:-1])
+    y = _np.append(y, yc[1:-1])
 
-    bmask = np.append(bmask, np.zeros(2*i.size + 2*(i.size-2), dtype=bool))
+    bmask = _np.append(bmask, _np.zeros(2*i.size + 2*(i.size-2), dtype=bool))
 
     return x, y, bmask
 
@@ -722,34 +719,34 @@ def generate_elliptical_points(minX, maxX, minY, maxY, spacingX, spacingY, sampl
 
     print("Origin = ", originX, originY, "Radius = ", radiusX, "Aspect = ", aspect)
 
-    lin_samples = int(np.sqrt(samples))
+    lin_samples = int(_np.sqrt(samples))
 
-    tiX = np.linspace(minX + 0.75 * spacingX, maxX - 0.75 * spacingX, lin_samples)
-    tiY = np.linspace(minY + 0.75 * spacingY, maxY - 0.75 * spacingY, lin_samples)
+    tiX = _np.linspace(minX + 0.75 * spacingX, maxX - 0.75 * spacingX, lin_samples)
+    tiY = _np.linspace(minY + 0.75 * spacingY, maxY - 0.75 * spacingY, lin_samples)
 
-    x,y = np.meshgrid(tiX, tiY)
+    x,y = _np.meshgrid(tiX, tiY)
 
-    x = np.reshape(x,len(x)*len(x[0]))
-    y = np.reshape(y,len(y)*len(y[0]))
+    x = _np.reshape(x,len(x)*len(x[0]))
+    y = _np.reshape(y,len(y)*len(y[0]))
 
-    xscale = (x.max()-x.min()) / (2.0 * np.sqrt(samples))
-    yscale = (y.max()-y.min()) / (2.0 * np.sqrt(samples))
+    xscale = (x.max()-x.min()) / (2.0 * _np.sqrt(samples))
+    yscale = (y.max()-y.min()) / (2.0 * _np.sqrt(samples))
 
-    x += xscale * (0.5 - np.random.rand(len(x)))
-    y += yscale * (0.5 - np.random.rand(len(y)))
+    x += xscale * (0.5 - _np.random.rand(len(x)))
+    y += yscale * (0.5 - _np.random.rand(len(y)))
 
-    mask = np.where( (x**2 + y**2 / aspect**2) < (radiusX-0.5*spacingX)**2 )
+    mask = _np.where( (x**2 + y**2 / aspect**2) < (radiusX-0.5*spacingX)**2 )
 
     X = x[mask]
     Y = y[mask]
-    bmask = np.ones_like(X, dtype=bool)
+    bmask = _np.ones_like(X, dtype=bool)
 
     # Now add boundary points
 
-    theta = np.array( [ 2.0 * np.pi * i / (3 * boundary_samples) for i in range(0, 3 * boundary_samples) ])
+    theta = _np.array( [ 2.0 * _np.pi * i / (3 * boundary_samples) for i in range(0, 3 * boundary_samples) ])
 
-    X = np.append(X, 1.001 * radiusX * np.sin(theta))
-    Y = np.append(Y, 1.001 * radiusX * aspect * np.cos(theta))
-    bmask = np.append(bmask, np.zeros_like(theta, dtype=bool))
+    X = _np.append(X, 1.001 * radiusX * _np.sin(theta))
+    Y = _np.append(Y, 1.001 * radiusX * aspect * _np.cos(theta))
+    bmask = _np.append(bmask, _np.zeros_like(theta, dtype=bool))
 
     return X, Y, bmask
