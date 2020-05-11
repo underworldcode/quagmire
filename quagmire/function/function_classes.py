@@ -48,6 +48,33 @@ class LazyEvaluation(object):
     def __repr__(self):
         return("quagmire.fn: {}".format(self.description))
 
+    @staticmethod
+    def convert(obj):
+        """
+        This method will attempt to convert the provided input into an
+        equivalent quagmire function. If the provided input is already
+        of LazyEvaluation type, it is immediately returned. Likewise if
+        the input is of None type, it is also returned.
+
+        Parameters
+        ----------
+
+        obj: The object to be converted
+
+        Returns
+        -------
+
+        LazyEvaluation function or None.
+        """
+
+        if isinstance(obj, (LazyEvaluation, type(None))):
+            return obj
+        else:
+            try:
+                return parameter(obj)
+            except Exception as e:
+                raise e
+
     def evaluate(self, *args, **kwargs):
         raise(NotImplementedError)
 
@@ -195,6 +222,7 @@ class LazyEvaluation(object):
 ## Arithmetic operations
 
     def __mul__(self, other):
+        other = self.convert(other)
         mesh = self._mesh
         if mesh == None:
             mesh = other._mesh
@@ -203,8 +231,20 @@ class LazyEvaluation(object):
         newLazyFn.description = "({})*({})".format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
         return newLazyFn
+    
+    def __rmul__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
+        newLazyFn.description = "({})*({})".format(other.description, self.description)
+        newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
+        return newLazyFn
 
     def __add__(self, other):
+        other = self.convert(other)
         mesh = self._mesh
         if mesh == None:
             mesh = other._mesh
@@ -212,10 +252,21 @@ class LazyEvaluation(object):
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})+({})".format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
-
+        return newLazyFn
+    
+    def __radd__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
+        newLazyFn.description = "({})+({})".format(other.description, self.description)
+        newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
         return newLazyFn
 
     def __truediv__(self, other):
+        other = self.convert(other)
         mesh = self._mesh
         if mesh == None:
             mesh = other._mesh
@@ -227,6 +278,7 @@ class LazyEvaluation(object):
         return newLazyFn
 
     def __sub__(self, other):
+        other = self.convert(other)
         mesh = self._mesh
         if mesh == None:
             mesh = other._mesh
@@ -234,7 +286,17 @@ class LazyEvaluation(object):
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})-({})".format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
-
+        return newLazyFn
+    
+    def __rsub__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
+        newLazyFn.description = "({})-({})".format(other.description, self.description)
+        newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
         return newLazyFn
 
     def __neg__(self):
@@ -252,7 +314,6 @@ class LazyEvaluation(object):
         newLazyFn.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
         newLazyFn.description = "({})**({})".format(self.description, exponent.description)
         newLazyFn.dependency_list |= self.dependency_list | exponent.dependency_list
-
         return newLazyFn
 
 
