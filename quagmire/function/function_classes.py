@@ -56,11 +56,53 @@ class LazyEvaluation(object):
     def fn_gradient(self):
         mesh = self._mesh
         newLazyGradient = LazyGradientEvaluation(mesh=mesh)
-        newLazyGradient._evaluate = self.evaluate
+        newLazyGradient.evaluate = self._fn_gradient
         newLazyGradient.description = "d({0})/dX,d({0})/dY".format(self.description)
         newLazyGradient.dependency_list = self.dependency_list
         return newLazyGradient
     
+
+    def _fn_gradient(self, *args, **kwargs):
+
+        import quagmire
+
+        if self._mesh is None and mesh is None:
+            raise RuntimeError("fn_gradient is a numerical differentiation routine based on derivatives of a fitted spline function on a mesh. The function {} has no associated mesh. To obtain *numerical* derivatives of this function, you can provide a mesh to the gradient function. The usual reason for this error is that your function is not based upon mesh variables and can, perhaps, be differentiated without resort to interpolating splines. ".format(self.__repr__()))
+
+
+        elif self._mesh is not None:
+            diff_mesh = self._mesh
+        else:
+            quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
+            diff_mesh = mesh
+
+        local_array = self.evaluate(diff_mesh)
+
+        df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+        ndim = len(df_tuple)
+
+        if len(args) == 1 and args[0] == diff_mesh:
+            return df_tuple
+        elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+            mesh = args[0]
+            df_interp = []
+            for df in df_tuple:
+                result = diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=df, **kwargs)
+                df_interp.append(result)
+            return df_interp
+        elif len(args) > 1:
+            xi = np.atleast_1d(args[0])  # .resize(-1,1)
+            yi = np.atleast_1d(args[1])  # .resize(-1,1)
+            df_interp = []
+            for df in df_tuple:
+                i, e = diff_mesh.interpolate(xi, yi, zdata=df, **kwargs)
+                df_interp.append(i)
+            return df_interp
+        else:
+            err_msg = "Invalid number of arguments\n"
+            err_msg += "Input a valid mesh or coordinates in x,y directions"
+            raise ValueError(err_msg)
+
 
     @property
     def description(self):
@@ -143,46 +185,6 @@ class LazyGradientEvaluation(LazyEvaluation):
     def __getitem__(self, dirn):
         return self._fn_gradient(dirn=dirn, mesh=self._mesh)
 
-    def evaluate(self, *args, **kwargs):
-
-        import quagmire
-
-        if self._mesh is None and mesh is None:
-            raise RuntimeError("fn_gradient is a numerical differentiation routine based on derivatives of a fitted spline function on a mesh. The function {} has no associated mesh. To obtain *numerical* derivatives of this function, you can provide a mesh to the gradient function. The usual reason for this error is that your function is not based upon mesh variables and can, perhaps, be differentiated without resort to interpolating splines. ".format(self.__repr__()))
-
-
-        elif self._mesh is not None:
-            diff_mesh = self._mesh
-        else:
-            quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
-            diff_mesh = mesh
-
-        local_array = self._evaluate(diff_mesh)
-
-        df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
-        ndim = len(df_tuple)
-
-        if len(args) == 1 and args[0] == diff_mesh:
-            return df_tuple
-        elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
-            mesh = args[0]
-            df_interp = []
-            for df in df_tuple:
-                result = diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=df, **kwargs)
-                df_interp.append(result)
-            return df_interp
-        elif len(args) > 1:
-            xi = np.atleast_1d(args[0])  # .resize(-1,1)
-            yi = np.atleast_1d(args[1])  # .resize(-1,1)
-            df_interp = []
-            for df in df_tuple:
-                i, e = diff_mesh.interpolate(xi, yi, zdata=df, **kwargs)
-                df_interp.append(i)
-            return df_interp
-        else:
-            err_msg = "Invalid number of arguments\n"
-            err_msg += "Input a valid mesh or coordinates in x,y directions"
-            raise ValueError(err_msg)
 
     @property
     def fn_gradient(self):
@@ -212,8 +214,7 @@ class LazyGradientEvaluation(LazyEvaluation):
             diff_mesh = mesh
 
         def new_fn_x(*args, **kwargs):
-            local_array = self._evaluate(diff_mesh)
-            dx, dy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            dx, dy = self.evaluate(diff_mesh)
 
             if len(args) == 1 and args[0] == diff_mesh:
                 return dx
@@ -232,8 +233,7 @@ class LazyGradientEvaluation(LazyEvaluation):
                 raise ValueError(err_msg)
 
         def new_fn_y(*args, **kwargs):
-            local_array = self._evaluate(diff_mesh)
-            dx, dy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+            dx, dy = self.evaluate(diff_mesh)
 
             if len(args) == 1 and args[0] == diff_mesh:
                 return dy
