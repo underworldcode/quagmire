@@ -1,6 +1,6 @@
 ##~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~##
 ##                                                                                   ##
-##  This file forms part of the Underworld/Quagmire  modelling application.          ##
+##  This file forms part of the Underworld geophysics modelling application.         ##
 ##                                                                                   ##
 ##  For full license and copyright information, please refer to the LICENSE.md file  ##
 ##  located at the project root, or contact the authors.                             ##
@@ -11,7 +11,7 @@
 Utilities to convert between dimensional and non-dimensional values.
 """
 from __future__ import print_function, absolute_import
-import quagmire
+import underworld as uw
 from ._utils import TransformedDict
 from pint import UnitRegistry
 
@@ -49,8 +49,8 @@ def non_dimensionalise(dimValue):
 
     Example:
     --------
-    >>> import quagmire
-    >>> u = quagmire.scaling.units
+    >>> import underworld as uw
+    >>> u = uw.scaling.units
 
     >>> # Characteristic values of the system
     >>> half_rate = 0.5 * u.centimeter / u.year
@@ -66,7 +66,7 @@ def non_dimensionalise(dimValue):
     >>> Kt_degrees = (baseModelTemp - surfaceTemp)
     >>> K_substance = 1. * u.mole
 
-    >>> scaling_coefficients = quagmire.scaling.get_coefficients()
+    >>> scaling_coefficients = uw.scaling.get_coefficients()
     >>> scaling_coefficients["[time]"] = KT_seconds
     >>> scaling_coefficients["[length]"] = KL_meters
     >>> scaling_coefficients["[mass]"] = KM_kilograms
@@ -74,7 +74,7 @@ def non_dimensionalise(dimValue):
     >>> scaling_coefficients["[substance]"] -= K_substance
 
     >>> # Get a scaled value:
-    >>> gravity = quagmire.scaling.non_dimensionalise(9.81 * u.meter / u.second**2)
+    >>> gravity = uw.scaling.non_dimensionalise(9.81 * u.meter / u.second**2)
     """
     try:
         val = dimValue.unitless
@@ -124,7 +124,6 @@ def non_dimensionalise(dimValue):
     else:
         raise ValueError('Dimension Error')
 
-
 def dimensionalise(value, units):
     """
     Dimensionalise a value.
@@ -142,8 +141,8 @@ def dimensionalise(value, units):
 
     Example
     -------
-    >>> import quagmire
-    >>> A = quagmire.scaling.dimensionalise(1.0, u.metre)
+    >>> import underworld as uw
+    >>> A = uw.scaling.dimensionalise(1.0, u.metre)
     """
 
     unit = (1.0 * units).to_base_units()
@@ -181,13 +180,28 @@ def dimensionalise(value, units):
               temperature**(dtemp) *
               substance**(dsubstance))
 
+    if (isinstance(value, uw.mesh._meshvariable.MeshVariable) or
+       isinstance(value, uw.swarm._swarmvariable.SwarmVariable)):
 
-    ## FIXME mesh variable references - need to be able to make a copy ...
-
-    if isinstance(value, (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
-        
         tempVar = value.copy()
         tempVar.data[...] = (value.data[...] * factor).to(units)
         return tempVar
     else:
         return (value * factor).to(units)
+
+
+def ndargs(f):
+    """ Decorator used to non-dimensionalise the arguments of a function"""
+
+    def convert(obj):
+        if isinstance(obj, (list, tuple)):
+            return type(obj)([convert(val) for val in obj])
+        else:
+            return non_dimensionalise(obj)
+
+    def new_f(*args, **kwargs):
+        nd_args = [convert(arg) for arg in args]
+        nd_kwargs = {name:convert(val) for name, val in kwargs.items()}
+        return f(*nd_args, **nd_kwargs)
+    new_f.__name__ = f.__name__
+    return new_f
