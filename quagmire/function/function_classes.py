@@ -261,12 +261,12 @@ class LazyGradientEvaluation(LazyEvaluation):
         newLazyFn_dy.evaluate = new_fn_y
         newLazyFn_dy.description = self.description[d2:]
 
-        if dirn == 1:
+        if dirn == 0:
             return newLazyFn_dx
-        elif dirn == 2:
+        elif dirn == 1:
             return newLazyFn_dy
         else:
-            raise ValueError("dirn can only be set to 1 or 2")
+            raise ValueError("dirn can only be set to 0 or 1")
 
 
 
