@@ -15,7 +15,8 @@ def test_derivatives_and_interpolation(load_triangulated_mesh_DM):
     height = mesh.add_variable(name="h(x,y)")
     height.data = mesh.tri.x**2 + mesh.tri.y**2
 
-    dhdx, dhdy = fn.math.grad(height)
+    dhdx = height.fn_gradient[0]
+    dhdy = height.fn_gradient[1]
 
     # interpolate onto a straight line
     # bounding box should be [-5,5,-5,5]
