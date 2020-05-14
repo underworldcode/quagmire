@@ -1,6 +1,6 @@
 ##~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~##
 ##                                                                                   ##
-##  This file forms part of the Underworld geophysics modelling application.         ##
+##  This file forms part of the Underworld/Quagmire geophysics modelling application ##
 ##                                                                                   ##
 ##  For full license and copyright information, please refer to the LICENSE.md file  ##
 ##  located at the project root, or contact the authors.                             ##
@@ -48,8 +48,8 @@ def non_dimensionalise(dimValue):
 
     Example:
     --------
-    >>> import underworld as uw
-    >>> u = uw.scaling.units
+    >>> import quagmire
+    >>> u = quagmire.scaling.units
 
     >>> # Characteristic values of the system
     >>> half_rate = 0.5 * u.centimeter / u.year
@@ -65,7 +65,7 @@ def non_dimensionalise(dimValue):
     >>> Kt_degrees = (baseModelTemp - surfaceTemp)
     >>> K_substance = 1. * u.mole
 
-    >>> scaling_coefficients = uw.scaling.get_coefficients()
+    >>> scaling_coefficients = quagmire.scaling.get_coefficients()
     >>> scaling_coefficients["[time]"] = KT_seconds
     >>> scaling_coefficients["[length]"] = KL_meters
     >>> scaling_coefficients["[mass]"] = KM_kilograms
@@ -73,7 +73,7 @@ def non_dimensionalise(dimValue):
     >>> scaling_coefficients["[substance]"] -= K_substance
 
     >>> # Get a scaled value:
-    >>> gravity = uw.scaling.non_dimensionalise(9.81 * u.meter / u.second**2)
+    >>> gravity = quagmire.scaling.non_dimensionalise(9.81 * u.meter / u.second**2)
     """
     try:
         val = dimValue.unitless
@@ -140,8 +140,8 @@ def dimensionalise(value, units):
 
     Example
     -------
-    >>> import underworld as uw
-    >>> A = uw.scaling.dimensionalise(1.0, u.metre)
+    >>> import quagmire
+    >>> A = quagmire.scaling.dimensionalise(1.0, u.metre)
     """
     import quagmire.function as fn
 
