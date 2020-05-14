@@ -9,17 +9,12 @@ from quagmire import QuagMesh
 from quagmire.mesh import MeshVariable
 import numpy as np
 
-minX, maxX = -5.0, 5.0
-minY, maxY = -5.0, 5.0,
-dx, dy = 0.02, 0.02
+from conftest import load_triangulated_mesh_DM
 
-x,y, bound = meshtools.generate_elliptical_points(minX, maxX, minY, maxY, dx, dy, 60000, 300)
-DM = meshtools.create_DMPlex_from_points(x, y, bmask=bound)
-mesh = QuagMesh(DM, downhill_neighbours=1)
 
-def test_mesh_variable_instance():
+def test_mesh_variable_instance(load_triangulated_mesh_DM):
 
-    global mesh
+    mesh = QuagMesh(load_triangulated_mesh_DM, downhill_neighbours=1)
 
     phi = mesh.add_variable(name="PHI(X,Y)")
     psi = mesh.add_variable(name="PSI(X,Y)")
@@ -43,10 +38,9 @@ def test_mesh_variable_instance():
 
     return
 
-def test_mesh_variable_properties():
+def test_mesh_variable_properties(load_triangulated_mesh_DM):
 
-    global mesh
-
+    mesh = QuagMesh(load_triangulated_mesh_DM, downhill_neighbours=1)
 
     ## Don't specify a name
 
@@ -76,7 +70,9 @@ def test_mesh_variable_properties():
 
 
 
-def test_mesh_variable_derivative():
+def test_mesh_variable_derivative(load_triangulated_mesh_DM):
+
+    mesh = QuagMesh(load_triangulated_mesh_DM, downhill_neighbours=1)
 
     # Functions we can differentiate easily
 
