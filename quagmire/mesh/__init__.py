@@ -17,6 +17,8 @@
 """
 The mesh module provides 3 fundamental spatial data structures
 
+<img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart-flatmesh.png" style="width: 321px; float:right">
+
 - `pixmesh.PixMesh`: for structured data on a regular grid.
 - `trimesh.TriMesh`: for unstructured data in Cartesian coordinates.
 - `strimesh.sTriMesh`: for unstructured data on the sphere.

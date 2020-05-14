@@ -60,6 +60,22 @@ class MeshVariable(_LazyEvaluation):
         return
 
     def copy(self, name=None, locked=None):
+        """
+        Create a copy of this MeshVariable
+
+        Parameters
+        ----------
+        name : str
+            set a name to this MeshVariable, otherwise "copy"
+            is appended to the original name
+        locked : bool (default: False)
+            lock the mesh variable from accidental modification
+
+        Returns
+        -------
+        MeshVariable : object
+            Instantiate a MeshVariable copy.
+        """
 
         if name is None:
             name = self._name+"_copy"
@@ -90,6 +106,7 @@ class MeshVariable(_LazyEvaluation):
 
     @property
     def data(self):
+        """ View of MeshVariable data of shape (n,) """
         pass
 
     @data.getter
@@ -136,14 +153,18 @@ class MeshVariable(_LazyEvaluation):
 
 
     def getGlobalVector(self, gdata):
+        """
+        Obtain a PETSc global vector of the MeshVariable
+        """
         from petsc4py import PETSc
         self._dm.localToGlobal(self._ldata, gdata, addv=PETSc.InsertMode.INSERT_VALUES)
         return
 
 
     def sync(self, mergeShadow=False):
-
-        """ Explicit global sync of data """
+        """
+        Explicit global sync of data
+        """
 
         from petsc4py import PETSc
 
@@ -166,17 +187,18 @@ class MeshVariable(_LazyEvaluation):
     def save(self, filename=None, append=False):
         """
         Save the MeshVariable to disk.
+
         Parameters
         ----------
-         filename : str (optional)
+        filename : str (optional)
             The name of the output file. Relative or absolute paths may be
             used, but all directories must exist.
-         append   : bool (default is False)
+        append : bool (default is False)
             Append to existing file if it exists
 
         Notes
         -----
-         This method must be called collectively by all processes.
+        This method must be called collectively by all processes.
         """
         from petsc4py import PETSc
         import os
@@ -209,14 +231,14 @@ class MeshVariable(_LazyEvaluation):
 
         Parameters
         ----------
-         filename: str
-             The filename for the saved file. Relative or absolute paths may be
-             used, but all directories must exist.
+        filename: str
+            The filename for the saved file. Relative or absolute paths may be
+            used, but all directories must exist.
 
         Notes
         -----
-         Provided files must be in hdf5 format, and contain a vector the same
-         size and with the same name as the current MeshVariable
+        Provided files must be in hdf5 format, and contain a vector the same
+        size and with the same name as the current MeshVariable
         """
         from petsc4py import PETSc
         # need a global vector
@@ -239,17 +261,17 @@ class MeshVariable(_LazyEvaluation):
 
         Parameters
         ----------
-         PHI : ndarray of floats, shape (n,)
+        PHI : ndarray of floats, shape (n,)
             compute the derivative of this array
-         nit : int optional (default: 10)
+        nit : int optional (default: 10)
             number of iterations to reach convergence
-         tol : float optional (default: 1e-8)
+        tol : float optional (default: 1e-8)
             convergence is reached when this tolerance is met
         Returns
         -------
-         PHIx : ndarray of floats, shape(n,)
+        PHIx : ndarray of floats, shape (n,)
             first partial derivative of PHI in x direction
-         PHIy : ndarray of floats, shape(n,)
+        PHIy : ndarray of floats, shape (n,)
             first partial derivative of PHI in y direction
         """
 
@@ -265,14 +287,14 @@ class MeshVariable(_LazyEvaluation):
 
         Parameters
         ----------
-         PHI : ndarray of floats, shape (n,)
+        PHI : ndarray of floats, shape (n,)
             compute the derivative of this array
 
         Returns
         -------
-         PHIx : ndarray of floats, shape(n,)
+        PHIx : ndarray of floats, shape(n,)
             first partial derivative of PHI in x direction
-         PHIy : ndarray of floats, shape(n,)
+        PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         """
 
@@ -314,6 +336,30 @@ class MeshVariable(_LazyEvaluation):
 
 
     def interpolate(self, xi, yi, err=False, **kwargs):
+        """
+        Interpolate mesh data to a set of coordinates
+
+        This method just passes the coordinates to the interpolation
+        methods on the mesh object.
+
+        Parameters
+        ----------
+        xi : array of floats, shape (l,)
+            interpolation coordinates in the x direction
+        yi : array of floats, shape (l,)
+            interpolation coordinates in the y direction
+        err : bool (default: False)
+            toggle whether to return error information
+        **kwargs : keyword arguments
+            optional arguments to pass through to the interpolation method
+
+        Returns
+        -------
+        interp : array of floats, shape (l,)
+            interpolated values of MeshVariable at xi,yi coordinates
+        err : array of ints, shape (l,)
+            error information to diagnose interpolation / extrapolation
+        """
         ## pass through for the mesh's interpolate method
         import numpy as np
 
@@ -331,9 +377,10 @@ class MeshVariable(_LazyEvaluation):
 
 
     def evaluate(self, *args, **kwargs):
-        """ If the argument is a mesh, return the
-            values at the nodes. In all other cases call the interpolate
-            method """
+        """
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+        """
 
         import quagmire
 
@@ -417,6 +464,7 @@ class VectorMeshVariable(MeshVariable):
 
     @property
     def data(self):
+        """ View of MeshVariable data of shape (n,) """
         pass
 
     @data.getter
@@ -440,9 +488,10 @@ class VectorMeshVariable(MeshVariable):
         raise TypeError("VectorMeshVariable does not currently support interpolate operations")
 
     def evaluate(self, xi, yi, err=False, **kwargs):
-        """A pass through for the interpolate method chosen for
-        consistency with underworld"""
-
+        """
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+        """
         return self.interpolate(*args, **kwargs)
 
 

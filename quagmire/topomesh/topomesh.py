@@ -33,7 +33,6 @@ from quagmire.function import LazyEvaluation as _LazyEvaluation
 class TopoMesh(object):
     def __init__(self, downhill_neighbours=2, *args, **kwargs):
 
-
         # Initialise cumulative flow vectors
         self._DX0 = self.gvec.duplicate()
         self._DX1 = self.gvec.duplicate()
@@ -41,22 +40,23 @@ class TopoMesh(object):
 
         self.downhillMat = None
 
-        # Initialise mesh fields
-        # self.height = self.gvec.duplicate()
-        # self.slope = self.gvec.duplicate()
+        # There is no topography yet set, so we need to avoid
+        # triggering the matrix rebuilding in the setter of this property
+        self._downhill_neighbours = downhill_neighbours
+        self._topography_modified_count = 0
 
         # create a variable for the height (data) and fn_height
         # a context manager to ensure the matrices are updated when h(x,y) changes
 
-        self.topography = self.add_variable(name="h(x,y)", locked=True)
+        self.topography        = self.add_variable(name="h(x,y)", locked=True)
+        self.upstream_area     = self.add_variable(name="A(x,y)", locked=True)
         self.deform_topography = self._height_update_context_manager_generator()
 
-        # There is no topography yet set, so we need to avoid
-        # triggering the matrix rebuilding in the setter of this property
-        self._downhill_neighbours = downhill_neighbours
+        ## TODO: Should be able to fix upstream area as a "partial" function of upstream area
+        ## with a parameter value of 1.0 in the argument (or 1.0 above a ref height)
 
         # Slope (function)
-        self.slope = fn.math.sqrt(self.topography.fn_gradient(0)**2.0+self.topography.fn_gradient(1)**2.0)
+        self.slope = fn.math.slope(self.topography)
 
         self._heightVariable = self.topography
 
@@ -69,11 +69,14 @@ class TopoMesh(object):
     @downhill_neighbours.setter
     def downhill_neighbours(self, value):
         self._downhill_neighbours = int(value)
+        self.deform_topography = self._height_update_context_manager_generator()
+
         # if the topography is unlocked, don't rebuild anything
         # as it might break something
 
         if self.topography._locked == True:
-            self._build_downhill_matrix_iterate()
+            self._update_height()
+            self._update_height_for_surface_flows()
 
         return
 
@@ -91,30 +94,57 @@ class TopoMesh(object):
             print(("{} - Build downhill matrices {}s".format(self.dm.comm.rank, perf_counter()-t)))
         return
 
+    def _update_height_for_surface_flows(self):
+
+        #self.rainfall_pattern = rainfall_pattern.copy()
+        #self.sediment_distribution = sediment_distribution.copy()
+
+        t = perf_counter()
+
+        self.upstream_area.unlock()
+        self.upstream_area.data = self.cumulative_flow(self.pointwise_area.data)  ## Should be upstream integral of 1.0
+        self.upstream_area.lock()
+
+        self.timings['Upstream area'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+
+        if self.verbose:
+            print(("{} - Build upstream areas {}s".format(self.dm.comm.rank, perf_counter()-t)))
+
+        # Find low points
+        self.low_points = self.identify_low_points()
+
+        # Find high points
+        self.outflow_points = self.identify_outflow_points()
+
     def _height_update_context_manager_generator(self):
         """Builds a context manager on the current mesh object to control when matrices are to be updated"""
 
         topomesh = self
         topographyVariable = self.topography
+        downhill_neighbours = self.downhill_neighbours
 
         class Topomesh_Height_Update_Manager(object):
             """Manage when changes to the height information trigger a rebuild
             of the topomesh matrices and other internal data.
             """
 
-            def __init__(inner_self):
+            def __init__(inner_self, downhill_neighbours=downhill_neighbours):
                 inner_self._topomesh = topomesh
                 inner_self._topovar  = topographyVariable
+                inner_self._downhill_neighbours = int(downhill_neighbours)
                 return
 
             def __enter__(inner_self):
                 # unlock
                 inner_self._topovar.unlock()
+                inner_self._topomesh._downhill_neighbours = inner_self._downhill_neighbours
                 return
 
             def __exit__(inner_self, *args):
                 inner_self._topomesh._update_height()
+                inner_self._topomesh._update_height_for_surface_flows()
                 inner_self._topovar.lock()
+                inner_self._topomesh._topography_modified_count += 1
                 return
 
         return Topomesh_Height_Update_Manager
@@ -717,3 +747,400 @@ class TopoMesh(object):
             else:
                 self.node_chain_list[0].append(this_chain[0])
                 self.node_chain_lookup[this_chain[0]] = 0
+
+
+### Methods copied over from obseleted SurfMesh class
+
+    def low_points_local_flood_fill(self, its=99999, scale=1.0, smoothing_steps=2):
+        """
+        Fill low points with a local flooding algorithm.
+          - its is the number of uphill propagation steps
+          - scale
+        """
+
+        t = perf_counter()
+        if self.rank==0 and self.verbose:
+            print("Low point local flood fill")
+
+        my_low_points = self.identify_low_points()
+
+        self.topography.unlock()
+        h = self.topography.data
+
+        fill_height =  (h[self.neighbour_cloud[my_low_points,1:7]].mean(axis=1)-h[my_low_points])
+
+        new_h = self.uphill_propagation(my_low_points,  fill_height, scale=scale,  its=its, fill=0.0)
+        new_h = self.sync(new_h)
+
+        smoothed_new_height = self.rbf_smoother(new_h, iterations=smoothing_steps)
+        self.topography.data = np.maximum(0.0, smoothed_new_height) + h
+        self.topography.sync()
+        self.topography.lock()
+        self._update_height()
+
+        if self.rank==0 and self.verbose:
+            print("Low point local flood fill ",  perf_counter()-t, " seconds")
+
+        self._update_height_for_surface_flows()
+
+        return
+
+    def low_points_local_patch_fill(self, its=1, smoothing_steps=1):
+
+        from petsc4py import PETSc
+        t = perf_counter()
+        if self.rank==0 and self.verbose:
+            print("Low point local patch fill")
+
+        for iteration in range(0,its):
+            low_points = self.identify_low_points()
+
+            self.topography.unlock()
+
+            h = self.topography.data
+            delta_height = np.zeros_like(h)
+
+            ## Note, the smoother has a communication barrier so needs to be called even if it has no work to do on this process
+
+            if len(low_points) != 0:
+                delta_height[low_points] =  (h[self.neighbour_cloud[low_points,1:5]].mean(axis=1) -
+                                                         h[low_points])
+            ## Note, the smoother has a communication barrier so needs to be called even
+            ## if len(low_points==0) and there is no work to do on this process
+            smoothed_height = h + self.rbf_smoother(delta_height, iterations=smoothing_steps)
+
+            self.topography.data = np.maximum(smoothed_height, h)
+            self.topography.sync()
+            self.topography.lock()
+            self._update_height()
+
+        if self.rank==0 and self.verbose:
+            print("Low point local patch fill ",  perf_counter()-t, " seconds")
+
+        ## and now we need to rebuild the surface process information
+        self._update_height_for_surface_flows()
+
+        return
+
+
+    def low_points_swamp_fill(self, its=1000, saddles=True, ref_height=0.0, ref_gradient=0.001):
+
+        import petsc4py
+        from petsc4py import PETSc
+        from mpi4py import MPI
+
+        comm = MPI.COMM_WORLD
+        size = comm.Get_size()
+        rank = comm.Get_rank()
+
+        t0 = perf_counter()
+
+        my_low_points = self.identify_low_points()
+        my_glow_points = self.lgmap_row.apply(my_low_points.astype(PETSc.IntType))
+
+        t = perf_counter()
+        ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
+
+        if self.rank==0 and self.verbose:
+            print("Build low point catchments - ", perf_counter() - t, " seconds")
+
+        if saddles:  # Find saddle points on the catchment edge - catchment detection is via down-neighbour 1,
+                     # so neighbour 2 (or 3) is the earliest detection opportunity for a spill
+
+            cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
+            try:
+                cedges3 = np.where(ctmt[self.down_neighbour[3]] != ctmt )[0] ## local numbering
+                cedges = np.unique(np.hstack((cedges,cedges3)))
+            except:
+                pass
+
+        else:        # Find all edge points (this does not seem to work in most cases ... why not ?)
+            ctmt2 = ctmt[self.neighbour_cloud] - ctmt.reshape(-1,1)
+            ctmt3 = ctmt2 * self.near_neighbour_mask
+            cedges = np.where(ctmt3.any(axis=1))[0]
+
+        outer_edges = np.where(~self.bmask)[0]
+        edges = np.unique(np.hstack((cedges,outer_edges)))
+
+        height = self.topography.data.copy()
+
+        ## In parallel this is all the low points where this process may have a spill-point
+        my_catchments = np.unique(ctmt)
+
+        spills = np.empty((edges.shape[0]),
+                         dtype=np.dtype([('c', int), ('h', float), ('x', float), ('y', float)]))
+
+        ii = 0
+        for l, this_low in enumerate(my_catchments):
+            this_low_spills = edges[np.where(ctmt[edges] == this_low)]  ## local numbering
+
+            for spill in this_low_spills:
+                spills['c'][ii] = this_low
+                spills['h'][ii] = height[spill]
+                spills['x'][ii] = self.coords[spill,0]
+                spills['y'][ii] = self.coords[spill,1]
+                ii += 1
+
+        t = perf_counter()
+
+        spills.sort(axis=0)  # Sorts by catchment then height ...
+        s, indices = np.unique(spills['c'], return_index=True)
+        spill_points = spills[indices]
+
+        if self.rank == 0 and self.verbose:
+            print(self.rank, " Sort spills - ", perf_counter() - t)
+
+        # Gather lists to process 0, stack and remove duplicates
+
+        t = perf_counter()
+        list_of_spills = comm.gather(spill_points,   root=0)
+
+        if self.rank == 0 and self.verbose:
+            print(self.rank, " Gather spill data - ", perf_counter() - t)
+
+        if self.rank == 0:
+            t = perf_counter()
+
+            all_spills = np.hstack(list_of_spills)
+            all_spills.sort(axis=0) # Sorts by catchment then height ...
+            s, indices = np.unique(all_spills['c'], return_index=True)
+            all_spill_points = all_spills[indices]
+
+            if self.verbose:
+                print(rank, " Sort all spills - ", perf_counter() - t)
+
+        else:
+            all_spill_points = None
+            pass
+
+        # Broadcast lists to everyone
+
+        global_spill_points = comm.bcast(all_spill_points, root=0)
+
+        height2 = np.zeros_like(height) + ref_height
+
+        for i, spill in enumerate(global_spill_points):
+            this_catchment = int(spill['c'])
+
+            ## -ve values indicate that the point is connected
+            ## to the outflow of the mesh and needs no modification
+            if this_catchment < 0:
+                continue
+
+            catchment_nodes = np.where(ctmt == this_catchment)
+            separation_x = (self.coords[catchment_nodes,0] - spill['x'])
+            separation_y = (self.coords[catchment_nodes,1] - spill['y'])
+            distance = np.hypot(separation_x, separation_y)
+
+            ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
+            height2[catchment_nodes] = spill['h'] + ref_gradient * distance  # A 'small' gradient (should be a user-parameter)
+
+        height2 = self.sync(height2)
+
+        new_height = np.maximum(height, height2)
+        new_height = self.sync(new_height)
+
+
+        # We only need to update the height not all
+        # surface process information that is associated with it.
+        self.topography.unlock()
+        self.topography.data = new_height
+        self._update_height()
+        self.topography.lock()
+
+
+        if self.rank==0 and self.verbose:
+            print("Low point swamp fill ",  perf_counter()-t0, " seconds")
+
+        ## but now we need to rebuild the surface process information
+        self._update_height_for_surface_flows()
+        return
+
+
+    def backfill_points(self, fill_points, heights, its):
+        """
+        Handles *selected* low points by backfilling height array.
+        This can be used to block a stream path, for example, or to locate lakes
+        """
+
+        if len(fill_points) == 0:
+            return self.heightVariable.data
+
+        new_height = self.lvec.duplicate()
+        new_height.setArray(heights)
+        height = np.maximum(self.height, new_height.array)
+
+        # Now march the new height to all the uphill nodes of these nodes
+        # height = np.maximum(self.height, delta_height.array)
+
+        self.dm.localToGlobal(new_height, self.gvec)
+        global_dH = self.gvec.copy()
+
+        for p in range(0, its):
+            self.adjacency[1].multTranspose(global_dH, self.gvec)
+            global_dH.setArray(self.gvec)
+            global_dH.scale(1.001)  # Maybe !
+            self.dm.globalToLocal(global_dH, new_height)
+
+            height = np.maximum(height, new_height.array)
+
+        return height
+
+    def uphill_propagation(self, points, values, scale=1.0, its=1000, fill=-1):
+
+        t0 = perf_counter()
+
+        local_ID = self.lvec.copy()
+        global_ID = self.gvec.copy()
+
+        local_ID.set(fill+1)
+        global_ID.set(fill+1)
+
+        identifier = np.empty_like(self.topography.data)
+        identifier.fill(fill+1)
+
+        if len(points):
+            identifier[points] = values + 1
+
+        local_ID.setArray(identifier)
+        self.dm.localToGlobal(local_ID, global_ID)
+
+        delta = global_ID.copy()
+        delta.abs()
+        rtolerance = delta.max()[1] * 1.0e-10
+
+        for p in range(0, its):
+
+            # self.adjacency[1].multTranspose(global_ID, self.gvec)
+            gvec = self.uphill[1] * global_ID
+            delta = global_ID - gvec
+            delta.abs()
+            max_delta = delta.max()[1]
+
+            if max_delta < rtolerance:
+                break
+
+            self.gvec.scale(scale)
+
+            if self.dm.comm.Get_size() == 1:
+                local_ID.array[:] = gvec.array[:]
+            else:
+                self.dm.globalToLocal(gvec, local_ID)
+
+            global_ID.array[:] = gvec.array[:]
+
+            identifier = np.maximum(identifier, local_ID.array)
+            identifier = self.sync(identifier)
+
+        # Note, the -1 is used to identify out of bounds values
+
+        if self.rank == 0 and self.verbose:
+            print(p, " iterations, time = ", perf_counter() - t0)
+
+        return identifier - 1
+
+
+
+    def identify_low_points(self, include_shadows=False):
+        """
+        Identify if the mesh has (internal) local minima and return an array of node indices
+        """
+
+        # from petsc4py import PETSc
+
+        nodes = np.arange(0, self.npoints, dtype=np.int)
+        gnodes = self.lgmap_row.apply(nodes.astype(PETSc.IntType))
+
+        low_nodes = self.down_neighbour[1]
+        mask = np.logical_and(nodes == low_nodes, self.bmask == True)
+
+        if not include_shadows:
+            mask = np.logical_and(mask, gnodes >= 0)
+
+        return nodes[mask]
+
+    def identify_global_low_points(self, global_array=False):
+        """
+        Identify if the mesh as a whole has (internal) local minima and return an array of local lows in global
+        index format.
+
+        If global_array is True, then lows for the whole mesh are returned
+        """
+
+        import petsc4py
+        from petsc4py import PETSc
+        from mpi4py import MPI
+
+        comm = MPI.COMM_WORLD
+        size = comm.Get_size()
+        rank = comm.Get_rank()
+
+        # from petsc4py import PETSc
+
+        nodes = np.arange(0, self.npoints, dtype=np.int)
+        gnodes = self.lgmap_row.apply(nodes.astype(PETSc.IntType))
+
+        low_nodes = self.down_neighbour[1]
+        mask = np.logical_and(nodes == low_nodes, self.bmask == True)
+        mask = np.logical_and(mask, gnodes >= 0)
+
+        number_of_lows = np.count_nonzero(mask)
+        low_gnodes = self.lgmap_row.apply(low_nodes.astype(PETSc.IntType))
+
+        # gather/scatter numbers
+
+        list_of_nlows  = comm.gather(number_of_lows,   root=0)
+        if self.rank == 0:
+            all_low_counts = np.hstack(list_of_nlows)
+            no_global_lows0 = all_low_counts.sum()
+
+        else:
+            no_global_lows0 = None
+
+        no_global_lows = comm.bcast(no_global_lows0, root=0)
+
+
+        if global_array:
+
+            list_of_lglows = comm.gather(low_gnodes,   root=0)
+
+            if self.rank == 0:
+                all_glows = np.hstack(list_of_lglows)
+                global_lows0 = np.unique(all_glows)
+
+            else:
+                global_lows0 = None
+
+            low_gnodes = comm.bcast(global_lows0, root=0)
+
+        return no_global_lows, low_gnodes
+
+
+    def identify_outflow_points(self):
+        """
+        Identify the (boundary) outflow points and return an array of (local) node indices
+        """
+
+        # nodes = np.arange(0, self.npoints, dtype=np.int)
+        # low_nodes = self.down_neighbour[1]
+        # mask = np.logical_and(nodes == low_nodes, self.bmask == False)
+        #
+
+        i = self.downhill_neighbours
+
+        o = (np.logical_and(self.down_neighbour[i] == np.indices(self.down_neighbour[i].shape), self.bmask == False)).ravel()
+        outflow_nodes = o.nonzero()[0]
+
+        return outflow_nodes
+
+
+    def identify_flat_spots(self):
+
+        slope = self.slope.evaluate(self.slope._mesh)
+        smooth_grad1 = self.local_area_smoothing(slope, its=1, centre_weight=0.5)
+
+        # flat_spot_field = np.where(smooth_grad1 < smooth_grad1.max()/100, 0.0, 1.0)
+
+        flat_spots = np.where(smooth_grad1 < smooth_grad1.max()/1000.0, True, False)
+
+        return flat_spots

@@ -16,6 +16,18 @@
 
 """
 For structured data on a regular grid.
+
+<img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart-pixmesh.png" style="width: 321px; float:right">
+
+`PixMesh` implements the following functionality:
+
+- calculating spatial derivatives
+- identifying node neighbour relationships
+- interpolation / extrapolation
+- smoothing operators
+- importing and saving mesh information
+
+Supply a `PETSc DM` object (created from `quagmire.tools.meshtools`) to initialise the object.
 """
 
 import numpy as np
@@ -33,14 +45,74 @@ except: pass
 
 class PixMesh(_CommonMesh):
     """
-    Creating a global vector from a distributed DM removes duplicate entries (shadow zones)
+    Build spatial data structures on an __structured Cartesian grid__.
+
+    Use `PixMesh` for:
+
+    - calculating spatial derivatives
+    - identifying node neighbour relationships
+    - interpolation / extrapolation
+    - smoothing operators
+    - importing and saving mesh information
+
+    Each of these data structures are built on top of a `PETSc DM` object
+    (created from `quagmire.tools.meshtools`).
+
+    Parameters
+    ----------
+    DM : PETSc DMDA object
+        Build this unstructured Cartesian mesh object using one of:
+
+        - `quagmire.tools.meshtools.create_DMDA`
+    verbose : bool
+        Flag toggles verbose output
+    *args : optional arguments
+    **kwargs : optional keyword arguments
+
+    Attributes
+    ----------
+    dx : float
+        spacing in the x direction
+    dy : float
+        spacing in the y direction
+    npoints : int
+        Number of points (n) in the mesh
+    pointwise_area : Quagmire MeshVariable
+        `quagmire.mesh.basemesh.MeshVariable` of point-wise area
+    mask : Quagmire MeshVariable
+        `quagmire.mesh.basemesh.MeshVariable` to denote points on the boundary
+    data : array of floats, shape (n,2)
+        Cartesian mesh coordinates in x,y directions
+    coords : array of floats, shape (n,2)
+        Same as `data`
+    neighbour_array : array of ints, shape(n,25)
+        array of node neighbours
+    timings : dict
+        Timing information for each Quagmire routine
     """
+
+    ## This is a count of all the instances of the class that are launched
+    ## so that we have a way to name / identify them
+
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        PixMesh.__count += 1
+        return PixMesh.__count
+
+    @property
+    def id(self):
+        return self.__id
+
+
     def __init__(self, dm, verbose=True, *args, **kwargs):
         from scipy.spatial import cKDTree as _cKDTree
 
         # initialise base mesh class
         super(PixMesh, self).__init__(dm, verbose)
 
+        self.__id = "pixmesh_{}".format(self._count())
 
         (minX, maxX), (minY, maxY) = dm.getBoundingBox()
         Nx, Ny = dm.getSizes()
@@ -51,6 +123,9 @@ class PixMesh(_CommonMesh):
 
         self.area = np.array(dx*dy)
         self.adjacency_weight = 0.5
+        self.pointwise_area = self.add_variable(name="area")
+        self.pointwise_area.data = self.area
+        self.pointwise_area.lock()
 
         self.bc = dict()
         self.bc["top"]    = (1,maxY)
@@ -79,60 +154,69 @@ class PixMesh(_CommonMesh):
         self.npoints = nx*ny
 
 
-        # Find neighbours
-        t = perf_counter()
-        self.construct_neighbours()
-        self.timings['construct neighbours'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print((" - Construct neighbour array {}s".format(perf_counter()-t)))
-
         # cKDTree
         t = perf_counter()
         self.cKDTree = _cKDTree(self.coords)
         self.timings['cKDTree'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print((" - cKDTree {}s".format(perf_counter()-t)))
+        if self.rank == 0 and self.verbose:
+            print("{} - cKDTree {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
         # Find boundary points
         t = perf_counter()
         self.bmask = self.get_boundary()
+        self.mask = self.add_variable(name="Mask")
+        self.mask.data = self.bmask.astype(PETSc.ScalarType)
+        self.mask.lock()
         self.timings['find boundaries'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print((" - Find boundaries {}s".format(perf_counter()-t)))
-
-
-        # Build smoothing operator
-        t = perf_counter()
-        self._build_smoothing_matrix()
-        self.timings['smoothing matrix'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print((" - Build smoothing matrix {}s".format(perf_counter()-t)))
-
+        if self.rank == 0 and self.verbose:
+            print("{} - Find boundaries {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
         # Find neighbours
         t = perf_counter()
         self.construct_neighbour_cloud()
         self.timings['construct neighbour cloud'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print((" - Construct neighbour cloud array {}s".format(perf_counter()-t)))
+        if self.rank == 0 and self.verbose:
+            print("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
         # RBF smoothing operator
         t = perf_counter()
         self._construct_rbf_weights()
         self.timings['construct rbf weights'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.verbose:
-            print((" - Construct rbf weights {}s".format(perf_counter()-t)))
-
+        if self.rank == 0 and self.verbose:
+            print("{} - Construct rbf weights {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
         self.root = False
 
+        # functions / parameters that are required for compatibility among FlatMesh types
+        self._derivative_grad_cartesian = self.derivative_grad
+        self._radius = 1.0
+
 
     def derivative_grad(self, PHI):
+        """
+        Compute derivatives of PHI in the x, y directions.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
 
+        Arguments
+        ---------
+        PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+        nit : int optional (default: 10)
+            number of iterations to reach convergence
+        tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+
+        Returns
+        -------
+        PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+        PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
+        """
         u = PHI.reshape(self.ny, self.nx)
         u_x, u_y = np.gradient(u, self.dx, self.dy)
 
@@ -140,13 +224,42 @@ class PixMesh(_CommonMesh):
 
 
     def derivative_div(self, PHIx, PHIy):
+        """
+        Compute second order derivative from flux fields PHIx, PHIy
+        We evaluate the gradient on these fields using the derivative-grad method.
 
+        Arguments
+        ---------
+        PHIx : ndarray of floats, shape (n,)
+            array of first partial derivatives in x direction
+        PHIy : ndarray of floats, shape (n,)
+            array of first partial derivatives in y direction
+        kwargs : optional keyword-argument specifiers
+            keyword arguments to be passed onto derivative_grad
+            e.g. nit=5, tol=1e-3
+
+        Returns
+        -------
+        del2PHI : ndarray of floats, shape (n,)
+            second derivative of PHI
+        """
         u_xx, u_xy = self.derivative_grad(PHIx)
         u_yx, u_yy = self.derivative_grad(PHIy)
 
         return u_xx + u_yy
 
     def construct_neighbours(self):
+        """
+        Find neighbours from edges and store as CSR coordinates.
+
+        This allows you to directly ask the neighbours for a given node a la Qhull,
+        or efficiently construct a sparse matrix (PETSc/SciPy)
+
+        Notes
+        -----
+        This method searches only for immediate note neighbours that are connected
+        by a line segment.
+        """
 
         nx, ny = self.nx, self.ny
         n = self.npoints
@@ -252,6 +365,22 @@ class PixMesh(_CommonMesh):
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
 
+        # identify corner nodes
+        corners = [0, self.nx-1, -self.nx, -1]
+
+        # interior nodes have 3*3 neighbours (including self)
+        neighbours = np.full(self.npoints, 9, dtype=np.int)
+        neighbours[~self.bmask] = 6 # walls have 3*2 neighbours
+        neighbours[corners] = 4 # corners have 4 neighbours
+
+        self.near_neighbours = neighbours + 2
+        self.extended_neighbours = np.full_like(neighbours, size)
+
+        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+        for node in range(0,self.npoints):
+            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+
         return
 
     def _build_smoothing_matrix(self):
@@ -286,22 +415,47 @@ class PixMesh(_CommonMesh):
 
 
     def local_area_smoothing(self, data, its=1, centre_weight=0.75):
+        """
+        Local area smoothing using radial-basis function smoothing kernel
 
-        self.lvec.setArray(data)
-        self.dm.localToGlobal(self.lvec, self.gvec)
-        smooth_data = self.gvec.copy()
+        Parameters
+        ----------
+        data : array of floats, shape (n,)
+            field variable to be smoothed
+        its : int
+            number of iterations (default: 1)
+        centre_weight : float
+            weight to apply to centre nodes (default: 0.75)
+            other nodes are weighted by (1 - `centre_weight`)
+
+        Returns
+        -------
+        sm : array of floats, shape (n,)
+            smoothed field variable
+        """
+
+        smooth_data = data.copy()
+        smooth_data_old = data.copy()
 
         for i in range(0, its):
-            self.localSmoothMat.mult(smooth_data, self.gvec)
-            smooth_data = centre_weight*smooth_data + (1.0 - centre_weight)*self.gvec
+            smooth_data_old[:] = smooth_data
+            smooth_data = centre_weight*smooth_data_old + \
+                          (1.0 - centre_weight)*self.rbf_smoother(smooth_data)
+            smooth_data[:] = self.sync(smooth_data)
 
-        self.dm.globalToLocal(smooth_data, self.lvec)
-
-        return self.lvec.array
+        return smooth_data
 
 
     def get_boundary(self):
+        """
+        Get boundary information on the mesh
 
+        Returns
+        -------
+        bmask : array of bools, shape (n,)
+            mask out the boundary nodes. Interior nodes are True;
+            Boundary nodes are False.
+        """
         bmask = np.ones(self.npoints, dtype=bool)
 
         for key in self.bc:
@@ -314,25 +468,58 @@ class PixMesh(_CommonMesh):
 
     def _construct_rbf_weights(self, delta=None):
 
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
+
         self.delta  = delta
-
-        if self.delta == None:
-            self.delta = self.neighbour_cloud_distances[:,1].mean() # * 0.75
-
-        # Initialise the interpolants
-
-        gaussian_dist_w       = np.zeros_like(self.neighbour_cloud_distances)
-        gaussian_dist_w[:,:]  = np.exp(-np.power(self.neighbour_cloud_distances[:,:]/self.delta, 2.0))
-        gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
-
-        self.gaussian_dist_w = gaussian_dist_w
+        self.gaussian_dist_w = self._rbf_weights(delta)
 
         return
 
-    def rbf_smoother(self, field):
+    def _rbf_weights(self, delta=None):
 
-        # Should do some error checking here to ensure the field and point cloud are compatible
+        neighbour_cloud_distances = self.neighbour_cloud_distances
 
-        smoothfield = (field[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
 
-        return smoothfield
+        # Initialise the interpolants
+
+        gaussian_dist_w       = np.zeros_like(neighbour_cloud_distances)
+        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/delta, 2.0))
+        gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
+
+        return gaussian_dist_w
+
+    def rbf_smoother(self, vector, iterations=1, delta=None):
+        """
+        Smoothing using a radial-basis function smoothing kernel
+
+        Arguments
+        ---------
+        vector : array of floats, shape (n,)
+            field variable to be smoothed
+        iterations : int
+            number of iterations to smooth vector
+        delta : float / array of floats shape (n,)
+            distance weights to apply the Gaussian interpolants
+
+        Returns
+        -------
+        smooth_vec : array of floats, shape (n,)
+            smoothed version of input vector
+        """
+
+
+        if type(delta) != type(None):
+            self._construct_rbf_weights(delta)
+
+        vector = self.sync(vector)
+
+        for i in range(0, iterations):
+            # print self.dm.comm.rank, ": RBF ",vector.max(), vector.min()
+
+            vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+            vector = self.sync(vector_smoothed)
+
+        return vector

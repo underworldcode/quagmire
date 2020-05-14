@@ -108,48 +108,191 @@ def fabs(lazyFn):
 def sqrt(lazyFn):
     return _make_npmath_op(_np.sqrt, "sqrt", lazyFn)
 
+def degrees(lazyFn):
+    return _make_npmath_op(_np.degrees, "180/pi*", lazyFn)
+
+def radians(lazyFn):
+    return _make_npmath_op(_np.radians, "pi/180*", lazyFn)
+
+def rad2deg(lazyFn):
+    return degrees(lazyFn)
+
+def deg2rad(lazyFn):
+    return radians(lazyFn)
 
 
 # grad
 
 def grad(lazyFn):
-    """Lazy evaluation of 2D gradient operator on a scalar field"""
+    """Lazy evaluation of gradient operator on a scalar field"""
+    return lazyFn.fn_gradient[0], lazyFn.fn_gradient[1]
 
-    return lazyFn.fn_gradient(0), lazyFn.fn_gradient(1)
+def div(*args):
+    """Lazy evaluation of divergence operator on a N-D vector field"""
+    def _div(lazyFn_list, *args, **kwargs):
+        lazy_ev = 0.0
+        for lazyFn in lazyFn_list:
+            lazy_ev += lazyFn.evaluate(*args, **kwargs)
+        return lazy_ev
 
-def div(lazyFn_x, lazyFn_y):
-    """Lazy evaluation of divergence operator on a 2D vector field"""
-    if lazyFn_x._mesh.id != lazyFn_y._mesh.id:
-        raise ValueError("Both meshes must be identical")
-    newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
-    fn_dx = lazyFn_x.fn_gradient(0)
-    fn_dy = lazyFn_y.fn_gradient(1)
-    newLazyFn.evaluate = lambda *args, **kwargs : fn_dx.evaluate(*args, **kwargs) + fn_dy.evaluate(*args, **kwargs)
-    newLazyFn.description = "diff({},X) + diff({},Y)".format(lazyFn_x.description, lazyFn_y.description)
-    newLazyFn.dependency_list = lazyFn_x.dependency_list | lazyFn_y.dependency_list
+    dims = ['X', 'Y', 'Z']
+    lazyFn_id = set()
+    lazyFn_list = []
+    lazyFn_description = ""
+    lazyFn_dependency = set()
+    for f, lazyFn in enumerate(args):
+        lazyFn_id.add(lazyFn._mesh.id)
+        lazyFn_list.append(lazyFn.fn_gradient[f])
+        lazyFn_description += "diff({},{}) + ".format(lazyFn.description, dims[f])
+        lazyFn_dependency.union(lazyFn.dependency_list)
+    lazyFn_description = lazyFn_description[:-3]
+    if len(lazyFn_id) > 1:
+        raise ValueError("Meshes must be identical")
+
+    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+    newLazyFn.evaluate = lambda *args, **kwargs : _div(lazyFn_list, *args, **kwargs)
+    newLazyFn.description = lazyFn_description
+    newLazyFn.dependency_list = lazyFn_dependency
 
     return newLazyFn
 
-def curl(lazyFn_x, lazyFn_y):
+def curl(*args):
     """Lazy evaluation of curl operator on a 2D vector field"""
-    if lazyFn_x._mesh.id != lazyFn_y._mesh.id:
-        raise ValueError("Both meshes must be identical")
-    newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
-    fn_dvydx = lazyFn_y.fn_gradient(0)
-    fn_dvxdy = lazyFn_x.fn_gradient(1)
-    newLazyFn.evaluate = lambda *args, **kwargs : fn_dvydx.evaluate(*args, **kwargs) - fn_dvxdy.evaluate(*args, **kwargs)
-    newLazyFn.description = "diff({},X) - diff({},Y)".format(lazyFn_y.description, lazyFn_x.description)
-    newLazyFn.dependency_list = lazyFn_x.dependency_list | lazyFn_y.dependency_list
+
+    if len(args) == 2:
+        lazyFn_x = args[0]
+        lazyFn_y = args[1]
+        if lazyFn_x._mesh.id != lazyFn_y._mesh.id:
+            raise ValueError("Both meshes must be identical")
+        
+        newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
+        fn_dvydx = lazyFn_y.fn_gradient[0]
+        fn_dvxdy = lazyFn_x.fn_gradient[1]
+        newLazyFn.evaluate = lambda *args, **kwargs : fn_dvydx.evaluate(*args, **kwargs) - fn_dvxdy.evaluate(*args, **kwargs)
+        newLazyFn.description = "diff({},X) - diff({},Y)".format(lazyFn_y.description, lazyFn_x.description)
+        newLazyFn.dependency_list = lazyFn_x.dependency_list | lazyFn_y.dependency_list
+
+    elif len(args) == 3:
+        lazyFn_x = args[0]
+        lazyFn_y = args[1]
+        lazyFn_z = args[2]
+        if lazyFn_x._mesh.id != lazyFn_y._mesh.id != lazyFn_z._mesh.id :
+            raise ValueError("All meshes must be identical")
+        
+        newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
+        fn_dvxdx, fn_dvxdy, fn_dvxdz = lazyFn_x.fn_gradient
+        fn_dvydx, fn_dvydy, fn_dvydz = lazyFn_y.fn_gradient
+        fn_dvzdx, fn_dvzdy, fn_dvzdz = lazyFn_z.fn_gradient
+        fn_curl = (fn_dvzdy-fn_dvydz) + (fn_dvxdz-fn_dvzdx) + (fn_dvydx-fn_dvxdy)
+        newLazyFn.evaluate = lambda *args, **kwargs : fn_curl.evaluate(*args, **kwargs)
+        desc = "(diff({},dy) - diff({},dz)) + (diff({},dz) - diff({},dx)) + (diff({},dx) - diff({},dy))"
+        newLazyFn.description = desc.format(\
+            lazyFn_z.description, lazyFn_y.description, \
+            lazyFn_x.description, lazyFn_z.description, \
+            lazyFn_y.description, lazyFn_x.description)
+        newLazyFn.dependency_list = lazyFn_x.dependency_list | lazyFn_y.dependency_list | lazyFn_z.dependency_list
+
+    else:
+        raise ValueError("Enter a valid number of arguments")
 
     return newLazyFn
 
+def hypot(*args):
+    """Lazy evaluation of hypot operator on N fields"""
+    def _hyp(lazyFn_list, *args, **kwargs):
+        lazy_ev = []
+        for lazyFn in lazyFn_list:
+            lazy_ev.append( lazyFn.evaluate(*args, **kwargs) )
+        return _np.hypot(*lazy_ev)
+    lazyFn_list = []
+    lazyFn_description = ""
+    lazyFn_dependency = set()
+    for lazyFn in args:
+        lazyFn_list.append(lazyFn)
+        lazyFn_description += "{}^2 + ".format(lazyFn.description)
+        lazyFn_dependency.union(lazyFn.dependency_list)
+    lazyFn_description = lazyFn_description[:-3]
+
+    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+    newLazyFn.evaluate = lambda *args, **kwargs : _hyp(lazyFn_list, *args, **kwargs)
+    newLazyFn.description = "sqrt({})".format(lazyFn_description)
+    newLazyFn.dependency_list = lazyFn_dependency
+
+    return newLazyFn
+
+
+def arctan2(*args):
+    """Lazy evaluation of arctan2 operator on N fields"""
+    def _arctan2(lazyFn_list, *args, **kwargs):
+        lazy_ev = []
+        for lazyFn in lazyFn_list:
+            lazy_ev.append( lazyFn.evaluate(*args, **kwargs) )
+        return _np.arctan2(*lazy_ev)
+    lazyFn_list = []
+    lazyFn_description = ""
+    lazyFn_dependency = set()
+    for lazyFn in args:
+        lazyFn_list.append(lazyFn)
+        lazyFn_description += "{},".format(lazyFn.description)
+        lazyFn_dependency.union(lazyFn.dependency_list)
+    lazyFn_description = lazyFn_description[:-1]
+
+    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+    newLazyFn.evaluate = lambda *args, **kwargs : _arctan2(lazyFn_list, *args, **kwargs)
+    newLazyFn.description = "arctan2({})".format(lazyFn_description)
+    newLazyFn.dependency_list = lazyFn_dependency
+
+    return newLazyFn
+
+
+def slope(lazyFn):
+    """Lazy evaluation of the slope of a scalar field"""
+    
+    # need to take a few lines from `function_classes` gradient method
+
+    if lazyFn._mesh is None:
+        raise RuntimeError("fn_gradient is a numerical differentiation routine based on " + \
+            "derivatives of a fitted spline function on a mesh. " + \
+            "The function {} has no associated mesh. ".format(lazyFn.__repr__())) + \
+            "To obtain *numerical* derivatives of this function, " + \
+            "you can provide a mesh to the gradient function. " + \
+            "The usual reason for this error is that your function is not based upon " + \
+            "mesh variables and can, perhaps, be differentiated without resort to interpolating splines. "
+
+    elif lazyFn._mesh is not None:
+        diff_mesh = lazyFn._mesh
+    else:
+        import quagmire
+        quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
+        diff_mesh = mesh
+
+    def new_fn_slope(*args, **kwargs):
+        local_array = lazyFn.evaluate(diff_mesh)
+        df_tuple = diff_mesh._derivative_grad_cartesian(local_array, nit=10, tol=1e-8)
+
+        grad_f = _np.hypot(*df_tuple)/diff_mesh._radius
+
+        if len(args) == 1 and args[0] == diff_mesh:
+            return grad_f
+        elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+            mesh = args[0]
+            return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=grad_f, **kwargs)
+        elif len(args) > 1:
+            xi = np.atleast_1d(args[0])  # .resize(-1,1)
+            yi = np.atleast_1d(args[1])  # .resize(-1,1)
+            i, e = diff_mesh.interpolate(xi, yi, zdata=grad_f, **kwargs)
+            return i
+        else:
+            err_msg = "Invalid number of arguments\n"
+            err_msg += "Input a valid mesh or coordinates in x,y directions"
+            raise ValueError(err_msg)
+
+    newLazyFn = _LazyEvaluation(mesh=diff_mesh)
+    newLazyFn.evaluate = new_fn_slope
+    newLazyFn.description = "sqrt(d({0})/dX^2 + d({0})/dY^2)".format(lazyFn.description)
+    newLazyFn.dependency_list = lazyFn.dependency_list
+    return newLazyFn
 
 ## These are not defined yet (LM)
 
-# hypot(x1, x2, /[, out, where, casting, …])	Given the “legs” of a right triangle, return its hypotenuse.
-# arctan2(x1, x2, /[, out, where, casting, …])	Element-wise arc tangent of x1/x2 choosing the quadrant correctly.
-# degrees(x, /[, out, where, casting, order, …])	Convert angles from radians to degrees.
-# radians(x, /[, out, where, casting, order, …])	Convert angles from degrees to radians.
 # unwrap(p[, discont, axis])	Unwrap by changing deltas between values to 2*pi complement.
-# deg2rad(x, /[, out, where, casting, order, …])	Convert angles from degrees to radians.
-# rad2deg(x, /[, out, where, casting, order, …])	Convert angles from radians to degrees.

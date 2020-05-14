@@ -2,7 +2,7 @@
 import pytest
 import numpy as np
 import quagmire
-from quagmire import FlatMesh
+from quagmire import QuagMesh
 from quagmire import function as fn
 from quagmire.tools import meshtools
 
@@ -10,12 +10,13 @@ from conftest import load_triangulated_mesh_DM
 
 
 def test_derivatives_and_interpolation(load_triangulated_mesh_DM):
-    mesh = FlatMesh(load_triangulated_mesh_DM)
+    mesh = QuagMesh(load_triangulated_mesh_DM)
 
     height = mesh.add_variable(name="h(x,y)")
     height.data = mesh.tri.x**2 + mesh.tri.y**2
 
-    dhdx, dhdy = fn.math.grad(height)
+    dhdx = height.fn_gradient[0]
+    dhdy = height.fn_gradient[1]
 
     # interpolate onto a straight line
     # bounding box should be [-5,5,-5,5]
@@ -32,7 +33,7 @@ def test_derivatives_and_interpolation(load_triangulated_mesh_DM):
 
 
 def test_smoothing(load_triangulated_mesh_DM):
-    mesh = FlatMesh(load_triangulated_mesh_DM)
+    mesh = QuagMesh(load_triangulated_mesh_DM)
 
     noise = np.random.rand(mesh.npoints)
     smooth_noise = mesh.local_area_smoothing(noise, its=1)
@@ -44,23 +45,19 @@ def test_smoothing(load_triangulated_mesh_DM):
 
 def test_spherical_area():
     import stripy
-    cm = stripy.spherical_meshes.icosahedral_mesh(refinement_levels=3)
-    fm = stripy.spherical_meshes.icosahedral_mesh(refinement_levels=4)
+    cm = stripy.spherical_meshes.icosahedral_mesh(refinement_levels=2)
+    DM = meshtools.create_spherical_DMPlex(cm.lons, cm.lats, cm.simplices)
+    mesh = QuagMesh(DM)
 
-    DM_c = meshtools.create_spherical_DMPlex(cm.lons, cm.lats, cm.simplices)
-    DM_f = meshtools.create_spherical_DMPlex(fm.lons, fm.lats, fm.simplices)
+    # adjust radius of the sphere
+    # this should re-calculate pointwise area and weights
+    R1 = 1.0
+    R2 = 2.0
 
-    mesh_c = FlatMesh(DM_c)
-    mesh_f = FlatMesh(DM_f)
+    mesh.radius = R1
+    area1 = mesh.pointwise_area.sum()
+    assert np.isclose(area1,4.*np.pi), "Area of the unit-sphere is incorrect, {}".format(area1)
 
-    area_of_earth = 510064472e6 # metres^2
-    
-    # re-calculate area
-    mesh_c.calculate_area_weights(r1=6384.4e3, r2=6352.8e3)
-    mesh_f.calculate_area_weights(r1=6384.4e3, r2=6352.8e3)
-
-    area1 = mesh_c.area.sum() # metres^2
-    area2 = mesh_f.area.sum() # metres^2
-
-    err_msg = "Area of the earth is getting worse with refinement"
-    assert abs(area_of_earth - area2) < abs(area_of_earth - area1), err_msg
+    mesh.radius = R2
+    area2 = mesh.pointwise_area.sum()
+    assert np.isclose(area2,4.*np.pi*R2**2), "Area of sphere with r=2 is incorrect, {}".format(area2)

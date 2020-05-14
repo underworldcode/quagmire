@@ -19,11 +19,31 @@
 
 **Quagmire is a Python surface process framework for building erosion and deposition models on highly parallel, decomposed structured and unstructured meshes.**
 
-<img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/hierarchy_chart.png" style="width: 400px; float:right">
+Quagmire is structured into three major tiers that inherit methods and attributes from different classes:
 
-Quagmire is structured into three major classes that inherit methods and attributes from lower tiers.
+<img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart.png" style="width: 321px; float:right">
 
-The Surface Processes class inherits from the Topography class, which in turn inherits from TriMesh or PixMesh depending on the type of mesh.
+1. `SurfaceProcessMesh`
+    - Calculate erosion-deposition rates
+    - Landscape analysis
+    - Long range flow models
+2. `TopoMesh`
+    - Assemble downhill connectivity matrix
+    - Calculate upstream area
+    - Compute slope
+    - Identify flat spots, low points, high points.
+3. `FlatMesh`
+    - calculating spatial derivatives
+    - identifying node neighbour relationships
+    - interpolation / extrapolation
+    - smoothing operators
+    - importing and saving mesh information
+
+The `quagmire.surfmesh.surfmesh.SurfMesh` class (1) inherits from
+the `quagmire.topomesh.topomesh.TopoMesh` class (2), which in turn inherits from
+the `quagmire.mesh.pixmesh.PixMesh`, `quagmire.mesh.trimesh.TriMesh`, or
+`quagmire.mesh.strimesh.sTriMesh` class (3) depending on the type of mesh.
+
 
 ## Installation
 
@@ -53,7 +73,7 @@ Running this code requires the following packages to be installed. The visualisa
 
 PETSc is used extensively via the Python frontend, petsc4py. It is required that PETSc be configured and installed on your local machine prior to using Quagmire. You can use pip or petsc to install petsc4py and its dependencies with consistent versions.
 
-```
+```sh
 [sudo] pip install numpy mpi4py
 [sudo] pip install petsc petsc4py
 ```
@@ -64,7 +84,7 @@ If that fails you must compile these manually.
 
 This is an optional installation, but it is very useful for saving data that is distributed across multiple processes. If you are compiling HDF5 from [source](https://support.hdfgroup.org/downloads/index.html) it should be configured with the `--enable-parallel` flag:
 
-```
+```sh
 CC=/usr/local/mpi/bin/mpicc ./configure --enable-parallel --enable-shared --prefix=<install-directory>
 make    # build the library
 make check  # verify the correctness
@@ -77,7 +97,7 @@ You can then point to this install directory when you install [h5py](http://docs
 
 Quagmire is scalable in parallel. All of the python scripts in the *tests* subdirectory can be run in parallel, e.g.
 
-```
+```sh
 mpirun -np 4 python stream_power.py
 ```
 
@@ -128,7 +148,6 @@ from .mesh import TriMesh as _TriMesh
 from .mesh import sTriMesh as _sTriMesh
 from petsc4py import PETSc as _PETSc
 from .topomesh import TopoMesh as _TopoMeshClass
-from .surfmesh import SurfMesh as _SurfaceProcessMeshClass
 
 from . import documentation
 from . import tools
@@ -201,132 +220,13 @@ def _get_label(DM):
     return label
 
 
-def FlatMesh(DM, *args, **kwargs):
-    """
-    Instantiates a mesh using `mesh.trimesh.TriMesh`,
-    `mesh.strimesh.sTriMesh` or `mesh.pixmesh.PixMesh` objects.
 
-    This object contains methods for the following operations:
-
-    - calculating derivatives
-    - interpolation (nearest-neighbour, linear, cubic)
-    - local smoothing operations
-    - identifying node neighbours
-
-    Parameters
-    ----------
-    DM : PETSc DM object
-        Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
-
-    Returns
-    -------
-    FlatMesh : object
-        Inherits methods and attributes from:
-
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
-    """
-
-    # get DM label name
-    BaseMeshType = _get_label(DM)
-
-    if BaseMeshType in known_basemesh_classes:
-
-        class FlatMeshClass(known_basemesh_classes[BaseMeshType]):
-
-            __count = 0
-
-            @classmethod
-            def _count(cls):
-                FlatMeshClass.__count += 1
-                return FlatMeshClass.__count
-
-            @property
-            def id(self):
-                return self.__id
-
-            def __init__(self, dm, *args, **kwargs):
-
-                # I can't see how to do this automatically
-                # but it does seem useful to have the ID reflect the
-                # mesh type (perhaps)
-
-                if isinstance(self, _TriMesh):
-                    self.__id = "trimesh_{}".format(self._count())
-                elif isinstance(self, _PixMesh):
-                    self.__id = "pixmesh_{}".format(self._count())
-                else:
-                    self.__id = "flatmesh_{}".format(self._count())
-
-                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
-
-                # super(FlatMeshClass, self).__init__(dm, *args, **kwargs)
-
-        return FlatMeshClass(DM, *args, **kwargs)
-
-    else:
-      raise TypeError("Mesh type {:s} unknown\n\
-        Known mesh types: {}".format(BaseMeshType, list(known_basemesh_classes.keys())))
-
-    return
-
-def TopoMesh(DM, *args, **kwargs):
-    """
-    Instantiates a mesh with a height field.
-    TopoMesh inherits from `FlatMesh`.
-
-    This object contains methods for the following operations:
-
-    - calculating the slope from height field
-    - constructing downhill matrices
-    - cumulative downstream flow
-    - handling flat spots and local minima
-
-    Parameters
-    ----------
-    DM : PETSc DM object
-        Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
-
-    Returns
-    -------
-    TopoMesh : object
-        Inherits methods and attributes from:
-
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
-        - `topomesh.topomesh.TopoMesh`
-    """
-
-    BaseMeshType = _get_label(DM)
-
-    if BaseMeshType in known_basemesh_classes:
-        class TopoMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
-            def __init__(self, dm, *args, **kwargs):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
-                _TopoMeshClass.__init__(self, *args, **kwargs)
-                # super(TopoMeshClass, self).__init__(dm, *args, **kwargs)
-
-        return TopoMeshClass(DM, *args, **kwargs)
-
-    else:
-      raise TypeError("Mesh type {:s} unknown\n\
-        Known mesh types: {}".format(BaseMeshType, list(known_basemesh_classes.keys())))
-
-    return
-
-
-
-def SurfaceProcessMesh(DM, *args, **kwargs):
+def QuagMesh(DM, *args, **kwargs):
     """
     Instantiates a mesh with a height and rainfall field.
-    SurfaceProcessMesh inherits from `FlatMesh` and `TopoMesh`.
+    QuagMesh identifies the type of DM and builds the necessary
+    data structures for landscape processing and analysis.
 
-    This object contains methods for the following operations:
-
-    - long-range flow models
-    - calculate erosion and deposition rates
-    - landscape equilibrium metrics
-    - stream-wise smoothing
 
     Parameters
     ----------
@@ -336,28 +236,29 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
 
     Returns
     -------
-    SurfaceProcessMesh : object
+    QuagMesh : object
         Inherits methods and attributes from:
 
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
+        - `mesh.commonmesh.CommonMesh`
+        - `mesh.pixmesh.PixMesh` (if `DM` is a regularly-spaced Cartesian grid)
+        - `mesh.trimesh.TriMesh` (if `DM` is an unstructred Cartesian mesh)
+        - `mesh.strimesh.sTriMesh` (if `DM` is an unstructured spherical mesh)
         - `topomesh.topomesh.TopoMesh`
-        - `surfmesh.surfmesh.SurfMesh`
     """
 
     BaseMeshType = _get_label(DM)
 
     if BaseMeshType in known_basemesh_classes:
-        class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _SurfaceProcessMeshClass):
+        class QuagMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
             def __init__(self, dm, *args, **kwargs):
                 known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
                 _TopoMeshClass.__init__(self, *args, **kwargs)
-                _SurfaceProcessMeshClass.__init__(self, *args, **kwargs)
-                # super(SurfaceProcessMeshClass, self).__init__(dm, *args, **kwargs)
+                # super(QuagMeshClass, self).__init__(dm, *args, **kwargs)
 
-        return SurfaceProcessMeshClass(DM, *args, **kwargs)
+        return QuagMeshClass(DM, *args, **kwargs)
 
     else:
-      raise TypeError("Mesh type {:s} unknown\n\
-        Known mesh types: {}".format(BaseMeshType, list(known_basemesh_classes.keys())))
+        raise TypeError("Mesh type {:s} unknown\n\
+            Known mesh types: {}".format(BaseMeshType, list(known_basemesh_classes.keys())))
 
     return

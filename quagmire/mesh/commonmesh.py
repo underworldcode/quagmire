@@ -16,6 +16,17 @@
 
 """
 Routines common to all mesh types.
+
+<img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart-commonmesh.png" style="width: 321px; float:right">
+
+`CommonMesh` implements the following functionality:
+
+- creating Quagmire mesh variables
+- setting and reading node labels on the PETSc DM
+- saving the mesh and mesh variables to HDF5 files
+- handling global and local synchronisation operations
+
+Supply a `PETSc DM` object (created from `quagmire.tools.meshtools`) to initialise the object.
 """
 
 import numpy as np
@@ -31,8 +42,51 @@ except: pass
 
 
 class CommonMesh(object):
+    """
+    Build routines on top of a PETSc DM mesh object common to:
+
+    - `quagmire.mesh.pixmesh.PixMesh`
+    - `quagmire.mesh.trimesh.TriMesh`
+    - `quagmire.mesh.strimesh.sTriMesh`
+
+    The above classes inherit `CommonMesh` to:
+
+    - create `quagmire.mesh.basemesh.MeshVariable` objects
+    - save the mesh and mesh variables to HDF5 files
+    - retrieving and setting labels on the DM
+    - synchronise local mesh information to all processors
+
+    Parameters
+    ----------
+    DM : PETSc DM object
+        Build this mesh object using one of the functions in
+        `quagmire.tools.meshtools`
+    verbose : bool
+        Flag toggles verbose output
+    *args : optional arguments
+    **kwargs : optional keyword arguments
+
+    Attributes
+    ----------
+    dm : PETSc DM object
+        structured Cartesian grid or unstructured Cartesian/
+        spherical mesh object
+    log : PETSc log object
+        contains logs for performance benchmarks
+    gvec : PETSc global vector
+        used to synchronise vectors across multiple processors
+    lvec : PETSc local vector
+        used to synchromise local information to the global vector
+    sizes : tuple
+        size of the local and global domains
+    comm : object
+        MPI COMM object for controlling global communications
+    rank : int
+        COMM rank is hte number assigned to each processor
+    """
 
     def __init__(self, dm, verbose=True,  *args, **kwargs):
+        self.mesh_type = 'FlatMesh'
 
         self.timings = dict() # store times
 
@@ -64,7 +118,21 @@ class CommonMesh(object):
         return
 
     def add_variable(self, name=None, locked=False):
+        """
+        Create a Quagmire mesh variable.
 
+        Parameters
+        ----------
+        name : str
+            name for the mesh variable
+        locked : bool (default: False)
+            lock the mesh variable from accidental modification
+
+        Returns
+        -------
+        MeshVariable : object
+            Instantiate a `quagmire.mesh.basemesh.MeshVariable`.
+        """
         from quagmire.mesh import MeshVariable
         return MeshVariable(name=name, mesh=self, locked=locked)
 
@@ -72,6 +140,16 @@ class CommonMesh(object):
         """
         Retrieves all points in the DM that is marked with a specific label.
         e.g. "boundary", "coarse"
+
+        Parameters
+        ----------
+        label : str
+            retrieve indices on the DM marked with `label`.
+
+        Returns
+        -------
+        indices : list of ints
+            list of indices corresponding to the label
         """
         pStart, pEnd = self.dm.getDepthStratum(0)
 
@@ -98,7 +176,14 @@ class CommonMesh(object):
 
     def set_label(self, label, indices):
         """
-        Marks local indices in the DM with a label
+        Marks local indices in the DM with a label.
+
+        Parameters
+        ----------
+        label : str
+            mark indices on the DM with `label`.
+        indices : list of ints
+            indices on the DM
         """
         pStart, pEnd = self.dm.getDepthStratum(0)
         indices += pStart
@@ -118,6 +203,16 @@ class CommonMesh(object):
         """
         Find the nodes on the boundary from the DM
         If marker does not exist then the convex hull is used.
+
+        Parameters
+        ----------
+        marker : str (default: 'boundary')
+            name of the boundary label
+        
+        Returns
+        -------
+        mask : array of bools, shape (n,)
+            mask of interior nodes
         """
 
         pStart, pEnd = self.dm.getDepthStratum(0)
@@ -138,11 +233,55 @@ class CommonMesh(object):
         return bmask
 
 
+    def save_quagmire_project(self, file):
+
+        import h5py
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+
+        file = str(file)
+        if not file.endswith('.h5'):
+            file += '.h5'
+
+        # first save the mesh
+        self.save_mesh_to_hdf5(file)
+
+        # then save the topography
+        self.topography.save(file, append=True)
+
+        # handle saving radius to file for spherical mesh
+        if np.array(self._radius).size == self.npoints:
+            radius_meshVariable = self.add_variable('radius')
+            radius_meshVariable.data = self._radius
+            radius_meshVariable.save(file, append=True)
+            radius = False
+        else:
+            radius = self._radius
+
+        # now save important parameters we need to reconstruct
+        # data structures. For this we need to crack open the HDF5
+        # file we just saved and write attributes on a 'quagmire' group
+
+        with h5py.File(file, mode='r+', driver='mpio', comm=comm) as h5:
+            quag = h5.create_group('quagmire')
+            quag.attrs['id']                  = self.id
+            quag.attrs['verbose']             = self.verbose
+            quag.attrs['radius']              = radius
+            quag.attrs['downhill_neighbours'] = self.downhill_neighbours
+            quag.attrs['topography_modified'] = self._topography_modified_count
+
+        return
+
 
     def save_mesh_to_hdf5(self, file):
         """
         Saves mesh information stored in the DM to HDF5 file
         If the file already exists, it is overwritten.
+
+        Parameters
+        ----------
+        file : str
+            Save the mesh to an HDF5 file with this name
         """
         file = str(file)
         if not file.endswith('.h5'):
@@ -154,13 +293,38 @@ class CommonMesh(object):
         ViewHDF5.destroy()
 
 
+        if self.id.startswith("pixmesh"):
+            import h5py
+            from mpi4py import MPI
+            comm = MPI.COMM_WORLD
+
+            (minX, maxX), (minY, maxY) = self.dm.getBoundingBox()
+            resX, resY = self.dm.getSizes()
+
+            with h5py.File(file, mode='r+', driver='mpio', comm=comm) as h5:
+                geom = h5.create_group('geometry')
+                geom.attrs['minX'] = minX
+                geom.attrs['maxX'] = maxX
+                geom.attrs['minY'] = minY
+                geom.attrs['maxY'] = maxY
+                geom.attrs['resX'] = resX
+                geom.attrs['resY'] = resY
+
+
     def save_field_to_hdf5(self, file, *args, **kwargs):
         """
         Saves data on the mesh to an HDF5 file
-         e.g. height, rainfall, sea level, etc.
+        e.g. height, rainfall, sea level, etc.
 
         Pass these as arguments or keyword arguments for
         their names to be saved to the hdf5 file
+
+        Parameters
+        ----------
+        file : str
+            Save the mesh variables to an HDF5 file with this name
+        *args : arguments
+        **kwargs : keyword arguments
         """
         import os.path
 
@@ -265,6 +429,16 @@ class CommonMesh(object):
     def sync(self, vector):
         """
         Synchronise the local domain with the global domain
+
+        Parameters
+        ----------
+        vector : array of floats, shape (n,)
+            local vector to be synchronised
+
+        Returns
+        -------
+        vector : array of floats, shape (n,)
+            local vector synchronised with the global mesh
         """
 
         if self.dm.comm.Get_size() == 1:

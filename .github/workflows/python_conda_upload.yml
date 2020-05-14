@@ -5,7 +5,7 @@ on:
     types: [created, edited]
   push:
     branches:
-      - dev
+      - conda-test
 
 # Limited to ubuntu and macos because of petsc / petsc4py
 # py27 seems problematic in stripy builds
