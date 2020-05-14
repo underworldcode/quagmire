@@ -291,7 +291,18 @@ class parameter(LazyEvaluation):
         self.value = value
         return
 
-    def fn_gradient(self, dirn=None):
+
+    @property
+    def fn_gradient(self):
+        mesh = self._mesh
+        newLazyGradient = LazyGradientEvaluation(mesh=mesh)
+        newLazyGradient.evaluate = self.evaluate
+        newLazyGradient._fn_gradient = self._fn_gradient
+        newLazyGradient.description = "d({0})/dX,d({0})/dY".format(self.description)
+        newLazyGradient.dependency_list = self.dependency_list
+        return newLazyGradient
+
+    def _fn_gradient(self, dirn=None, mesh=None):
         """Gradients information is not provided by default for lazy evaluation objects:
            it is necessary to implement the gradient method"""
 
@@ -299,10 +310,8 @@ class parameter(LazyEvaluation):
         px.description = "d({})/dX===0.0".format(self.description)
         py = parameter(0.0)
         py.description = "d({})/dY===0.0".format(self.description)
-        pz = parameter(0.0)
-        pz.description = "d({})/dZ===0.0".format(self.description)
 
-        p = [px, py, pz]
+        p = [px, py]
 
         if dirn is None:
             # not sure about dimensions here, a parameter is always 1-d so it should

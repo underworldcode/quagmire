@@ -125,7 +125,7 @@ def deg2rad(lazyFn):
 
 def grad(lazyFn):
     """Lazy evaluation of gradient operator on a scalar field"""
-    return lazyFn.fn_gradient
+    return lazyFn.fn_gradient[0], lazyFn.fn_gradient[1]
 
 def div(*args):
     """Lazy evaluation of divergence operator on a N-D vector field"""
