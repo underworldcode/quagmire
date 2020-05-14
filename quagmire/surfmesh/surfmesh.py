@@ -185,7 +185,10 @@ class SurfMesh(_TopoMesh):
 
         t0 = perf_counter()
 
-        my_low_points = self.identify_low_points()
+        # I'm not sure the two ref_height values really refer to the same quantity 
+        # and perhaps should be separated out (or should live on the surf mesh)
+
+        my_low_points  = self.identify_low_points(ref_height=ref_height)
         my_glow_points = self.lgmap_row.apply(my_low_points.astype(PETSc.IntType))
 
         t = perf_counter()
@@ -391,25 +394,26 @@ class SurfMesh(_TopoMesh):
 
 
 
-    def identify_low_points(self, include_shadows=False):
+    def identify_low_points(self, include_shadows=False, ref_height=0.0):
         """
         Identify if the mesh has (internal) local minima and return an array of node indices
         """
 
         # from petsc4py import PETSc
 
-        nodes = np.arange(0, self.npoints, dtype=np.int)
+        nodes  = np.arange(0, self.npoints, dtype=np.int)
         gnodes = self.lgmap_row.apply(nodes.astype(PETSc.IntType))
 
         low_nodes = self.down_neighbour[1]
         mask = np.logical_and(nodes == low_nodes, self.bmask == True)
+        mask = np.logical_and(mask, self.topography.data > ref_height)
 
         if not include_shadows:
             mask = np.logical_and(mask, gnodes >= 0)
 
         return nodes[mask]
 
-    def identify_global_low_points(self, global_array=False):
+    def identify_global_low_points(self, global_array=False, ref_height=0.0):
         """
         Identify if the mesh as a whole has (internal) local minima and return an array of local lows in global
         index format.
@@ -432,6 +436,7 @@ class SurfMesh(_TopoMesh):
 
         low_nodes = self.down_neighbour[1]
         mask = np.logical_and(nodes == low_nodes, self.bmask == True)
+        mask = np.logical_and(mask, self.topography.data > ref_height)
         mask = np.logical_and(mask, gnodes >= 0)
 
         number_of_lows = np.count_nonzero(mask)
