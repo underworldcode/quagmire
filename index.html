@@ -26,20 +26,20 @@
 <p>Quagmire is structured into three major tiers that inherit methods and attributes from different classes:</p>
 <p><img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart.png" style="width: 321px; float:right"></p>
 <ol>
-<li><code><a title="quagmire.SurfaceProcessMesh" href="#quagmire.SurfaceProcessMesh">SurfaceProcessMesh()</a></code><ul>
+<li><code>SurfaceProcessMesh</code><ul>
 <li>Calculate erosion-deposition rates</li>
 <li>Landscape analysis</li>
 <li>Long range flow models</li>
 </ul>
 </li>
-<li><code><a title="quagmire.TopoMesh" href="#quagmire.TopoMesh">TopoMesh()</a></code><ul>
+<li><code>TopoMesh</code><ul>
 <li>Assemble downhill connectivity matrix</li>
 <li>Calculate upstream area</li>
 <li>Compute slope</li>
 <li>Identify flat spots, low points, high points.</li>
 </ul>
 </li>
-<li><code><a title="quagmire.FlatMesh" href="#quagmire.FlatMesh">FlatMesh()</a></code><ul>
+<li><code>FlatMesh</code><ul>
 <li>calculating spatial derivatives</li>
 <li>identifying node neighbour relationships</li>
 <li>interpolation / extrapolation</li>
@@ -48,7 +48,7 @@
 </ul>
 </li>
 </ol>
-<p>The <code><a title="quagmire.surfmesh.surfmesh.SurfMesh" href="surfmesh/surfmesh.html#quagmire.surfmesh.surfmesh.SurfMesh">SurfMesh</a></code> class (1) inherits from
+<p>The <code>quagmire.surfmesh.surfmesh.SurfMesh</code> class (1) inherits from
 the <code><a title="quagmire.topomesh.topomesh.TopoMesh" href="topomesh/topomesh.html#quagmire.topomesh.topomesh.TopoMesh">TopoMesh</a></code> class (2), which in turn inherits from
 the <code><a title="quagmire.mesh.pixmesh.PixMesh" href="mesh/pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code>, <code><a title="quagmire.mesh.trimesh.TriMesh" href="mesh/trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code>, or
 <code><a title="quagmire.mesh.strimesh.sTriMesh" href="mesh/strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code> class (3) depending on the type of mesh.</p>
@@ -278,7 +278,6 @@ from .mesh import TriMesh as _TriMesh
 from .mesh import sTriMesh as _sTriMesh
 from petsc4py import PETSc as _PETSc
 from .topomesh import TopoMesh as _TopoMeshClass
-from .surfmesh import SurfMesh as _SurfaceProcessMeshClass
 
 from . import documentation
 from . import tools
@@ -351,132 +350,13 @@ def _get_label(DM):
     return label
 
 
-def FlatMesh(DM, *args, **kwargs):
-    &#34;&#34;&#34;
-    Instantiates a mesh using `mesh.trimesh.TriMesh`,
-    `mesh.strimesh.sTriMesh` or `mesh.pixmesh.PixMesh` objects.
 
-    This object contains methods for the following operations:
-
-    - calculating derivatives
-    - interpolation (nearest-neighbour, linear, cubic)
-    - local smoothing operations
-    - identifying node neighbours
-
-    Parameters
-    ----------
-    DM : PETSc DM object
-        Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
-
-    Returns
-    -------
-    FlatMesh : object
-        Inherits methods and attributes from:
-
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
-    &#34;&#34;&#34;
-
-    # get DM label name
-    BaseMeshType = _get_label(DM)
-
-    if BaseMeshType in known_basemesh_classes:
-
-        class FlatMeshClass(known_basemesh_classes[BaseMeshType]):
-
-            __count = 0
-
-            @classmethod
-            def _count(cls):
-                FlatMeshClass.__count += 1
-                return FlatMeshClass.__count
-
-            @property
-            def id(self):
-                return self.__id
-
-            def __init__(self, dm, *args, **kwargs):
-
-                # I can&#39;t see how to do this automatically
-                # but it does seem useful to have the ID reflect the
-                # mesh type (perhaps)
-
-                if isinstance(self, _TriMesh):
-                    self.__id = &#34;trimesh_{}&#34;.format(self._count())
-                elif isinstance(self, _PixMesh):
-                    self.__id = &#34;pixmesh_{}&#34;.format(self._count())
-                else:
-                    self.__id = &#34;flatmesh_{}&#34;.format(self._count())
-
-                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
-
-                # super(FlatMeshClass, self).__init__(dm, *args, **kwargs)
-
-        return FlatMeshClass(DM, *args, **kwargs)
-
-    else:
-      raise TypeError(&#34;Mesh type {:s} unknown\n\
-        Known mesh types: {}&#34;.format(BaseMeshType, list(known_basemesh_classes.keys())))
-
-    return
-
-def TopoMesh(DM, *args, **kwargs):
-    &#34;&#34;&#34;
-    Instantiates a mesh with a height field.
-    TopoMesh inherits from `FlatMesh`.
-
-    This object contains methods for the following operations:
-
-    - calculating the slope from height field
-    - constructing downhill matrices
-    - cumulative downstream flow
-    - handling flat spots and local minima
-
-    Parameters
-    ----------
-    DM : PETSc DM object
-        Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
-
-    Returns
-    -------
-    TopoMesh : object
-        Inherits methods and attributes from:
-
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
-        - `topomesh.topomesh.TopoMesh`
-    &#34;&#34;&#34;
-
-    BaseMeshType = _get_label(DM)
-
-    if BaseMeshType in known_basemesh_classes:
-        class TopoMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
-            def __init__(self, dm, *args, **kwargs):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
-                _TopoMeshClass.__init__(self, *args, **kwargs)
-                # super(TopoMeshClass, self).__init__(dm, *args, **kwargs)
-
-        return TopoMeshClass(DM, *args, **kwargs)
-
-    else:
-      raise TypeError(&#34;Mesh type {:s} unknown\n\
-        Known mesh types: {}&#34;.format(BaseMeshType, list(known_basemesh_classes.keys())))
-
-    return
-
-
-
-def SurfaceProcessMesh(DM, *args, **kwargs):
+def QuagMesh(DM, *args, **kwargs):
     &#34;&#34;&#34;
     Instantiates a mesh with a height and rainfall field.
-    SurfaceProcessMesh inherits from `FlatMesh` and `TopoMesh`.
+    QuagMesh identifies the type of DM and builds the necessary
+    data structures for landscape processing and analysis.
 
-    This object contains methods for the following operations:
-
-    - long-range flow models
-    - calculate erosion and deposition rates
-    - landscape equilibrium metrics
-    - stream-wise smoothing
 
     Parameters
     ----------
@@ -486,29 +366,30 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
 
     Returns
     -------
-    SurfaceProcessMesh : object
+    QuagMesh : object
         Inherits methods and attributes from:
 
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
+        - `mesh.commonmesh.CommonMesh`
+        - `mesh.pixmesh.PixMesh` (if `DM` is a regularly-spaced Cartesian grid)
+        - `mesh.trimesh.TriMesh` (if `DM` is an unstructred Cartesian mesh)
+        - `mesh.strimesh.sTriMesh` (if `DM` is an unstructured spherical mesh)
         - `topomesh.topomesh.TopoMesh`
-        - `surfmesh.surfmesh.SurfMesh`
     &#34;&#34;&#34;
 
     BaseMeshType = _get_label(DM)
 
     if BaseMeshType in known_basemesh_classes:
-        class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _SurfaceProcessMeshClass):
+        class QuagMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
             def __init__(self, dm, *args, **kwargs):
                 known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
                 _TopoMeshClass.__init__(self, *args, **kwargs)
-                _SurfaceProcessMeshClass.__init__(self, *args, **kwargs)
-                # super(SurfaceProcessMeshClass, self).__init__(dm, *args, **kwargs)
+                # super(QuagMeshClass, self).__init__(dm, *args, **kwargs)
 
-        return SurfaceProcessMeshClass(DM, *args, **kwargs)
+        return QuagMeshClass(DM, *args, **kwargs)
 
     else:
-      raise TypeError(&#34;Mesh type {:s} unknown\n\
-        Known mesh types: {}&#34;.format(BaseMeshType, list(known_basemesh_classes.keys())))
+        raise TypeError(&#34;Mesh type {:s} unknown\n\
+            Known mesh types: {}&#34;.format(BaseMeshType, list(known_basemesh_classes.keys())))
 
     return</code></pre>
 </details>
@@ -536,10 +417,6 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
 <dd>
 <div class="desc"><p>The scaling module provides units and scaling capabilities.</p></div>
 </dd>
-<dt><code class="name"><a title="quagmire.surfmesh" href="surfmesh/index.html">quagmire.surfmesh</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
 <dt><code class="name"><a title="quagmire.tools" href="tools/index.html">quagmire.tools</a></code></dt>
 <dd>
 <div class="desc"><p>Tools for creating and saving meshes</p></div>
@@ -555,122 +432,13 @@ def SurfaceProcessMesh(DM, *args, **kwargs):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="quagmire.FlatMesh"><code class="name flex">
-<span>def <span class="ident">FlatMesh</span></span>(<span>DM, *args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Instantiates a mesh using <code><a title="quagmire.mesh.trimesh.TriMesh" href="mesh/trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code>,
-<code><a title="quagmire.mesh.strimesh.sTriMesh" href="mesh/strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code> or <code><a title="quagmire.mesh.pixmesh.PixMesh" href="mesh/pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code> objects.</p>
-<p>This object contains methods for the following operations:</p>
-<ul>
-<li>calculating derivatives</li>
-<li>interpolation (nearest-neighbour, linear, cubic)</li>
-<li>local smoothing operations</li>
-<li>identifying node neighbours</li>
-</ul>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DM object</code></dt>
-<dd>Either a DMDA or DMPlex object created using the meshing
-functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools.html">quagmire.tools.meshtools</a></code></dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><strong><code>FlatMesh</code></strong> :&ensp;<code>object</code></dt>
-<dd>
-<p>Inherits methods and attributes from:</p>
-<ul>
-<li><code><a title="quagmire.mesh.pixmesh.PixMesh" href="mesh/pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code>, <code><a title="quagmire.mesh.trimesh.TriMesh" href="mesh/trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code>, or <code><a title="quagmire.mesh.strimesh.sTriMesh" href="mesh/strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code></li>
-</ul>
-</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def FlatMesh(DM, *args, **kwargs):
-    &#34;&#34;&#34;
-    Instantiates a mesh using `mesh.trimesh.TriMesh`,
-    `mesh.strimesh.sTriMesh` or `mesh.pixmesh.PixMesh` objects.
-
-    This object contains methods for the following operations:
-
-    - calculating derivatives
-    - interpolation (nearest-neighbour, linear, cubic)
-    - local smoothing operations
-    - identifying node neighbours
-
-    Parameters
-    ----------
-    DM : PETSc DM object
-        Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
-
-    Returns
-    -------
-    FlatMesh : object
-        Inherits methods and attributes from:
-
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
-    &#34;&#34;&#34;
-
-    # get DM label name
-    BaseMeshType = _get_label(DM)
-
-    if BaseMeshType in known_basemesh_classes:
-
-        class FlatMeshClass(known_basemesh_classes[BaseMeshType]):
-
-            __count = 0
-
-            @classmethod
-            def _count(cls):
-                FlatMeshClass.__count += 1
-                return FlatMeshClass.__count
-
-            @property
-            def id(self):
-                return self.__id
-
-            def __init__(self, dm, *args, **kwargs):
-
-                # I can&#39;t see how to do this automatically
-                # but it does seem useful to have the ID reflect the
-                # mesh type (perhaps)
-
-                if isinstance(self, _TriMesh):
-                    self.__id = &#34;trimesh_{}&#34;.format(self._count())
-                elif isinstance(self, _PixMesh):
-                    self.__id = &#34;pixmesh_{}&#34;.format(self._count())
-                else:
-                    self.__id = &#34;flatmesh_{}&#34;.format(self._count())
-
-                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
-
-                # super(FlatMeshClass, self).__init__(dm, *args, **kwargs)
-
-        return FlatMeshClass(DM, *args, **kwargs)
-
-    else:
-      raise TypeError(&#34;Mesh type {:s} unknown\n\
-        Known mesh types: {}&#34;.format(BaseMeshType, list(known_basemesh_classes.keys())))
-
-    return</code></pre>
-</details>
-</dd>
-<dt id="quagmire.SurfaceProcessMesh"><code class="name flex">
-<span>def <span class="ident">SurfaceProcessMesh</span></span>(<span>DM, *args, **kwargs)</span>
+<dt id="quagmire.QuagMesh"><code class="name flex">
+<span>def <span class="ident">QuagMesh</span></span>(<span>DM, *args, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Instantiates a mesh with a height and rainfall field.
-SurfaceProcessMesh inherits from <code><a title="quagmire.FlatMesh" href="#quagmire.FlatMesh">FlatMesh()</a></code> and <code><a title="quagmire.TopoMesh" href="#quagmire.TopoMesh">TopoMesh()</a></code>.</p>
-<p>This object contains methods for the following operations:</p>
-<ul>
-<li>long-range flow models</li>
-<li>calculate erosion and deposition rates</li>
-<li>landscape equilibrium metrics</li>
-<li>stream-wise smoothing</li>
-</ul>
+QuagMesh identifies the type of DM and builds the necessary
+data structures for landscape processing and analysis.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DM object</code></dt>
@@ -679,13 +447,15 @@ functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><strong><code>SurfaceProcessMesh</code></strong> :&ensp;<code>object</code></dt>
+<dt><strong><code>QuagMesh</code></strong> :&ensp;<code>object</code></dt>
 <dd>
 <p>Inherits methods and attributes from:</p>
 <ul>
-<li><code><a title="quagmire.mesh.pixmesh.PixMesh" href="mesh/pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code>, <code><a title="quagmire.mesh.trimesh.TriMesh" href="mesh/trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code>, or <code><a title="quagmire.mesh.strimesh.sTriMesh" href="mesh/strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh" href="mesh/commonmesh.html#quagmire.mesh.commonmesh.CommonMesh">CommonMesh</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh" href="mesh/pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code> (if <code>DM</code> is a regularly-spaced Cartesian grid)</li>
+<li><code><a title="quagmire.mesh.trimesh.TriMesh" href="mesh/trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code> (if <code>DM</code> is an unstructred Cartesian mesh)</li>
+<li><code><a title="quagmire.mesh.strimesh.sTriMesh" href="mesh/strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code> (if <code>DM</code> is an unstructured spherical mesh)</li>
 <li><code><a title="quagmire.topomesh.topomesh.TopoMesh" href="topomesh/topomesh.html#quagmire.topomesh.topomesh.TopoMesh">TopoMesh</a></code></li>
-<li><code><a title="quagmire.surfmesh.surfmesh.SurfMesh" href="surfmesh/surfmesh.html#quagmire.surfmesh.surfmesh.SurfMesh">SurfMesh</a></code></li>
 </ul>
 </dd>
 </dl></div>
@@ -693,17 +463,12 @@ functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def SurfaceProcessMesh(DM, *args, **kwargs):
+<pre><code class="python">def QuagMesh(DM, *args, **kwargs):
     &#34;&#34;&#34;
     Instantiates a mesh with a height and rainfall field.
-    SurfaceProcessMesh inherits from `FlatMesh` and `TopoMesh`.
+    QuagMesh identifies the type of DM and builds the necessary
+    data structures for landscape processing and analysis.
 
-    This object contains methods for the following operations:
-
-    - long-range flow models
-    - calculate erosion and deposition rates
-    - landscape equilibrium metrics
-    - stream-wise smoothing
 
     Parameters
     ----------
@@ -713,108 +478,30 @@ functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools
 
     Returns
     -------
-    SurfaceProcessMesh : object
+    QuagMesh : object
         Inherits methods and attributes from:
 
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
-        - `topomesh.topomesh.TopoMesh`
-        - `surfmesh.surfmesh.SurfMesh`
-    &#34;&#34;&#34;
-
-    BaseMeshType = _get_label(DM)
-
-    if BaseMeshType in known_basemesh_classes:
-        class SurfaceProcessMeshClass(known_basemesh_classes[BaseMeshType], _SurfaceProcessMeshClass):
-            def __init__(self, dm, *args, **kwargs):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
-                _TopoMeshClass.__init__(self, *args, **kwargs)
-                _SurfaceProcessMeshClass.__init__(self, *args, **kwargs)
-                # super(SurfaceProcessMeshClass, self).__init__(dm, *args, **kwargs)
-
-        return SurfaceProcessMeshClass(DM, *args, **kwargs)
-
-    else:
-      raise TypeError(&#34;Mesh type {:s} unknown\n\
-        Known mesh types: {}&#34;.format(BaseMeshType, list(known_basemesh_classes.keys())))
-
-    return</code></pre>
-</details>
-</dd>
-<dt id="quagmire.TopoMesh"><code class="name flex">
-<span>def <span class="ident">TopoMesh</span></span>(<span>DM, *args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Instantiates a mesh with a height field.
-TopoMesh inherits from <code><a title="quagmire.FlatMesh" href="#quagmire.FlatMesh">FlatMesh()</a></code>.</p>
-<p>This object contains methods for the following operations:</p>
-<ul>
-<li>calculating the slope from height field</li>
-<li>constructing downhill matrices</li>
-<li>cumulative downstream flow</li>
-<li>handling flat spots and local minima</li>
-</ul>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DM object</code></dt>
-<dd>Either a DMDA or DMPlex object created using the meshing
-functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools.html">quagmire.tools.meshtools</a></code></dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><strong><code>TopoMesh</code></strong> :&ensp;<code>object</code></dt>
-<dd>
-<p>Inherits methods and attributes from:</p>
-<ul>
-<li><code><a title="quagmire.mesh.pixmesh.PixMesh" href="mesh/pixmesh.html#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code>, <code><a title="quagmire.mesh.trimesh.TriMesh" href="mesh/trimesh.html#quagmire.mesh.trimesh.TriMesh">TriMesh</a></code>, or <code><a title="quagmire.mesh.strimesh.sTriMesh" href="mesh/strimesh.html#quagmire.mesh.strimesh.sTriMesh">sTriMesh</a></code></li>
-<li><code><a title="quagmire.topomesh.topomesh.TopoMesh" href="topomesh/topomesh.html#quagmire.topomesh.topomesh.TopoMesh">TopoMesh</a></code></li>
-</ul>
-</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def TopoMesh(DM, *args, **kwargs):
-    &#34;&#34;&#34;
-    Instantiates a mesh with a height field.
-    TopoMesh inherits from `FlatMesh`.
-
-    This object contains methods for the following operations:
-
-    - calculating the slope from height field
-    - constructing downhill matrices
-    - cumulative downstream flow
-    - handling flat spots and local minima
-
-    Parameters
-    ----------
-    DM : PETSc DM object
-        Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
-
-    Returns
-    -------
-    TopoMesh : object
-        Inherits methods and attributes from:
-
-        - `mesh.pixmesh.PixMesh`, `mesh.trimesh.TriMesh`, or `mesh.strimesh.sTriMesh`
+        - `mesh.commonmesh.CommonMesh`
+        - `mesh.pixmesh.PixMesh` (if `DM` is a regularly-spaced Cartesian grid)
+        - `mesh.trimesh.TriMesh` (if `DM` is an unstructred Cartesian mesh)
+        - `mesh.strimesh.sTriMesh` (if `DM` is an unstructured spherical mesh)
         - `topomesh.topomesh.TopoMesh`
     &#34;&#34;&#34;
 
     BaseMeshType = _get_label(DM)
 
     if BaseMeshType in known_basemesh_classes:
-        class TopoMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
+        class QuagMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
             def __init__(self, dm, *args, **kwargs):
                 known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
                 _TopoMeshClass.__init__(self, *args, **kwargs)
-                # super(TopoMeshClass, self).__init__(dm, *args, **kwargs)
+                # super(QuagMeshClass, self).__init__(dm, *args, **kwargs)
 
-        return TopoMeshClass(DM, *args, **kwargs)
+        return QuagMeshClass(DM, *args, **kwargs)
 
     else:
-      raise TypeError(&#34;Mesh type {:s} unknown\n\
-        Known mesh types: {}&#34;.format(BaseMeshType, list(known_basemesh_classes.keys())))
+        raise TypeError(&#34;Mesh type {:s} unknown\n\
+            Known mesh types: {}&#34;.format(BaseMeshType, list(known_basemesh_classes.keys())))
 
     return</code></pre>
 </details>
@@ -846,16 +533,13 @@ functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools
 <li><code><a title="quagmire.function" href="function/index.html">quagmire.function</a></code></li>
 <li><code><a title="quagmire.mesh" href="mesh/index.html">quagmire.mesh</a></code></li>
 <li><code><a title="quagmire.scaling" href="scaling/index.html">quagmire.scaling</a></code></li>
-<li><code><a title="quagmire.surfmesh" href="surfmesh/index.html">quagmire.surfmesh</a></code></li>
 <li><code><a title="quagmire.tools" href="tools/index.html">quagmire.tools</a></code></li>
 <li><code><a title="quagmire.topomesh" href="topomesh/index.html">quagmire.topomesh</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="quagmire.FlatMesh" href="#quagmire.FlatMesh">FlatMesh</a></code></li>
-<li><code><a title="quagmire.SurfaceProcessMesh" href="#quagmire.SurfaceProcessMesh">SurfaceProcessMesh</a></code></li>
-<li><code><a title="quagmire.TopoMesh" href="#quagmire.TopoMesh">TopoMesh</a></code></li>
+<li><code><a title="quagmire.QuagMesh" href="#quagmire.QuagMesh">QuagMesh</a></code></li>
 </ul>
 </li>
 </ul>

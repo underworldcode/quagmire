@@ -283,6 +283,9 @@ class CommonMesh(object):
         # first save the mesh
         self.save_mesh_to_hdf5(file)
 
+        # then save the topography
+        self.topography.save(file, append=True)
+
         # handle saving radius to file for spherical mesh
         if np.array(self._radius).size == self.npoints:
             radius_meshVariable = self.add_variable(&#39;radius&#39;)
@@ -298,16 +301,11 @@ class CommonMesh(object):
 
         with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
             quag = h5.create_group(&#39;quagmire&#39;)
-            quag.attrs[&#39;id&#39;]        = self.id
-            quag.attrs[&#39;verbose&#39;]   = self.verbose
-            quag.attrs[&#39;mesh_type&#39;] = self.mesh_type
-            quag.attrs[&#39;radius&#39;]    = radius
-
-            if self.mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
-                quag.attrs[&#39;downhill_neighbours&#39;] = self.downhill_neighbours
-
-        if self.mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
-            self.topography.save(file, append=True)
+            quag.attrs[&#39;id&#39;]                  = self.id
+            quag.attrs[&#39;verbose&#39;]             = self.verbose
+            quag.attrs[&#39;radius&#39;]              = radius
+            quag.attrs[&#39;downhill_neighbours&#39;] = self.downhill_neighbours
+            quag.attrs[&#39;topography_modified&#39;] = self._topography_modified_count
 
         return
 
@@ -330,6 +328,24 @@ class CommonMesh(object):
         ViewHDF5.createHDF5(file, mode=&#39;w&#39;)
         ViewHDF5.view(obj=self.dm)
         ViewHDF5.destroy()
+
+
+        if self.id.startswith(&#34;pixmesh&#34;):
+            import h5py
+            from mpi4py import MPI
+            comm = MPI.COMM_WORLD
+
+            (minX, maxX), (minY, maxY) = self.dm.getBoundingBox()
+            resX, resY = self.dm.getSizes()
+
+            with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
+                geom = h5.create_group(&#39;geometry&#39;)
+                geom.attrs[&#39;minX&#39;] = minX
+                geom.attrs[&#39;maxX&#39;] = maxX
+                geom.attrs[&#39;minY&#39;] = minY
+                geom.attrs[&#39;maxY&#39;] = maxY
+                geom.attrs[&#39;resX&#39;] = resX
+                geom.attrs[&#39;resY&#39;] = resY
 
 
     def save_field_to_hdf5(self, file, *args, **kwargs):
@@ -742,6 +758,9 @@ spherical mesh object</dd>
         # first save the mesh
         self.save_mesh_to_hdf5(file)
 
+        # then save the topography
+        self.topography.save(file, append=True)
+
         # handle saving radius to file for spherical mesh
         if np.array(self._radius).size == self.npoints:
             radius_meshVariable = self.add_variable(&#39;radius&#39;)
@@ -757,16 +776,11 @@ spherical mesh object</dd>
 
         with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
             quag = h5.create_group(&#39;quagmire&#39;)
-            quag.attrs[&#39;id&#39;]        = self.id
-            quag.attrs[&#39;verbose&#39;]   = self.verbose
-            quag.attrs[&#39;mesh_type&#39;] = self.mesh_type
-            quag.attrs[&#39;radius&#39;]    = radius
-
-            if self.mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
-                quag.attrs[&#39;downhill_neighbours&#39;] = self.downhill_neighbours
-
-        if self.mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
-            self.topography.save(file, append=True)
+            quag.attrs[&#39;id&#39;]                  = self.id
+            quag.attrs[&#39;verbose&#39;]             = self.verbose
+            quag.attrs[&#39;radius&#39;]              = radius
+            quag.attrs[&#39;downhill_neighbours&#39;] = self.downhill_neighbours
+            quag.attrs[&#39;topography_modified&#39;] = self._topography_modified_count
 
         return
 
@@ -789,6 +803,24 @@ spherical mesh object</dd>
         ViewHDF5.createHDF5(file, mode=&#39;w&#39;)
         ViewHDF5.view(obj=self.dm)
         ViewHDF5.destroy()
+
+
+        if self.id.startswith(&#34;pixmesh&#34;):
+            import h5py
+            from mpi4py import MPI
+            comm = MPI.COMM_WORLD
+
+            (minX, maxX), (minY, maxY) = self.dm.getBoundingBox()
+            resX, resY = self.dm.getSizes()
+
+            with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
+                geom = h5.create_group(&#39;geometry&#39;)
+                geom.attrs[&#39;minX&#39;] = minX
+                geom.attrs[&#39;maxX&#39;] = maxX
+                geom.attrs[&#39;minY&#39;] = minY
+                geom.attrs[&#39;maxY&#39;] = maxY
+                geom.attrs[&#39;resX&#39;] = resX
+                geom.attrs[&#39;resY&#39;] = resY
 
 
     def save_field_to_hdf5(self, file, *args, **kwargs):
@@ -1235,7 +1267,25 @@ If the file already exists, it is overwritten.</p>
     ViewHDF5 = PETSc.Viewer()
     ViewHDF5.createHDF5(file, mode=&#39;w&#39;)
     ViewHDF5.view(obj=self.dm)
-    ViewHDF5.destroy()</code></pre>
+    ViewHDF5.destroy()
+
+
+    if self.id.startswith(&#34;pixmesh&#34;):
+        import h5py
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+
+        (minX, maxX), (minY, maxY) = self.dm.getBoundingBox()
+        resX, resY = self.dm.getSizes()
+
+        with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
+            geom = h5.create_group(&#39;geometry&#39;)
+            geom.attrs[&#39;minX&#39;] = minX
+            geom.attrs[&#39;maxX&#39;] = maxX
+            geom.attrs[&#39;minY&#39;] = minY
+            geom.attrs[&#39;maxY&#39;] = maxY
+            geom.attrs[&#39;resX&#39;] = resX
+            geom.attrs[&#39;resY&#39;] = resY</code></pre>
 </details>
 </dd>
 <dt id="quagmire.mesh.commonmesh.CommonMesh.save_quagmire_project"><code class="name flex">
@@ -1260,6 +1310,9 @@ If the file already exists, it is overwritten.</p>
     # first save the mesh
     self.save_mesh_to_hdf5(file)
 
+    # then save the topography
+    self.topography.save(file, append=True)
+
     # handle saving radius to file for spherical mesh
     if np.array(self._radius).size == self.npoints:
         radius_meshVariable = self.add_variable(&#39;radius&#39;)
@@ -1275,16 +1328,11 @@ If the file already exists, it is overwritten.</p>
 
     with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
         quag = h5.create_group(&#39;quagmire&#39;)
-        quag.attrs[&#39;id&#39;]        = self.id
-        quag.attrs[&#39;verbose&#39;]   = self.verbose
-        quag.attrs[&#39;mesh_type&#39;] = self.mesh_type
-        quag.attrs[&#39;radius&#39;]    = radius
-
-        if self.mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
-            quag.attrs[&#39;downhill_neighbours&#39;] = self.downhill_neighbours
-
-    if self.mesh_type in [&#39;TopoMesh&#39;, &#39;SurfaceProcessMesh&#39;]:
-        self.topography.save(file, append=True)
+        quag.attrs[&#39;id&#39;]                  = self.id
+        quag.attrs[&#39;verbose&#39;]             = self.verbose
+        quag.attrs[&#39;radius&#39;]              = radius
+        quag.attrs[&#39;downhill_neighbours&#39;] = self.downhill_neighbours
+        quag.attrs[&#39;topography_modified&#39;] = self._topography_modified_count
 
     return</code></pre>
 </details>

@@ -75,14 +75,208 @@ class LazyEvaluation(object):
     def __repr__(self):
         return(&#34;quagmire.fn: {}&#34;.format(self.description))
 
+    @staticmethod
+    def convert(obj):
+        &#34;&#34;&#34;
+        This method will attempt to convert the provided input into an
+        equivalent quagmire function. If the provided input is already
+        of LazyEvaluation type, it is immediately returned. Likewise if
+        the input is of None type, it is also returned.
+
+        Parameters
+        ----------
+
+        obj: The object to be converted
+
+        Returns
+        -------
+
+        LazyEvaluation function or None.
+        &#34;&#34;&#34;
+
+        if isinstance(obj, (LazyEvaluation, type(None))):
+            return obj
+        else:
+            try:
+                return parameter(obj)
+            except Exception as e:
+                raise e
+
     def evaluate(self, *args, **kwargs):
         raise(NotImplementedError)
 
 
     @property
     def fn_gradient(self):
-        return self._fn_gradient()
+        mesh = self._mesh
+        newLazyGradient = LazyGradientEvaluation(mesh=mesh)
+        newLazyGradient.evaluate = self._fn_gradient
+        newLazyGradient.description = &#34;d({0})/dX,d({0})/dY&#34;.format(self.description)
+        newLazyGradient.dependency_list = self.dependency_list
+        return newLazyGradient
     
+
+    def _fn_gradient(self, *args, **kwargs):
+
+        import quagmire
+
+        if self._mesh is None and mesh is None:
+            raise RuntimeError(&#34;fn_gradient is a numerical differentiation routine based on derivatives of a fitted spline function on a mesh. The function {} has no associated mesh. To obtain *numerical* derivatives of this function, you can provide a mesh to the gradient function. The usual reason for this error is that your function is not based upon mesh variables and can, perhaps, be differentiated without resort to interpolating splines. &#34;.format(self.__repr__()))
+
+
+        elif self._mesh is not None:
+            diff_mesh = self._mesh
+        else:
+            quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
+            diff_mesh = mesh
+
+        local_array = self.evaluate(diff_mesh)
+
+        df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+        ndim = len(df_tuple)
+
+        if len(args) == 1 and args[0] == diff_mesh:
+            return df_tuple
+        elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+            mesh = args[0]
+            df_interp = []
+            for df in df_tuple:
+                result = diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=df, **kwargs)
+                df_interp.append(result)
+            return df_interp
+        elif len(args) &gt; 1:
+            xi = np.atleast_1d(args[0])  # .resize(-1,1)
+            yi = np.atleast_1d(args[1])  # .resize(-1,1)
+            df_interp = []
+            for df in df_tuple:
+                i, e = diff_mesh.interpolate(xi, yi, zdata=df, **kwargs)
+                df_interp.append(i)
+            return df_interp
+        else:
+            err_msg = &#34;Invalid number of arguments\n&#34;
+            err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+            raise ValueError(err_msg)
+
+
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, value):
+        self._description = &#34;{}&#34;.format(value)
+
+## Arithmetic operations
+
+    def __mul__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})*({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+    
+    def __rmul__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})*({})&#34;.format(other.description, self.description)
+        newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
+        return newLazyFn
+
+    def __add__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})+({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+    
+    def __radd__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})+({})&#34;.format(other.description, self.description)
+        newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
+        return newLazyFn
+
+    def __truediv__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) / other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})/({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+
+        return newLazyFn
+
+    def __sub__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})-({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+    
+    def __rsub__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})-({})&#34;.format(other.description, self.description)
+        newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
+        return newLazyFn
+
+    def __neg__(self):
+        newLazyFn = LazyEvaluation(mesh=self._mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : -1.0 * self.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;-({})&#34;.format(self.description)
+        newLazyFn.dependency_list |= self.dependency_list
+
+        return newLazyFn
+
+    def __pow__(self, exponent):
+        if isinstance(exponent, (float, int)):
+            exponent = parameter(float(exponent))
+        newLazyFn = LazyEvaluation(mesh=self._mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
+        newLazyFn.description = &#34;({})**({})&#34;.format(self.description, exponent.description)
+        newLazyFn.dependency_list |= self.dependency_list | exponent.dependency_list
+        return newLazyFn
+
+
+class LazyGradientEvaluation(LazyEvaluation):
+
+    def __init__(self, mesh=None):
+        super(LazyGradientEvaluation, self).__init__(mesh=mesh)
+
+
+    def __getitem__(self, dirn):
+        return self._fn_gradient(dirn=dirn, mesh=self._mesh)
+
+
+    @property
+    def fn_gradient(self):
+        raise NotImplementedError(&#34;gradient operations on the &#39;LazyGradientEvaluation&#39; sub-class are not supported&#34;)
 
     def _fn_gradient(self, dirn=None, mesh=None):
         &#34;&#34;&#34;
@@ -108,9 +302,7 @@ class LazyEvaluation(object):
             diff_mesh = mesh
 
         def new_fn_x(*args, **kwargs):
-            local_array = self.evaluate(diff_mesh)
-            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
-            dx = df_tuple[0]
+            dx, dy = self.evaluate(diff_mesh)
 
             if len(args) == 1 and args[0] == diff_mesh:
                 return dx
@@ -129,9 +321,7 @@ class LazyEvaluation(object):
                 raise ValueError(err_msg)
 
         def new_fn_y(*args, **kwargs):
-            local_array = self.evaluate(diff_mesh)
-            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
-            dy = df_tuple[1]
+            dx, dy = self.evaluate(diff_mesh)
 
             if len(args) == 1 and args[0] == diff_mesh:
                 return dy
@@ -148,120 +338,24 @@ class LazyEvaluation(object):
                 err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
                 raise ValueError(err_msg)
 
-        # Should this be made into a vector mesh variable ?
-        def new_fn_grad(*args, **kwargs):
-            local_array = self.evaluate(diff_mesh)
-            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
-            ndim = len(df_tuple)
 
-            if len(args) == 1 and args[0] == diff_mesh:
-                return df_tuple
-            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
-                mesh = args[0]
-                df_interp = []
-                for df in df_tuple:
-                    result = diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=df, **kwargs)
-                    df_interp.append(result)
-                return df_interp
-            elif len(args) &gt; 1:
-                xi = np.atleast_1d(args[0])  # .resize(-1,1)
-                yi = np.atleast_1d(args[1])  # .resize(-1,1)
-                df_interp = []
-                for df in df_tuple:
-                    i, e = diff_mesh.interpolate(xi, yi, zdata=df, **kwargs)
-                    df_interp.append(i)
-                return df_interp
-            else:
-                err_msg = &#34;Invalid number of arguments\n&#34;
-                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
-                raise ValueError(err_msg)
+        d1 = len(self.description)//2
+        d2 = d1 + 1
 
         newLazyFn_dx = LazyEvaluation(mesh=diff_mesh)
         newLazyFn_dx.evaluate = new_fn_x
-        newLazyFn_dx.description = &#34;d({})/dX&#34;.format(self.description)
+        newLazyFn_dx.description = self.description[:d1]
         newLazyFn_dy = LazyEvaluation(mesh=diff_mesh)
         newLazyFn_dy.evaluate = new_fn_y
-        newLazyFn_dy.description = &#34;d({})/dY&#34;.format(self.description)
+        newLazyFn_dy.description = self.description[d2:]
 
-        fn_dir = [newLazyFn_dx, newLazyFn_dy]
-
-        if dirn is None:
-            # return a vector mesh variable ?
-            return fn_dir
+        if dirn == 0:
+            return newLazyFn_dx
+        elif dirn == 1:
+            return newLazyFn_dy
         else:
-            return fn_dir[dirn]
+            raise ValueError(&#34;dirn can only be set to 0 or 1&#34;)
 
-
-    @property
-    def description(self):
-        return self._description
-
-    @description.setter
-    def description(self, value):
-        self._description = &#34;{}&#34;.format(value)
-
-## Arithmetic operations
-
-    def __mul__(self, other):
-        mesh = self._mesh
-        if mesh == None:
-            mesh = other._mesh
-        newLazyFn = LazyEvaluation(mesh=mesh)
-        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
-        newLazyFn.description = &#34;({})*({})&#34;.format(self.description, other.description)
-        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
-        return newLazyFn
-
-    def __add__(self, other):
-        mesh = self._mesh
-        if mesh == None:
-            mesh = other._mesh
-        newLazyFn = LazyEvaluation(mesh=mesh)
-        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
-        newLazyFn.description = &#34;({})+({})&#34;.format(self.description, other.description)
-        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
-
-        return newLazyFn
-
-    def __truediv__(self, other):
-        mesh = self._mesh
-        if mesh == None:
-            mesh = other._mesh
-        newLazyFn = LazyEvaluation(mesh=mesh)
-        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) / other.evaluate(*args, **kwargs)
-        newLazyFn.description = &#34;({})/({})&#34;.format(self.description, other.description)
-        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
-
-        return newLazyFn
-
-    def __sub__(self, other):
-        mesh = self._mesh
-        if mesh == None:
-            mesh = other._mesh
-        newLazyFn = LazyEvaluation(mesh=mesh)
-        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
-        newLazyFn.description = &#34;({})-({})&#34;.format(self.description, other.description)
-        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
-
-        return newLazyFn
-
-    def __neg__(self):
-        newLazyFn = LazyEvaluation(mesh=self._mesh)
-        newLazyFn.evaluate = lambda *args, **kwargs : -1.0 * self.evaluate(*args, **kwargs)
-        newLazyFn.description = &#34;-({})&#34;.format(self.description)
-        newLazyFn.dependency_list |= self.dependency_list
-
-        return newLazyFn
-
-    def __pow__(self, exponent):
-        if isinstance(exponent, (float, int)):
-            exponent = parameter(float(exponent))
-        newLazyFn = LazyEvaluation(mesh=self._mesh)
-        newLazyFn.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
-        newLazyFn.description = &#34;({})**({})&#34;.format(self.description, exponent.description)
-        newLazyFn.dependency_list |= self.dependency_list | exponent.dependency_list
-
-        return newLazyFn
 
 
 ## need a fn.coord to extract (x or y) ??
@@ -280,12 +374,23 @@ class LazyEvaluation(object):
 class parameter(LazyEvaluation):
     &#34;&#34;&#34;Floating point parameter / coefficient for lazy evaluation of functions&#34;&#34;&#34;
 
-    def __init__(self, value):
-        super(parameter, self).__init__()
+    def __init__(self, value, *args, **kwargs):
+        super(parameter, self).__init__(*args, **kwargs)
         self.value = value
         return
 
-    def fn_gradient(self, dirn=None):
+
+    @property
+    def fn_gradient(self):
+        mesh = self._mesh
+        newLazyGradient = LazyGradientEvaluation(mesh=mesh)
+        newLazyGradient.evaluate = self.evaluate
+        newLazyGradient._fn_gradient = self._fn_gradient
+        newLazyGradient.description = &#34;d({0})/dX,d({0})/dY&#34;.format(self.description)
+        newLazyGradient.dependency_list = self.dependency_list
+        return newLazyGradient
+
+    def _fn_gradient(self, dirn=None, mesh=None):
         &#34;&#34;&#34;Gradients information is not provided by default for lazy evaluation objects:
            it is necessary to implement the gradient method&#34;&#34;&#34;
 
@@ -293,10 +398,8 @@ class parameter(LazyEvaluation):
         px.description = &#34;d({})/dX===0.0&#34;.format(self.description)
         py = parameter(0.0)
         py.description = &#34;d({})/dY===0.0&#34;.format(self.description)
-        pz = parameter(0.0)
-        pz.description = &#34;d({})/dZ===0.0&#34;.format(self.description)
 
-        p = [px, py, pz]
+        p = [px, py]
 
         if dirn is None:
             # not sure about dimensions here, a parameter is always 1-d so it should
@@ -329,7 +432,7 @@ class parameter(LazyEvaluation):
             mesh = args[0]
             return self.value * np.ones(mesh.npoints)
 
-        elif any(args):
+        elif len(args) &gt;= 1:
             xi = np.atleast_1d(args[0])
             yi = np.atleast_1d(args[1])
 
@@ -389,25 +492,48 @@ If no mesh is provided then no gradient function can be implemented</p></div>
     def __repr__(self):
         return(&#34;quagmire.fn: {}&#34;.format(self.description))
 
+    @staticmethod
+    def convert(obj):
+        &#34;&#34;&#34;
+        This method will attempt to convert the provided input into an
+        equivalent quagmire function. If the provided input is already
+        of LazyEvaluation type, it is immediately returned. Likewise if
+        the input is of None type, it is also returned.
+
+        Parameters
+        ----------
+
+        obj: The object to be converted
+
+        Returns
+        -------
+
+        LazyEvaluation function or None.
+        &#34;&#34;&#34;
+
+        if isinstance(obj, (LazyEvaluation, type(None))):
+            return obj
+        else:
+            try:
+                return parameter(obj)
+            except Exception as e:
+                raise e
+
     def evaluate(self, *args, **kwargs):
         raise(NotImplementedError)
 
 
     @property
     def fn_gradient(self):
-        return self._fn_gradient()
+        mesh = self._mesh
+        newLazyGradient = LazyGradientEvaluation(mesh=mesh)
+        newLazyGradient.evaluate = self._fn_gradient
+        newLazyGradient.description = &#34;d({0})/dX,d({0})/dY&#34;.format(self.description)
+        newLazyGradient.dependency_list = self.dependency_list
+        return newLazyGradient
     
 
-    def _fn_gradient(self, dirn=None, mesh=None):
-        &#34;&#34;&#34;
-        The generic mechanism for obtaining the gradient of a lazy variable is
-        to evaluate the values on the mesh at the time in question and use the mesh gradient
-        operators to compute the new values.
-
-        Sub classes may have more efficient approaches. MeshVariables have
-        stored data and don&#39;t need to evaluate values. Parameters have Gradients
-        that are identically zero ... etc
-        &#34;&#34;&#34;
+    def _fn_gradient(self, *args, **kwargs):
 
         import quagmire
 
@@ -421,89 +547,32 @@ If no mesh is provided then no gradient function can be implemented</p></div>
             quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
             diff_mesh = mesh
 
-        def new_fn_x(*args, **kwargs):
-            local_array = self.evaluate(diff_mesh)
-            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
-            dx = df_tuple[0]
+        local_array = self.evaluate(diff_mesh)
 
-            if len(args) == 1 and args[0] == diff_mesh:
-                return dx
+        df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+        ndim = len(df_tuple)
 
-            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
-                mesh = args[0]
-                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dx, **kwargs)
-            elif len(args) &gt; 1:
-                xi = np.atleast_1d(args[0])
-                yi = np.atleast_1d(args[1])
-                i, e = diff_mesh.interpolate(xi, yi, zdata=dx, **kwargs)
-                return i
-            else:
-                err_msg = &#34;Invalid number of arguments\n&#34;
-                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
-                raise ValueError(err_msg)
-
-        def new_fn_y(*args, **kwargs):
-            local_array = self.evaluate(diff_mesh)
-            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
-            dy = df_tuple[1]
-
-            if len(args) == 1 and args[0] == diff_mesh:
-                return dy
-            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
-                mesh = args[0]
-                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dy, **kwargs)
-            elif len(args) &gt; 1:
-                xi = np.atleast_1d(args[0])  # .resize(-1,1)
-                yi = np.atleast_1d(args[1])  # .resize(-1,1)
-                i, e = diff_mesh.interpolate(xi, yi, zdata=dy, **kwargs)
-                return i
-            else:
-                err_msg = &#34;Invalid number of arguments\n&#34;
-                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
-                raise ValueError(err_msg)
-
-        # Should this be made into a vector mesh variable ?
-        def new_fn_grad(*args, **kwargs):
-            local_array = self.evaluate(diff_mesh)
-            df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
-            ndim = len(df_tuple)
-
-            if len(args) == 1 and args[0] == diff_mesh:
-                return df_tuple
-            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
-                mesh = args[0]
-                df_interp = []
-                for df in df_tuple:
-                    result = diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=df, **kwargs)
-                    df_interp.append(result)
-                return df_interp
-            elif len(args) &gt; 1:
-                xi = np.atleast_1d(args[0])  # .resize(-1,1)
-                yi = np.atleast_1d(args[1])  # .resize(-1,1)
-                df_interp = []
-                for df in df_tuple:
-                    i, e = diff_mesh.interpolate(xi, yi, zdata=df, **kwargs)
-                    df_interp.append(i)
-                return df_interp
-            else:
-                err_msg = &#34;Invalid number of arguments\n&#34;
-                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
-                raise ValueError(err_msg)
-
-        newLazyFn_dx = LazyEvaluation(mesh=diff_mesh)
-        newLazyFn_dx.evaluate = new_fn_x
-        newLazyFn_dx.description = &#34;d({})/dX&#34;.format(self.description)
-        newLazyFn_dy = LazyEvaluation(mesh=diff_mesh)
-        newLazyFn_dy.evaluate = new_fn_y
-        newLazyFn_dy.description = &#34;d({})/dY&#34;.format(self.description)
-
-        fn_dir = [newLazyFn_dx, newLazyFn_dy]
-
-        if dirn is None:
-            # return a vector mesh variable ?
-            return fn_dir
+        if len(args) == 1 and args[0] == diff_mesh:
+            return df_tuple
+        elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+            mesh = args[0]
+            df_interp = []
+            for df in df_tuple:
+                result = diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=df, **kwargs)
+                df_interp.append(result)
+            return df_interp
+        elif len(args) &gt; 1:
+            xi = np.atleast_1d(args[0])  # .resize(-1,1)
+            yi = np.atleast_1d(args[1])  # .resize(-1,1)
+            df_interp = []
+            for df in df_tuple:
+                i, e = diff_mesh.interpolate(xi, yi, zdata=df, **kwargs)
+                df_interp.append(i)
+            return df_interp
         else:
-            return fn_dir[dirn]
+            err_msg = &#34;Invalid number of arguments\n&#34;
+            err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+            raise ValueError(err_msg)
 
 
     @property
@@ -517,6 +586,7 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 ## Arithmetic operations
 
     def __mul__(self, other):
+        other = self.convert(other)
         mesh = self._mesh
         if mesh == None:
             mesh = other._mesh
@@ -525,8 +595,20 @@ If no mesh is provided then no gradient function can be implemented</p></div>
         newLazyFn.description = &#34;({})*({})&#34;.format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
         return newLazyFn
+    
+    def __rmul__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})*({})&#34;.format(other.description, self.description)
+        newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
+        return newLazyFn
 
     def __add__(self, other):
+        other = self.convert(other)
         mesh = self._mesh
         if mesh == None:
             mesh = other._mesh
@@ -534,10 +616,21 @@ If no mesh is provided then no gradient function can be implemented</p></div>
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
         newLazyFn.description = &#34;({})+({})&#34;.format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
-
+        return newLazyFn
+    
+    def __radd__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})+({})&#34;.format(other.description, self.description)
+        newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
         return newLazyFn
 
     def __truediv__(self, other):
+        other = self.convert(other)
         mesh = self._mesh
         if mesh == None:
             mesh = other._mesh
@@ -549,6 +642,7 @@ If no mesh is provided then no gradient function can be implemented</p></div>
         return newLazyFn
 
     def __sub__(self, other):
+        other = self.convert(other)
         mesh = self._mesh
         if mesh == None:
             mesh = other._mesh
@@ -556,7 +650,17 @@ If no mesh is provided then no gradient function can be implemented</p></div>
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
         newLazyFn.description = &#34;({})-({})&#34;.format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
-
+        return newLazyFn
+    
+    def __rsub__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})-({})&#34;.format(other.description, self.description)
+        newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
         return newLazyFn
 
     def __neg__(self):
@@ -574,14 +678,64 @@ If no mesh is provided then no gradient function can be implemented</p></div>
         newLazyFn.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
         newLazyFn.description = &#34;({})**({})&#34;.format(self.description, exponent.description)
         newLazyFn.dependency_list |= self.dependency_list | exponent.dependency_list
-
         return newLazyFn</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
+<li><a title="quagmire.function.function_classes.LazyGradientEvaluation" href="#quagmire.function.function_classes.LazyGradientEvaluation">LazyGradientEvaluation</a></li>
 <li><a title="quagmire.function.function_classes.parameter" href="#quagmire.function.function_classes.parameter">parameter</a></li>
 <li><a title="quagmire.mesh.basemesh.MeshVariable" href="../mesh/basemesh.html#quagmire.mesh.basemesh.MeshVariable">MeshVariable</a></li>
 </ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="quagmire.function.function_classes.LazyEvaluation.convert"><code class="name flex">
+<span>def <span class="ident">convert</span></span>(<span>obj)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method will attempt to convert the provided input into an
+equivalent quagmire function. If the provided input is already
+of LazyEvaluation type, it is immediately returned. Likewise if
+the input is of None type, it is also returned.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>obj</code></strong> :&ensp;<code>The object to be converted</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>LazyEvaluation function or None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def convert(obj):
+    &#34;&#34;&#34;
+    This method will attempt to convert the provided input into an
+    equivalent quagmire function. If the provided input is already
+    of LazyEvaluation type, it is immediately returned. Likewise if
+    the input is of None type, it is also returned.
+
+    Parameters
+    ----------
+
+    obj: The object to be converted
+
+    Returns
+    -------
+
+    LazyEvaluation function or None.
+    &#34;&#34;&#34;
+
+    if isinstance(obj, (LazyEvaluation, type(None))):
+        return obj
+    else:
+        try:
+            return parameter(obj)
+        except Exception as e:
+            raise e</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Instance variables</h3>
 <dl>
 <dt id="quagmire.function.function_classes.LazyEvaluation.description"><code class="name">var <span class="ident">description</span></code></dt>
@@ -605,7 +759,12 @@ def description(self):
 </summary>
 <pre><code class="python">@property
 def fn_gradient(self):
-    return self._fn_gradient()</code></pre>
+    mesh = self._mesh
+    newLazyGradient = LazyGradientEvaluation(mesh=mesh)
+    newLazyGradient.evaluate = self._fn_gradient
+    newLazyGradient.description = &#34;d({0})/dX,d({0})/dY&#34;.format(self.description)
+    newLazyGradient.dependency_list = self.dependency_list
+    return newLazyGradient</code></pre>
 </details>
 </dd>
 <dt id="quagmire.function.function_classes.LazyEvaluation.id"><code class="name">var <span class="ident">id</span></code></dt>
@@ -638,9 +797,140 @@ def id(self):
 </dd>
 </dl>
 </dd>
+<dt id="quagmire.function.function_classes.LazyGradientEvaluation"><code class="flex name class">
+<span>class <span class="ident">LazyGradientEvaluation</span></span>
+<span>(</span><span>mesh=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Lazy evaluation of mesh variables / parameters
+If no mesh is provided then no gradient function can be implemented</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LazyGradientEvaluation(LazyEvaluation):
+
+    def __init__(self, mesh=None):
+        super(LazyGradientEvaluation, self).__init__(mesh=mesh)
+
+
+    def __getitem__(self, dirn):
+        return self._fn_gradient(dirn=dirn, mesh=self._mesh)
+
+
+    @property
+    def fn_gradient(self):
+        raise NotImplementedError(&#34;gradient operations on the &#39;LazyGradientEvaluation&#39; sub-class are not supported&#34;)
+
+    def _fn_gradient(self, dirn=None, mesh=None):
+        &#34;&#34;&#34;
+        The generic mechanism for obtaining the gradient of a lazy variable is
+        to evaluate the values on the mesh at the time in question and use the mesh gradient
+        operators to compute the new values.
+
+        Sub classes may have more efficient approaches. MeshVariables have
+        stored data and don&#39;t need to evaluate values. Parameters have Gradients
+        that are identically zero ... etc
+        &#34;&#34;&#34;
+
+        import quagmire
+
+        if self._mesh is None and mesh is None:
+            raise RuntimeError(&#34;fn_gradient is a numerical differentiation routine based on derivatives of a fitted spline function on a mesh. The function {} has no associated mesh. To obtain *numerical* derivatives of this function, you can provide a mesh to the gradient function. The usual reason for this error is that your function is not based upon mesh variables and can, perhaps, be differentiated without resort to interpolating splines. &#34;.format(self.__repr__()))
+
+
+        elif self._mesh is not None:
+            diff_mesh = self._mesh
+        else:
+            quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
+            diff_mesh = mesh
+
+        def new_fn_x(*args, **kwargs):
+            dx, dy = self.evaluate(diff_mesh)
+
+            if len(args) == 1 and args[0] == diff_mesh:
+                return dx
+
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dx, **kwargs)
+            elif len(args) &gt; 1:
+                xi = np.atleast_1d(args[0])
+                yi = np.atleast_1d(args[1])
+                i, e = diff_mesh.interpolate(xi, yi, zdata=dx, **kwargs)
+                return i
+            else:
+                err_msg = &#34;Invalid number of arguments\n&#34;
+                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+                raise ValueError(err_msg)
+
+        def new_fn_y(*args, **kwargs):
+            dx, dy = self.evaluate(diff_mesh)
+
+            if len(args) == 1 and args[0] == diff_mesh:
+                return dy
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dy, **kwargs)
+            elif len(args) &gt; 1:
+                xi = np.atleast_1d(args[0])  # .resize(-1,1)
+                yi = np.atleast_1d(args[1])  # .resize(-1,1)
+                i, e = diff_mesh.interpolate(xi, yi, zdata=dy, **kwargs)
+                return i
+            else:
+                err_msg = &#34;Invalid number of arguments\n&#34;
+                err_msg += &#34;Input a valid mesh or coordinates in x,y directions&#34;
+                raise ValueError(err_msg)
+
+
+        d1 = len(self.description)//2
+        d2 = d1 + 1
+
+        newLazyFn_dx = LazyEvaluation(mesh=diff_mesh)
+        newLazyFn_dx.evaluate = new_fn_x
+        newLazyFn_dx.description = self.description[:d1]
+        newLazyFn_dy = LazyEvaluation(mesh=diff_mesh)
+        newLazyFn_dy.evaluate = new_fn_y
+        newLazyFn_dy.description = self.description[d2:]
+
+        if dirn == 0:
+            return newLazyFn_dx
+        elif dirn == 1:
+            return newLazyFn_dy
+        else:
+            raise ValueError(&#34;dirn can only be set to 0 or 1&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="quagmire.function.function_classes.LazyEvaluation" href="#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="quagmire.function.function_classes.LazyGradientEvaluation.fn_gradient"><code class="name">var <span class="ident">fn_gradient</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def fn_gradient(self):
+    raise NotImplementedError(&#34;gradient operations on the &#39;LazyGradientEvaluation&#39; sub-class are not supported&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="quagmire.function.function_classes.LazyEvaluation" href="#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></b></code>:
+<ul class="hlist">
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.convert" href="#quagmire.function.function_classes.LazyEvaluation.convert">convert</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
 <dt id="quagmire.function.function_classes.parameter"><code class="flex name class">
 <span>class <span class="ident">parameter</span></span>
-<span>(</span><span>value)</span>
+<span>(</span><span>value, *args, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Floating point parameter / coefficient for lazy evaluation of functions</p>
@@ -653,12 +943,23 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 <pre><code class="python">class parameter(LazyEvaluation):
     &#34;&#34;&#34;Floating point parameter / coefficient for lazy evaluation of functions&#34;&#34;&#34;
 
-    def __init__(self, value):
-        super(parameter, self).__init__()
+    def __init__(self, value, *args, **kwargs):
+        super(parameter, self).__init__(*args, **kwargs)
         self.value = value
         return
 
-    def fn_gradient(self, dirn=None):
+
+    @property
+    def fn_gradient(self):
+        mesh = self._mesh
+        newLazyGradient = LazyGradientEvaluation(mesh=mesh)
+        newLazyGradient.evaluate = self.evaluate
+        newLazyGradient._fn_gradient = self._fn_gradient
+        newLazyGradient.description = &#34;d({0})/dX,d({0})/dY&#34;.format(self.description)
+        newLazyGradient.dependency_list = self.dependency_list
+        return newLazyGradient
+
+    def _fn_gradient(self, dirn=None, mesh=None):
         &#34;&#34;&#34;Gradients information is not provided by default for lazy evaluation objects:
            it is necessary to implement the gradient method&#34;&#34;&#34;
 
@@ -666,10 +967,8 @@ If no mesh is provided then no gradient function can be implemented</p></div>
         px.description = &#34;d({})/dX===0.0&#34;.format(self.description)
         py = parameter(0.0)
         py.description = &#34;d({})/dY===0.0&#34;.format(self.description)
-        pz = parameter(0.0)
-        pz.description = &#34;d({})/dZ===0.0&#34;.format(self.description)
 
-        p = [px, py, pz]
+        p = [px, py]
 
         if dirn is None:
             # not sure about dimensions here, a parameter is always 1-d so it should
@@ -702,7 +1001,7 @@ If no mesh is provided then no gradient function can be implemented</p></div>
             mesh = args[0]
             return self.value * np.ones(mesh.npoints)
 
-        elif any(args):
+        elif len(args) &gt;= 1:
             xi = np.atleast_1d(args[0])
             yi = np.atleast_1d(args[1])
 
@@ -717,6 +1016,24 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 </ul>
 <h3>Instance variables</h3>
 <dl>
+<dt id="quagmire.function.function_classes.parameter.fn_gradient"><code class="name">var <span class="ident">fn_gradient</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def fn_gradient(self):
+    mesh = self._mesh
+    newLazyGradient = LazyGradientEvaluation(mesh=mesh)
+    newLazyGradient.evaluate = self.evaluate
+    newLazyGradient._fn_gradient = self._fn_gradient
+    newLazyGradient.description = &#34;d({0})/dX,d({0})/dY&#34;.format(self.description)
+    newLazyGradient.dependency_list = self.dependency_list
+    return newLazyGradient</code></pre>
+</details>
+</dd>
 <dt id="quagmire.function.function_classes.parameter.value"><code class="name">var <span class="ident">value</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -747,7 +1064,7 @@ def value(self):
         mesh = args[0]
         return self.value * np.ones(mesh.npoints)
 
-    elif any(args):
+    elif len(args) &gt;= 1:
         xi = np.atleast_1d(args[0])
         yi = np.atleast_1d(args[1])
 
@@ -757,38 +1074,15 @@ def value(self):
         return self.value</code></pre>
 </details>
 </dd>
-<dt id="quagmire.function.function_classes.parameter.fn_gradient"><code class="name flex">
-<span>def <span class="ident">fn_gradient</span></span>(<span>self, dirn=None)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Gradients information is not provided by default for lazy evaluation objects:
-it is necessary to implement the gradient method</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def fn_gradient(self, dirn=None):
-    &#34;&#34;&#34;Gradients information is not provided by default for lazy evaluation objects:
-       it is necessary to implement the gradient method&#34;&#34;&#34;
-
-    px = parameter(0.0)
-    px.description = &#34;d({})/dX===0.0&#34;.format(self.description)
-    py = parameter(0.0)
-    py.description = &#34;d({})/dY===0.0&#34;.format(self.description)
-    pz = parameter(0.0)
-    pz.description = &#34;d({})/dZ===0.0&#34;.format(self.description)
-
-    p = [px, py, pz]
-
-    if dirn is None:
-        # not sure about dimensions here, a parameter is always 1-d so it should
-        # always return the same derivative
-        return px
-    else:
-        return p[dirn]</code></pre>
-</details>
-</dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="quagmire.function.function_classes.LazyEvaluation" href="#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></b></code>:
+<ul class="hlist">
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.convert" href="#quagmire.function.function_classes.LazyEvaluation.convert">convert</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 </dl>
 </section>
@@ -809,10 +1103,17 @@ it is necessary to implement the gradient method</p></div>
 <li>
 <h4><code><a title="quagmire.function.function_classes.LazyEvaluation" href="#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></code></h4>
 <ul class="">
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.convert" href="#quagmire.function.function_classes.LazyEvaluation.convert">convert</a></code></li>
 <li><code><a title="quagmire.function.function_classes.LazyEvaluation.description" href="#quagmire.function.function_classes.LazyEvaluation.description">description</a></code></li>
 <li><code><a title="quagmire.function.function_classes.LazyEvaluation.evaluate" href="#quagmire.function.function_classes.LazyEvaluation.evaluate">evaluate</a></code></li>
 <li><code><a title="quagmire.function.function_classes.LazyEvaluation.fn_gradient" href="#quagmire.function.function_classes.LazyEvaluation.fn_gradient">fn_gradient</a></code></li>
 <li><code><a title="quagmire.function.function_classes.LazyEvaluation.id" href="#quagmire.function.function_classes.LazyEvaluation.id">id</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="quagmire.function.function_classes.LazyGradientEvaluation" href="#quagmire.function.function_classes.LazyGradientEvaluation">LazyGradientEvaluation</a></code></h4>
+<ul class="">
+<li><code><a title="quagmire.function.function_classes.LazyGradientEvaluation.fn_gradient" href="#quagmire.function.function_classes.LazyGradientEvaluation.fn_gradient">fn_gradient</a></code></li>
 </ul>
 </li>
 <li>
