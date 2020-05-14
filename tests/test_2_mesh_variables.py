@@ -5,7 +5,7 @@ import pytest
 # ==========================
 
 from quagmire.tools import meshtools
-from quagmire import FlatMesh
+from quagmire import QuagMesh
 from quagmire.mesh import MeshVariable
 import numpy as np
 
@@ -15,7 +15,7 @@ dx, dy = 0.02, 0.02
 
 x,y, bound = meshtools.generate_elliptical_points(minX, maxX, minY, maxY, dx, dy, 60000, 300)
 DM = meshtools.create_DMPlex_from_points(x, y, bmask=bound)
-mesh = FlatMesh(DM, downhill_neighbours=1)
+mesh = QuagMesh(DM, downhill_neighbours=1)
 
 def test_mesh_variable_instance():
 
@@ -87,7 +87,7 @@ def test_mesh_variable_derivative():
     phi.data = np.sin(mesh.coords[:,0])
     psi.data = np.cos(mesh.coords[:,0])
 
-    assert(np.isclose(phi.fn_gradient(0).evaluate(0.0,0.0), psi.evaluate(0.0,0.0), rtol=1.0e-3))
+    assert(np.isclose(phi.fn_gradient[0].evaluate(0.0,0.0), psi.evaluate(0.0,0.0), rtol=1.0e-3))
 
 
     return
