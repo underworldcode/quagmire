@@ -20,3 +20,4 @@ Tools for creating and saving meshes
 
 from .meshtools import *
 from .generate_xdmf import generateXdmf as generate_xdmf
+from .io import *

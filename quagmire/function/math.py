@@ -125,7 +125,7 @@ def deg2rad(lazyFn):
 
 def grad(lazyFn):
     """Lazy evaluation of gradient operator on a scalar field"""
-    return lazyFn.fn_gradient()
+    return lazyFn.fn_gradient[0], lazyFn.fn_gradient[1]
 
 def div(*args):
     """Lazy evaluation of divergence operator on a N-D vector field"""
@@ -142,7 +142,7 @@ def div(*args):
     lazyFn_dependency = set()
     for f, lazyFn in enumerate(args):
         lazyFn_id.add(lazyFn._mesh.id)
-        lazyFn_list.append(lazyFn.fn_gradient(f))
+        lazyFn_list.append(lazyFn.fn_gradient[f])
         lazyFn_description += "diff({},{}) + ".format(lazyFn.description, dims[f])
         lazyFn_dependency.union(lazyFn.dependency_list)
     lazyFn_description = lazyFn_description[:-3]
@@ -166,8 +166,8 @@ def curl(*args):
             raise ValueError("Both meshes must be identical")
         
         newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
-        fn_dvydx = lazyFn_y.fn_gradient(0)
-        fn_dvxdy = lazyFn_x.fn_gradient(1)
+        fn_dvydx = lazyFn_y.fn_gradient[0]
+        fn_dvxdy = lazyFn_x.fn_gradient[1]
         newLazyFn.evaluate = lambda *args, **kwargs : fn_dvydx.evaluate(*args, **kwargs) - fn_dvxdy.evaluate(*args, **kwargs)
         newLazyFn.description = "diff({},X) - diff({},Y)".format(lazyFn_y.description, lazyFn_x.description)
         newLazyFn.dependency_list = lazyFn_x.dependency_list | lazyFn_y.dependency_list
@@ -180,9 +180,9 @@ def curl(*args):
             raise ValueError("All meshes must be identical")
         
         newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
-        fn_dvxdx, fn_dvxdy, fn_dvxdz = lazyFn_x.fn_gradient()
-        fn_dvydx, fn_dvydy, fn_dvydz = lazyFn_y.fn_gradient()
-        fn_dvzdx, fn_dvzdy, fn_dvzdz = lazyFn_z.fn_gradient()
+        fn_dvxdx, fn_dvxdy, fn_dvxdz = lazyFn_x.fn_gradient
+        fn_dvydx, fn_dvydy, fn_dvydz = lazyFn_y.fn_gradient
+        fn_dvzdx, fn_dvzdy, fn_dvzdz = lazyFn_z.fn_gradient
         fn_curl = (fn_dvzdy-fn_dvydz) + (fn_dvxdz-fn_dvzdx) + (fn_dvydx-fn_dvxdy)
         newLazyFn.evaluate = lambda *args, **kwargs : fn_curl.evaluate(*args, **kwargs)
         desc = "(diff({},dy) - diff({},dz)) + (diff({},dz) - diff({},dx)) + (diff({},dx) - diff({},dy))"

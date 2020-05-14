@@ -30,16 +30,14 @@ def test_stripy_import():
     from stripy import Triangulation
 
 def test_quagmire_modules():
-	import quagmire
-	from quagmire import documentation
-	from quagmire import function
-	from quagmire import mesh
-	from quagmire import tools
-	from quagmire import scaling
-	from quagmire import FlatMesh
-	from quagmire import TopoMesh
-	from quagmire import SurfaceProcessMesh
-	from quagmire import _fortran
+    import quagmire
+    from quagmire import documentation
+    from quagmire import function
+    from quagmire import mesh
+    from quagmire import tools
+    from quagmire import scaling
+    from quagmire import QuagMesh
+    from quagmire import _fortran
 
 def test_jupyter_available():
     from subprocess import check_output
