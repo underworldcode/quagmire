@@ -11,7 +11,6 @@
 Utilities to convert between dimensional and non-dimensional values.
 """
 from __future__ import print_function, absolute_import
-import underworld as uw
 from ._utils import TransformedDict
 from pint import UnitRegistry
 
@@ -144,6 +143,7 @@ def dimensionalise(value, units):
     >>> import underworld as uw
     >>> A = uw.scaling.dimensionalise(1.0, u.metre)
     """
+    import quagmire.function as fn
 
     unit = (1.0 * units).to_base_units()
 
@@ -180,12 +180,11 @@ def dimensionalise(value, units):
               temperature**(dtemp) *
               substance**(dsubstance))
 
-    if (isinstance(value, uw.mesh._meshvariable.MeshVariable) or
-       isinstance(value, uw.swarm._swarmvariable.SwarmVariable)):
-
-        tempVar = value.copy()
-        tempVar.data[...] = (value.data[...] * factor).to(units)
-        return tempVar
+    if fn.check_object_is_a_q_function(value):
+        if fn.check_object_is_a_mesh_variable(value):
+            tempVar = value.copy()
+            tempVar.data[...] = (value.data[...] * factor).to(units)
+            return tempVar
     else:
         return (value * factor).to(units)
 
