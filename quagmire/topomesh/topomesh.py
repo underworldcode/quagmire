@@ -1044,7 +1044,7 @@ class TopoMesh(object):
 
 
 
-    def identify_low_points(self, include_shadows=False), ref_height=0:
+    def identify_low_points(self, include_shadows=False, ref_height=0):
         """
         Identify if the mesh has (internal) local minima and return an array of node indices
         """
