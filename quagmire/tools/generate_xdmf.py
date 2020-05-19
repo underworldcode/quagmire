@@ -135,7 +135,7 @@ class Xdmf:
 	       DataType="Float" Precision="8"
 	       Dimensions="%d %d %d"
 	       Format="HDF">
-	      &HeavyData;:%s
+	      %s
 	    </DataItem>
 	  </DataItem>
 	</Attribute>
@@ -181,7 +181,7 @@ class Xdmf:
 	       DataType="Float" Precision="8"
 	       Dimensions="%s"
 	       Format="HDF">
-	      &HeavyData;:%s
+	      %s
 	    </DataItem>
 	  </DataItem>
 	</Attribute>
@@ -232,18 +232,18 @@ class Xdmf:
     fp.write('  </Domain>\n</Xdmf>\n')
     return
 
-  def write(self, hdfFilename, topologyPath, numCells, numCorners, cellDim, geometryPath, numVertices, spaceDim, time, vfields, cfields, numParticles):
+  def write(self, hdfFilename, hdfmeshFilename, topologyPath, numCells, numCorners, cellDim, geometryPath, numVertices, spaceDim, time, vfields, cfields, numParticles):
     useTime = not (len(time) < 2 and time[0] == -1)
     with open(self.filename, 'w') as fp:
-      self.writeHeader(fp, hdfFilename)
+      self.writeHeader(fp, hdfmeshFilename)
       # Field information
       self.writeCells(fp, topologyPath, numCells, numCorners)
       self.writeVertices(fp, geometryPath, numVertices, spaceDim)
       if useTime: self.writeTimeGridHeader(fp, time)
       for t in range(len(time)):
         self.writeSpaceGridHeader(fp, numCells, numCorners, cellDim, spaceDim)
-        for vf in vfields: self.writeField(fp, len(time), t, cellDim, spaceDim, '/vertex_fields/'+vf[0], vf, 'Node')
-        for cf in cfields: self.writeField(fp, len(time), t, cellDim, spaceDim, '/cell_fields/'+cf[0], cf, 'Cell')
+        for vf in vfields: self.writeField(fp, len(time), t, cellDim, spaceDim, hdfFilename+':/vertex_fields/'+vf[0], vf, 'Node')
+        for cf in cfields: self.writeField(fp, len(time), t, cellDim, spaceDim, hdfFilename+':/cell_fields/'+cf[0], cf, 'Cell')
         self.writeSpaceGridFooter(fp)
       if useTime: self.writeTimeGridFooter(fp)
       if numParticles:
@@ -256,9 +256,9 @@ class Xdmf:
       self.writeFooter(fp)
     return
 
-def generateXdmf(hdfFilename, xdmfFilename = None):
+def generate_dmplex_xdmf(hdfFilename, xdmfFilename=None):
   if xdmfFilename is None:
-    xdmfFilename = os.path.splitext(hdfFilename)[0] + '.xmf'
+    xdmfFilename = os.path.splitext(hdfFilename)[0] + '.xdmf'
   # Read mesh
   h5          = h5py.File(hdfFilename, 'r')
   if 'viz' in h5 and 'geometry' in h5['viz']:
@@ -292,9 +292,185 @@ def generateXdmf(hdfFilename, xdmfFilename = None):
   if 'particles' in h5: numParticles = h5['particles']['xcoord'].shape[0]
 
   # Write Xdmf
-  Xdmf(xdmfFilename).write(hdfFilename, topoPath, numCells, numCorners, cellDim, geomPath, numVertices, spaceDim, time, vfields, cfields, numParticles)
+  Xdmf(xdmfFilename).write(hdfFilename, hdfFilename, topoPath, numCells, numCorners, cellDim, geomPath, numVertices, spaceDim, time, vfields, cfields, numParticles)
   h5.close()
   return
+
+
+def generate_dmplex_field_xdmf(hdfFilename, hdfmeshFilename, xdmfFilename=None):
+  if xdmfFilename is None:
+    xdmfFilename = os.path.splitext(hdfFilename)[0] + '.xdmf'
+
+  # Read mesh
+  h5          = h5py.File(hdfFilename, 'r')
+  h5m         = h5py.File(hdfmeshFilename, 'r')
+  if 'viz' in h5m and 'geometry' in h5m['viz']:
+    geomPath  = 'viz/geometry'
+    geom      = h5m['viz']['geometry']
+  else:
+    geomPath  = 'geometry'
+    geom      = h5m['geometry']
+  if 'viz' in h5m and 'topology' in h5m['viz']:
+    topoPath  = 'viz/topology'
+    topo      = h5m['viz']['topology']
+  else:
+    topoPath  = 'topology'
+    topo      = h5m['topology']
+  vertices    = geom['vertices']
+  numVertices = vertices.shape[0]
+  spaceDim    = vertices.shape[1]
+  cells       = topo['cells']
+  numCells    = cells.shape[0]
+  numCorners  = cells.shape[1]
+  cellDim     = topo['cells'].attrs['cell_dim']
+
+  # Read fields
+  if 'time' in h5:
+    time      = np.array(h5['time']).flatten()
+  else:
+    time      = [-1]
+  vfields     = []
+  cfields     = []
+  if 'vertex_fields' in h5: vfields = list(h5['vertex_fields'].items())
+  if 'cell_fields' in h5: cfields = list(h5['cell_fields'].items())
+  numParticles = 0
+  if 'particles' in h5: numParticles = h5['particles']['xcoord'].shape[0]
+
+  # Write Xdmf
+  Xdmf(xdmfFilename).write(hdfFilename, hdfmeshFilename, topoPath, numCells, numCorners, cellDim, geomPath, numVertices, spaceDim, time, vfields, cfields, numParticles)
+  h5.close()
+  h5m.close()
+  return
+
+
+def generate_dmda_xdmf(hdfFilename, xdmfFilename=None):
+  """
+  Generate a XDMF file to visualise HDF5 fields and vectors in Paraview.
+
+  Writes a XDMF file to the working directory.
+  """
+
+  if xdmfFilename is None:
+    xdmfFilename = os.path.splitext(hdfFilename)[0] + '.xdmf'
+
+  f = open(xdmfFilename, 'w')
+
+  def write_header(f):
+    f.write('''<?xml version="1.0" ?>\n\
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>\n\
+<Xdmf xmlns:xi="http://www.w3.org/2003/XInclude" Version="2.2">\n\
+  <Information Name="SampleLocation" Value="4"/>\n\
+  <Domain>\n\
+    <Grid Name="Structured Grid" GridType="Uniform">\n''')
+
+  def write_footer(f):
+    f.write('''    </Grid>\n  </Domain>\n</Xdmf>''')
+
+  def write_geometry(f, dim, shape, origin, stride):
+    f.write('''      <Topology TopologyType="2DCORECTMesh" NumberOfElements="{1}"/>\n\
+  <Geometry GeometryType="ORIGIN_DXDY">\n\
+    <DataItem Dimensions="{0}" NumberType="Float" Precision="4" Format="XML">\n\
+      {2}\n\
+    </DataItem>\n\
+    <DataItem Dimensions="{0}" NumberType="Float" Precision="4" Format="XML">\n\
+      {3}\n\
+    </DataItem>\n\
+  </Geometry>\n'''.format(dim, shape, origin, stride))
+
+  def write_attribute(f, attributeName, arrtype, dshape, dpath):
+    f.write('''      <Attribute Name="{0}" AttributeType="{1}" Center="Node">'\n\
+    <DataItem Dimensions="{2}" NumberType="Float" Precision="4" Format="HDF">{3}</DataItem>\n\
+  </Attribute>\n'''.format(attributeName, arrtype, dshape, dpath))
+
+  def array_to_string(array):
+    s = ""
+    for i in array:
+        s += "{} ".format(i)
+    return s
+
+
+  h5file = h5py.File(hdfFilename, 'r')
+  basename = os.path.basename(hdfFilename)
+
+  # get topology attributes
+  geom = h5file['geometry']
+  minX = geom.attrs['minX']
+  maxX = geom.attrs['maxX']
+  minY = geom.attrs['minY']
+  maxY = geom.attrs['maxY']
+  resX = geom.attrs['resX']
+  resY = geom.attrs['resY']
+  
+  minCoords = minX, minY
+  maxCoords = maxX, maxY
+  
+  shape = resY, resX
+  nodes = resX*resY
+
+  stride = [(maxY - minY)/(resY-1), (maxX - minX)/(resX-1)]
+
+  tshape = array_to_string(shape)
+  torigin = array_to_string(minCoords)
+  tstride = array_to_string(stride)
+
+  write_header(f)
+  write_geometry(f, len(shape), tshape, torigin, tstride)
+
+  for key in h5file:
+    dset = h5file[key]
+
+    # We only want datasets, topology group is not required
+    if type(dset) is h5py.Dataset:
+      # if all(dset.shape != shape):
+      #     raise ValueError('Dataset should be of shape {}'.format(shape))
+
+      dpath = basename + ":" + dset.name
+      dname = dset.name[1:]
+      dshape = array_to_string(dset.shape)
+
+      dnodes = 1
+      for n in dset.shape:
+        dnodes *= n
+
+      if dnodes%nodes != 0:
+        raise ValueError("Dataset {} is not a valid shape".format(dname))
+      elif dnodes/nodes > 1:
+        arrtype = "Vector"
+      elif dnodes/nodes == 1:
+        arrtype = "Scalar"
+
+      write_attribute(f, dname, arrtype, dshape, dpath)
+
+  write_footer(f)
+  f.close()
+  h5file.close()
+  return
+
+
+def generateXdmf(hdfFilename, hdfmeshFilename=None, xdmfFilename=None):
+
+  if xdmfFilename is None:
+    xdmfFilename = os.path.splitext(hdfFilename)[0] + '.xdmf'
+
+
+  DMPLEX = False
+  with h5py.File(hdfFilename, 'r') as h5:
+    if 'vertex_fields' in h5:
+      DMPLEX = True
+      if 'geometry' not in h5 and hdfmeshFilename is None:
+        err_msg = "mesh info not found in HDF5, save mesh info to this HDF5 file"
+        err_msg += " or point to an externl HDF5 file containing the mesh info."
+        raise TypeError(err_msg)
+
+
+  if DMPLEX:
+    if hdfmeshFilename is None:
+      generate_dmplex_xdmf(hdfFilename, xdmfFilename)
+    else:
+      generate_dmplex_field_xdmf(hdfFilename, hdfmeshFilename, xdmfFilename)
+
+  else:
+    generate_dmda_xdmf(hdfFilename, xdmfFilename)
 
 if __name__ == '__main__':
   for f in sys.argv[1:]:

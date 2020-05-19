@@ -184,16 +184,34 @@ class MeshVariable(_LazyEvaluation):
 
         return
 
-    def save(self, filename=None, append=False):
+
+    def xdmf(self, hdf5_filename, hdf5_mesh_filename=None, xdmf_filename=None):
+        """
+        Creates an xdmf file associating the saved HDF5 file with the mesh
+
+        """
+        from quagmire.tools.generate_xdmf import generateXdmf
+        from quagmire import mpi_rank
+
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith('.h5'):
+            hdf5_filename += '.h5'
+
+        if mpi_rank == 0:
+            generateXdmf(hdf5_filename, hdf5_mesh_filename, xdmf_filename)
+        return
+
+
+    def save(self, hdf5_filename, append=True):
         """
         Save the MeshVariable to disk.
 
         Parameters
         ----------
-        filename : str (optional)
+        hdf5_filename : str (optional)
             The name of the output file. Relative or absolute paths may be
             used, but all directories must exist.
-        append : bool (default is False)
+        append : bool (default is True)
             Append to existing file if it exists
 
         Notes
@@ -203,35 +221,42 @@ class MeshVariable(_LazyEvaluation):
         from petsc4py import PETSc
         import os
 
-        vname = self._ldata.getName()
-        if type(filename) == type(None):
-            filename = vname + '.h5'
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith('.h5'):
+            hdf5_filename += '.h5'
+
+        if self._mesh.id.startswith("pixmesh"):
+            # save mesh info to the hdf5 if DMDA object
+            # this is so tiny that I/O hit is negligible
+            self._mesh.save_mesh_to_hdf5(hdf5_filename)
 
         mode = "w"
-        if append and os.path.exists(filename):
+        if append and os.path.exists(hdf5_filename):
             mode = "a"
 
         # need a global vector
+        vname = self._ldata.getName()
         gdata = self._dm.getGlobalVec()
         gdata.setName(vname)
         self._dm.localToGlobal(self._ldata, gdata)
 
         ViewHDF5 = PETSc.Viewer()
-        ViewHDF5.createHDF5(filename, mode=mode)
+        ViewHDF5.createHDF5(hdf5_filename, mode=mode)
         ViewHDF5(gdata)
         ViewHDF5.destroy()
+        ViewHDF5 = None
 
         self._dm.restoreGlobalVec(gdata)
 
         return
 
-    def load(self, filename):
+    def load(self, hdf5_filename):
         """
         Load the MeshVariable from disk.
 
         Parameters
         ----------
-        filename: str
+        hdf5_filename: str
             The filename for the saved file. Relative or absolute paths may be
             used, but all directories must exist.
 
@@ -246,9 +271,10 @@ class MeshVariable(_LazyEvaluation):
         gdata.setName(self._ldata.getName())
 
         ViewHDF5 = PETSc.Viewer()
-        ViewHDF5.createHDF5(str(filename), mode='r')
+        ViewHDF5.createHDF5(str(hdf5_filename), mode='r')
         gdata.load(ViewHDF5)
         ViewHDF5.destroy()
+        ViewHDF5 = None
 
         self._dm.globalToLocal(gdata, self._ldata)
         self._dm.restoreGlobalVec(gdata)
