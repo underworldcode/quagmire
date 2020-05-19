@@ -1063,7 +1063,7 @@ class TopoMesh(object):
 
         return nodes[mask]
 
-    def identify_global_low_points(self, global_array=False):
+    def identify_global_low_points(self, global_array=False, ref_height=0.0):
         """
         Identify if the mesh as a whole has (internal) local minima and return an array of local lows in global
         index format.
@@ -1086,6 +1086,7 @@ class TopoMesh(object):
 
         low_nodes = self.down_neighbour[1]
         mask = np.logical_and(nodes == low_nodes, self.bmask == True)
+        mask = np.logical_and(mask, self.topography.data > ref_height)
         mask = np.logical_and(mask, gnodes >= 0)
 
         number_of_lows = np.count_nonzero(mask)
