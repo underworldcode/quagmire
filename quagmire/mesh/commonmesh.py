@@ -272,25 +272,48 @@ class CommonMesh(object):
 
         return
 
-
-    def save_mesh_to_hdf5(self, file):
+    def xdmf(self, hdf5_filename, xdmf_filename=None):
         """
-        Saves mesh information stored in the DM to HDF5 file
-        If the file already exists, it is overwritten.
+        Creates an xdmf file associating the saved HDF5 file with the mesh
+
+        If no xdmf filename is not provided, a xdmf file is generated from
+        the hdf5 filename with a trailing `.xdmf` extension.
+        """
+        from quagmire.tools.generate_xdmf import generateXdmf
+        from quagmire import mpi_rank
+
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith('.h5'):
+            hdf5_filename += '.h5'
+
+        if mpi_rank == 0:
+            generateXdmf(hdf5_filename, xdmfFilename=xdmf_filename)
+        return
+
+
+    def save(self, hdf5_filename):
+        return self.save_quagmire_project(hdf5_filename)
+
+
+    def save_mesh_to_hdf5(self, hdf5_filename):
+        """
+        Saves mesh information stored in the DM to HDF5 filename
+        If the filename already exists, it is overwritten.
 
         Parameters
         ----------
-        file : str
-            Save the mesh to an HDF5 file with this name
+        filename : str
+            Save the mesh to an HDF5 filename with this name
         """
-        file = str(file)
-        if not file.endswith('.h5'):
-            file += '.h5'
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith('.h5'):
+            hdf5_filename += '.h5'
 
         ViewHDF5 = PETSc.Viewer()
-        ViewHDF5.createHDF5(file, mode='w')
+        ViewHDF5.createHDF5(hdf5_filename, mode='w')
         ViewHDF5.view(obj=self.dm)
         ViewHDF5.destroy()
+        ViewHDF5 = None
 
 
         if self.id.startswith("pixmesh"):
@@ -301,7 +324,7 @@ class CommonMesh(object):
             (minX, maxX), (minY, maxY) = self.dm.getBoundingBox()
             resX, resY = self.dm.getSizes()
 
-            with h5py.File(file, mode='r+', driver='mpio', comm=comm) as h5:
+            with h5py.File(hdf5_filename, mode='r+', driver='mpio', comm=comm) as h5:
                 geom = h5.create_group('geometry')
                 geom.attrs['minX'] = minX
                 geom.attrs['maxX'] = maxX
@@ -311,7 +334,7 @@ class CommonMesh(object):
                 geom.attrs['resY'] = resY
 
 
-    def save_field_to_hdf5(self, file, *args, **kwargs):
+    def save_field_to_hdf5(self, hdf5_filename, *args, **kwargs):
         """
         Saves data on the mesh to an HDF5 file
         e.g. height, rainfall, sea level, etc.
@@ -321,20 +344,16 @@ class CommonMesh(object):
 
         Parameters
         ----------
-        file : str
+        hdf5_filename : str
             Save the mesh variables to an HDF5 file with this name
         *args : arguments
         **kwargs : keyword arguments
         """
         import os.path
 
-        file = str(file)
-        if not file.endswith('.h5'):
-            file += '.h5'
-
-        # write mesh if it doesn't exist
-        # if not os.path.isfile(file):
-        #     self.save_mesh_to_hdf5(file)
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith('.h5'):
+            hdf5_filename += '.h5'
 
         kwdict = kwargs
         for i, arg in enumerate(args):
@@ -344,10 +363,9 @@ class CommonMesh(object):
                                   and keyword: {}".format(key))
             kwdict[key] = arg
 
-        vec = self.gvec.duplicate()
         vec = self.dm.createGlobalVec()
 
-        if os.path.isfile(file):
+        if os.path.isfile(hdf5_filename):
             mode = "a"
         else:
             mode = "w"
@@ -366,12 +384,13 @@ class CommonMesh(object):
                 print("Saving {} to hdf5".format(key))
 
             ViewHDF5 = PETSc.Viewer()
-            ViewHDF5.createHDF5(file, mode=mode)
+            ViewHDF5.createHDF5(hdf5_filename, mode=mode)
             ViewHDF5.view(obj=vec)
             ViewHDF5.destroy()
             mode = "a"
 
         vec.destroy()
+        vec = None
 
 
     def _gather_root(self):
