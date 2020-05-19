@@ -221,7 +221,7 @@ def _get_label(DM):
 
 
 
-def QuagMesh(DM, *args, **kwargs):
+def QuagMesh(DM, downhill_neighbours=2, verbose=True, *args, **kwargs):
     """
     Instantiates a mesh with a height and rainfall field.
     QuagMesh identifies the type of DM and builds the necessary
@@ -232,7 +232,11 @@ def QuagMesh(DM, *args, **kwargs):
     ----------
     DM : PETSc DM object
         Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
+        functions within `tools.meshtools`.
+    downhill_neighbours : int (default: 2)
+        Number of downhill neighbours to initialise with topography.
+    verbose : bool (default: True)
+        Print detailed information on Quagmire routines and timings.
 
     Returns
     -------
@@ -251,8 +255,8 @@ def QuagMesh(DM, *args, **kwargs):
     if BaseMeshType in known_basemesh_classes:
         class QuagMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
             def __init__(self, dm, *args, **kwargs):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
-                _TopoMeshClass.__init__(self, *args, **kwargs)
+                known_basemesh_classes[BaseMeshType].__init__(self, dm, verbose, *args, **kwargs)
+                _TopoMeshClass.__init__(self, downhill_neighbours, *args, **kwargs)
                 # super(QuagMeshClass, self).__init__(dm, *args, **kwargs)
 
         return QuagMeshClass(DM, *args, **kwargs)
