@@ -13,12 +13,6 @@ jobs:
       matrix:
         os: [ 'macos-latest', 'ubuntu-latest' ]
         python-version: [  '3.7' ]
-      
-        # exclude: 
-        # - os: ubuntu-latest
-        #   python-version: '2.7'
-        # - os: macos-latest
-        #   python-version: '2.7'
 
     steps:
 
@@ -33,6 +27,7 @@ jobs:
         shell: bash -l {0}
         run: |
           conda install conda-build anaconda-client
+          conda install -c conda-forge compilers
           conda install -c underworldcode petsc 
           conda install -c conda-forge petsc4py mpi4py h5py
           conda install -c conda-forge pint 
