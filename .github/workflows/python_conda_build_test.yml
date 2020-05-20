@@ -26,13 +26,13 @@ jobs:
         if: matrix.os == 'macos-latest' 
         shell: bash -l {0}
         run: |
-          conda install conda-build anaconda-client
+          conda install -c conda-forge conda-build anaconda-client
           conda install -c conda-forge compilers
           conda install -c underworldcode petsc 
           conda install -c conda-forge petsc4py mpi4py h5py
           conda install -c conda-forge pint 
           conda install -c underworldcode stripy 
-          conda install pytest
+          conda install -c conda-forge pytest
           conda install pip 
 
 
@@ -40,7 +40,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest' 
         shell: bash -l {0}
         run: |
-          conda install conda-build anaconda-client
+          conda install -c conda-forge conda-build anaconda-client
           conda install -c conda-forge compilers
           conda install -c underworldcode petsc 
           conda install -c conda-forge numpy scipy sympy
