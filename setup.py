@@ -13,7 +13,7 @@ import subprocess
 import platform 
 
 # in development set version to none and ...
-PYPI_VERSION = "0.9.0b"
+PYPI_VERSION = "0.9.1b"
 
 def git_version():
     
