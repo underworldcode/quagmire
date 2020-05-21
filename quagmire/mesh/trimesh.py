@@ -91,7 +91,7 @@ class TriMesh(_CommonMesh):
     neighbour_cloud : array of ints, shape(n,25)
         array of nearest node neighbours by distance
     near_neighbour_mask : array of bools, shape(n,25)
-        mask immediate node neighbours in `neighbour_cloud`
+        mask immediate node neighbours in `neighbour_cloud`  (They may not be there !! )
     timings : dict
         Timing information for each Quagmire routine
     """
@@ -394,6 +394,7 @@ class TriMesh(_CommonMesh):
         in favour of `construct_neighbour_cloud`, which uses a k-d tree
         to search for nearsest neighbours based on distance.
         """
+
         import warnings
         warnings.warn("deprecated", DeprecationWarning)
 
@@ -466,12 +467,14 @@ class TriMesh(_CommonMesh):
         `size` is set to.
         """
         nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
+        self.neighbour_cloud = nncloud
+        self.neighbour_cloud_distances = nndist
 
         neighbours = np.bincount(self.tri.simplices.ravel(), minlength=self.npoints)
         self.near_neighbours = neighbours + 2
         self.extended_neighbours = np.full_like(neighbours, size)
 
-        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+        self.near_neighbour_mask = np.zeros_like(nncloud, dtype=np.bool)
 
         for node in range(0,self.npoints):
             self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
@@ -492,8 +495,6 @@ class TriMesh(_CommonMesh):
 
             ## Nothing is done about the nndist array, yet...
 
-        self.neighbour_cloud = nncloud
-        self.neighbour_cloud_distances = nndist
 
         return
 
