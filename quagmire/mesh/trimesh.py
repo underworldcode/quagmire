@@ -467,9 +467,6 @@ class TriMesh(_CommonMesh):
         """
         nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
 
-        self.neighbour_cloud = nncloud
-        self.neighbour_cloud_distances = nndist
-
         neighbours = np.bincount(self.tri.simplices.ravel(), minlength=self.npoints)
         self.near_neighbours = neighbours + 2
         self.extended_neighbours = np.full_like(neighbours, size)
@@ -478,6 +475,25 @@ class TriMesh(_CommonMesh):
 
         for node in range(0,self.npoints):
             self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+
+            row, col = np.nonzero(self.tri.simplices == node)
+            natural_neighbours = list(np.unique(np.hstack(self.tri.simplices[row])))
+
+            # move self node to start of the list
+            natural_neighbours.remove(node)
+            natural_neighbours.insert(0, node)
+
+            # identify distance neighbours from cloud and join lists
+            distance_neighbours = list(set(nncloud[node]) - set(natural_neighbours))
+            node_neighbours = np.hstack([natural_neighbours, distance_neighbours])
+
+            # size of node_nncloud will be >= ncols
+            nncloud[node] = node_neighbours[0:size]
+
+            ## Nothing is done about the nndist array, yet...
+
+        self.neighbour_cloud = nncloud
+        self.neighbour_cloud_distances = nndist
 
         return
 
