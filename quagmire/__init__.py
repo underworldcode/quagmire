@@ -223,7 +223,7 @@ def _get_label(DM):
 
 def QuagMesh(DM, downhill_neighbours=2, verbose=True, *args, **kwargs):
     """
-    Instantiates a mesh with a height and rainfall field.
+    Instantiates a mesh in the form required for quagmire computation.
     QuagMesh identifies the type of DM and builds the necessary
     data structures for landscape processing and analysis.
 
@@ -255,6 +255,8 @@ def QuagMesh(DM, downhill_neighbours=2, verbose=True, *args, **kwargs):
     if BaseMeshType in known_basemesh_classes:
         class QuagMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
             def __init__(self, dm, *args, **kwargs):
+                if verbose:
+                    print("Underlying Mesh type: {}".format(BaseMeshType))
                 known_basemesh_classes[BaseMeshType].__init__(self, dm, verbose, *args, **kwargs)
                 _TopoMeshClass.__init__(self, downhill_neighbours, *args, **kwargs)
                 # super(QuagMeshClass, self).__init__(dm, *args, **kwargs)

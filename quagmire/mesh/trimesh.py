@@ -166,14 +166,19 @@ class TriMesh(_CommonMesh):
         if self.rank==0 and self.verbose:
             print(("{} - cKDTree {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
-
         # Find neighbours
         t = perf_counter()
         self.construct_neighbour_cloud()
         self.timings['construct neighbour cloud'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.rank==0 and self.verbose:
-            print(("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
+        t1 = perf_counter()
+        self.construct_natural_neighbour_cloud()
+        self.timings['construct natural neighbour cloud'] = [perf_counter()-t1, self.log.getCPUTime(), self.log.getFlops()]
+ 
+        if self.rank==0 and self.verbose:
+            print("{} - Construct neighbour cloud arrays {}s, ({}s + {}s)".format(self.dm.comm.rank,  perf_counter()-t,
+                                                                                self.timings['construct neighbour cloud'][0],
+                                                                                self.timings['construct natural neighbour cloud'][0]  ))
 
         # sync smoothing operator
         t = perf_counter()
@@ -380,6 +385,37 @@ class TriMesh(_CommonMesh):
         self.neighbour_array = np.array(closed_neighbours)
 
 
+    def construct_natural_neighbour_cloud(self):
+        """
+        Find the natural neighbours for each node in the triangulation and store in a
+        numpy array for efficient lookup.
+        """
+
+        # maximum size of nn array node-by-node (it's almost certainly +1 because
+        # it is only +2 if the neighbours do not form a closed loop around the node)
+
+        max_neighbours = np.bincount(self.tri.simplices.ravel(), minlength=self.npoints).max() + 2
+
+        s = self.tri.simplices
+        nns = -1 * np.ones((self.npoints, max_neighbours), dtype=int)
+        nnm = np.zeros((self.npoints, max_neighbours), dtype=bool)
+        nn  = np.empty((self.npoints), dtype=int)
+
+        for node in range(0, self.npoints):
+            w = np.where(s==node)
+            l = np.unique(s[w[0]])
+            l = np.roll(l,-np.argwhere(l == node)[0])
+            nn[node] = l.shape[0]
+            nns[node,0:nn[node]] = l
+            nnm[node,0:nn[node]] = True
+
+        self.natural_neighbours       = nns
+        self.natural_neighbours_count = nn
+        self.natural_neighbours_mask   = nnm
+
+        return
+
+
     def construct_extended_neighbour_cloud(self):
         """
         Find extended node neighbours.
@@ -474,26 +510,26 @@ class TriMesh(_CommonMesh):
         self.near_neighbours = neighbours + 2
         self.extended_neighbours = np.full_like(neighbours, size)
 
-        self.near_neighbour_mask = np.zeros_like(nncloud, dtype=np.bool)
+        # self.near_neighbour_mask = np.zeros_like(nncloud, dtype=np.bool)
 
-        for node in range(0,self.npoints):
-            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+        # for node in range(0,self.npoints):
+        #     self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
 
-            row, col = np.nonzero(self.tri.simplices == node)
-            natural_neighbours = list(np.unique(np.hstack(self.tri.simplices[row])))
+        #     row, col = np.nonzero(self.tri.simplices == node)
+        #     natural_neighbours = list(np.unique(np.hstack(self.tri.simplices[row])))
 
-            # move self node to start of the list
-            natural_neighbours.remove(node)
-            natural_neighbours.insert(0, node)
+        #     # move self node to start of the list
+        #     natural_neighbours.remove(node)
+        #     natural_neighbours.insert(0, node)
 
-            # identify distance neighbours from cloud and join lists
-            distance_neighbours = list(set(nncloud[node]) - set(natural_neighbours))
-            node_neighbours = np.hstack([natural_neighbours, distance_neighbours])
+        #     # identify distance neighbours from cloud and join lists
+        #     distance_neighbours = list(set(nncloud[node]) - set(natural_neighbours))
+        #     node_neighbours = np.hstack([natural_neighbours, distance_neighbours])
 
-            # size of node_nncloud will be >= ncols
-            nncloud[node] = node_neighbours[0:size]
+        #     # size of node_nncloud will be >= ncols
+        #     nncloud[node] = node_neighbours[0:size]
 
-            ## Nothing is done about the nndist array, yet...
+        #     ## Nothing is done about the nndist array, yet...
 
 
         return
