@@ -416,7 +416,7 @@ class TopoMesh(object):
     def cumulative_flow(self, vector, *args, **kwargs):
 
 
-        niter, cumulative_flow_vector = self._cumulative_flow_verbose(vector, **kwargs)
+        niter, cumulative_flow_vector = self._cumulative_flow_verbose(vector, *args, **kwargs)
         return cumulative_flow_vector
 
 
@@ -825,6 +825,9 @@ class TopoMesh(object):
 
     def low_points_swamp_fill(self, its=1000, saddles=True, ref_height=0.0, ref_gradient=0.001):
 
+        if self.downhill_neighbours < 2 and saddles:
+            raise ValueError("Set downhill_neighbours >= 2 to use swamp filling algorithm with saddle point detection.")
+
         import petsc4py
         from petsc4py import PETSc
         from mpi4py import MPI
@@ -851,11 +854,9 @@ class TopoMesh(object):
                      # so neighbour 2 (or 3) is the earliest detection opportunity for a spill
 
             cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
-            try:
+            if self.downhill_neighbours >= 3:
                 cedges3 = np.where(ctmt[self.down_neighbour[3]] != ctmt )[0] ## local numbering
                 cedges = np.unique(np.hstack((cedges,cedges3)))
-            except:
-                pass
 
         else:        # Find all edge points (this does not seem to work in most cases ... why not ?)
             ctmt2 = ctmt[self.neighbour_cloud] - ctmt.reshape(-1,1)
@@ -1012,25 +1013,32 @@ class TopoMesh(object):
         delta.abs()
         rtolerance = delta.max()[1] * 1.0e-10
 
+        uphill_matrix = self.uphill[1]
+        gvec  = self.gvec
+        delta = gvec.duplicate()
+
         for p in range(0, its):
 
             # self.adjacency[1].multTranspose(global_ID, self.gvec)
-            gvec = self.uphill[1] * global_ID
-            delta = global_ID - gvec
+            uphill_matrix.mult(global_ID, gvec)
+            # delta = global_ID - gvec
+            delta.setArray(gvec)
+            delta.axpy(-1.0, global_ID)
             delta.abs()
             max_delta = delta.max()[1]
 
             if max_delta < rtolerance:
                 break
 
-            self.gvec.scale(scale)
+            if scale != 1.0:
+                gvec.scale(scale)
 
             if self.dm.comm.Get_size() == 1:
-                local_ID.array[:] = gvec.array[:]
+                local_ID.setArray(gvec)
             else:
                 self.dm.globalToLocal(gvec, local_ID)
 
-            global_ID.array[:] = gvec.array[:]
+            global_ID.setArray(gvec)
 
             identifier = np.maximum(identifier, local_ID.array)
             identifier = self.sync(identifier)
@@ -1079,9 +1087,7 @@ class TopoMesh(object):
         size = comm.Get_size()
         rank = comm.Get_rank()
 
-        # from petsc4py import PETSc
-
-        nodes = np.arange(0, self.npoints, dtype=np.int)
+        nodes = np.arange(0, self.npoints, dtype=PETSc.IntType)
         gnodes = self.lgmap_row.apply(nodes.astype(PETSc.IntType))
 
         low_nodes = self.down_neighbour[1]
@@ -1089,20 +1095,12 @@ class TopoMesh(object):
         mask = np.logical_and(mask, self.topography.data > ref_height)
         mask = np.logical_and(mask, gnodes >= 0)
 
-        number_of_lows = np.count_nonzero(mask)
+        number_of_lows  = np.array(np.count_nonzero(mask), dtype=PETSc.IntType)
         low_gnodes = self.lgmap_row.apply(low_nodes.astype(PETSc.IntType))
 
-        # gather/scatter numbers
-
-        list_of_nlows  = comm.gather(number_of_lows,   root=0)
-        if self.rank == 0:
-            all_low_counts = np.hstack(list_of_nlows)
-            no_global_lows0 = all_low_counts.sum()
-
-        else:
-            no_global_lows0 = None
-
-        no_global_lows = comm.bcast(no_global_lows0, root=0)
+        # MPI sum operation
+        no_global_lows = np.array(0, dtype=PETSc.IntType)
+        comm.Allreduce([number_of_lows, MPI.INT], [no_global_lows, MPI.INT], op=MPI.SUM)
 
 
         if global_array:
