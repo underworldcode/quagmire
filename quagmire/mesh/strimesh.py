@@ -177,9 +177,15 @@ class sTriMesh(_CommonMesh):
         t = perf_counter()
         self.construct_neighbour_cloud()
         self.timings['construct neighbour cloud'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.rank == 0 and self.verbose:
-            print("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, perf_counter()-t))
 
+        t1 = perf_counter()
+        self.construct_natural_neighbour_cloud()
+        self.timings['construct natural neighbour cloud'] = [perf_counter()-t1, self.log.getCPUTime(), self.log.getFlops()]
+ 
+        if self.rank==0 and self.verbose:
+            print("{} - Construct neighbour cloud arrays {}s, ({}s + {}s)".format(self.dm.comm.rank,  perf_counter()-t,
+                                                                                self.timings['construct neighbour cloud'][0],
+                                                                                self.timings['construct natural neighbour cloud'][0]  ))
 
         # RBF smoothing operator
         t = perf_counter()
@@ -487,6 +493,75 @@ class sTriMesh(_CommonMesh):
 
         print(" - Array sort {}s".format(perf_counter()-t))
 
+    def construct_natural_neighbour_cloud(self):
+        """
+        Find the natural neighbours for each node in the triangulation and store in a
+        numpy array for efficient lookup.
+        """
+
+        # # maximum size of nn array node-by-node (it's almost certainly +1 because
+        # # it is only +2 if the neighbours do not form a closed loop around the node)
+
+        # max_neighbours = np.bincount(self.tri.simplices.ravel(), minlength=self.npoints).max() + 2
+
+        # s = self.tri.simplices
+        # nns = -1 * np.ones((self.npoints, max_neighbours), dtype=int)
+        # nnm = np.zeros((self.npoints, max_neighbours), dtype=bool)
+        # nn  = np.empty((self.npoints), dtype=int)
+
+        # for node in range(0, self.npoints):
+        #     w = np.where(s==node)
+        #     l = np.unique(s[w[0]])
+        #     # l = np.roll(l,-np.argwhere(l == node)[0])
+        #     nn[node] = l.shape[0]
+        #     nns[node,0:nn[node]] = l
+        #     nnm[node,0:nn[node]] = True
+
+        # self.natural_neighbours       = nns
+        # self.natural_neighbours_count = nn
+        # self.natural_neighbours_mask   = nnm
+
+
+        
+        # Find all the segments in the triangulation and sort the array
+        # (note this differs from the stripy routine because is treates m-n and n-m as distinct)
+        
+
+        lst  = self.tri.lst
+        lend = self.tri.lend
+        lptr = self.tri.lptr
+
+        segments_array = np.empty((len(lptr),2),dtype=np.int)
+        segments_array[:,0] = np.abs(lst[:]) - 1
+        segments_array[:,1] = np.abs(lst[lptr[:]-1]) - 1
+        
+        valid = np.logical_and(segments_array[:,0] >= 0,  segments_array[:,1] >= 0)
+        segments = segments_array[valid,:]
+
+        deshuffled = self.tri._deshuffle_simplices(segments)
+        smsi = np.argsort(deshuffled[:,0])
+        sms  = np.zeros_like(deshuffled)
+        sms[np.indices((deshuffled.shape[0],)),:] = deshuffled[smsi,:]
+
+        nodes, natural_neighbours_count = np.unique(sms[:,0], return_counts=True)
+        iend = np.cumsum(natural_neighbours_count)
+        istart = np.zeros_like(iend)
+        istart[1:] = iend[:-1]
+
+        natural_neighbours = -1 * np.ones((self.npoints, natural_neighbours_count.max()+1), dtype=np.int)
+
+        for j in range(0,self.npoints):
+            natural_neighbours[j, 0] = j
+            natural_neighbours[j, 1:natural_neighbours_count[j]+1] = sms[istart[j]:istart[j]+natural_neighbours_count[j],1]
+
+        natural_neighbours_count += 1 
+
+        self.natural_neighbours       = natural_neighbours
+        self.natural_neighbours_count = natural_neighbours_count
+        self.natural_neighbours_mask  = natural_neighbours != -1
+
+        return
+
 
     def construct_neighbour_cloud(self, size=25):
         """
@@ -680,6 +755,67 @@ class sTriMesh(_CommonMesh):
 
         return vector
 
+    def build_rbf_smoother(self, delta, iterations=1):
+
+        trimesh_self = self
+
+        class _rbf_smoother_object(object):
+
+            def __init__(inner_self, delta, iterations=1):
+
+                if delta == None:
+                    delta = trimesh_self.neighbour_cloud_distances[:, 1].mean()  ## NOT IDEAL IN PARALLEL !!!
+
+                inner_self._mesh = trimesh_self
+                inner_self.delta = delta
+                inner_self.iterations = iterations
+                inner_self.gaussian_dist_w = inner_self._mesh._rbf_weights(delta)
+
+                return
+
+
+            def _apply_rbf_on_my_mesh(inner_self, lazyFn, iterations=1):
+                import quagmire
+
+                smooth_node_values = lazyFn.evaluate(inner_self._mesh)
+
+                for i in range(0, iterations):
+                    smooth_node_values = (smooth_node_values[inner_self._mesh.neighbour_cloud[:,:]] * inner_self.gaussian_dist_w[:,:]).sum(axis=1)
+                    smooth_node_values = inner_self._mesh.sync(smooth_node_values)
+
+                return smooth_node_values
+
+
+            def smooth_fn(inner_self, lazyFn, iterations=None):
+
+                if iterations is None:
+                        iterations = inner_self.iterations
+
+                def smoother_fn(*args, **kwargs):
+
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(lazyFn, iterations=iterations)
+
+                    if len(args) == 1 and args[0] == lazyFn._mesh:
+                        return smooth_node_values
+                    elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                        mesh = args[0]
+                        return inner_self._mesh.interpolate(lazyFn._mesh.coords[:,0], lazyFn._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                    else:
+                        xi = np.atleast_1d(args[0])
+                        yi = np.atleast_1d(args[1])
+                        i, e = inner_self._mesh.interpolate(xi, yi, zdata=smooth_node_values, **kwargs)
+                        return i
+
+
+                newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+                newLazyFn.evaluate = smoother_fn
+                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(lazyFn.description, inner_self.delta, iterations)
+
+                return newLazyFn
+
+        return _rbf_smoother_object(delta, iterations)
+
+
 
 
 def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
@@ -705,3 +841,4 @@ def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
     num = (r1**2*coslat)**2 + (r2**2*sinlat)**2
     den = (r1*coslat)**2 + (r2*sinlat)**2
     return np.sqrt(num/den)
+

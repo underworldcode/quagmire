@@ -771,14 +771,13 @@ class TopoMesh(object):
         for iteration in range(0,its):
             low_points = self.identify_low_points(ref_height=ref_height)
 
-
             h = self.topography.data
             delta_height = np.zeros_like(h)
 
             ## Note, the smoother has a communication barrier so needs to be called even if it has no work to do on this process
 
             if len(low_points) != 0:
-                delta_height[low_points] =  ((h[self.natural_neighbours[low_points]] * self.natural_neighbours_mask[low_points]).mean(axis=1) -
+                delta_height[low_points] =  ((h[self.natural_neighbours[low_points]] * self.natural_neighbours_mask[low_points]).max(axis=1) -
                                                          h[low_points])
             ## Note, the smoother has a communication barrier so needs to be called even
             ## if len(low_points==0) and there is no work to do on this process

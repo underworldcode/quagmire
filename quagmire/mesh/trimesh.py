@@ -391,27 +391,66 @@ class TriMesh(_CommonMesh):
         numpy array for efficient lookup.
         """
 
-        # maximum size of nn array node-by-node (it's almost certainly +1 because
-        # it is only +2 if the neighbours do not form a closed loop around the node)
+        # # maximum size of nn array node-by-node (it's almost certainly +1 because
+        # # it is only +2 if the neighbours do not form a closed loop around the node)
 
-        max_neighbours = np.bincount(self.tri.simplices.ravel(), minlength=self.npoints).max() + 2
+        # max_neighbours = np.bincount(self.tri.simplices.ravel(), minlength=self.npoints).max() + 2
 
-        s = self.tri.simplices
-        nns = -1 * np.ones((self.npoints, max_neighbours), dtype=int)
-        nnm = np.zeros((self.npoints, max_neighbours), dtype=bool)
-        nn  = np.empty((self.npoints), dtype=int)
+        # s = self.tri.simplices
+        # nns = -1 * np.ones((self.npoints, max_neighbours), dtype=int)
+        # nnm = np.zeros((self.npoints, max_neighbours), dtype=bool)
+        # nn  = np.empty((self.npoints), dtype=int)
 
-        for node in range(0, self.npoints):
-            w = np.where(s==node)
-            l = np.unique(s[w[0]])
-            l = np.roll(l,-np.argwhere(l == node)[0])
-            nn[node] = l.shape[0]
-            nns[node,0:nn[node]] = l
-            nnm[node,0:nn[node]] = True
+        # for node in range(0, self.npoints):
+        #     w = np.where(s==node)
+        #     l = np.unique(s[w[0]])
+        #     # l = np.roll(l,-np.argwhere(l == node)[0])
+        #     nn[node] = l.shape[0]
+        #     nns[node,0:nn[node]] = l
+        #     nnm[node,0:nn[node]] = True
 
-        self.natural_neighbours       = nns
-        self.natural_neighbours_count = nn
-        self.natural_neighbours_mask   = nnm
+        # self.natural_neighbours       = nns
+        # self.natural_neighbours_count = nn
+        # self.natural_neighbours_mask   = nnm
+
+
+        
+        # Find all the segments in the triangulation and sort the array
+        # (note this differs from the stripy routine because is treates m-n and n-m as distinct)
+        
+
+        lst  = self.tri.lst
+        lend = self.tri.lend
+        lptr = self.tri.lptr
+
+        segments_array = np.empty((len(lptr),2),dtype=np.int)
+        segments_array[:,0] = np.abs(lst[:]) - 1
+        segments_array[:,1] = np.abs(lst[lptr[:]-1]) - 1
+        
+        valid = np.logical_and(segments_array[:,0] >= 0,  segments_array[:,1] >= 0)
+        segments = segments_array[valid,:]
+
+        deshuffled = self.tri._deshuffle_simplices(segments)
+        smsi = np.argsort(deshuffled[:,0])
+        sms  = np.zeros_like(deshuffled)
+        sms[np.indices((deshuffled.shape[0],)),:] = deshuffled[smsi,:]
+
+        nodes, natural_neighbours_count = np.unique(sms[:,0], return_counts=True)
+        iend = np.cumsum(natural_neighbours_count)
+        istart = np.zeros_like(iend)
+        istart[1:] = iend[:-1]
+
+        natural_neighbours = -1 * np.ones((self.npoints, natural_neighbours_count.max()+1), dtype=np.int)
+
+        for j in range(0,self.npoints):
+            natural_neighbours[j, 0] = j
+            natural_neighbours[j, 1:natural_neighbours_count[j]+1] = sms[istart[j]:istart[j]+natural_neighbours_count[j],1]
+
+        natural_neighbours_count += 1 
+
+        self.natural_neighbours       = natural_neighbours
+        self.natural_neighbours_count = natural_neighbours_count
+        self.natural_neighbours_mask  = natural_neighbours != -1
 
         return
 
@@ -707,7 +746,7 @@ class TriMesh(_CommonMesh):
             def __init__(inner_self, delta, iterations=1):
 
                 if delta == None:
-                    delta = trimesh_self.neighbour_cloud_distances[:, 1].mean()  ## NOT SAFE IN PARALLEL !!!
+                    delta = trimesh_self.neighbour_cloud_distances[:, 1].mean()  ## NOT IDEAL IN PARALLEL !!!
 
                 inner_self._mesh = trimesh_self
                 inner_self.delta = delta
