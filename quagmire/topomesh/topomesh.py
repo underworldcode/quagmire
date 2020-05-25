@@ -776,9 +776,11 @@ class TopoMesh(object):
 
             ## Note, the smoother has a communication barrier so needs to be called even if it has no work to do on this process
 
-            if len(low_points) != 0:
-                delta_height[low_points] =  ((h[self.natural_neighbours[low_points]] * self.natural_neighbours_mask[low_points]).max(axis=1) -
-                                                         h[low_points])
+            for i in low_points:
+                delta_height[i] =  ( 0.75 * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).min() +
+                                     0.25 * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).max() 
+                                              - h[i] )
+
             ## Note, the smoother has a communication barrier so needs to be called even
             ## if len(low_points==0) and there is no work to do on this process
             smoothed_height = h + self.rbf_smoother(delta_height, iterations=smoothing_steps)
