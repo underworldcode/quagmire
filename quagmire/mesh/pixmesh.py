@@ -177,8 +177,15 @@ class PixMesh(_CommonMesh):
         t = perf_counter()
         self.construct_neighbour_cloud()
         self.timings['construct neighbour cloud'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.rank == 0 and self.verbose:
-            print("{} - Construct neighbour cloud array {}s".format(self.dm.comm.rank, perf_counter()-t))
+
+        t1 = perf_counter()
+        self.construct_natural_neighbour_cloud()
+        self.timings['construct natural neighbour cloud'] = [perf_counter()-t1, self.log.getCPUTime(), self.log.getFlops()]
+ 
+        if self.rank==0 and self.verbose:
+            print("{} - Construct neighbour cloud arrays {}s, ({}s + {}s)".format(self.dm.comm.rank,  perf_counter()-t,
+                                                                                self.timings['construct neighbour cloud'][0],
+                                                                                self.timings['construct natural neighbour cloud'][0]  ))
 
 
         # RBF smoothing operator
@@ -248,77 +255,6 @@ class PixMesh(_CommonMesh):
 
         return u_xx + u_yy
 
-    def construct_neighbours(self):
-        """
-        Find neighbours from edges and store as CSR coordinates.
-
-        This allows you to directly ask the neighbours for a given node a la Qhull,
-        or efficiently construct a sparse matrix (PETSc/SciPy)
-
-        Notes
-        -----
-        This method searches only for immediate note neighbours that are connected
-        by a line segment.
-        """
-
-        nx, ny = self.nx, self.ny
-        n = self.npoints
-        nodes = np.arange(0, n, dtype=PETSc.IntType)
-
-        index = np.empty((ny+2, nx+2), dtype=PETSc.IntType)
-        index.fill(-1)
-        index[1:-1,1:-1] = nodes.reshape(ny,nx)
-
-        closure = [(0,-2), (1,-1), (2,0), (1,-1), (1,-1)]
-        # closure = [(0,-2),(0,-2),(2,0),(2,0),(0,-2),(1,-1),(2,0),(1,-1),(1,-1)]
-        nc = len(closure)
-
-        rows = np.empty((nc,n), dtype=PETSc.IntType)
-        cols = np.empty((nc,n), dtype=PETSc.IntType)
-        vals = np.empty((nc,n))
-
-        for i in range(0,nc):
-            rs, re = closure[i]
-            cs, ce = closure[-1+i]
-
-            rows[i] = nodes
-            cols[i] = index[rs:ny+re+2,cs:nx+ce+2].ravel()
-
-        row = rows.ravel()
-        col = cols.ravel()
-
-        # sort by row
-        sort = row.argsort()
-        row = row[sort]
-        col = col[sort]
-
-
-        mask = col > -1
-
-        # Save 5 point neighbour stencil
-        # self.neighbour_block = np.ma.array(col.reshape(-1,nc), mask=~mask)
-
-        # mask off-grid entries
-        row = row[mask]
-        col = col[mask]
-
-
-        nnz = np.bincount(row) # number of nonzeros
-        indptr = np.insert(np.cumsum(nnz),0,0)
-
-        self.vertex_neighbours = nnz.astype(PETSc.IntType)
-        self.vertex_neighbour_vertices = indptr, col
-
-
-        # We may not need this, but constuct anyway for now!
-        closed_neighbours = [[]]*self.npoints
-
-        for i in range(0,indptr.size-1):
-            start, end = indptr[i], indptr[i+1]
-            closed_neighbours[i] = np.array(col[start:end])
-
-        self.neighbour_array = np.array(closed_neighbours)
-
 
     def sort_nodes_by_field2(self, field):
         """
@@ -358,8 +294,19 @@ class PixMesh(_CommonMesh):
         """
         Find neighbours from distance cKDTree.
 
-        """
+        Parameters
+        ----------
+        size : int
+            Number of neighbours to search for
 
+        Notes
+        -----
+        Use this method to search for neighbours that are not
+        necessarily immediate node neighbours (i.e. neighbours
+        connected by a line segment). Extended node neighbours
+        should be captured by the search depending on how large
+        `size` is set to.
+        """
         nndist, nncloud = self.cKDTree.query(self.coords, k=size)
 
         self.neighbour_cloud = nncloud
@@ -376,42 +323,12 @@ class PixMesh(_CommonMesh):
         self.near_neighbours = neighbours + 2
         self.extended_neighbours = np.full_like(neighbours, size)
 
-        self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+        # self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
 
-        for node in range(0,self.npoints):
-            self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+        # for node in range(0,self.npoints):
+        #     self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
 
         return
-
-    def _build_smoothing_matrix(self):
-
-        indptr, indices = self.vertex_neighbour_vertices
-        weight  = np.ones(self.npoints)*(self.area*4)
-        nweight = weight[indices]
-
-        lgmask = self.lgmap_row.indices >= 0
-
-
-        nnz = self.vertex_neighbours[lgmask] + 1
-
-
-        smoothMat = PETSc.Mat().create(comm=self.dm.comm)
-        smoothMat.setType('aij')
-        smoothMat.setSizes(self.sizes)
-        smoothMat.setLGMap(self.lgmap_row, self.lgmap_col)
-        smoothMat.setFromOptions()
-        smoothMat.setPreallocationNNZ(nnz)
-
-        # read in data
-        smoothMat.setValuesLocalCSR(indptr.astype(PETSc.IntType), indices.astype(PETSc.IntType), nweight)
-        # self.lvec.setArray(weight)
-        # self.dm.localToGlobal(self.lvec, self.gvec)
-        # smoothMat.setDiagonal(self.gvec)
-
-        smoothMat.assemblyBegin()
-        smoothMat.assemblyEnd()
-
-        self.localSmoothMat = smoothMat
 
 
     def local_area_smoothing(self, data, its=1, centre_weight=0.75):
@@ -441,7 +358,6 @@ class PixMesh(_CommonMesh):
             smooth_data_old[:] = smooth_data
             smooth_data = centre_weight*smooth_data_old + \
                           (1.0 - centre_weight)*self.rbf_smoother(smooth_data)
-            smooth_data[:] = self.sync(smooth_data)
 
         return smooth_data
 
@@ -523,3 +439,67 @@ class PixMesh(_CommonMesh):
             vector = self.sync(vector_smoothed)
 
         return vector
+
+
+    def build_rbf_smoother(self, delta, iterations=1):
+
+        pixmesh_self = self
+
+        class _rbf_smoother_object(object):
+
+            def __init__(inner_self, delta, iterations=1):
+
+                if delta == None:
+                    pixmesh_self.lvec.setArray(pixmesh_self.neighbour_cloud_distances[:, 1])
+                    pixmesh_self.dm.localToGlobal(pixmesh_self.lvec, pixmesh_self.gvec)
+                    delta = pixmesh_self.gvec.sum() / pixmesh_self.gvec.getSize()
+
+                inner_self._mesh = pixmesh_self
+                inner_self.delta = delta
+                inner_self.iterations = iterations
+                inner_self.gaussian_dist_w = inner_self._mesh._rbf_weights(delta)
+
+                return
+
+
+            def _apply_rbf_on_my_mesh(inner_self, lazyFn, iterations=1):
+                import quagmire
+
+                smooth_node_values = lazyFn.evaluate(inner_self._mesh)
+
+                for i in range(0, iterations):
+                    smooth_node_values = (smooth_node_values[inner_self._mesh.neighbour_cloud[:,:]] * inner_self.gaussian_dist_w[:,:]).sum(axis=1)
+                    smooth_node_values = inner_self._mesh.sync(smooth_node_values)
+
+                return smooth_node_values
+
+
+            def smooth_fn(inner_self, lazyFn, iterations=None):
+
+                if iterations is None:
+                        iterations = inner_self.iterations
+
+                def smoother_fn(*args, **kwargs):
+                    import quagmire
+
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(lazyFn, iterations=iterations)
+
+                    if len(args) == 1 and args[0] == lazyFn._mesh:
+                        return smooth_node_values
+                    elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
+                        mesh = args[0]
+                        return inner_self._mesh.interpolate(lazyFn._mesh.coords[:,0], lazyFn._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                    else:
+                        xi = np.atleast_1d(args[0])
+                        yi = np.atleast_1d(args[1])
+                        i, e = inner_self._mesh.interpolate(xi, yi, zdata=smooth_node_values, **kwargs)
+                        return i
+
+
+                newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+                newLazyFn.evaluate = smoother_fn
+                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(lazyFn.description, inner_self.delta, iterations)
+
+                return newLazyFn
+
+        return _rbf_smoother_object(delta, iterations)
