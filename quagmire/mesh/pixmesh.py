@@ -290,6 +290,43 @@ class PixMesh(_CommonMesh):
         self.neighbour_array_l2h = neighbour_array_l2h
 
 
+    def construct_natural_neighbour_cloud(self):
+        """
+        Find the natural neighbours for each node in the triangulation and store in a
+        numpy array for efficient lookup.
+        """
+
+        natural_neighbours = np.empty((self.npoints, 9), dtype=np.int)
+        nodes = np.arange(0, self.npoints, dtype=np.int).reshape(self.ny,self.nx)
+        index = np.pad(nodes, (1,1), constant_values=-1)
+
+
+        natural_neighbours[:,0] = index[1:-1,1:-1].flat  # self
+        natural_neighbours[:,1] = index[2:,  1:-1].flat  # right
+        natural_neighbours[:,2] = index[1:-1, :-2].flat  # bottom
+        natural_neighbours[:,3] = index[0:-2,1:-1].flat  # left
+        natural_neighbours[:,4] = index[1:-1,2:  ].flat  # top
+        natural_neighbours[:,5] = index[2:  ,2:  ].flat  # top right
+        natural_neighbours[:,6] = index[2:  , :-2].flat  # bottom right
+        natural_neighbours[:,7] = index[ :-2, :-2].flat  # bottom left
+        natural_neighbours[:,8] = index[ :-2,2:  ].flat  # top left
+
+        # shuffle -1 entries to the end
+        natural_neighbour_mask = natural_neighbours != -1
+        natural_neighbours_count = np.count_nonzero(natural_neighbour_mask, axis=1)
+
+        for i in range(0, self.npoints):
+            nnc = natural_neighbours_count[i]
+            nnm = natural_neighbour_mask[i]
+
+            natural_neighbours[i,:nnc], natural_neighbours[i,nnc:] = natural_neighbours[i,nnm], natural_neighbours[i,~nnm]
+
+
+        self.natural_neighbours       = natural_neighbours
+        self.natural_neighbours_count = natural_neighbours_count
+        self.natural_neighbours_mask  = natural_neighbours != -1
+
+
     def construct_neighbour_cloud(self, size=25):
         """
         Find neighbours from distance cKDTree.
