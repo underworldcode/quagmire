@@ -416,7 +416,7 @@ class TopoMesh(object):
     def cumulative_flow(self, vector, *args, **kwargs):
 
 
-        niter, cumulative_flow_vector = self._cumulative_flow_verbose(vector, **kwargs)
+        niter, cumulative_flow_vector = self._cumulative_flow_verbose(vector, *args, **kwargs)
         return cumulative_flow_vector
 
 
@@ -822,8 +822,159 @@ class TopoMesh(object):
 
         return
 
+    def low_points_swamp_fill(self, its=1000, saddles=None, ref_height=0.0, ref_gradient=0.001):
 
-    def low_points_swamp_fill(self, its=1000, saddles=True, ref_height=0.0, ref_gradient=0.001):
+        import petsc4py
+        from petsc4py import PETSc
+        from mpi4py import MPI
+
+        comm = MPI.COMM_WORLD
+        size = comm.Get_size()
+        rank = comm.Get_rank()
+
+        t0 = perf_counter()
+
+        # I'm not sure the two ref_height values really refer to the same quantity 
+        # and perhaps should be separated out 
+
+        my_low_points = self.identify_low_points(ref_height=ref_height)
+        my_glow_points = self.lgmap_row.apply(my_low_points.astype(PETSc.IntType))
+
+        t = perf_counter()
+        ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
+
+        height = self.topography.data.copy()
+
+        if self.rank==0 and self.verbose:
+            print("Build low point catchments - ", perf_counter() - t, " seconds")
+
+        # if saddles:  
+        #     # Find saddle points on the catchment edge - catchment detection is via down-neighbour 1,
+        #     # so neighbour 2 (or 3) is the earliest detection opportunity for a spill
+
+        #     cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
+        #     try:
+        #         cedges3 = np.where(ctmt[self.down_neighbour[3]] != ctmt )[0] ## local numbering
+        #         cedges = np.unique(np.hstack((cedges,cedges3)))
+        #     except:
+        #         pass
+
+        # else:    
+        #     
+
+# Possible problem - low point that should flow out the side of the domain boundary. 
+
+        # Find all catchment-edge points (mix of catchments in the natural neighbours)
+        ctmt2 = (ctmt[self.natural_neighbours] - ctmt.reshape(-1,1)) * (self.natural_neighbours_mask)
+
+        # filter out points that whose other-catchment neighbours are not lower
+        dh = (height[self.natural_neighbours] - height.reshape(-1,1)) * (self.natural_neighbours_mask)
+
+        ctmt3 = ctmt2 * (dh < 0.0)
+        cedges = np.where(ctmt3.any(axis=1))[0]
+
+        outer_edges = np.where(~self.bmask)[0]
+        edges = np.unique(np.hstack((cedges,outer_edges)))
+
+        ## In parallel this is all the low points where this process may have a spill-point
+        my_catchments = np.unique(ctmt)
+
+        spills = np.empty((edges.shape[0]),
+                         dtype=np.dtype([('c', int), ('h', float), ('x', float), ('y', float)]))
+
+        ii = 0
+        for l, this_low in enumerate(my_catchments):
+            this_low_spills = edges[np.where(ctmt[edges] == this_low)]  ## local numbering
+
+            for spill in this_low_spills:
+                spills['c'][ii] = this_low
+                spills['h'][ii] = height[spill]
+                spills['x'][ii] = self.coords[spill,0]
+                spills['y'][ii] = self.coords[spill,1]
+                ii += 1
+
+        t = perf_counter()
+
+        spills.sort(axis=0)  # Sorts by catchment then height ...
+        s, indices = np.unique(spills['c'], return_index=True)
+        spill_points = spills[indices]
+
+        if self.rank == 0 and self.verbose:
+            print(self.rank, " Sort spills - ", perf_counter() - t)
+
+        # Gather lists to process 0, stack and remove duplicates
+
+        t = perf_counter()
+        list_of_spills = comm.gather(spill_points,   root=0)
+
+        if self.rank == 0 and self.verbose:
+            print(self.rank, " Gather spill data - ", perf_counter() - t)
+
+        if self.rank == 0:
+            t = perf_counter()
+
+            all_spills = np.hstack(list_of_spills)
+            all_spills.sort(axis=0) # Sorts by catchment then height ...
+            s, indices = np.unique(all_spills['c'], return_index=True)
+            all_spill_points = all_spills[indices]
+
+            if self.verbose:
+                print(rank, " Sort all spills - ", perf_counter() - t)
+
+        else:
+            all_spill_points = None
+            pass
+
+        # Broadcast lists to everyone
+
+        global_spill_points = comm.bcast(all_spill_points, root=0)
+
+        height2 = np.zeros_like(height) 
+
+        for i, spill in enumerate(global_spill_points):
+            this_catchment = int(spill['c'])
+
+            ## -ve values indicate that the point is connected
+            ## to the outflow of the mesh and needs no modification
+            if this_catchment < 0:
+                continue
+
+            catchment_nodes = np.where(ctmt == this_catchment)
+            separation_x = (self.coords[catchment_nodes,0] - spill['x'])
+            separation_y = (self.coords[catchment_nodes,1] - spill['y'])
+            distance = np.hypot(separation_x, separation_y)
+
+            ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
+            height2[catchment_nodes] = spill['h'] + ref_gradient * distance  # A 'small' gradient (should be a user-parameter)
+
+        height2 = self.sync(height2)
+
+        new_height = np.maximum(height, height2)
+        new_height = self.sync(new_height)
+
+
+        # We only need to update the height not all
+        # surface process information that is associated with it.
+        self.topography.unlock()
+        self.topography.data = new_height
+        self._update_height()
+        self.topography.lock()
+
+
+        if self.rank==0 and self.verbose:
+            print("Low point swamp fill ",  perf_counter()-t0, " seconds")
+
+        ## but now we need to rebuild the surface process information
+        self._update_height_for_surface_flows()
+        return
+
+
+
+
+    def low_points_swamp_fill_outdated(self, its=1000, saddles=True, ref_height=0.0, ref_gradient=0.001):
+
+        if self.downhill_neighbours < 2 and saddles:
+            raise ValueError("Set downhill_neighbours >= 2 to use swamp filling algorithm with saddle point detection.")
 
         import petsc4py
         from petsc4py import PETSc
@@ -851,11 +1002,9 @@ class TopoMesh(object):
                      # so neighbour 2 (or 3) is the earliest detection opportunity for a spill
 
             cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
-            try:
+            if self.downhill_neighbours >= 3:
                 cedges3 = np.where(ctmt[self.down_neighbour[3]] != ctmt )[0] ## local numbering
                 cedges = np.unique(np.hstack((cedges,cedges3)))
-            except:
-                pass
 
         else:        # Find all edge points (this does not seem to work in most cases ... why not ?)
             ctmt2 = ctmt[self.neighbour_cloud] - ctmt.reshape(-1,1)
@@ -1012,25 +1161,32 @@ class TopoMesh(object):
         delta.abs()
         rtolerance = delta.max()[1] * 1.0e-10
 
+        uphill_matrix = self.uphill[1]
+        gvec  = self.gvec
+        delta = gvec.duplicate()
+
         for p in range(0, its):
 
             # self.adjacency[1].multTranspose(global_ID, self.gvec)
-            gvec = self.uphill[1] * global_ID
-            delta = global_ID - gvec
+            uphill_matrix.mult(global_ID, gvec)
+            # delta = global_ID - gvec
+            delta.setArray(gvec)
+            delta.axpy(-1.0, global_ID)
             delta.abs()
             max_delta = delta.max()[1]
 
             if max_delta < rtolerance:
                 break
 
-            self.gvec.scale(scale)
+            if scale != 1.0:
+                gvec.scale(scale)
 
             if self.dm.comm.Get_size() == 1:
-                local_ID.array[:] = gvec.array[:]
+                local_ID.setArray(gvec)
             else:
                 self.dm.globalToLocal(gvec, local_ID)
 
-            global_ID.array[:] = gvec.array[:]
+            global_ID.setArray(gvec)
 
             identifier = np.maximum(identifier, local_ID.array)
             identifier = self.sync(identifier)
@@ -1079,9 +1235,7 @@ class TopoMesh(object):
         size = comm.Get_size()
         rank = comm.Get_rank()
 
-        # from petsc4py import PETSc
-
-        nodes = np.arange(0, self.npoints, dtype=np.int)
+        nodes = np.arange(0, self.npoints, dtype=PETSc.IntType)
         gnodes = self.lgmap_row.apply(nodes.astype(PETSc.IntType))
 
         low_nodes = self.down_neighbour[1]
@@ -1089,20 +1243,12 @@ class TopoMesh(object):
         mask = np.logical_and(mask, self.topography.data > ref_height)
         mask = np.logical_and(mask, gnodes >= 0)
 
-        number_of_lows = np.count_nonzero(mask)
+        number_of_lows  = np.array(np.count_nonzero(mask), dtype=PETSc.IntType)
         low_gnodes = self.lgmap_row.apply(low_nodes.astype(PETSc.IntType))
 
-        # gather/scatter numbers
-
-        list_of_nlows  = comm.gather(number_of_lows,   root=0)
-        if self.rank == 0:
-            all_low_counts = np.hstack(list_of_nlows)
-            no_global_lows0 = all_low_counts.sum()
-
-        else:
-            no_global_lows0 = None
-
-        no_global_lows = comm.bcast(no_global_lows0, root=0)
+        # MPI sum operation
+        no_global_lows = np.array(0, dtype=PETSc.IntType)
+        comm.Allreduce([number_of_lows, MPI.INT], [no_global_lows, MPI.INT], op=MPI.SUM)
 
 
         if global_array:
