@@ -543,12 +543,12 @@ class sTriMesh(_CommonMesh):
         sms  = np.zeros_like(deshuffled)
         sms[np.indices((deshuffled.shape[0],)),:] = deshuffled[smsi,:]
 
-        nodes, natural_neighbours_count = np.unique(sms[:,0], return_counts=True)
+        natural_neighbours_count = np.bincount(sms[:,0])
         iend = np.cumsum(natural_neighbours_count)
         istart = np.zeros_like(iend)
         istart[1:] = iend[:-1]
 
-        natural_neighbours = -1 * np.ones((self.npoints, natural_neighbours_count.max()+1), dtype=np.int)
+        natural_neighbours = np.full((self.npoints, natural_neighbours_count.max()+1), -1, dtype=np.int)
 
         for j in range(0,self.npoints):
             natural_neighbours[j, 0] = j
