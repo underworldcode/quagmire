@@ -585,6 +585,7 @@ def refine_DM(dm, refinement_levels=1):
     For each step, the midpoint of every line segment is added
     to the DM.
     """
+    from stripy.spherical import lonlat2xyz, xyz2lonlat
 
     for i in range(0, refinement_levels):
         dm = dm.refine()
@@ -594,6 +595,32 @@ def refine_DM(dm, refinement_levels=1):
     origSect.setFieldName(0, "points")
     origSect.setUp()
     dm.setDefaultSection(origSect)
+
+
+    # puff refined vertices to unit sphere
+    # but first we need to check if the DM is spherical
+    if refinement_levels > 0:
+
+        nlabels = dm.getNumLabels()
+        is_spherical = False
+        for i in range(0, nlabels):
+            if dm.getLabelName(i) == "sTriMesh":
+                is_spherical = True
+                break
+
+        if is_spherical:
+            # get coordinate array from DM
+            global_coord_vec = dm.getCoordinates()
+            global_coords = global_coord_vec.array.reshape(-1,3)
+
+            # xyz - lonlat - xyz conversion
+            lon, lat = xyz2lonlat(global_coords[:,0], global_coords[:,1], global_coords[:,2])
+            xs,ys,zs = lonlat2xyz(lon, lat)
+
+            # set puffed coordinate array to DM
+            global_puffed_coords = _np.column_stack([xs,ys,zs])
+            global_coord_vec.setArray(global_puffed_coords.ravel())
+            dm.setCoordinates(global_coord_vec)
 
     return dm
 
