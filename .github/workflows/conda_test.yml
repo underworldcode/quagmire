@@ -1,4 +1,4 @@
-name: Conda Deployment 
+name: Unit testing with Conda
 
 on:
   push
@@ -26,23 +26,23 @@ jobs:
         if: matrix.os == 'macos-latest' 
         shell: bash -l {0}
         run: |
-          conda install pip
           # conda install conda-build anaconda-client
           conda install -c underworldcode petsc
           conda install -c underworldcode petsc4py mpi4py h5py stripy
           conda install -c conda-forge numpy scipy sympy
           conda install -c conda-forge pint
+          conda install pip
           conda install pytest
       - name: Install dependencies with conda
         if: matrix.os == 'ubuntu-latest' 
         shell: bash -l {0}
         run: |
-          conda install pip 
           # conda install conda-build anaconda-client
           conda install -c underworldcode petsc
           conda install -c underworldcode petsc4py mpi4py h5py stripy
           conda install -c conda-forge numpy scipy sympy
           conda install -c conda-forge pint
+          conda install pip 
           conda install pytest
       - name: Install (self)
         shell: bash -l {0}
