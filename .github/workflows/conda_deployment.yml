@@ -1,9 +1,7 @@
 name: Conda Deployment 
 
 on:
-  push:
-    branches: 
-      - conda_deploy
+  push
     
 jobs:
   macos:
