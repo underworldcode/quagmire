@@ -143,13 +143,7 @@ def test_mesh_save_to_hdf5(load_triangulated_mesh):
     DM = meshtools.create_DMPlex(x, y, simplices)
 
     # save to hdf5 file
-    try:
-        meshtools.save_DM_to_hdf5(DM, "test_mesh.h5")
-
-    # TODO: This is  an installation problem we
-    # ought to catch elsewhere 
-    except petsc4py.PETSc.Error:
-        print("This error means that PETSc was not installed with hdf5")
+    meshtools.save_DM_to_hdf5(DM, "test_mesh.h5")
 
 
 # This fails in conda (we need our own PETSc build with hdf5)
@@ -158,14 +152,9 @@ def test_mesh_load_from_hdf5():
     from quagmire import QuagMesh
     import petsc4py
 
-    try:
-        DM = meshtools.create_DMPlex_from_hdf5("test_mesh.h5")
+    DM = meshtools.create_DMPlex_from_hdf5("test_mesh.h5")
 
-    except petsc4py.PETSc.Error:
-        print("This error means that PETSc was not installed with hdf5")
-    
-    else:
-        mesh = QuagMesh(DM)
-        assert mesh.npoints > 0, "mesh could not be successfully loaded"
+    mesh = QuagMesh(DM)
+    assert mesh.npoints > 0, "mesh could not be successfully loaded"
 
  
