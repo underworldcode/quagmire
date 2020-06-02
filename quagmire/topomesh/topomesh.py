@@ -943,6 +943,7 @@ class TopoMesh(object):
             separation_x = (self.coords[catchment_nodes,0] - spill['x'])
             separation_y = (self.coords[catchment_nodes,1] - spill['y'])
             distance = np.hypot(separation_x, separation_y)
+            fluctuation = ref_gradient * distance.mean() * np.random.random(size=distance.shape)  # how does this work in the shadows ?
 
             ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
             height2[catchment_nodes] = spill['h'] + ref_gradient * distance  # A 'small' gradient (should be a user-parameter)
@@ -952,7 +953,6 @@ class TopoMesh(object):
         new_height = np.maximum(height, height2)
         new_height = self.sync(new_height)
 
-
         # We only need to update the height not all
         # surface process information that is associated with it.
         self.topography.unlock()
@@ -960,15 +960,12 @@ class TopoMesh(object):
         self._update_height()
         self.topography.lock()
 
-
         if self.rank==0 and self.verbose:
             print("Low point swamp fill ",  perf_counter()-t0, " seconds")
 
         ## but now we need to rebuild the surface process information
         self._update_height_for_surface_flows()
         return
-
-
 
 
     def low_points_swamp_fill_outdated(self, its=1000, saddles=True, ref_height=0.0, ref_gradient=0.001):
