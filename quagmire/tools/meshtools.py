@@ -412,13 +412,12 @@ def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     -------
     DM : PETSc DMDA object
     """
+    assert(maxX > minX), """maxX ({0}) must be greater than minX ({1})""".format(maxX, minX)
+    assert(maxY > minY), """maxY ({0}) must be greater than minY ({1})""".format(maxY, minY)
+    assert(resX > 0), """resX must be positive"""
+    assert(resY > 0), """resY must be positive"""
+    
     from petsc4py import PETSc
-
-    dx = (maxX - minX)/resX
-    dy = (maxY - minY)/resY
-
-    if dx != dy:
-        raise ValueError("Spacing must be uniform in x and y directions [{:.4f}, {:.4f}]".format(dx,dy))
 
     dim = 2
     dm = PETSc.DMDA().create(dim, sizes=(resX, resY), stencil_width=1)

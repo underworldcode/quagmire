@@ -1,8 +1,9 @@
-name: Unit testing with Conda
+name: Conda Deployment 
 
 on:
-  push
-
+  release:
+    types: [created, edited]
+    
 jobs:
 
   conda_build_test:
@@ -19,18 +20,11 @@ jobs:
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
-          activate-environment: foo
       - name: Conda Upload
         shell: bash -l {0}
         run: |
-          conda config --add channels conda-forge
-          conda config --add channels underworldcode
-          conda install petsc4py mpi4py compilers
-          conda install stripy h5py sympy pint
-      - name: Test quagmire
-        shell: bash -l {0}
-        run: |
-          conda install pytest
-          conda install pip
-          pip install -e .
-          python -m pytest -v
+            conda install --channel conda-forge conda-build anaconda-client conda-verify
+            conda config --set anaconda_upload yes
+            anaconda login --hostname github-actions-${{ matrix.os  }}-$RANDOM --username ${{ secrets.ANACONDA_USERNAME }} --password ${{ secrets.ANACONDA_PASSWORD }}
+            conda-build --channel conda-forge --user underworldcode conda
+            anaconda logout

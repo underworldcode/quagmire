@@ -5,6 +5,7 @@ import numpy.testing as npt
 import quagmire
 from quagmire.tools import meshtools
 from mpi4py import MPI
+from petsc4py import PETSc
 comm = MPI.COMM_WORLD
 
 from conftest import load_triangulated_mesh
@@ -133,6 +134,30 @@ def test_mesh_improvement(load_triangulated_mesh):
 
 # This fails in conda (there is no PETSc build with hdf5)
 
+def test_petsc_save_hdf5():
+    dm = PETSc.DMDA().create(2, sizes=(10, 10), stencil_width=1)
+    ViewHDF5 = PETSc.Viewer()
+    ViewHDF5.createHDF5('test.h5', mode='w')
+    ViewHDF5.view(obj=dm)
+    ViewHDF5 = None
+
+def test_dmplex_save_hdf5():
+    DIM = 2
+    CELLS = [[0, 1, 3], [1, 3, 4], [1, 2, 4], [2, 4, 5],
+             [3, 4, 6], [4, 6, 7], [4, 5, 7], [5, 7, 8]]
+    COORDS = [[0.0, 0.0], [0.5, 0.0], [1.0, 0.0],
+              [0.0, 0.5], [0.5, 0.5], [1.0, 0.5],
+              [0.0, 1.0], [0.5, 1.0], [1.0, 1.0]]
+    DOFS = [1, 0, 0]
+
+
+    dm = PETSc.DMPlex().createFromCellList(DIM, CELLS, COORDS)
+
+    ViewHDF5 = PETSc.Viewer()
+    ViewHDF5.createHDF5('test.h5', mode='w')
+    ViewHDF5.view(obj=dm)
+    ViewHDF5 = None
+
 def test_mesh_save_to_hdf5(load_triangulated_mesh):
     import petsc4py
 
@@ -140,10 +165,14 @@ def test_mesh_save_to_hdf5(load_triangulated_mesh):
     y = load_triangulated_mesh['y']
     simplices = load_triangulated_mesh['simplices']
 
-    DM = meshtools.create_DMPlex(x, y, simplices)
+    dm = meshtools.create_DMPlex(x, y, simplices)
 
     # save to hdf5 file
-    meshtools.save_DM_to_hdf5(DM, "test_mesh.h5")
+    #meshtools.save_DM_to_hdf5(DM, "test_mesh.h5")
+    ViewHDF5 = PETSc.Viewer()
+    ViewHDF5.createHDF5('test.h5', mode='w')
+    ViewHDF5.view(obj=dm)
+    ViewHDF5 = None
 
 
 # This fails in conda (we need our own PETSc build with hdf5)

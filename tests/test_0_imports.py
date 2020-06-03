@@ -22,6 +22,9 @@ def test_pint_import():
     import pint
     return
 
+def test_h5py_import():
+    import h5py
+
 def test_stripy_import():
     import stripy
     from stripy import spherical_meshes
