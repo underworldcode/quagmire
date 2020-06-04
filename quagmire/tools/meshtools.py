@@ -166,9 +166,9 @@ def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_level
     Parameters
     ----------
     lons : array of floats, shape (n,)
-        longitudinal coordinates in radians
+        longitudinal coordinates in degrees
     lats : array of floats, shape (n,)
-        latitudinal coordinates in radians
+        latitudinal coordinates in degrees
     bmask : array of bools, shape (n,)
         boundary mask where points along the boundary
         equal False, and the interior equal True
@@ -190,7 +190,10 @@ def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_level
     """
     from stripy import sTriangulation
 
-    tri = sTriangulation(lons, lats, permute=True)
+    rlons = _np.radians(lons)
+    rlats = _np.radians(lats)
+
+    tri = sTriangulation(rlons, rlats, permute=True)
 
     if bmask is None:
         boundary_vertices = find_boundary_segments(tri.simplices)
@@ -536,9 +539,9 @@ def create_spherical_DMPlex(lons, lats, simplices, boundary_vertices=None, refin
     Parameters
     ----------
     lons : array of floats shape (n,)
-        longitudinal coordinates
+        longitudinal coordinates in degrees
     lats : array of floats shape (n,)
-        latitudinal coordinates
+        latitudinal coordinates in degrees
     simplices : connectivity of the mesh
     boundary_vertices : array of ints, shape(l,2)
         (optional) boundary edges
@@ -549,8 +552,11 @@ def create_spherical_DMPlex(lons, lats, simplices, boundary_vertices=None, refin
     """
     from stripy.spherical import lonlat2xyz
 
+    rlons = _np.radians(lons)
+    rlats = _np.radians(lats)
+
     # convert to xyz to construct the DM
-    x,y,z = lonlat2xyz(lons, lats)
+    x,y,z = lonlat2xyz(rlons, rlats)
     points = _np.c_[x,y,z]
 
     # PETSc's markBoundaryFaces routine cannot detect boundary segments
