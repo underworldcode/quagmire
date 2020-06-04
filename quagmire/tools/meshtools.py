@@ -412,8 +412,8 @@ def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     -------
     DM : PETSc DMDA object
     """
-    assert(minX > maxX), """maxX ({0}) must be greater than minX ({1})""".format(maxX, minX)
-    assert(minY > maxY), """maxY ({0}) must be greater than minY ({1})""".format(maxY, minY)
+    assert(maxX > minX), """maxX ({0}) must be greater than minX ({1})""".format(maxX, minX)
+    assert(maxY > minY), """maxY ({0}) must be greater than minY ({1})""".format(maxY, minY)
     assert(resX > 0), """resX must be positive"""
     assert(resY > 0), """resY must be positive"""
     
