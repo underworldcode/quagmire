@@ -38,8 +38,11 @@ def load_triangulated_spherical_mesh():
     # construct a spherical stripy mesh
     sm = stripy.spherical_meshes.icosahedral_mesh(refinement_levels=3)
 
+    lons = np.degrees(sm.lons)
+    lats = np.degrees(sm.lats)
+
     # return as a dictionary
-    mesh_dict = {'lons': sm.lons, 'lats': sm.lats, 'simplices': sm.simplices}
+    mesh_dict = {'lons': lons, 'lats': lats, 'simplices': sm.simplices}
     return mesh_dict
 
 
@@ -50,7 +53,10 @@ def load_triangulated_spherical_mesh_DM():
     # construct a spherical stripy mesh
     sm = stripy.spherical_meshes.icosahedral_mesh(refinement_levels=3)
 
-    return meshtools.create_spherical_DMPlex(sm.lons, sm.lats, sm.simplices)
+    lons = np.degrees(sm.lons)
+    lats = np.degrees(sm.lats)
+
+    return meshtools.create_spherical_DMPlex(lons, lats, sm.simplices)
 
 
 @pytest.fixture(scope="module")
