@@ -38,6 +38,7 @@ from petsc4py import PETSc
 # comm = MPI.COMM_WORLD
 from time import perf_counter
 from .commonmesh import CommonMesh as _CommonMesh
+from scipy.spatial import cKDTree as _cKDTree
 
 try: range = xrange
 except: pass
@@ -108,7 +109,6 @@ class sTriMesh(_CommonMesh):
 
     def __init__(self, dm, r1=6384.4e3, r2=6352.8e3, verbose=True, *args, **kwargs):
         import stripy
-        from scipy.spatial import cKDTree as _cKDTree
 
         # initialise base mesh class
         super(sTriMesh, self).__init__(dm, verbose)
@@ -172,7 +172,7 @@ class sTriMesh(_CommonMesh):
 
         # cKDTree
         t = perf_counter()
-        self.cKDTree = _cKDTree(self.tri.points, balanced_tree=False)
+        self.cKDTree = _cKDTree(self.data, balanced_tree=False)
         self.timings['cKDTree'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank == 0 and self.verbose:
             print("{} - cKDTree {}s".format(self.dm.comm.rank, perf_counter()-t))
@@ -243,6 +243,7 @@ class sTriMesh(_CommonMesh):
         # update mesh coordinates and rebuild k-d tree
         self._data = self.tri.points*np.array(self._radius).reshape(-1,1)
         self._update_DM_coordinates()
+        self.cKDTree = _cKDTree(self.data, balanced_tree=False)
         self.construct_neighbour_cloud()
 
         # re-evalutate mesh area
