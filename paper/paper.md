@@ -36,24 +36,63 @@ aas-journal: Journal of Open Source Software
 
 # Summary
 
-Quagmire is a Python surface process framework for building erosion and deposition models on highly parallel, decomposed structured and unstructured meshes.
+Quagmire is a Python surface process framework for building erosion and deposition models on stuctured and unstructured meshes distributed in parallel.
 
-# Mathematics
 
-Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$
+# Erosion, deposition and transport models
 
-Double dollars make self-standing equations:
+The contributing processes to landscape evolution depend on local hillslope diffusion, long-range transport, and tectonic uplift,
 
-$$\Theta(x) = \left\{\begin{array}{l}
-0\textrm{ if } x < 0\cr
-1\textrm{ else}
-\end{array}\right.$$
-
-You can also use plain \LaTeX for equations
-\begin{equation}\label{eq:fourier}
-\hat f(\omega) = \int_{-\infty}^{\infty} f(x) e^{i\omega x} dx
+$$
+\begin{equation}
+  \frac{Dh}{Dt} =  \dot{h}_\textrm{local} 
+           + \dot{h}_\textrm{incision} 
+           + \dot{h}_\textrm{deposition}   
+           + \dot{h}_\textrm{basement}
 \end{equation}
-and refer to \autoref{eq:fourier} from text.
+$$
+
+where $h$ is the surface height at each point and the $\dot{h}$ terms are time derivatives with respect to height. Summed together, the change in height from local diffusion, fluvial incision, deposition, and regional basement uplift/subsidence describe the processes that govern landscape morphology.
+
+
+## Local evolution rate
+
+The local evolution rate represents small-scale, hill-slope dependent processes which can be represented as a non-linear diffusion equation. 
+
+$$
+\begin{equation}
+  \dot{h}(\bm{x})_\textrm{local} = \nabla \left[\kappa(h,\bm{x}) \nabla h(\bm{x}) \right]
+\end{equation}
+$$
+
+$\kappa$ is a non-linear diffusion coefficient which can, for example, be used to enforce a critical hill slope value if it is a strongly increasing function of the local gradient.
+Evaluating spatial derivatives is trivial on a regular grid and are outsourced to [stripy](https://github.com/underworldcode/stripy) for triangulated meshes [@Moresi:2019].
+
+
+## Incision and deposition
+
+The fluvial incision rate includes the effect of cumulative rainfall runoff across the landscape. This term encapsulates the available energy of rivers which in turn is related to both the discharge flux at any given point and the local stream-bed slope. The incision rate may be written in "stream power" form,
+
+$$
+\begin{equation}
+  \dot{h}(\bm{x})_\textrm{incision} = 
+      K(\bm{x}) q_r(\bm{x})^m \left| \nabla h(\bm{x}) \right|^n
+\end{equation}
+$$
+
+where $K$, $m$, $n$ are constants, $q_r$ is the runoff flux, and $\left| \nabla h \right|$ is the downhill bed slope.
+
+$$
+  \begin{equation}
+    q_r(\bm{x}) = \int\displaylimits_{\textrm{upstream}} \!\!\!\! {\cal R} (\xi) d \xi
+  \end{equation}
+$$
+
+This integral computes the accumulated run off for all of the areas which lie upstream of the point $\bm{x}$.
+The cumulative power of any given stream is intrinsically controlled by the interconnectivity of nodes in the mesh. Thus, the discretisation of a landscape imparts a significant role on the integrated rainfall flux or a catchment.
+The cumulative power of any given stream is intrinsically controlled by the interconnectivity of nodes in the mesh that describe the network of tributaries.
+In this way, the discretisation of a landscape imparts a significant role on the integrated rainfall flux or a catchment.
+
 
 # Citations
 
