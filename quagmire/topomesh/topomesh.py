@@ -280,8 +280,7 @@ class TopoMesh(object):
         for i in range(0, self.downhill_neighbours):
             down_N = self.down_neighbour[i+1]
             grad = np.abs(height - height[down_N]+1.0e-10) / (1.0e-10 + \
-                   np.hypot(self.coords[:,0] - self.coords[down_N,0],
-                            self.coords[:,1] - self.coords[down_N,1] ))
+                   np.linalg.norm(self.data - self.data[down_N], axis=1))
 
             weights[i,:] = np.sqrt(grad)
 
@@ -858,7 +857,9 @@ class TopoMesh(object):
         my_catchments = np.unique(ctmt)
 
         spills = np.empty((edges.shape[0]),
-                         dtype=np.dtype([('c', int), ('h', float), ('x', float), ('y', float)]))
+                         dtype=np.dtype([('c', int), ('h', float), ('x', float), ('y', float), ('z', float)]))
+
+        is_strimesh = self.id.startswith('strimesh')
 
         ii = 0
         for l, this_low in enumerate(my_catchments):
@@ -867,8 +868,12 @@ class TopoMesh(object):
             for spill in this_low_spills:
                 spills['c'][ii] = this_low
                 spills['h'][ii] = height[spill]
-                spills['x'][ii] = self.coords[spill,0]
-                spills['y'][ii] = self.coords[spill,1]
+                spills['x'][ii] = self.data[spill,0]
+                spills['y'][ii] = self.data[spill,1]
+                if is_strimesh:
+                    spills['z'][ii] = self.data[spill,2]
+                else:
+                    spills['z'][ii] = 0.0
                 ii += 1
 
         t = perf_counter()
@@ -918,9 +923,8 @@ class TopoMesh(object):
                 continue
 
             catchment_nodes = np.where(ctmt == this_catchment)
-            separation_x = (self.coords[catchment_nodes,0] - spill['x'])
-            separation_y = (self.coords[catchment_nodes,1] - spill['y'])
-            distance = np.hypot(separation_x, separation_y)
+            spill_coord = np.array([spill['x'], spill['y'], spill['z']])
+            distance = np.linalg.norm(self.data[catchment_nodes] - spill_coord, axis=1)
 
             ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
             height2[catchment_nodes] = spill['h'] + ref_gradient * distance  # A 'small' gradient (should be a user-parameter)

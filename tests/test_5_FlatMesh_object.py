@@ -46,7 +46,7 @@ def test_smoothing(load_triangulated_mesh_DM):
 def test_spherical_area():
     import stripy
     cm = stripy.spherical_meshes.icosahedral_mesh(refinement_levels=2)
-    DM = meshtools.create_spherical_DMPlex(cm.lons, cm.lats, cm.simplices)
+    DM = meshtools.create_spherical_DMPlex(np.degrees(cm.lons), np.degrees(cm.lats), cm.simplices)
     mesh = QuagMesh(DM)
 
     # adjust radius of the sphere

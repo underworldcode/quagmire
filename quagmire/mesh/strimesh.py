@@ -38,6 +38,7 @@ from petsc4py import PETSc
 # comm = MPI.COMM_WORLD
 from time import perf_counter
 from .commonmesh import CommonMesh as _CommonMesh
+from scipy.spatial import cKDTree as _cKDTree
 
 try: range = xrange
 except: pass
@@ -108,7 +109,6 @@ class sTriMesh(_CommonMesh):
 
     def __init__(self, dm, r1=6384.4e3, r2=6352.8e3, verbose=True, *args, **kwargs):
         import stripy
-        from scipy.spatial import cKDTree as _cKDTree
 
         # initialise base mesh class
         super(sTriMesh, self).__init__(dm, verbose)
@@ -129,9 +129,12 @@ class sTriMesh(_CommonMesh):
         # r = 1.0
         # lons = np.arctan2(coords[:,1], coords[:,0])
         # lats = np.arcsin(coords[:,2]/r)
-        lons, lats = stripy.spherical.xyz2lonlat(coords[:,0], coords[:,1], coords[:,2])
+        rlons, rlats = stripy.spherical.xyz2lonlat(coords[:,0], coords[:,1], coords[:,2])
 
-        self.tri = stripy.sTriangulation(lons, lats)
+        lons = np.degrees(rlons)
+        lats = np.degrees(rlats)
+
+        self.tri = stripy.sTriangulation(rlons, rlats)
         self.npoints = self.tri.npoints
         self.timings['triangulation'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank == 0 and self.verbose:
@@ -139,7 +142,9 @@ class sTriMesh(_CommonMesh):
 
 
         # Calculate geocentric radius
-        self._radius = geocentric_radius(self.tri.lats, r1, r2)
+        self._radius = geocentric_radius(lats, r1, r2)
+        self._coords = np.c_[lons, lats]
+        self._data = self.tri.points*self._radius.reshape(-1,1)
 
 
         # Calculate weigths and pointwise area
@@ -167,7 +172,7 @@ class sTriMesh(_CommonMesh):
 
         # cKDTree
         t = perf_counter()
-        self.cKDTree = _cKDTree(self.tri.points, balanced_tree=False)
+        self.cKDTree = _cKDTree(self.data, balanced_tree=False)
         self.timings['cKDTree'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank == 0 and self.verbose:
             print("{} - cKDTree {}s".format(self.dm.comm.rank, perf_counter()-t))
@@ -196,14 +201,24 @@ class sTriMesh(_CommonMesh):
 
 
         self.root = False
-        self.coords = np.c_[self.tri.lons, self.tri.lats]
-        self.data = self.tri.points
-        self.interpolate = self.tri.interpolate
 
         # functions / parameters that are required for compatibility among FlatMesh types
         self._derivative_grad_cartesian = self.tri.gradient_xyz
 
 
+# We place these properties here to prevent users from mucking up the coordinates.
+# Radius is the only property to have a setter only because freedom in the vertical axis
+# doesn't mess up the graph, and is quite useful for visualisation in lavavu / paraview.
+
+## FUTURE: deforming the mesh should be via a context manager.
+
+    @property
+    def data(self):
+        return self._data
+    
+    @property
+    def coords(self):
+        return self._coords
 
     @property
     def radius(self):
@@ -225,11 +240,60 @@ class sTriMesh(_CommonMesh):
     def radius(self, value):
         self._radius = value
 
+        # update mesh coordinates and rebuild k-d tree
+        self._data = self.tri.points*np.array(self._radius).reshape(-1,1)
+        self._update_DM_coordinates()
+        self.cKDTree = _cKDTree(self.data, balanced_tree=False)
+        self.construct_neighbour_cloud()
+
         # re-evalutate mesh area
         self.area, self.weight = self.calculate_area_weights()
         self.pointwise_area.unlock()
         self.pointwise_area.data = self.area
         self.pointwise_area.lock()
+
+
+    def _update_DM_coordinates(self):
+        """ Update the coordinates on the DM """
+        # get global coordinate vector from DM
+        global_coord_vec = self.dm.getCoordinates()
+        global_coord_vec.setArray(self.data.ravel())
+        self.dm.setCoordinates(global_coord_vec)
+
+
+    def interpolate(self, lons, lats, zdata, order=1, grad=None):
+        """
+        Base class to handle nearest neighbour, linear, and cubic interpolation.
+        Given a triangulation of a set of nodes on the unit sphere, along with data
+        values at the nodes, this method interpolates (or extrapolates) the value
+        at a given longitude and latitude.
+
+        Parameters
+        ----------
+        lons : float / array of floats, shape (l,)
+            longitudinal coordinate(s) on the sphere
+        lats : float / array of floats, shape (l,)
+            latitudinal coordinate(s) on the sphere
+        zdata : array of floats, shape (n,)
+            value at each point in the triangulation
+            must be the same size of the mesh
+        order : int (default=1)
+            order of the interpolatory function used
+            - 0 = nearest-neighbour
+            - 1 = linear
+            - 3 = cubic
+
+        Returns
+        -------
+        zi : float / array of floats, shape (l,)
+            interpolated value(s) at (lons, lats)
+        err : int / array of ints, shape (l,)
+            whether interpolation (0), extrapolation (1) or error (other)
+        """
+        rlons = np.radians(lons)
+        rlats = np.radians(lats)
+
+        return self.tri.interpolate(rlons, rlats, zdata, order, grad)
 
 
     def calculate_area_weights(self):
@@ -305,7 +369,8 @@ class sTriMesh(_CommonMesh):
         PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         """
-        return self.tri.gradient_lonlat(PHI, nit, tol)
+        PHIx, PHIy = self.tri.gradient_lonlat(PHI, nit, tol)
+        return np.radians(PHIx), np.radians(PHIy)
 
 
     def derivative_div(self, PHIx, PHIy, PHIz, **kwargs):
@@ -330,11 +395,11 @@ class sTriMesh(_CommonMesh):
         del2PHI : ndarray of floats, shape (n,)
             second derivative of PHI
         """
-        u_xx, u_xy, u_zz = self.derivative_grad(PHIx, **kwargs)
-        u_yx, u_yy, u_zz = self.derivative_grad(PHIy, **kwargs)
-        u_zx, u_zy, u_zz = self.derivative_grad(PHIz, **kwargs)
+        u_xx, u_xy, u_zz = self.tri.gradient_xyz(PHIx, **kwargs)
+        u_yx, u_yy, u_zz = self.tri.gradient_xyz(PHIy, **kwargs)
+        u_zx, u_zy, u_zz = self.tri.gradient_xyz(PHIz, **kwargs)
 
-        return u_xx + u_yy + u_zz
+        return (u_xx + u_yy + u_zz)/self._radius
 
 
     def construct_natural_neighbour_cloud(self):
@@ -424,7 +489,7 @@ class sTriMesh(_CommonMesh):
         should be captured by the search depending on how large
         `size` is set to.
         """
-        nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
+        nndist, nncloud = self.cKDTree.query(self.data, k=size)
         self.neighbour_cloud = nncloud
         self.neighbour_cloud_distances = nndist
 
@@ -656,7 +721,7 @@ def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
     Parameters
     ----------
     lat : array of floats
-        latitudinal coordinates in radians
+        latitudinal coordinates in degrees
     r1 : float
         radius at the equator (in metres)
     r2 : float
@@ -667,8 +732,9 @@ def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
     r : array of floats
         radius at provided latitudes `lat` in metres
     """
-    coslat = np.cos(lat)
-    sinlat = np.sin(lat)
+    rlat = np.radians(lat)
+    coslat = np.cos(rlat)
+    sinlat = np.sin(rlat)
     num = (r1**2*coslat)**2 + (r2**2*sinlat)**2
     den = (r1*coslat)**2 + (r2*sinlat)**2
     return np.sqrt(num/den)
