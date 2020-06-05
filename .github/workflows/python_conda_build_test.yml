@@ -35,7 +35,8 @@ jobs:
           conda install pip 
           conda install conda-build anaconda-client
           conda install -c conda-forge libgfortran numpy scipy sympy
-          conda install -c conda-forge petsc4py petsc mpi4py h5py
+          conda install -c underworldcode petsc 
+          conda install -c conda-forge petsc4py mpi4py h5py
           conda install -c conda-forge pint 
           conda install -c underworldcode stripy 
           conda install pytest
@@ -47,6 +48,7 @@ jobs:
           conda install pip 
           conda install conda-build anaconda-client
           conda install -c conda-forge compilers numpy scipy sympy
+          conda install -c underworldcode petsc 
           conda install -c conda-forge petsc4py petsc mpi4py h5py
           conda install -c conda-forge pint 
           conda install -c underworldcode stripy 

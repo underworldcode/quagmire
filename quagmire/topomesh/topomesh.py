@@ -211,58 +211,34 @@ class TopoMesh(object):
     def _build_down_neighbour_arrays(self, nearest=True):
 
         nodes = list(range(0,self.npoints))
-        # nheight  = self.height[self.neighbour_cloud]
-        nheight  = self._heightVariable.data[self.neighbour_cloud]
+        nheight  = self._heightVariable.data[self.natural_neighbours]
+        nheight[np.where(self.natural_neighbours == -1)] = np.finfo(nheight.dtype).max
 
         nheightidx = np.argsort(nheight, axis=1)
-
-        nheightn = nheight.copy()
-        # nheightn[~self.near_neighbour_mask] += self.height.max()
-        nheightn[~self.near_neighbour_mask] += self._heightVariable.data.max()
-        nheightnidx = np.argsort(nheightn, axis=1)
 
         ## How many low neighbours are there in each ?
 
         idxrange  = np.where(nheightidx==0)[1]
-        idxnrange = np.where(nheightnidx==0)[1]
 
         ## First the STD, 1-neighbour
 
         idx  = nheightidx[:,0]
-        idxn = nheightnidx[:,0]
-
-        # Pick either extended or standard ...
-        use_extended = np.where(idxnrange == 0)
-
-        index1 = self.neighbour_cloud[nodes, idxn[nodes]]
-
-        if not nearest:
-            index1[use_extended] = self.neighbour_cloud[use_extended, idx[use_extended]]
+        index1 = self.natural_neighbours[nodes, idx[nodes]]
 
         # store in neighbour dictionary
         self.down_neighbour = dict()
         self.down_neighbour[1] = index1.astype(PETSc.IntType)
 
-
-        ## Now all higher neighours
+        ## Now all next-lower-level neighours
 
         for i in range(1, self.downhill_neighbours):
             n = i + 1
 
             idx  = nheightidx[:,i]
-            idxn = nheightnidx[:,i]
+            indexN = self.natural_neighbours[nodes, idx[nodes]]
 
-            indexN = self.neighbour_cloud[nodes, idxn[nodes]]
-
-            if not nearest:
-                use_extended = np.where(idxnrange < n)
-                indexN[use_extended] = self.neighbour_cloud[use_extended, idx[use_extended]]
-
-                failed = np.where(idxrange < n)
-                indexN[failed] = index1[failed]
-            else:
-                failed = np.where(idxnrange < n)
-                indexN[failed] = index1[failed]
+            failed = np.where(idxrange < n)
+            indexN[failed] = index1[failed]
 
             # store in neighbour dictionary
             self.down_neighbour[n] = indexN.astype(PETSc.IntType)
@@ -270,7 +246,7 @@ class TopoMesh(object):
 
     def _build_adjacency_matrix_iterate(self):
 
-        self._build_down_neighbour_arrays(nearest=False)
+        self._build_down_neighbour_arrays(nearest=True)
 
         self.adjacency = dict()
         self.uphill = dict()
@@ -751,7 +727,7 @@ class TopoMesh(object):
 
 ### Methods copied over from obseleted SurfMesh class
 
-    def low_points_local_flood_fill(self, its=99999, scale=1.0, smoothing_steps=2):
+    def low_points_local_flood_fill(self, its=99999, scale=1.0, smoothing_steps=2, ref_height=0.0):
         """
         Fill low points with a local flooding algorithm.
           - its is the number of uphill propagation steps
@@ -762,12 +738,12 @@ class TopoMesh(object):
         if self.rank==0 and self.verbose:
             print("Low point local flood fill")
 
-        my_low_points = self.identify_low_points()
+        my_low_points = self.identify_low_points(ref_height=ref_height)
 
         self.topography.unlock()
         h = self.topography.data
 
-        fill_height =  (h[self.neighbour_cloud[my_low_points,1:7]].mean(axis=1)-h[my_low_points])
+        fill_height =  h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]].min(axis=1) - h[my_low_points]
 
         new_h = self.uphill_propagation(my_low_points,  fill_height, scale=scale,  its=its, fill=0.0)
         new_h = self.sync(new_h)
@@ -785,7 +761,12 @@ class TopoMesh(object):
 
         return
 
-    def low_points_local_patch_fill(self, its=1, smoothing_steps=1):
+    def low_points_local_patch_fill(self, its=1, smoothing_steps=1, ref_height=0.0, fraction=0.01):
+        """
+        Local patch algorithm to fill low points - raises the topography at a local minimum to be
+        a small fraction higher than the lowest neighbour. If smoothing is used, then that correction
+        in topography is spread around all the local nodes. 
+        """
 
         from petsc4py import PETSc
         t = perf_counter()
@@ -793,22 +774,23 @@ class TopoMesh(object):
             print("Low point local patch fill")
 
         for iteration in range(0,its):
-            low_points = self.identify_low_points()
-
-            self.topography.unlock()
+            low_points = self.identify_low_points(ref_height=ref_height)
 
             h = self.topography.data
             delta_height = np.zeros_like(h)
 
             ## Note, the smoother has a communication barrier so needs to be called even if it has no work to do on this process
 
-            if len(low_points) != 0:
-                delta_height[low_points] =  (h[self.neighbour_cloud[low_points,1:5]].mean(axis=1) -
-                                                         h[low_points])
+            for i in low_points:
+                delta_height[i] =  ( (1.0-fraction) * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).min() +
+                                          fraction  * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).max() 
+                                              - h[i] )
+
             ## Note, the smoother has a communication barrier so needs to be called even
             ## if len(low_points==0) and there is no work to do on this process
             smoothed_height = h + self.rbf_smoother(delta_height, iterations=smoothing_steps)
 
+            self.topography.unlock()
             self.topography.data = np.maximum(smoothed_height, h)
             self.topography.sync()
             self.topography.lock()
@@ -823,7 +805,7 @@ class TopoMesh(object):
         return
 
 
-    def low_points_swamp_fill(self, its=1000, saddles=True, ref_height=0.0, ref_gradient=0.001):
+    def low_points_swamp_fill(self, its=1000, saddles=None, ref_height=0.0, ref_gradient=0.001, fluctuation_strength=0.05):
 
         import petsc4py
         from petsc4py import PETSc
@@ -835,34 +817,34 @@ class TopoMesh(object):
 
         t0 = perf_counter()
 
-        my_low_points = self.identify_low_points()
+        # I'm not sure the two ref_height values really refer to the same quantity 
+        # and perhaps should be separated out 
+
+        my_low_points = self.identify_low_points(ref_height=ref_height)
         my_glow_points = self.lgmap_row.apply(my_low_points.astype(PETSc.IntType))
 
         t = perf_counter()
         ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
 
+        height = self.topography.data.copy()
+
         if self.rank==0 and self.verbose:
             print("Build low point catchments - ", perf_counter() - t, " seconds")
+  
 
-        if saddles:  # Find saddle points on the catchment edge - catchment detection is via down-neighbour 1,
-                     # so neighbour 2 (or 3) is the earliest detection opportunity for a spill
+# Possible problem - low point that should flow out the side of the domain boundary. 
 
-            cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
-            try:
-                cedges3 = np.where(ctmt[self.down_neighbour[3]] != ctmt )[0] ## local numbering
-                cedges = np.unique(np.hstack((cedges,cedges3)))
-            except:
-                pass
+        # Find all catchment-edge points (mix of catchments in the natural neighbours)
+        ctmt2 = (ctmt[self.natural_neighbours] - ctmt.reshape(-1,1)) * (self.natural_neighbours_mask)
 
-        else:        # Find all edge points (this does not seem to work in most cases ... why not ?)
-            ctmt2 = ctmt[self.neighbour_cloud] - ctmt.reshape(-1,1)
-            ctmt3 = ctmt2 * self.near_neighbour_mask
-            cedges = np.where(ctmt3.any(axis=1))[0]
+        # filter out points that whose other-catchment neighbours are not lower
+        dh = (height[self.natural_neighbours] - height.reshape(-1,1)) * (self.natural_neighbours_mask)
+
+        ctmt3 = ctmt2 * (dh < 0.0)
+        cedges = np.where(ctmt3.any(axis=1))[0]
 
         outer_edges = np.where(~self.bmask)[0]
         edges = np.unique(np.hstack((cedges,outer_edges)))
-
-        height = self.topography.data.copy()
 
         ## In parallel this is all the low points where this process may have a spill-point
         my_catchments = np.unique(ctmt)
@@ -917,7 +899,7 @@ class TopoMesh(object):
 
         global_spill_points = comm.bcast(all_spill_points, root=0)
 
-        height2 = np.zeros_like(height) + ref_height
+        height2 = np.zeros_like(height) 
 
         for i, spill in enumerate(global_spill_points):
             this_catchment = int(spill['c'])
@@ -931,9 +913,10 @@ class TopoMesh(object):
             separation_x = (self.coords[catchment_nodes,0] - spill['x'])
             separation_y = (self.coords[catchment_nodes,1] - spill['y'])
             distance = np.hypot(separation_x, separation_y)
+            fluctuations = 1.0 + np.random.random(size=distance.shape) * distance.mean() * ref_gradient * fluctuation_strength
 
             ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
-            height2[catchment_nodes] = spill['h'] + ref_gradient * distance  # A 'small' gradient (should be a user-parameter)
+            height2[catchment_nodes] = spill['h'] + ref_gradient * distance * fluctuations # A 'small' gradient but this should depend on local conditions
 
         height2 = self.sync(height2)
 
@@ -1041,7 +1024,7 @@ class TopoMesh(object):
 
 
 
-    def identify_low_points(self, include_shadows=False):
+    def identify_low_points(self, include_shadows=False, ref_height=0):
         """
         Identify if the mesh has (internal) local minima and return an array of node indices
         """
@@ -1053,13 +1036,14 @@ class TopoMesh(object):
 
         low_nodes = self.down_neighbour[1]
         mask = np.logical_and(nodes == low_nodes, self.bmask == True)
+        mask = np.logical_and(mask, self.topography.data > ref_height)
 
         if not include_shadows:
             mask = np.logical_and(mask, gnodes >= 0)
 
         return nodes[mask]
 
-    def identify_global_low_points(self, global_array=False):
+    def identify_global_low_points(self, global_array=False, ref_height=0.0):
         """
         Identify if the mesh as a whole has (internal) local minima and return an array of local lows in global
         index format.
@@ -1082,6 +1066,7 @@ class TopoMesh(object):
 
         low_nodes = self.down_neighbour[1]
         mask = np.logical_and(nodes == low_nodes, self.bmask == True)
+        mask = np.logical_and(mask, self.topography.data > ref_height)
         mask = np.logical_and(mask, gnodes >= 0)
 
         number_of_lows = np.count_nonzero(mask)
