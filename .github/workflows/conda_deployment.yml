@@ -1,0 +1,78 @@
+name: Conda Deployment 
+
+on:
+  push
+    
+jobs:
+  macos:
+    name: MacOS conda build
+
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download MacOSX 10.9 SDK
+        run: |
+          wget https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.9.sdk.tar.xz
+          tar -xf MacOSX10.9.sdk.tar.xz
+          echo 'CONDA_BUILD_SYSROOT:' > conda_build_config.yaml
+          echo "  - $GITHUB_WORKSPACE/MacOSX10.9.sdk" >> conda_build_config.yaml
+          cat conda_build_config.yaml
+      - name: Install Conda
+        run: |
+          brew cask install miniconda
+          echo "shell: ${SHELL}"
+          conda init "$(basename ${SHELL})"
+      - name: Deploy Conda package
+        run: |
+          # We must use a new shell (new step) for Conda to take effect.
+          source ~/.bash_profile
+          conda create -n packaging --channel conda-forge conda-build anaconda-client conda-verify
+          conda activate packaging
+          conda config --set anaconda_upload yes
+          conda config --add channels conda-forge
+          conda config --add channels underworldcode
+          anaconda login --hostname github-actions-mac-$RANDOM --username ${{ secrets.ANACONDA_USERNAME }} --password ${{ secrets.ANACONDA_PASSWORD }}
+          conda-build --user underworldcode conda
+          anaconda logout
+      - name: Test
+        run: |
+            source ~/.bash_profile
+            conda create -n test
+            conda activate test
+            conda config --add channels conda-forge
+            conda config --add channels underworldcode
+            conda install pytest quagmire 
+            pytest
+  
+  ubuntu:
+    name: Ubuntu Conda Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Initialise Conda
+        run: |
+            conda init "$(basename ${SHELL})"
+      - name: Deploy Conda package
+        run: |
+            # we must use a new shell (new step) for Conda to take effect.
+            source /usr/share/miniconda/etc/profile.d/conda.sh
+            # create a new conda environment
+            conda create -n packaging --channel conda-forge conda-build anaconda-client conda-verify
+            conda activate packaging
+            conda config --set anaconda_upload yes
+            conda config --add channels conda-forge
+            conda config --add channels underworldcode
+            anaconda login --hostname github-actions-ubuntu-$RANDOM --username ${{ secrets.ANACONDA_USERNAME }} --password ${{ secrets.ANACONDA_PASSWORD }}
+            conda-build --user underworldcode conda
+            anaconda logout
+      - name: Test
+        run: |
+            source /usr/share/miniconda/etc/profile.d/conda.sh
+            conda create -n test
+            conda activate test
+            conda config --add channels conda-forge
+            conda config --add channels underworldcode
+            conda install pytest quagmire 
+            pytest

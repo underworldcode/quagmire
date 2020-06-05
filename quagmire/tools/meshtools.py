@@ -166,9 +166,9 @@ def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_level
     Parameters
     ----------
     lons : array of floats, shape (n,)
-        longitudinal coordinates in radians
+        longitudinal coordinates in degrees
     lats : array of floats, shape (n,)
-        latitudinal coordinates in radians
+        latitudinal coordinates in degrees
     bmask : array of bools, shape (n,)
         boundary mask where points along the boundary
         equal False, and the interior equal True
@@ -190,7 +190,10 @@ def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_level
     """
     from stripy import sTriangulation
 
-    tri = sTriangulation(lons, lats, permute=True)
+    rlons = _np.radians(lons)
+    rlats = _np.radians(lats)
+
+    tri = sTriangulation(rlons, rlats, permute=True)
 
     if bmask is None:
         boundary_vertices = find_boundary_segments(tri.simplices)
@@ -412,13 +415,12 @@ def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     -------
     DM : PETSc DMDA object
     """
+    assert(maxX > minX), """maxX ({0}) must be greater than minX ({1})""".format(maxX, minX)
+    assert(maxY > minY), """maxY ({0}) must be greater than minY ({1})""".format(maxY, minY)
+    assert(resX > 0), """resX must be positive"""
+    assert(resY > 0), """resY must be positive"""
+    
     from petsc4py import PETSc
-
-    dx = (maxX - minX)/resX
-    dy = (maxY - minY)/resY
-
-    if dx != dy:
-        raise ValueError("Spacing must be uniform in x and y directions [{:.4f}, {:.4f}]".format(dx,dy))
 
     dim = 2
     dm = PETSc.DMDA().create(dim, sizes=(resX, resY), stencil_width=1)
@@ -536,9 +538,9 @@ def create_spherical_DMPlex(lons, lats, simplices, boundary_vertices=None, refin
     Parameters
     ----------
     lons : array of floats shape (n,)
-        longitudinal coordinates
+        longitudinal coordinates in degrees
     lats : array of floats shape (n,)
-        latitudinal coordinates
+        latitudinal coordinates in degrees
     simplices : connectivity of the mesh
     boundary_vertices : array of ints, shape(l,2)
         (optional) boundary edges
@@ -549,8 +551,11 @@ def create_spherical_DMPlex(lons, lats, simplices, boundary_vertices=None, refin
     """
     from stripy.spherical import lonlat2xyz
 
+    rlons = _np.radians(lons)
+    rlats = _np.radians(lats)
+
     # convert to xyz to construct the DM
-    x,y,z = lonlat2xyz(lons, lats)
+    x,y,z = lonlat2xyz(rlons, rlats)
     points = _np.c_[x,y,z]
 
     # PETSc's markBoundaryFaces routine cannot detect boundary segments
@@ -585,6 +590,7 @@ def refine_DM(dm, refinement_levels=1):
     For each step, the midpoint of every line segment is added
     to the DM.
     """
+    from stripy.spherical import lonlat2xyz, xyz2lonlat
 
     for i in range(0, refinement_levels):
         dm = dm.refine()
@@ -594,6 +600,32 @@ def refine_DM(dm, refinement_levels=1):
     origSect.setFieldName(0, "points")
     origSect.setUp()
     dm.setDefaultSection(origSect)
+
+
+    # puff refined vertices to unit sphere
+    # but first we need to check if the DM is spherical
+    if refinement_levels > 0:
+
+        nlabels = dm.getNumLabels()
+        is_spherical = False
+        for i in range(0, nlabels):
+            if dm.getLabelName(i) == "sTriMesh":
+                is_spherical = True
+                break
+
+        if is_spherical:
+            # get coordinate array from DM
+            global_coord_vec = dm.getCoordinates()
+            global_coords = global_coord_vec.array.reshape(-1,3)
+
+            # xyz - lonlat - xyz conversion
+            lon, lat = xyz2lonlat(global_coords[:,0], global_coords[:,1], global_coords[:,2])
+            xs,ys,zs = lonlat2xyz(lon, lat)
+
+            # set puffed coordinate array to DM
+            global_puffed_coords = _np.column_stack([xs,ys,zs])
+            global_coord_vec.setArray(global_puffed_coords.ravel())
+            dm.setCoordinates(global_coord_vec)
 
     return dm
 

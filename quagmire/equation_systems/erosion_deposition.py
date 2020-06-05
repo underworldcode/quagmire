@@ -74,7 +74,7 @@ class ErosionDepositionEquation(object):
         return
 
     @property
-    def erostion_rate(self):
+    def erosion_rate(self):
         return self._erosion_rate
     # No setter for this ... it is defined via the mesh.setter
     @property
