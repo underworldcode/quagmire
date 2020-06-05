@@ -351,9 +351,9 @@ def _get_label(DM):
 
 
 
-def QuagMesh(DM, *args, **kwargs):
+def QuagMesh(DM, downhill_neighbours=2, verbose=True, *args, **kwargs):
     &#34;&#34;&#34;
-    Instantiates a mesh with a height and rainfall field.
+    Instantiates a mesh in the form required for quagmire computation.
     QuagMesh identifies the type of DM and builds the necessary
     data structures for landscape processing and analysis.
 
@@ -362,7 +362,11 @@ def QuagMesh(DM, *args, **kwargs):
     ----------
     DM : PETSc DM object
         Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
+        functions within `tools.meshtools`.
+    downhill_neighbours : int (default: 2)
+        Number of downhill neighbours to initialise with topography.
+    verbose : bool (default: True)
+        Print detailed information on Quagmire routines and timings.
 
     Returns
     -------
@@ -381,8 +385,10 @@ def QuagMesh(DM, *args, **kwargs):
     if BaseMeshType in known_basemesh_classes:
         class QuagMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
             def __init__(self, dm, *args, **kwargs):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
-                _TopoMeshClass.__init__(self, *args, **kwargs)
+                if verbose:
+                    print(&#34;Underlying Mesh type: {}&#34;.format(BaseMeshType))
+                known_basemesh_classes[BaseMeshType].__init__(self, dm, verbose, *args, **kwargs)
+                _TopoMeshClass.__init__(self, downhill_neighbours, *args, **kwargs)
                 # super(QuagMeshClass, self).__init__(dm, *args, **kwargs)
 
         return QuagMeshClass(DM, *args, **kwargs)
@@ -433,17 +439,21 @@ def QuagMesh(DM, *args, **kwargs):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="quagmire.QuagMesh"><code class="name flex">
-<span>def <span class="ident">QuagMesh</span></span>(<span>DM, *args, **kwargs)</span>
+<span>def <span class="ident">QuagMesh</span></span>(<span>DM, downhill_neighbours=2, verbose=True, *args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Instantiates a mesh with a height and rainfall field.
+<div class="desc"><p>Instantiates a mesh in the form required for quagmire computation.
 QuagMesh identifies the type of DM and builds the necessary
 data structures for landscape processing and analysis.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DM object</code></dt>
 <dd>Either a DMDA or DMPlex object created using the meshing
-functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools.html">quagmire.tools.meshtools</a></code></dd>
+functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools.html">quagmire.tools.meshtools</a></code>.</dd>
+<dt><strong><code>downhill_neighbours</code></strong> :&ensp;<code>int (default: 2)</code></dt>
+<dd>Number of downhill neighbours to initialise with topography.</dd>
+<dt><strong><code>verbose</code></strong> :&ensp;<code>bool (default: True)</code></dt>
+<dd>Print detailed information on Quagmire routines and timings.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -463,9 +473,9 @@ functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def QuagMesh(DM, *args, **kwargs):
+<pre><code class="python">def QuagMesh(DM, downhill_neighbours=2, verbose=True, *args, **kwargs):
     &#34;&#34;&#34;
-    Instantiates a mesh with a height and rainfall field.
+    Instantiates a mesh in the form required for quagmire computation.
     QuagMesh identifies the type of DM and builds the necessary
     data structures for landscape processing and analysis.
 
@@ -474,7 +484,11 @@ functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools
     ----------
     DM : PETSc DM object
         Either a DMDA or DMPlex object created using the meshing
-        functions within `tools.meshtools`
+        functions within `tools.meshtools`.
+    downhill_neighbours : int (default: 2)
+        Number of downhill neighbours to initialise with topography.
+    verbose : bool (default: True)
+        Print detailed information on Quagmire routines and timings.
 
     Returns
     -------
@@ -493,8 +507,10 @@ functions within <code><a title="quagmire.tools.meshtools" href="tools/meshtools
     if BaseMeshType in known_basemesh_classes:
         class QuagMeshClass(known_basemesh_classes[BaseMeshType], _TopoMeshClass):
             def __init__(self, dm, *args, **kwargs):
-                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
-                _TopoMeshClass.__init__(self, *args, **kwargs)
+                if verbose:
+                    print(&#34;Underlying Mesh type: {}&#34;.format(BaseMeshType))
+                known_basemesh_classes[BaseMeshType].__init__(self, dm, verbose, *args, **kwargs)
+                _TopoMeshClass.__init__(self, downhill_neighbours, *args, **kwargs)
                 # super(QuagMeshClass, self).__init__(dm, *args, **kwargs)
 
         return QuagMeshClass(DM, *args, **kwargs)

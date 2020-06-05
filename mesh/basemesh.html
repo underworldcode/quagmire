@@ -214,16 +214,34 @@ class MeshVariable(_LazyEvaluation):
 
         return
 
-    def save(self, filename=None, append=False):
+
+    def xdmf(self, hdf5_filename, hdf5_mesh_filename=None, xdmf_filename=None):
+        &#34;&#34;&#34;
+        Creates an xdmf file associating the saved HDF5 file with the mesh
+
+        &#34;&#34;&#34;
+        from quagmire.tools.generate_xdmf import generateXdmf
+        from quagmire import mpi_rank
+
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
+
+        if mpi_rank == 0:
+            generateXdmf(hdf5_filename, hdf5_mesh_filename, xdmf_filename)
+        return
+
+
+    def save(self, hdf5_filename, append=True):
         &#34;&#34;&#34;
         Save the MeshVariable to disk.
 
         Parameters
         ----------
-        filename : str (optional)
+        hdf5_filename : str (optional)
             The name of the output file. Relative or absolute paths may be
             used, but all directories must exist.
-        append : bool (default is False)
+        append : bool (default is True)
             Append to existing file if it exists
 
         Notes
@@ -233,35 +251,42 @@ class MeshVariable(_LazyEvaluation):
         from petsc4py import PETSc
         import os
 
-        vname = self._ldata.getName()
-        if type(filename) == type(None):
-            filename = vname + &#39;.h5&#39;
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
+
+        if self._mesh.id.startswith(&#34;pixmesh&#34;):
+            # save mesh info to the hdf5 if DMDA object
+            # this is so tiny that I/O hit is negligible
+            self._mesh.save_mesh_to_hdf5(hdf5_filename)
 
         mode = &#34;w&#34;
-        if append and os.path.exists(filename):
+        if append and os.path.exists(hdf5_filename):
             mode = &#34;a&#34;
 
         # need a global vector
+        vname = self._ldata.getName()
         gdata = self._dm.getGlobalVec()
         gdata.setName(vname)
         self._dm.localToGlobal(self._ldata, gdata)
 
         ViewHDF5 = PETSc.Viewer()
-        ViewHDF5.createHDF5(filename, mode=mode)
+        ViewHDF5.createHDF5(hdf5_filename, mode=mode)
         ViewHDF5(gdata)
         ViewHDF5.destroy()
+        ViewHDF5 = None
 
         self._dm.restoreGlobalVec(gdata)
 
         return
 
-    def load(self, filename):
+    def load(self, hdf5_filename):
         &#34;&#34;&#34;
         Load the MeshVariable from disk.
 
         Parameters
         ----------
-        filename: str
+        hdf5_filename: str
             The filename for the saved file. Relative or absolute paths may be
             used, but all directories must exist.
 
@@ -276,9 +301,10 @@ class MeshVariable(_LazyEvaluation):
         gdata.setName(self._ldata.getName())
 
         ViewHDF5 = PETSc.Viewer()
-        ViewHDF5.createHDF5(str(filename), mode=&#39;r&#39;)
+        ViewHDF5.createHDF5(str(hdf5_filename), mode=&#39;r&#39;)
         gdata.load(ViewHDF5)
         ViewHDF5.destroy()
+        ViewHDF5 = None
 
         self._dm.globalToLocal(gdata, self._ldata)
         self._dm.restoreGlobalVec(gdata)
@@ -716,16 +742,34 @@ If no mesh is provided then no gradient function can be implemented</p></div>
 
         return
 
-    def save(self, filename=None, append=False):
+
+    def xdmf(self, hdf5_filename, hdf5_mesh_filename=None, xdmf_filename=None):
+        &#34;&#34;&#34;
+        Creates an xdmf file associating the saved HDF5 file with the mesh
+
+        &#34;&#34;&#34;
+        from quagmire.tools.generate_xdmf import generateXdmf
+        from quagmire import mpi_rank
+
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
+
+        if mpi_rank == 0:
+            generateXdmf(hdf5_filename, hdf5_mesh_filename, xdmf_filename)
+        return
+
+
+    def save(self, hdf5_filename, append=True):
         &#34;&#34;&#34;
         Save the MeshVariable to disk.
 
         Parameters
         ----------
-        filename : str (optional)
+        hdf5_filename : str (optional)
             The name of the output file. Relative or absolute paths may be
             used, but all directories must exist.
-        append : bool (default is False)
+        append : bool (default is True)
             Append to existing file if it exists
 
         Notes
@@ -735,35 +779,42 @@ If no mesh is provided then no gradient function can be implemented</p></div>
         from petsc4py import PETSc
         import os
 
-        vname = self._ldata.getName()
-        if type(filename) == type(None):
-            filename = vname + &#39;.h5&#39;
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
+
+        if self._mesh.id.startswith(&#34;pixmesh&#34;):
+            # save mesh info to the hdf5 if DMDA object
+            # this is so tiny that I/O hit is negligible
+            self._mesh.save_mesh_to_hdf5(hdf5_filename)
 
         mode = &#34;w&#34;
-        if append and os.path.exists(filename):
+        if append and os.path.exists(hdf5_filename):
             mode = &#34;a&#34;
 
         # need a global vector
+        vname = self._ldata.getName()
         gdata = self._dm.getGlobalVec()
         gdata.setName(vname)
         self._dm.localToGlobal(self._ldata, gdata)
 
         ViewHDF5 = PETSc.Viewer()
-        ViewHDF5.createHDF5(filename, mode=mode)
+        ViewHDF5.createHDF5(hdf5_filename, mode=mode)
         ViewHDF5(gdata)
         ViewHDF5.destroy()
+        ViewHDF5 = None
 
         self._dm.restoreGlobalVec(gdata)
 
         return
 
-    def load(self, filename):
+    def load(self, hdf5_filename):
         &#34;&#34;&#34;
         Load the MeshVariable from disk.
 
         Parameters
         ----------
-        filename: str
+        hdf5_filename: str
             The filename for the saved file. Relative or absolute paths may be
             used, but all directories must exist.
 
@@ -778,9 +829,10 @@ If no mesh is provided then no gradient function can be implemented</p></div>
         gdata.setName(self._ldata.getName())
 
         ViewHDF5 = PETSc.Viewer()
-        ViewHDF5.createHDF5(str(filename), mode=&#39;r&#39;)
+        ViewHDF5.createHDF5(str(hdf5_filename), mode=&#39;r&#39;)
         gdata.load(ViewHDF5)
         ViewHDF5.destroy()
+        ViewHDF5 = None
 
         self._dm.globalToLocal(gdata, self._ldata)
         self._dm.restoreGlobalVec(gdata)
@@ -1299,13 +1351,13 @@ methods on the mesh object.</p>
 </details>
 </dd>
 <dt id="quagmire.mesh.basemesh.MeshVariable.load"><code class="name flex">
-<span>def <span class="ident">load</span></span>(<span>self, filename)</span>
+<span>def <span class="ident">load</span></span>(<span>self, hdf5_filename)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Load the MeshVariable from disk.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
-<dt><strong><code>filename</code></strong> :&ensp;<code>str</code></dt>
+<dt><strong><code>hdf5_filename</code></strong> :&ensp;<code>str</code></dt>
 <dd>The filename for the saved file. Relative or absolute paths may be
 used, but all directories must exist.</dd>
 </dl>
@@ -1316,13 +1368,13 @@ size and with the same name as the current MeshVariable</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def load(self, filename):
+<pre><code class="python">def load(self, hdf5_filename):
     &#34;&#34;&#34;
     Load the MeshVariable from disk.
 
     Parameters
     ----------
-    filename: str
+    hdf5_filename: str
         The filename for the saved file. Relative or absolute paths may be
         used, but all directories must exist.
 
@@ -1337,9 +1389,10 @@ size and with the same name as the current MeshVariable</p></div>
     gdata.setName(self._ldata.getName())
 
     ViewHDF5 = PETSc.Viewer()
-    ViewHDF5.createHDF5(str(filename), mode=&#39;r&#39;)
+    ViewHDF5.createHDF5(str(hdf5_filename), mode=&#39;r&#39;)
     gdata.load(ViewHDF5)
     ViewHDF5.destroy()
+    ViewHDF5 = None
 
     self._dm.globalToLocal(gdata, self._ldata)
     self._dm.restoreGlobalVec(gdata)</code></pre>
@@ -1410,16 +1463,16 @@ size and with the same name as the current MeshVariable</p></div>
 </details>
 </dd>
 <dt id="quagmire.mesh.basemesh.MeshVariable.save"><code class="name flex">
-<span>def <span class="ident">save</span></span>(<span>self, filename=None, append=False)</span>
+<span>def <span class="ident">save</span></span>(<span>self, hdf5_filename, append=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Save the MeshVariable to disk.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
-<dt><strong><code>filename</code></strong> :&ensp;<code>str (optional)</code></dt>
+<dt><strong><code>hdf5_filename</code></strong> :&ensp;<code>str (optional)</code></dt>
 <dd>The name of the output file. Relative or absolute paths may be
 used, but all directories must exist.</dd>
-<dt><strong><code>append</code></strong> :&ensp;<code>bool (default is False)</code></dt>
+<dt><strong><code>append</code></strong> :&ensp;<code>bool (default is True)</code></dt>
 <dd>Append to existing file if it exists</dd>
 </dl>
 <h2 id="notes">Notes</h2>
@@ -1428,16 +1481,16 @@ used, but all directories must exist.</dd>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def save(self, filename=None, append=False):
+<pre><code class="python">def save(self, hdf5_filename, append=True):
     &#34;&#34;&#34;
     Save the MeshVariable to disk.
 
     Parameters
     ----------
-    filename : str (optional)
+    hdf5_filename : str (optional)
         The name of the output file. Relative or absolute paths may be
         used, but all directories must exist.
-    append : bool (default is False)
+    append : bool (default is True)
         Append to existing file if it exists
 
     Notes
@@ -1447,23 +1500,30 @@ used, but all directories must exist.</dd>
     from petsc4py import PETSc
     import os
 
-    vname = self._ldata.getName()
-    if type(filename) == type(None):
-        filename = vname + &#39;.h5&#39;
+    hdf5_filename = str(hdf5_filename)
+    if not hdf5_filename.endswith(&#39;.h5&#39;):
+        hdf5_filename += &#39;.h5&#39;
+
+    if self._mesh.id.startswith(&#34;pixmesh&#34;):
+        # save mesh info to the hdf5 if DMDA object
+        # this is so tiny that I/O hit is negligible
+        self._mesh.save_mesh_to_hdf5(hdf5_filename)
 
     mode = &#34;w&#34;
-    if append and os.path.exists(filename):
+    if append and os.path.exists(hdf5_filename):
         mode = &#34;a&#34;
 
     # need a global vector
+    vname = self._ldata.getName()
     gdata = self._dm.getGlobalVec()
     gdata.setName(vname)
     self._dm.localToGlobal(self._ldata, gdata)
 
     ViewHDF5 = PETSc.Viewer()
-    ViewHDF5.createHDF5(filename, mode=mode)
+    ViewHDF5.createHDF5(hdf5_filename, mode=mode)
     ViewHDF5(gdata)
     ViewHDF5.destroy()
+    ViewHDF5 = None
 
     self._dm.restoreGlobalVec(gdata)
 
@@ -1550,6 +1610,32 @@ used, but all directories must exist.</dd>
 </summary>
 <pre><code class="python">def unlock(self):
     self._locked = False</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.xdmf"><code class="name flex">
+<span>def <span class="ident">xdmf</span></span>(<span>self, hdf5_filename, hdf5_mesh_filename=None, xdmf_filename=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates an xdmf file associating the saved HDF5 file with the mesh</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def xdmf(self, hdf5_filename, hdf5_mesh_filename=None, xdmf_filename=None):
+    &#34;&#34;&#34;
+    Creates an xdmf file associating the saved HDF5 file with the mesh
+
+    &#34;&#34;&#34;
+    from quagmire.tools.generate_xdmf import generateXdmf
+    from quagmire import mpi_rank
+
+    hdf5_filename = str(hdf5_filename)
+    if not hdf5_filename.endswith(&#39;.h5&#39;):
+        hdf5_filename += &#39;.h5&#39;
+
+    if mpi_rank == 0:
+        generateXdmf(hdf5_filename, hdf5_mesh_filename, xdmf_filename)
+    return</code></pre>
 </details>
 </dd>
 </dl>
@@ -1707,6 +1793,7 @@ def data(self):
 <li><code><a title="quagmire.mesh.basemesh.MeshVariable.std" href="#quagmire.mesh.basemesh.MeshVariable.std">std</a></code></li>
 <li><code><a title="quagmire.mesh.basemesh.MeshVariable.sum" href="#quagmire.mesh.basemesh.MeshVariable.sum">sum</a></code></li>
 <li><code><a title="quagmire.mesh.basemesh.MeshVariable.sync" href="#quagmire.mesh.basemesh.MeshVariable.sync">sync</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.xdmf" href="#quagmire.mesh.basemesh.MeshVariable.xdmf">xdmf</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1747,6 +1834,7 @@ def data(self):
 <li><code><a title="quagmire.mesh.basemesh.MeshVariable.sum" href="#quagmire.mesh.basemesh.MeshVariable.sum">sum</a></code></li>
 <li><code><a title="quagmire.mesh.basemesh.MeshVariable.sync" href="#quagmire.mesh.basemesh.MeshVariable.sync">sync</a></code></li>
 <li><code><a title="quagmire.mesh.basemesh.MeshVariable.unlock" href="#quagmire.mesh.basemesh.MeshVariable.unlock">unlock</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.xdmf" href="#quagmire.mesh.basemesh.MeshVariable.xdmf">xdmf</a></code></li>
 </ul>
 </li>
 <li>

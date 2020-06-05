@@ -309,25 +309,48 @@ class CommonMesh(object):
 
         return
 
-
-    def save_mesh_to_hdf5(self, file):
+    def xdmf(self, hdf5_filename, xdmf_filename=None):
         &#34;&#34;&#34;
-        Saves mesh information stored in the DM to HDF5 file
-        If the file already exists, it is overwritten.
+        Creates an xdmf file associating the saved HDF5 file with the mesh
+
+        If no xdmf filename is not provided, a xdmf file is generated from
+        the hdf5 filename with a trailing `.xdmf` extension.
+        &#34;&#34;&#34;
+        from quagmire.tools.generate_xdmf import generateXdmf
+        from quagmire import mpi_rank
+
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
+
+        if mpi_rank == 0:
+            generateXdmf(hdf5_filename, xdmfFilename=xdmf_filename)
+        return
+
+
+    def save(self, hdf5_filename):
+        return self.save_quagmire_project(hdf5_filename)
+
+
+    def save_mesh_to_hdf5(self, hdf5_filename):
+        &#34;&#34;&#34;
+        Saves mesh information stored in the DM to HDF5 filename
+        If the filename already exists, it is overwritten.
 
         Parameters
         ----------
-        file : str
-            Save the mesh to an HDF5 file with this name
+        filename : str
+            Save the mesh to an HDF5 filename with this name
         &#34;&#34;&#34;
-        file = str(file)
-        if not file.endswith(&#39;.h5&#39;):
-            file += &#39;.h5&#39;
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
 
         ViewHDF5 = PETSc.Viewer()
-        ViewHDF5.createHDF5(file, mode=&#39;w&#39;)
+        ViewHDF5.createHDF5(hdf5_filename, mode=&#39;w&#39;)
         ViewHDF5.view(obj=self.dm)
         ViewHDF5.destroy()
+        ViewHDF5 = None
 
 
         if self.id.startswith(&#34;pixmesh&#34;):
@@ -338,7 +361,7 @@ class CommonMesh(object):
             (minX, maxX), (minY, maxY) = self.dm.getBoundingBox()
             resX, resY = self.dm.getSizes()
 
-            with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
+            with h5py.File(hdf5_filename, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
                 geom = h5.create_group(&#39;geometry&#39;)
                 geom.attrs[&#39;minX&#39;] = minX
                 geom.attrs[&#39;maxX&#39;] = maxX
@@ -348,7 +371,7 @@ class CommonMesh(object):
                 geom.attrs[&#39;resY&#39;] = resY
 
 
-    def save_field_to_hdf5(self, file, *args, **kwargs):
+    def save_field_to_hdf5(self, hdf5_filename, *args, **kwargs):
         &#34;&#34;&#34;
         Saves data on the mesh to an HDF5 file
         e.g. height, rainfall, sea level, etc.
@@ -358,20 +381,16 @@ class CommonMesh(object):
 
         Parameters
         ----------
-        file : str
+        hdf5_filename : str
             Save the mesh variables to an HDF5 file with this name
         *args : arguments
         **kwargs : keyword arguments
         &#34;&#34;&#34;
         import os.path
 
-        file = str(file)
-        if not file.endswith(&#39;.h5&#39;):
-            file += &#39;.h5&#39;
-
-        # write mesh if it doesn&#39;t exist
-        # if not os.path.isfile(file):
-        #     self.save_mesh_to_hdf5(file)
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
 
         kwdict = kwargs
         for i, arg in enumerate(args):
@@ -381,10 +400,9 @@ class CommonMesh(object):
                                   and keyword: {}&#34;.format(key))
             kwdict[key] = arg
 
-        vec = self.gvec.duplicate()
         vec = self.dm.createGlobalVec()
 
-        if os.path.isfile(file):
+        if os.path.isfile(hdf5_filename):
             mode = &#34;a&#34;
         else:
             mode = &#34;w&#34;
@@ -403,12 +421,13 @@ class CommonMesh(object):
                 print(&#34;Saving {} to hdf5&#34;.format(key))
 
             ViewHDF5 = PETSc.Viewer()
-            ViewHDF5.createHDF5(file, mode=mode)
+            ViewHDF5.createHDF5(hdf5_filename, mode=mode)
             ViewHDF5.view(obj=vec)
             ViewHDF5.destroy()
             mode = &#34;a&#34;
 
         vec.destroy()
+        vec = None
 
 
     def _gather_root(self):
@@ -784,25 +803,48 @@ spherical mesh object</dd>
 
         return
 
-
-    def save_mesh_to_hdf5(self, file):
+    def xdmf(self, hdf5_filename, xdmf_filename=None):
         &#34;&#34;&#34;
-        Saves mesh information stored in the DM to HDF5 file
-        If the file already exists, it is overwritten.
+        Creates an xdmf file associating the saved HDF5 file with the mesh
+
+        If no xdmf filename is not provided, a xdmf file is generated from
+        the hdf5 filename with a trailing `.xdmf` extension.
+        &#34;&#34;&#34;
+        from quagmire.tools.generate_xdmf import generateXdmf
+        from quagmire import mpi_rank
+
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
+
+        if mpi_rank == 0:
+            generateXdmf(hdf5_filename, xdmfFilename=xdmf_filename)
+        return
+
+
+    def save(self, hdf5_filename):
+        return self.save_quagmire_project(hdf5_filename)
+
+
+    def save_mesh_to_hdf5(self, hdf5_filename):
+        &#34;&#34;&#34;
+        Saves mesh information stored in the DM to HDF5 filename
+        If the filename already exists, it is overwritten.
 
         Parameters
         ----------
-        file : str
-            Save the mesh to an HDF5 file with this name
+        filename : str
+            Save the mesh to an HDF5 filename with this name
         &#34;&#34;&#34;
-        file = str(file)
-        if not file.endswith(&#39;.h5&#39;):
-            file += &#39;.h5&#39;
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
 
         ViewHDF5 = PETSc.Viewer()
-        ViewHDF5.createHDF5(file, mode=&#39;w&#39;)
+        ViewHDF5.createHDF5(hdf5_filename, mode=&#39;w&#39;)
         ViewHDF5.view(obj=self.dm)
         ViewHDF5.destroy()
+        ViewHDF5 = None
 
 
         if self.id.startswith(&#34;pixmesh&#34;):
@@ -813,7 +855,7 @@ spherical mesh object</dd>
             (minX, maxX), (minY, maxY) = self.dm.getBoundingBox()
             resX, resY = self.dm.getSizes()
 
-            with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
+            with h5py.File(hdf5_filename, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
                 geom = h5.create_group(&#39;geometry&#39;)
                 geom.attrs[&#39;minX&#39;] = minX
                 geom.attrs[&#39;maxX&#39;] = maxX
@@ -823,7 +865,7 @@ spherical mesh object</dd>
                 geom.attrs[&#39;resY&#39;] = resY
 
 
-    def save_field_to_hdf5(self, file, *args, **kwargs):
+    def save_field_to_hdf5(self, hdf5_filename, *args, **kwargs):
         &#34;&#34;&#34;
         Saves data on the mesh to an HDF5 file
         e.g. height, rainfall, sea level, etc.
@@ -833,20 +875,16 @@ spherical mesh object</dd>
 
         Parameters
         ----------
-        file : str
+        hdf5_filename : str
             Save the mesh variables to an HDF5 file with this name
         *args : arguments
         **kwargs : keyword arguments
         &#34;&#34;&#34;
         import os.path
 
-        file = str(file)
-        if not file.endswith(&#39;.h5&#39;):
-            file += &#39;.h5&#39;
-
-        # write mesh if it doesn&#39;t exist
-        # if not os.path.isfile(file):
-        #     self.save_mesh_to_hdf5(file)
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
 
         kwdict = kwargs
         for i, arg in enumerate(args):
@@ -856,10 +894,9 @@ spherical mesh object</dd>
                                   and keyword: {}&#34;.format(key))
             kwdict[key] = arg
 
-        vec = self.gvec.duplicate()
         vec = self.dm.createGlobalVec()
 
-        if os.path.isfile(file):
+        if os.path.isfile(hdf5_filename):
             mode = &#34;a&#34;
         else:
             mode = &#34;w&#34;
@@ -878,12 +915,13 @@ spherical mesh object</dd>
                 print(&#34;Saving {} to hdf5&#34;.format(key))
 
             ViewHDF5 = PETSc.Viewer()
-            ViewHDF5.createHDF5(file, mode=mode)
+            ViewHDF5.createHDF5(hdf5_filename, mode=mode)
             ViewHDF5.view(obj=vec)
             ViewHDF5.destroy()
             mode = &#34;a&#34;
 
         vec.destroy()
+        vec = None
 
 
     def _gather_root(self):
@@ -1151,8 +1189,21 @@ e.g. "boundary", "coarse"</p>
     return indices</code></pre>
 </details>
 </dd>
+<dt id="quagmire.mesh.commonmesh.CommonMesh.save"><code class="name flex">
+<span>def <span class="ident">save</span></span>(<span>self, hdf5_filename)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save(self, hdf5_filename):
+    return self.save_quagmire_project(hdf5_filename)</code></pre>
+</details>
+</dd>
 <dt id="quagmire.mesh.commonmesh.CommonMesh.save_field_to_hdf5"><code class="name flex">
-<span>def <span class="ident">save_field_to_hdf5</span></span>(<span>self, file, *args, **kwargs)</span>
+<span>def <span class="ident">save_field_to_hdf5</span></span>(<span>self, hdf5_filename, *args, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Saves data on the mesh to an HDF5 file
@@ -1161,7 +1212,7 @@ e.g. height, rainfall, sea level, etc.</p>
 their names to be saved to the hdf5 file</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
-<dt><strong><code>file</code></strong> :&ensp;<code>str</code></dt>
+<dt><strong><code>hdf5_filename</code></strong> :&ensp;<code>str</code></dt>
 <dd>Save the mesh variables to an HDF5 file with this name</dd>
 <dt><strong><code>*args</code></strong> :&ensp;<code>arguments</code></dt>
 <dd>&nbsp;</dd>
@@ -1172,7 +1223,7 @@ their names to be saved to the hdf5 file</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def save_field_to_hdf5(self, file, *args, **kwargs):
+<pre><code class="python">def save_field_to_hdf5(self, hdf5_filename, *args, **kwargs):
     &#34;&#34;&#34;
     Saves data on the mesh to an HDF5 file
     e.g. height, rainfall, sea level, etc.
@@ -1182,20 +1233,16 @@ their names to be saved to the hdf5 file</p>
 
     Parameters
     ----------
-    file : str
+    hdf5_filename : str
         Save the mesh variables to an HDF5 file with this name
     *args : arguments
     **kwargs : keyword arguments
     &#34;&#34;&#34;
     import os.path
 
-    file = str(file)
-    if not file.endswith(&#39;.h5&#39;):
-        file += &#39;.h5&#39;
-
-    # write mesh if it doesn&#39;t exist
-    # if not os.path.isfile(file):
-    #     self.save_mesh_to_hdf5(file)
+    hdf5_filename = str(hdf5_filename)
+    if not hdf5_filename.endswith(&#39;.h5&#39;):
+        hdf5_filename += &#39;.h5&#39;
 
     kwdict = kwargs
     for i, arg in enumerate(args):
@@ -1205,10 +1252,9 @@ their names to be saved to the hdf5 file</p>
                               and keyword: {}&#34;.format(key))
         kwdict[key] = arg
 
-    vec = self.gvec.duplicate()
     vec = self.dm.createGlobalVec()
 
-    if os.path.isfile(file):
+    if os.path.isfile(hdf5_filename):
         mode = &#34;a&#34;
     else:
         mode = &#34;w&#34;
@@ -1227,47 +1273,49 @@ their names to be saved to the hdf5 file</p>
             print(&#34;Saving {} to hdf5&#34;.format(key))
 
         ViewHDF5 = PETSc.Viewer()
-        ViewHDF5.createHDF5(file, mode=mode)
+        ViewHDF5.createHDF5(hdf5_filename, mode=mode)
         ViewHDF5.view(obj=vec)
         ViewHDF5.destroy()
         mode = &#34;a&#34;
 
-    vec.destroy()</code></pre>
+    vec.destroy()
+    vec = None</code></pre>
 </details>
 </dd>
 <dt id="quagmire.mesh.commonmesh.CommonMesh.save_mesh_to_hdf5"><code class="name flex">
-<span>def <span class="ident">save_mesh_to_hdf5</span></span>(<span>self, file)</span>
+<span>def <span class="ident">save_mesh_to_hdf5</span></span>(<span>self, hdf5_filename)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Saves mesh information stored in the DM to HDF5 file
-If the file already exists, it is overwritten.</p>
+<div class="desc"><p>Saves mesh information stored in the DM to HDF5 filename
+If the filename already exists, it is overwritten.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
-<dt><strong><code>file</code></strong> :&ensp;<code>str</code></dt>
-<dd>Save the mesh to an HDF5 file with this name</dd>
+<dt><strong><code>filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>Save the mesh to an HDF5 filename with this name</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def save_mesh_to_hdf5(self, file):
+<pre><code class="python">def save_mesh_to_hdf5(self, hdf5_filename):
     &#34;&#34;&#34;
-    Saves mesh information stored in the DM to HDF5 file
-    If the file already exists, it is overwritten.
+    Saves mesh information stored in the DM to HDF5 filename
+    If the filename already exists, it is overwritten.
 
     Parameters
     ----------
-    file : str
-        Save the mesh to an HDF5 file with this name
+    filename : str
+        Save the mesh to an HDF5 filename with this name
     &#34;&#34;&#34;
-    file = str(file)
-    if not file.endswith(&#39;.h5&#39;):
-        file += &#39;.h5&#39;
+    hdf5_filename = str(hdf5_filename)
+    if not hdf5_filename.endswith(&#39;.h5&#39;):
+        hdf5_filename += &#39;.h5&#39;
 
     ViewHDF5 = PETSc.Viewer()
-    ViewHDF5.createHDF5(file, mode=&#39;w&#39;)
+    ViewHDF5.createHDF5(hdf5_filename, mode=&#39;w&#39;)
     ViewHDF5.view(obj=self.dm)
     ViewHDF5.destroy()
+    ViewHDF5 = None
 
 
     if self.id.startswith(&#34;pixmesh&#34;):
@@ -1278,7 +1326,7 @@ If the file already exists, it is overwritten.</p>
         (minX, maxX), (minY, maxY) = self.dm.getBoundingBox()
         resX, resY = self.dm.getSizes()
 
-        with h5py.File(file, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
+        with h5py.File(hdf5_filename, mode=&#39;r+&#39;, driver=&#39;mpio&#39;, comm=comm) as h5:
             geom = h5.create_group(&#39;geometry&#39;)
             geom.attrs[&#39;minX&#39;] = minX
             geom.attrs[&#39;maxX&#39;] = maxX
@@ -1449,6 +1497,36 @@ If the file already exists, it is overwritten.</p>
         return self.lvec.array.copy()</code></pre>
 </details>
 </dd>
+<dt id="quagmire.mesh.commonmesh.CommonMesh.xdmf"><code class="name flex">
+<span>def <span class="ident">xdmf</span></span>(<span>self, hdf5_filename, xdmf_filename=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates an xdmf file associating the saved HDF5 file with the mesh</p>
+<p>If no xdmf filename is not provided, a xdmf file is generated from
+the hdf5 filename with a trailing <code>.xdmf</code> extension.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def xdmf(self, hdf5_filename, xdmf_filename=None):
+    &#34;&#34;&#34;
+    Creates an xdmf file associating the saved HDF5 file with the mesh
+
+    If no xdmf filename is not provided, a xdmf file is generated from
+    the hdf5 filename with a trailing `.xdmf` extension.
+    &#34;&#34;&#34;
+    from quagmire.tools.generate_xdmf import generateXdmf
+    from quagmire import mpi_rank
+
+    hdf5_filename = str(hdf5_filename)
+    if not hdf5_filename.endswith(&#39;.h5&#39;):
+        hdf5_filename += &#39;.h5&#39;
+
+    if mpi_rank == 0:
+        generateXdmf(hdf5_filename, xdmfFilename=xdmf_filename)
+    return</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -1474,12 +1552,14 @@ If the file already exists, it is overwritten.</p>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.gather_data" href="#quagmire.mesh.commonmesh.CommonMesh.gather_data">gather_data</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.get_boundary" href="#quagmire.mesh.commonmesh.CommonMesh.get_boundary">get_boundary</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.get_label" href="#quagmire.mesh.commonmesh.CommonMesh.get_label">get_label</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.save" href="#quagmire.mesh.commonmesh.CommonMesh.save">save</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.save_field_to_hdf5" href="#quagmire.mesh.commonmesh.CommonMesh.save_field_to_hdf5">save_field_to_hdf5</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.save_mesh_to_hdf5" href="#quagmire.mesh.commonmesh.CommonMesh.save_mesh_to_hdf5">save_mesh_to_hdf5</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.save_quagmire_project" href="#quagmire.mesh.commonmesh.CommonMesh.save_quagmire_project">save_quagmire_project</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.scatter_data" href="#quagmire.mesh.commonmesh.CommonMesh.scatter_data">scatter_data</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.set_label" href="#quagmire.mesh.commonmesh.CommonMesh.set_label">set_label</a></code></li>
 <li><code><a title="quagmire.mesh.commonmesh.CommonMesh.sync" href="#quagmire.mesh.commonmesh.CommonMesh.sync">sync</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.xdmf" href="#quagmire.mesh.commonmesh.CommonMesh.xdmf">xdmf</a></code></li>
 </ul>
 </li>
 </ul>
