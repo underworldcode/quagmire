@@ -132,8 +132,8 @@ class sTriMesh(_CommonMesh):
 
         rlons, rlats = stripy.spherical.xyz2lonlat(coords[:,0], coords[:,1], coords[:,2])
 
-        self.lons = np.degrees(rlons)
-        self.lats = np.degrees(rlats)
+        lons = np.degrees(rlons)
+        lats = np.degrees(rlats)
 
         self.tri = stripy.sTriangulation(rlons, rlats)
         self.npoints = self.tri.npoints

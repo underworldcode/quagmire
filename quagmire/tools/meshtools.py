@@ -857,12 +857,13 @@ def map_global_raster_to_strimesh(mesh, latlongrid, order=3, origin="lower", uni
     from scipy import ndimage
     import numpy as np
 
+
     raster = latlongrid.T
 
-    latitudes_in_degrees  = mesh.lats
-    longitudes_in_degrees = mesh.lons 
-
-    if units != "degrees":
+    try: 
+        latitudes_in_degrees  = np.degrees(mesh.tri.lats)
+        longitudes_in_degrees = np.degrees(mesh.tri.lats)
+    except:
         latitudes_in_degrees = np.degrees(mesh.lats)
         longitudes_in_degrees = np.degrees(mesh.lons)
 
