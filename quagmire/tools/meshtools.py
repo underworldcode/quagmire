@@ -709,8 +709,8 @@ def global_CO_mesh(stripy_mesh_name, include_face_points=False, refinement_C=7, 
     height = vals.data 
     height = 6.370 + 1.0e-6 * vals.data 
 
-    meshheightsC = map_raster_to_mesh(stC, height)
-    meshheightsO = map_raster_to_mesh(stO, height)
+    meshheightsC = map_global_raster_to_strimesh(stC, height, units="radians")
+    meshheightsO = map_global_raster_to_strimesh(stO, height, units="radians")
 
     clons = stC.lons[np.where(meshheightsC >= 6.3699)]  # 100m depth
     clats = stC.lats[np.where(meshheightsC >= 6.3699)]
@@ -725,9 +725,9 @@ def global_CO_mesh(stripy_mesh_name, include_face_points=False, refinement_C=7, 
     stN = stripy.spherical.sTriangulation(lons=nlons, lats=nlats, refinement_levels=0, tree=False)
    
     if return_heights:
-        return stN.lons, stN.lats, stN.simplices, nheights
+        return np.degrees(stN.lons_map_to_wrapped(stN.lons)), np.degrees(stN.lats), stN.simplices, nheights
     else:
-        return stN.lons, stN.lats, stN.simplices
+        return np.degrees(stN.lons_map_to_wrapped(stN.lons)), np.degrees(stN.lats), stN.simplices
     
 
 
@@ -818,18 +818,21 @@ def generate_elliptical_points(minX, maxX, minY, maxY, spacingX, spacingY, sampl
     return X, Y, bmask
 
 
-def map_raster_to_mesh(mesh, latlongrid, order=3, origin="lower"):
+def map_global_raster_to_strimesh(mesh, latlongrid, order=3, origin="lower", units="degrees"):
     """
     Map a lon/lat "image" (assuming origin="lower" in matplotlib parlance) to nodes on a quagmire mesh
     """
     from scipy import ndimage
+    import numpy as np
 
     raster = latlongrid.T
 
-    latitudes_in_radians  = mesh.lats
-    longitudes_in_radians = mesh.lons 
-    latitudes_in_degrees  = np.degrees(latitudes_in_radians) 
-    longitudes_in_degrees = np.degrees(longitudes_in_radians)%360.0 - 180.0
+    latitudes_in_degrees  = mesh.lats
+    longitudes_in_degrees = mesh.lons 
+
+    if units != "degrees":
+        latitudes_in_degrees = np.degrees(mesh.lats)
+        longitudes_in_degrees = np.degrees(mesh.lons)
 
     dlons = np.mod(longitudes_in_degrees+180.0, 360.0)
     dlats = np.mod(latitudes_in_degrees+90, 180.0)
