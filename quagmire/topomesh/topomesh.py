@@ -743,7 +743,7 @@ class TopoMesh(object):
         self.topography.unlock()
         h = self.topography.data
 
-        fill_height =  (h[self.natural_neighbours[my_low_points]] * self.natural_neighbours_mask[my_low_points]).mean(axis=1) - h[my_low_points]
+        fill_height =  h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]].min(axis=1) - h[my_low_points]
 
         new_h = self.uphill_propagation(my_low_points,  fill_height, scale=scale,  its=its, fill=0.0)
         new_h = self.sync(new_h)
@@ -761,7 +761,12 @@ class TopoMesh(object):
 
         return
 
-    def low_points_local_patch_fill(self, its=1, smoothing_steps=1, ref_height=0.0):
+    def low_points_local_patch_fill(self, its=1, smoothing_steps=1, ref_height=0.0, fraction=0.01):
+        """
+        Local patch algorithm to fill low points - raises the topography at a local minimum to be
+        a small fraction higher than the lowest neighbour. If smoothing is used, then that correction
+        in topography is spread around all the local nodes. 
+        """
 
         from petsc4py import PETSc
         t = perf_counter()
@@ -777,8 +782,8 @@ class TopoMesh(object):
             ## Note, the smoother has a communication barrier so needs to be called even if it has no work to do on this process
 
             for i in low_points:
-                delta_height[i] =  ( 0.75 * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).min() +
-                                     0.25 * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).max() 
+                delta_height[i] =  ( (1.0-fraction) * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).min() +
+                                          fraction  * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).max() 
                                               - h[i] )
 
             ## Note, the smoother has a communication barrier so needs to be called even
@@ -800,7 +805,7 @@ class TopoMesh(object):
         return
 
 
-    def low_points_swamp_fill(self, its=1000, saddles=None, ref_height=0.0, ref_gradient=0.001):
+    def low_points_swamp_fill(self, its=1000, saddles=None, ref_height=0.0, ref_gradient=0.001, fluctuation_strength=0.05):
 
         import petsc4py
         from petsc4py import PETSc
@@ -825,20 +830,7 @@ class TopoMesh(object):
 
         if self.rank==0 and self.verbose:
             print("Build low point catchments - ", perf_counter() - t, " seconds")
-
-        # if saddles:  
-        #     # Find saddle points on the catchment edge - catchment detection is via down-neighbour 1,
-        #     # so neighbour 2 (or 3) is the earliest detection opportunity for a spill
-
-        #     cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
-        #     try:
-        #         cedges3 = np.where(ctmt[self.down_neighbour[3]] != ctmt )[0] ## local numbering
-        #         cedges = np.unique(np.hstack((cedges,cedges3)))
-        #     except:
-        #         pass
-
-        # else:    
-        #     
+  
 
 # Possible problem - low point that should flow out the side of the domain boundary. 
 
@@ -921,9 +913,10 @@ class TopoMesh(object):
             separation_x = (self.coords[catchment_nodes,0] - spill['x'])
             separation_y = (self.coords[catchment_nodes,1] - spill['y'])
             distance = np.hypot(separation_x, separation_y)
+            fluctuations = 1.0 + np.random.random(size=distance.shape) * distance.mean() * ref_gradient * fluctuation_strength
 
             ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
-            height2[catchment_nodes] = spill['h'] + ref_gradient * distance  # A 'small' gradient (should be a user-parameter)
+            height2[catchment_nodes] = spill['h'] + ref_gradient * distance * fluctuations # A 'small' gradient but this should depend on local conditions
 
         height2 = self.sync(height2)
 
