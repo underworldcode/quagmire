@@ -108,6 +108,7 @@ class PixMesh(_CommonMesh):
 
     def __init__(self, dm, verbose=True, *args, **kwargs):
         from scipy.spatial import cKDTree as _cKDTree
+        from scipy.interpolate import RegularGridInterpolator
 
         # initialise base mesh class
         super(PixMesh, self).__init__(dm, verbose)
@@ -196,6 +197,17 @@ class PixMesh(_CommonMesh):
             print("{} - Construct rbf weights {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
+        # construct interpolator object
+        t = perf_counter()
+        xcoords = np.linspace(minX, maxX, nx)
+        ycoords = np.linspace(minY, maxY, ny)
+        dvalues = np.empty((ny,nx))
+        self._interpolator = RegularGridInterpolator((ycoords, xcoords), dvalues, bounds_error=False, fill_value=None)
+        self.timings['construct interpolator object'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank == 0 and self.verbose:
+            print("{} - Construct interpolator object {}s".format(self.dm.comm.rank, perf_counter()-t))
+
+
         self.root = False
 
         # functions / parameters that are required for compatibility among FlatMesh types
@@ -203,7 +215,31 @@ class PixMesh(_CommonMesh):
         self._radius = 1.0
 
 
-    def derivative_grad(self, PHI):
+    def interpolate(self, xi, yi, zdata, order=1):
+
+        order_dict = {1: "linear", 0: "nearest"}
+
+        if order not in order_dict:
+            raise ValueError("order must be set to 0 (nearest) or 1 (linear) interpolation")
+
+        xi = np.array(xi)
+        yi = np.array(yi)
+
+        interpolator = self._interpolator
+        interpolator.values = np.array(zdata).reshape(self.ny, self.nx)
+        ival = interpolator((yi, xi), method=order_dict[order])
+
+        # check if inside bounds
+        inside_bounds = np.zeros_like(xi, dtype=np.bool)
+        inside_bounds += xi < self.minX
+        inside_bounds += xi > self.maxX
+        inside_bounds += yi < self.minY
+        inside_bounds += yi > self.maxY
+
+        return ival, inside_bounds.astype(np.int)
+
+
+    def derivative_grad(self, PHI, **kwargs):
         """
         Compute derivatives of PHI in the x, y directions.
         This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
