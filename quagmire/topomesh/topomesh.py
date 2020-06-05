@@ -872,8 +872,6 @@ class TopoMesh(object):
                 spills['y'][ii] = self.data[spill,1]
                 if is_strimesh:
                     spills['z'][ii] = self.data[spill,2]
-                else:
-                    spills['z'][ii] = 0.0
                 ii += 1
 
         t = perf_counter()
@@ -923,7 +921,10 @@ class TopoMesh(object):
                 continue
 
             catchment_nodes = np.where(ctmt == this_catchment)
-            spill_coord = np.array([spill['x'], spill['y'], spill['z']])
+            if is_strimesh:
+                spill_coord = np.array([spill['x'], spill['y'], spill['z']])
+            else:
+                spill_coord = np.array([spill['x'], spill['y']])
             distance = np.linalg.norm(self.data[catchment_nodes] - spill_coord, axis=1)
 
             ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
