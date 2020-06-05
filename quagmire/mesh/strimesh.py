@@ -129,10 +129,11 @@ class sTriMesh(_CommonMesh):
         # r = 1.0
         # lons = np.arctan2(coords[:,1], coords[:,0])
         # lats = np.arcsin(coords[:,2]/r)
+
         rlons, rlats = stripy.spherical.xyz2lonlat(coords[:,0], coords[:,1], coords[:,2])
 
-        lons = np.degrees(rlons)
-        lats = np.degrees(rlats)
+        self.lons = np.degrees(rlons)
+        self.lats = np.degrees(rlats)
 
         self.tri = stripy.sTriangulation(rlons, rlats)
         self.npoints = self.tri.npoints
