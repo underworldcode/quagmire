@@ -665,6 +665,72 @@ def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0
     return tri.x, tri.y, tri.simplices
 
 
+
+def global_CO_mesh(stripy_mesh_name, include_face_points=False, refinement_C=7, refinement_O=4, verbose=False, return_heights=False):
+    """
+    Returns a mesh for global problems with different resolution in ocean and continental regions with
+    the transition between meshes determined using the ETOPO1 contour at -100m 
+    
+    Valid stripy_mesh_name values are "icosahedral_mesh", "triangulated_soccerball_mesh", and "octahedral_mesh"
+
+    This has additonal dependencies of xarray and scipy and functools
+    """
+        
+    from functools import partial
+    import stripy
+    import xarray
+    import numpy as np
+    
+    strimesh = {"icosahedral_mesh": partial(stripy.spherical_meshes.icosahedral_mesh, include_face_points=include_face_points),
+                "triangulated_soccerball_mesh": stripy.spherical_meshes.triangulated_soccerball_mesh, 
+                "octahedral_mesh": partial(stripy.spherical_meshes.octahedral_mesh, include_face_points=include_face_points)
+               }
+    
+    try:
+        stC = strimesh[stripy_mesh_name](refinement_levels = refinement_C, tree=False)
+        stO = strimesh[stripy_mesh_name](refinement_levels = refinement_O, tree=False)
+    except:
+        print("Suitable mesh types (stripy_mesh_name):")
+        print("     - icosahedral_mesh")
+        print("     - triangulated_soccerball_mesh")
+        print("     - octahedral_mesh" )
+        raise 
+     
+
+    etopo_dataset = "http://thredds.socib.es/thredds/dodsC/ancillary_data/bathymetry/ETOPO1_Bed_g_gmt4.nc"
+    etopo_data = xarray.open_dataset(etopo_dataset)
+    etopo_coarse = etopo_data.sel(x=slice(-180.0,180.0,30), y=slice(-90.0,90.0,30))
+
+    lons = etopo_coarse.coords.get('x')
+    lats = etopo_coarse.coords.get('y')
+    vals = etopo_coarse['z']
+
+    x,y = np.meshgrid(lons.data, lats.data)
+    height = vals.data 
+    height = 6.370 + 1.0e-6 * vals.data 
+
+    meshheightsC = map_raster_to_mesh(stC, height)
+    meshheightsO = map_raster_to_mesh(stO, height)
+
+    clons = stC.lons[np.where(meshheightsC >= 6.3699)]  # 100m depth
+    clats = stC.lats[np.where(meshheightsC >= 6.3699)]
+
+    olons = stO.lons[np.where(meshheightsO < 6.3699)]  # 100m depth
+    olats = stO.lats[np.where(meshheightsO < 6.3699)]
+
+    nlons = np.hstack((clons, olons))
+    nlats = np.hstack((clats, olats))
+    nheights = np.hstack((meshheightsC, meshheightsO))
+
+    stN = stripy.spherical.sTriangulation(lons=nlons, lats=nlats, refinement_levels=0, tree=False)
+   
+    if return_heights:
+        return stN.lons, stN.lats, stN.simplices, nheights
+    else:
+        return stN.lons, stN.lats, stN.simplices
+    
+
+
 def generate_square_points(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples ):
 
     lin_samples = int(_np.sqrt(samples))
@@ -750,3 +816,32 @@ def generate_elliptical_points(minX, maxX, minY, maxY, spacingX, spacingY, sampl
     bmask = _np.append(bmask, _np.zeros_like(theta, dtype=bool))
 
     return X, Y, bmask
+
+
+def map_raster_to_mesh(mesh, latlongrid, order=3, origin="lower"):
+    """
+    Map a lon/lat "image" (assuming origin="lower" in matplotlib parlance) to nodes on a quagmire mesh
+    """
+    from scipy import ndimage
+
+    raster = latlongrid.T
+
+    latitudes_in_radians  = mesh.lats
+    longitudes_in_radians = mesh.lons 
+    latitudes_in_degrees  = np.degrees(latitudes_in_radians) 
+    longitudes_in_degrees = np.degrees(longitudes_in_radians)%360.0 - 180.0
+
+    dlons = np.mod(longitudes_in_degrees+180.0, 360.0)
+    dlats = np.mod(latitudes_in_degrees+90, 180.0)
+
+    if origin != "lower":
+        dlats *= -1
+
+    ilons = raster.shape[0] * dlons / 360.0
+    ilats = raster.shape[1] * dlats / 180.0
+
+    icoords = np.array((ilons, ilats))
+
+    mvals = ndimage.map_coordinates(raster, icoords , order=order, mode='nearest').astype(np.float)
+
+    return mvals
