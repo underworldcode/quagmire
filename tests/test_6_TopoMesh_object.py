@@ -5,12 +5,12 @@ from quagmire import function as fn
 from quagmire import QuagMesh
 from petsc4py import PETSc
 
-from conftest import load_triangulated_mesh_DM
+from conftest import load_multi_mesh_DM as DM
 
 
-def test_height_mesh_variable(load_triangulated_mesh_DM):
-    mesh = QuagMesh(load_triangulated_mesh_DM)
-    x, y = mesh.tri.x, mesh.tri.y
+def test_height_mesh_variable(DM):
+    mesh = QuagMesh(DM)
+    x, y = mesh.coords[:,0], mesh.coords[:,1]
 
     radius  = np.sqrt((x**2 + y**2))
     theta   = np.arctan2(y,x) + 0.1
@@ -26,12 +26,12 @@ def test_height_mesh_variable(load_triangulated_mesh_DM):
     mat_info = mesh.downhillMat.getInfo()
     mat_size = mesh.downhillMat.getSize()
 
-    assert mat_info['nz_used'] >= mat_size[0], "Downhill matrix is not initialised correctly\n{}".format(mat_info)
+    assert mat_info['nz_used'] >= mat_size[0], "{}: Downhill matrix is not initialised correctly\n{}".format(mesh.id, mat_info)
 
 
-def test_downhill_neighbours(load_triangulated_mesh_DM):
-    mesh = QuagMesh(load_triangulated_mesh_DM, downhill_neighbours=1)
-    x, y = mesh.tri.x, mesh.tri.y
+def test_downhill_neighbours(DM):
+    mesh = QuagMesh(DM, downhill_neighbours=1)
+    x, y = mesh.coords[:,0], mesh.coords[:,1]
 
     radius  = np.sqrt((x**2 + y**2))
     theta   = np.arctan2(y,x) + 0.1
@@ -43,7 +43,7 @@ def test_downhill_neighbours(load_triangulated_mesh_DM):
 
     # increase number of downhill neighbours from 1-3
     for i in range(1,4):
-        mesh = QuagMesh(load_triangulated_mesh_DM, downhill_neighbours=i)
+        mesh = QuagMesh(DM, downhill_neighbours=i)
 
         with mesh.deform_topography():
             mesh.topography.data = height
@@ -54,11 +54,11 @@ def test_downhill_neighbours(load_triangulated_mesh_DM):
     mat_size = mesh.downhillMat.getSize()
     ascending = (np.diff(np.array(nz) - mat_size[0]) > 0).all()
 
-    err_msg = "Downhill matrix is not denser with more downhill neighbours: {}"
-    assert ascending, err_msg.format(list(enumerate(nz)))
+    err_msg = "{}: Downhill matrix is not denser with more downhill neighbours: {}"
+    assert ascending, err_msg.format(mesh.id, list(enumerate(nz)))
 
 
-def test_cumulative_flow(load_triangulated_mesh_DM):
+def test_cumulative_flow(DM):
 
     def identify_outflow_points(self):
         """
@@ -77,9 +77,9 @@ def test_cumulative_flow(load_triangulated_mesh_DM):
 
         return outflow_nodes
 
-    mesh = QuagMesh(load_triangulated_mesh_DM)
+    mesh = QuagMesh(DM)
 
-    x, y = mesh.tri.x, mesh.tri.y
+    x, y = mesh.coords[:,0], mesh.coords[:,1]
 
     radius  = np.sqrt((x**2 + y**2))
     theta   = np.arctan2(y,x) + 0.1
@@ -100,14 +100,14 @@ def test_cumulative_flow(load_triangulated_mesh_DM):
     # compare cumulative rainfall at the outflow nodes to the rest of the domain
     outflow_indices = identify_outflow_points(mesh)
 
-    err_msg = "cumulative rain outflow is less than the mean"
+    err_msg = "{}: cumulative rain outflow is less than the mean".format(mesh.id)
     assert upstream_rain[outflow_indices].mean() > upstream_rain.mean(), err_msg
 
 
-def test_streamwise_smoothing(load_triangulated_mesh_DM):
-    mesh = QuagMesh(load_triangulated_mesh_DM)
+def test_streamwise_smoothing(DM):
+    mesh = QuagMesh(DM)
 
-    x, y = mesh.tri.x, mesh.tri.y
+    x, y = mesh.coords[:,0], mesh.coords[:,1]
 
     radius  = np.sqrt((x**2 + y**2))
     theta   = np.arctan2(y,x) + 0.1
@@ -118,18 +118,20 @@ def test_streamwise_smoothing(load_triangulated_mesh_DM):
     with mesh.deform_topography():
         mesh.topography.data = height
 
-    # find steeper regions
-    flat_area_mask = fn.misc.levelset(mesh.slope, 0.1, invert=True)
+    # find streams
+    mask_streams = mesh.upstream_area.data > 0.001
+    stream_x = x[mask_streams]
+    stream_y = y[mask_streams]
 
-    # seed rainfall
+    # seed random rainfall
     rainfall = mesh.add_variable("rainfall")
-    rainfall.data = flat_area_mask.evaluate(mesh)
+    rainfall.data = np.random.random(size=mesh.npoints)
 
-    sm1 = np.std(rainfall.data)
+    sm1 = np.std(rainfall.evaluate(stream_x, stream_y))
 
     for i in range(1,4):
         sm0 = float(sm1)
         smooth_fn = mesh.streamwise_smoothing_fn(rainfall, its=i)
-        sm1 = np.std(smooth_fn.evaluate(mesh))
+        sm1 = np.std(smooth_fn.evaluate(stream_x, stream_y))
 
-        assert sm1 < sm0, "streamwise smoothing at its={} no smoother than its={}".format(i, i-1)
+        assert sm1 < sm0, "{}: streamwise smoothing at its={} no smoother than its={}".format(mesh.id, i, i-1)

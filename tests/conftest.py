@@ -50,18 +50,29 @@ def load_triangulated_spherical_mesh():
 def load_triangulated_spherical_mesh_DM():
     import stripy
 
-    # construct a spherical stripy mesh
-    sm = stripy.spherical_meshes.icosahedral_mesh(refinement_levels=3)
+    minX, maxX = -5.0, 5.0
+    minY, maxY = -5.0, 5.0
+    spacingX = 0.1
+    spacingY = 0.1
 
-    lons = np.degrees(sm.lons)
-    lats = np.degrees(sm.lats)
+    # construct an elliptical mesh
+    lons, lats, bmask = meshtools.generate_elliptical_points(minX, maxX, minY, maxY, spacingX, spacingY, 1500, 200)
 
-    return meshtools.create_spherical_DMPlex(lons, lats, sm.simplices)
+    return meshtools.create_DMPlex_from_spherical_points(lons, lats, bmask)
 
 
 @pytest.fixture(scope="module")
 def load_pixelated_mesh_DM():
-    minX, maxX = 0., 1.
-    minY, maxY = 0., 1.
+    minX, maxX = -5.0, 5.0
+    minY, maxY = -5.0, 5.0
     resX, resY = 50, 50
     return meshtools.create_DMDA(minX, maxX, minY, maxY, resX, resY)
+
+
+@pytest.fixture(scope="module", params=["PixMesh", "TriMesh", "sTriMesh"])
+def load_multi_mesh_DM(request, load_pixelated_mesh_DM, load_triangulated_mesh_DM, load_triangulated_spherical_mesh_DM):
+    DM_dict = {"PixMesh": load_pixelated_mesh_DM, \
+               "TriMesh": load_triangulated_mesh_DM, \
+              "sTriMesh": load_triangulated_spherical_mesh_DM }
+    DM_type = request.param
+    return DM_dict[DM_type]

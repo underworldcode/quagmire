@@ -12,7 +12,7 @@ from quagmire.mesh import MeshVariable
 from quagmire import function as fn
 import numpy as np
 
-from conftest import load_triangulated_mesh_DM
+from conftest import load_multi_mesh_DM as DM
 
 def test_parameters():
 
@@ -53,9 +53,9 @@ def test_fn_description():
 
     return
 
-def test_fn_mesh_variables(load_triangulated_mesh_DM):
+def test_fn_mesh_variables(DM):
 
-    mesh = QuagMesh(load_triangulated_mesh_DM, down_neighbours=2)
+    mesh = QuagMesh(DM, down_neighbours=2)
 
     height = mesh.add_variable(name="h(X,Y)")
     height.data = np.ones(mesh.npoints)

@@ -9,12 +9,12 @@ from quagmire import QuagMesh
 from quagmire.mesh import MeshVariable
 import numpy as np
 
-from conftest import load_triangulated_mesh_DM
+from conftest import load_multi_mesh_DM as DM
 
 
-def test_mesh_variable_instance(load_triangulated_mesh_DM):
+def test_mesh_variable_instance(DM):
 
-    mesh = QuagMesh(load_triangulated_mesh_DM, downhill_neighbours=1)
+    mesh = QuagMesh(DM, downhill_neighbours=1)
 
     phi = mesh.add_variable(name="PHI(X,Y)")
     psi = mesh.add_variable(name="PSI(X,Y)")
@@ -38,9 +38,9 @@ def test_mesh_variable_instance(load_triangulated_mesh_DM):
 
     return
 
-def test_mesh_variable_properties(load_triangulated_mesh_DM):
+def test_mesh_variable_properties(DM):
 
-    mesh = QuagMesh(load_triangulated_mesh_DM, downhill_neighbours=1)
+    mesh = QuagMesh(DM, downhill_neighbours=1)
 
     ## Don't specify a name
 
@@ -70,9 +70,9 @@ def test_mesh_variable_properties(load_triangulated_mesh_DM):
 
 
 
-def test_mesh_variable_derivative(load_triangulated_mesh_DM):
+def test_mesh_variable_derivative(DM):
 
-    mesh = QuagMesh(load_triangulated_mesh_DM, downhill_neighbours=1)
+    mesh = QuagMesh(DM, downhill_neighbours=1)
 
     # Functions we can differentiate easily
 
@@ -83,7 +83,7 @@ def test_mesh_variable_derivative(load_triangulated_mesh_DM):
     phi.data = np.sin(mesh.coords[:,0])
     psi.data = np.cos(mesh.coords[:,0])
 
-    assert(np.isclose(phi.fn_gradient[0].evaluate(0.0,0.0), psi.evaluate(0.0,0.0), rtol=1.0e-3))
+    assert(np.isclose(phi.fn_gradient[0].evaluate(0.0,0.0), psi.evaluate(0.0,0.0), rtol=0.01))
 
 
     return
