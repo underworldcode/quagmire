@@ -38,6 +38,7 @@ from petsc4py import PETSc
 # comm = MPI.COMM_WORLD
 from time import perf_counter
 from .commonmesh import CommonMesh as _CommonMesh
+from scipy.ndimage import map_coordinates as _map_coordinates
 
 try: range = xrange
 except: pass
@@ -197,17 +198,6 @@ class PixMesh(_CommonMesh):
             print("{} - Construct rbf weights {}s".format(self.dm.comm.rank, perf_counter()-t))
 
 
-        # construct interpolator object
-        t = perf_counter()
-        xcoords = np.linspace(minX, maxX, nx)
-        ycoords = np.linspace(minY, maxY, ny)
-        dvalues = np.empty((ny,nx))
-        self._interpolator = RegularGridInterpolator((ycoords, xcoords), dvalues, bounds_error=False, fill_value=None)
-        self.timings['construct interpolator object'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
-        if self.rank == 0 and self.verbose:
-            print("{} - Construct interpolator object {}s".format(self.dm.comm.rank, perf_counter()-t))
-
-
         self.root = False
 
         # functions / parameters that are required for compatibility among FlatMesh types
@@ -216,26 +206,58 @@ class PixMesh(_CommonMesh):
 
 
     def interpolate(self, xi, yi, zdata, order=1):
-
-        order_dict = {1: "linear", 0: "nearest"}
-
-        if order not in order_dict:
-            raise ValueError("order must be set to 0 (nearest) or 1 (linear) interpolation")
-
-        xi = np.array(xi)
-        yi = np.array(yi)
-
-        interpolator = self._interpolator
-        interpolator.values = np.array(zdata).reshape(self.ny, self.nx)
-        ival = interpolator((yi, xi), method=order_dict[order])
+        """
+        Maps the value at unstructured coordinates from a regular 2D grid.
+        Uses the `scipy.ndimage.map_coordinates` function with linear interpolation
+        
+        Parameters
+        ----------
+        xi : array shape (l,)
+            interpolation coordinates in the x direction
+        yi : array shape (l,)
+            interpolation coordinates in the y direction
+        zdata : array shape (n,)
+            field on the mesh to interpolate xi, yi coordinates
+        order : int
+            order of interpolation (default: 1)
+            - 0: nearest interpolation
+            - 1: linear interpolation
+            - 3: cubic interpolation
+         
+        Returns
+        -------
+        ival : array shape (l,)
+            interpolated values at xi,yi coordinates
+        ierr : array shape (l,)
+            flags values that are inside or outside local bounds
+            - 0 inside the local mesh bounds (interpolation)
+            - 1 outside the local mesh bounds (extrapolation)
+        """
+        grid = np.array(zdata).reshape(self.ny, self.nx)
+        
+        icoords = np.array(np.c_[xi,yi], dtype=np.float)
 
         # check if inside bounds
-        inside_bounds = np.zeros_like(xi, dtype=np.bool)
-        inside_bounds += xi < self.minX
-        inside_bounds += xi > self.maxX
-        inside_bounds += yi < self.minY
-        inside_bounds += yi > self.maxY
+        inside_bounds = np.zeros(icoords.shape[0], dtype=np.bool)
+        inside_bounds += icoords[:,0] < self.minX
+        inside_bounds += icoords[:,0] > self.maxX
+        inside_bounds += icoords[:,1] < self.minY
+        inside_bounds += icoords[:,1] > self.maxY
 
+        # normalise coordinates within extent
+        icoords[:,0] -= self.minX
+        icoords[:,1] -= self.minY
+        icoords[:,0] /= (self.maxX - self.minX)
+        icoords[:,1] /= (self.maxY - self.minY)
+        
+        # icoords now somewhere within range [0, 1]
+        # project coordinates to the number of grid indices
+        icoords[:,0] *= self.nx - 1
+        icoords[:,1] *= self.ny - 1
+
+        # now interpolate
+        ival = _map_coordinates(grid.T, icoords.T, order=order, mode='nearest')
+        
         return ival, inside_bounds.astype(np.int)
 
 
@@ -261,7 +283,7 @@ class PixMesh(_CommonMesh):
             first partial derivative of PHI in y direction
         """
         u = PHI.reshape(self.ny, self.nx)
-        u_x, u_y = np.gradient(u, self.dx, self.dy)
+        u_y, u_x = np.gradient(u, self.dy, self.dx)
 
         return u_x.ravel(), u_y.ravel()
 
@@ -334,7 +356,7 @@ class PixMesh(_CommonMesh):
 
         natural_neighbours = np.empty((self.npoints, 9), dtype=np.int)
         nodes = np.arange(0, self.npoints, dtype=np.int).reshape(self.ny,self.nx)
-        index = np.pad(nodes, (1,1), constant_values=-1)
+        index = np.pad(nodes, (1,1), mode='constant', constant_values=-1)
 
 
         natural_neighbours[:,0] = index[1:-1,1:-1].flat  # self
