@@ -135,3 +135,39 @@ def test_streamwise_smoothing(DM):
         sm1 = np.std(smooth_fn.evaluate(stream_x, stream_y))
 
         assert sm1 < sm0, "{}: streamwise smoothing at its={} no smoother than its={}".format(mesh.id, i, i-1)
+
+
+def test_swamp_fill(DM):
+    mesh = QuagMesh(DM, downhill_neighbours=2)
+
+    x, y = mesh.coords[:,0], mesh.coords[:,1]
+
+    radius  = np.sqrt((x**2 + y**2))
+    theta   = np.arctan2(y,x) + 0.1
+
+    height  = np.exp(-0.025*(x**2 + y**2)**2) + 0.25 * (0.2*radius)**4  * np.cos(5.0*theta)**2 ## Less so
+    height  += 0.5 * (1.0-0.2*radius)
+
+    # take a chunk out of the landscape centred on this point
+    xpt, ypt = 1.5, 1.5
+
+    # find the closest index on the mesh
+    index = np.abs(mesh.coords - [xpt, ypt]).sum(axis=1).argmin()
+    d, idx = mesh.cKDTree.query(mesh.data[index], k=30)
+
+    height[idx] = 0.001
+
+    with mesh.deform_topography():
+        mesh.topography.data = height
+
+
+    # slope at idx should be zero everywhere, and non-zero where the landscape is repaired.
+    # this does not happen in practise because there is a high slope at the boundary.
+
+    slope0 = mesh.slope.evaluate(mesh)
+
+    mesh.low_points_swamp_fill(ref_height=0.0)
+
+    slope1 = mesh.slope.evaluate(mesh)
+
+    assert slope1[idx].mean() > slope0[idx].mean(), "{}: swamp fill has not filled a pit in the side of a hill".format(mesh.id)
