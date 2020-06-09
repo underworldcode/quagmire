@@ -38,6 +38,7 @@ from petsc4py import PETSc
 # comm = MPI.COMM_WORLD
 from time import perf_counter
 from .commonmesh import CommonMesh as _CommonMesh
+from scipy.ndimage import map_coordinates as _map_coordinates
 
 try: range = xrange
 except: pass
@@ -108,6 +109,7 @@ class PixMesh(_CommonMesh):
 
     def __init__(self, dm, verbose=True, *args, **kwargs):
         from scipy.spatial import cKDTree as _cKDTree
+        from scipy.interpolate import RegularGridInterpolator
 
         # initialise base mesh class
         super(PixMesh, self).__init__(dm, verbose)
@@ -203,7 +205,63 @@ class PixMesh(_CommonMesh):
         self._radius = 1.0
 
 
-    def derivative_grad(self, PHI):
+    def interpolate(self, xi, yi, zdata, order=1):
+        """
+        Maps the value at unstructured coordinates from a regular 2D grid.
+        Uses the `scipy.ndimage.map_coordinates` function with linear interpolation
+        
+        Parameters
+        ----------
+        xi : array shape (l,)
+            interpolation coordinates in the x direction
+        yi : array shape (l,)
+            interpolation coordinates in the y direction
+        zdata : array shape (n,)
+            field on the mesh to interpolate xi, yi coordinates
+        order : int
+            order of interpolation (default: 1)
+            - 0: nearest interpolation
+            - 1: linear interpolation
+            - 3: cubic interpolation
+         
+        Returns
+        -------
+        ival : array shape (l,)
+            interpolated values at xi,yi coordinates
+        ierr : array shape (l,)
+            flags values that are inside or outside local bounds
+            - 0 inside the local mesh bounds (interpolation)
+            - 1 outside the local mesh bounds (extrapolation)
+        """
+        grid = np.array(zdata).reshape(self.ny, self.nx)
+        
+        icoords = np.array(np.c_[xi,yi], dtype=np.float)
+
+        # check if inside bounds
+        inside_bounds = np.zeros(icoords.shape[0], dtype=np.bool)
+        inside_bounds += icoords[:,0] < self.minX
+        inside_bounds += icoords[:,0] > self.maxX
+        inside_bounds += icoords[:,1] < self.minY
+        inside_bounds += icoords[:,1] > self.maxY
+
+        # normalise coordinates within extent
+        icoords[:,0] -= self.minX
+        icoords[:,1] -= self.minY
+        icoords[:,0] /= (self.maxX - self.minX)
+        icoords[:,1] /= (self.maxY - self.minY)
+        
+        # icoords now somewhere within range [0, 1]
+        # project coordinates to the number of grid indices
+        icoords[:,0] *= self.nx - 1
+        icoords[:,1] *= self.ny - 1
+
+        # now interpolate
+        ival = _map_coordinates(grid.T, icoords.T, order=order, mode='nearest')
+        
+        return ival, inside_bounds.astype(np.int)
+
+
+    def derivative_grad(self, PHI, **kwargs):
         """
         Compute derivatives of PHI in the x, y directions.
         This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
@@ -225,7 +283,7 @@ class PixMesh(_CommonMesh):
             first partial derivative of PHI in y direction
         """
         u = PHI.reshape(self.ny, self.nx)
-        u_x, u_y = np.gradient(u, self.dx, self.dy)
+        u_y, u_x = np.gradient(u, self.dy, self.dx)
 
         return u_x.ravel(), u_y.ravel()
 
@@ -298,7 +356,7 @@ class PixMesh(_CommonMesh):
 
         natural_neighbours = np.empty((self.npoints, 9), dtype=np.int)
         nodes = np.arange(0, self.npoints, dtype=np.int).reshape(self.ny,self.nx)
-        index = np.pad(nodes, (1,1), constant_values=-1)
+        index = np.pad(nodes, (1,1), mode='constant', constant_values=-1)
 
 
         natural_neighbours[:,0] = index[1:-1,1:-1].flat  # self

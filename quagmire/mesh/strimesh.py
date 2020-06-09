@@ -135,7 +135,7 @@ class sTriMesh(_CommonMesh):
         lons = np.degrees(rlons)
         lats = np.degrees(rlats)
 
-        self.tri = stripy.sTriangulation(rlons, rlats)
+        self.tri = stripy.sTriangulation(rlons, rlats, permute=True)
         self.npoints = self.tri.npoints
         self.timings['triangulation'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank == 0 and self.verbose:
