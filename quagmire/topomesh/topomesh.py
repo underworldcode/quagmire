@@ -909,7 +909,8 @@ class TopoMesh(object):
             fluctuation = fluctuation_strength * ref_gradient * distance.mean() * np.random.random(size=distance.shape)  # how does this work in the shadows ?
 
             ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
-            height2[catchment_nodes] = spill['h'] + ref_gradient * distance + fluctuation # A 'small' gradient (should be a user-parameter)
+            ## We need a global measure of typical distance that can be used to scale this gradient (self.delta ?)
+            height2[catchment_nodes] = spill['h'] + ref_gradient * distance + fluctuation # A 'small' gradient 
 
         height2 = self.sync(height2)
 

@@ -741,8 +741,8 @@ def global_CO_mesh(stripy_mesh_name, include_face_points=False, refinement_C=7, 
     height = vals.data 
     height = 6.370 + 1.0e-6 * vals.data 
 
-    meshheightsC = map_global_raster_to_strimesh(stC, height, units="radians")
-    meshheightsO = map_global_raster_to_strimesh(stO, height, units="radians")
+    meshheightsC = map_global_raster_to_strimesh(stC, height)
+    meshheightsO = map_global_raster_to_strimesh(stO, height)
 
     clons = stC.lons[np.where(meshheightsC >= 6.3699)]  # 100m depth
     clats = stC.lats[np.where(meshheightsC >= 6.3699)]
@@ -755,6 +755,9 @@ def global_CO_mesh(stripy_mesh_name, include_face_points=False, refinement_C=7, 
     nheights = np.hstack((meshheightsC, meshheightsO))
 
     stN = stripy.spherical.sTriangulation(lons=nlons, lats=nlats, refinement_levels=0, tree=False)
+
+    # print("stN - {} x {}".format(stN.lons.shape, stN.lats.shape))
+    # print("stN - {} x {}".format(stN.lons_map_to_wrapped(stN.lons).shape, stN.lats.shape))
    
     if return_heights:
         return np.degrees(stN.lons_map_to_wrapped(stN.lons)), np.degrees(stN.lats), stN.simplices, nheights
@@ -862,7 +865,7 @@ def map_global_raster_to_strimesh(mesh, latlongrid, order=3, origin="lower", uni
 
     try: 
         latitudes_in_degrees  = np.degrees(mesh.tri.lats)
-        longitudes_in_degrees = np.degrees(mesh.tri.lats)
+        longitudes_in_degrees = np.degrees(mesh.tri.lons)
     except:
         latitudes_in_degrees = np.degrees(mesh.lats)
         longitudes_in_degrees = np.degrees(mesh.lons)
