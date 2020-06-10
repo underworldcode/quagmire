@@ -36,12 +36,14 @@ aas-journal: Journal of Open Source Software
 
 # Summary
 
-Quagmire is a Python surface process framework for building erosion and deposition models on stuctured and unstructured meshes distributed in parallel.
+Quagmire is a Python surface process framework for building erosion and deposition models on structured and unstructured meshes distributed in parallel.
+
+Quagmire is built atop [PETSc](https://www.mcs.anl.gov/petsc/) using the `petsc4py` Python wrapper. The deconstruction of meshes among multiple processors and the synchronisation of matrices and vectors in parallel is abstracted to PETSc.
 
 
 # Mathematical background
 
-The contributing processes to landscape evolution depend on local hillslope diffusion, long-range transport, and tectonic uplift,
+The contributing processes to landscape evolution depend on local hill slope diffusion, long-range transport, and tectonic uplift,
 
 $$
   \frac{\mathrm{d}h}{\mathrm{d}t} =  \dot{h}_\textrm{local} 
@@ -50,7 +52,8 @@ $$
            + \dot{h}_\textrm{basement}
 $$
 
-where $h$ is the surface height at each point and the $\dot{h}$ terms are time derivatives with respect to height. Summed together, the change in height from local diffusion, fluvial incision, deposition, and regional basement uplift/subsidence describe the processes that govern landscape morphology.
+where $h$ is the surface height at each point and the $\dot{h}$ terms are time derivatives with respect to height.
+Summed together, the change in height from local diffusion, fluvial incision, deposition, and regional basement uplift/subsidence describe the processes that govern landscape morphology.
 
 
 ## Local evolution rate
@@ -67,7 +70,7 @@ Evaluating spatial derivatives is trivial on a regular grid and are outsourced t
 
 ## Incision and deposition
 
-The fluvial incision rate includes the effect of cumulative rainfall runoff across the landscape. This term encapsulates the available energy of rivers which in turn is related to both the discharge flux at any given point and the local stream-bed slope. The incision rate may be written in "stream power" form,
+The fluvial incision rate includes the effect of cumulative rainfall run-off across the landscape. This term encapsulates the available energy of rivers which in turn is related to both the discharge flux at any given point and the local stream-bed slope. The incision rate may be written in "stream power" form,
 
 $$
   \dot{h}(\mathbf{x})_\textrm{incision} = 
@@ -97,7 +100,7 @@ $$
 
 The sparsity of $\mathbf{D}$ is controlled by the number of river pathways in the landscape.
 Commonly, multiple descent pathways are desired to allow stream splitting.
-This is where rainfall runoff is partitioned from a donor node to more than one recipient nodes in its local viscinity.
+This is where rainfall run-off is partitioned from a donor node to more than one recipient nodes in its local vicinity.
 Quagmire lets the user control how many downhill neighbours to partition flow by setting the `downhill_neighbours` keyword on initialisation (default is 2),
 
 ```python
@@ -110,6 +113,46 @@ mesh.upstream_integral_fn(rainfall)
 ```
 
 # Usage
+
+Quagmire supports three types of mesh objects that may be constructed using functions within the `quagmire.tools.meshtools` module:
+
+```python
+# cartesian mesh on a grid
+DM = create_DMDA(minX, maxX, minY, maxY, resX, resY)
+
+# unstructured cartesian mesh
+DM = create_DMPlex(x, y, simplices, boundary_vertices=None, refinement_levels=0)
+
+# unstructured mesh on the sphere
+DM = create_spherical_DMPlex(lons, lats, simplices, boundary_vertices=None, refinement_levels=0)
+```
+
+These `DM` objects may be passed to `QuagMesh`, which automatically determines what type of mesh it has received and initialises the appropriate data structures.
+
+```python
+mesh = quagmire.QuagMesh(DM, downhill_neighbours=2):
+```
+
+## Adding topography
+
+Mesh variables can be created to safely handle global operations in parallel.
+One such mesh variable is topography, which may be updated via its context manager:
+
+```python
+with mesh.deform_topography():
+    mesh.topography.data = height
+```
+
+This triggers an update of the stream networks represented by the downhill matrix, $\mathbf{D}$, and integrates the upstream area.
+
+Some algorithms are provided to process the topography in order to render it suitable for simulating erosion and deposition. A commonly faced issue in using Digital Elevation Models (DEMs) is the existence of flat regions over a large area which have no easily identifiable stream pathway. 
+
+ Notably, the `low_points_swamp_fill` routine adds a small gradient to flat regions up to a spill point. This is useful because large flat regions 
+- `low_points_patch_fill`: 
+
+## Functions interface
+
+Operator overloading. Lazy evaluation of functions that only get evaluated when explicitly asked.
 
 # Acknowledgements
 
