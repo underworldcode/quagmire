@@ -155,7 +155,7 @@ def test_swamp_fill(DM):
     index = np.abs(mesh.coords - [xpt, ypt]).sum(axis=1).argmin()
     d, idx = mesh.cKDTree.query(mesh.data[index], k=30)
 
-    height[idx] = 0.001
+    height[idx] = height[idx].min()
 
     with mesh.deform_topography():
         mesh.topography.data = height
