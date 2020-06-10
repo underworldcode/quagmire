@@ -36,9 +36,15 @@ aas-journal: Journal of Open Source Software
 
 # Summary
 
-Quagmire is a Python surface process framework for building erosion and deposition models on structured and unstructured meshes distributed in parallel.
+Landscape evolution modelling simulates the erosion of mountain belts and deposition of sediment into basins in response to tectonic driving forces.
+Our work is driven by the challenge of interpreting how deep-seated and long-lived plate-scale geodynamic processes are expressed in the geological record that we can directly sample in the upper few kilometres of the crust.
+We present an efficient, parallel approach to modelling the physical evolution of topography.
 
-Quagmire is built atop [PETSc](https://www.mcs.anl.gov/petsc/) using the `petsc4py` Python wrapper. The deconstruction of meshes among multiple processors and the synchronisation of matrices and vectors in parallel is abstracted to PETSc.
+Quagmire is a Python surface process framework for building erosion and deposition models on structured and unstructured meshes distributed in parallel.
+Quagmire is built atop [PETSc](https://www.mcs.anl.gov/petsc/) using the `petsc4py` Python wrapper, which handles the partitioning of vectors and matrices that are mesh-dependent across multiple processors.
+Quagmire provides a parallel-safe `function` interface to avoid much of the synchronisation issues typically encountered within parallel computing environments.
+These functions provide the building pieces for users to construct their workflows, such as evaluating derivatives and integrating information on a mesh.
+In this way, Quagmire is a highly flexible and extensible framework for solving landscape evolution problems.
 
 
 # Mathematical background
@@ -66,6 +72,12 @@ $$
 
 $\kappa$ is a non-linear diffusion coefficient which can, for example, be used to enforce a critical hill slope value if it is a strongly increasing function of the local gradient.
 Evaluating spatial derivatives is trivial on a regular grid and are outsourced to [stripy](https://github.com/underworldcode/stripy) for triangulated meshes [@Moresi:2019].
+Derivatives on the mesh can be evaluated using functions interface, e.g.
+
+```python
+fn_dhdx, fn_dhdy = fn.math.grad(height)
+fn_dhdx.evaluate(mesh) # evaluate on the mesh 
+```
 
 
 ## Incision and deposition
@@ -84,7 +96,7 @@ $$
 $$
 
 This integral computes the accumulated run-off for all of the areas which lie upstream of the point $\mathbf{x}$.
-The cumulative power of any given stream is intrinsically controlled by the interconnectivity of nodes in the mesh that describe the network of tributaries.
+The cumulative power of any given stream is intrinsically controlled by the inter-connectivity of nodes in the mesh that describe the network of tributaries.
 In this way, the discretisation of a landscape imparts a significant role on the integrated rainfall flux of a catchment.
 
 
@@ -109,7 +121,8 @@ mesh = quagmire.QuagMesh(DM, downhill_neighbours=2)
 The upstream integral may be calculated using the function interface in Quagmire,
 
 ```python
-mesh.upstream_integral_fn(rainfall)
+fn_integral = mesh.upstream_integral_fn(rainfall)
+fn_integral.evaluate(mesh) # evaluate on the mesh
 ```
 
 # Usage
@@ -145,15 +158,14 @@ with mesh.deform_topography():
 
 This triggers an update of the stream networks represented by the downhill matrix, $\mathbf{D}$, and integrates the upstream area.
 
-Some algorithms are provided to process the topography in order to render it suitable for simulating erosion and deposition. A commonly faced issue in using Digital Elevation Models (DEMs) is the existence of flat regions over a large area which have no easily identifiable stream pathway. 
-
- Notably, the `low_points_swamp_fill` routine adds a small gradient to flat regions up to a spill point. This is useful because large flat regions 
-- `low_points_patch_fill`: 
+Some algorithms are provided to process the topography in order to render it suitable for simulating erosion and deposition.
+A commonly faced issue in using Digital Elevation Models (DEMs) is the existence of __flat regions__ over a large area which have no easily identifiable stream pathway, or __local minima__ which truncate the stream network.
+To address this, the `low_points_swamp_fill` routine adds a small gradient to flat regions up to a spill point, and `low_points_local_patch_fill` patches local minima to smooth artifacts in the slope.
 
 ## Functions interface
 
 Operator overloading. Lazy evaluation of functions that only get evaluated when explicitly asked.
 
-# Acknowledgements
+# Acknowledgments
 
-Development of Quagmire is financially supported by AuScope as part of the Simulation Analysis Modelling platform (SAM) and the NSW Department of Industry grant awarded through the office of the Chief Scientist and Engineer.
+Development of Quagmire is financially supported by AuScope as part of the Simulation Analysis Modelling platform (SAM) and the NSW Department of Industry grant awarded through the Office of the Chief Scientist and Engineer.
