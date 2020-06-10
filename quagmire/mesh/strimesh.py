@@ -215,10 +215,24 @@ class sTriMesh(_CommonMesh):
 
     @property
     def data(self):
+        """
+        Cartesian coordinates of local mesh points.
+
+        `data` is of shape (npoints, 3)
+
+        These points are projected to the radius of the sphere.
+        If `self.radius` is set to 1.0 then these points are on the unit sphere and are
+        identical to `self.tri.points`.
+        """
         return self._data
     
     @property
     def coords(self):
+        """
+        Spherical coordinates of local mesh points in degrees lon / lat.
+
+        `coords` is of shape (npoints, 2)
+        """
         return self._coords
 
     @property

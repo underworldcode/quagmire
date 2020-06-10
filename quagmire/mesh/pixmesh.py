@@ -145,8 +145,8 @@ class PixMesh(_CommonMesh):
 
 
         # Get local coordinates
-        self.coords = dm.getCoordinatesLocal().array.reshape(-1,2)
-        self.data = self.coords
+        self._coords = dm.getCoordinatesLocal().array.reshape(-1,2)
+        self._data = self._coords
 
         (minX, maxX), (minY, maxY) = dm.getLocalBoundingBox()
 
@@ -158,7 +158,7 @@ class PixMesh(_CommonMesh):
 
         # cKDTree
         t = perf_counter()
-        self.cKDTree = _cKDTree(self.coords)
+        self.cKDTree = _cKDTree(self._coords)
         self.timings['cKDTree'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank == 0 and self.verbose:
             print("{} - cKDTree {}s".format(self.dm.comm.rank, perf_counter()-t))
@@ -203,6 +203,29 @@ class PixMesh(_CommonMesh):
         # functions / parameters that are required for compatibility among FlatMesh types
         self._derivative_grad_cartesian = self.derivative_grad
         self._radius = 1.0
+
+
+    @property
+    def data(self):
+        """
+        Cartesian coordinates of local mesh points.
+
+        `data` is of shape (npoints, 2)
+
+        Being a `TriMesh` object, `self.data` are identical to `self.coords`
+        """
+        return self._data
+    
+    @property
+    def coords(self):
+        """
+        Cartesian coordinates of local mesh points
+
+        `coords` is of shape (npoints, 2)
+
+        Being a `TriMesh` object, `self.coords` are identical to `self.data`
+        """
+        return self._coords
 
 
     def interpolate(self, xi, yi, zdata, order=1):

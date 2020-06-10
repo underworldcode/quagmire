@@ -188,13 +188,36 @@ class TriMesh(_CommonMesh):
             print(("{} - Construct rbf weights {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
         self.root = False
-        self.coords = self.tri.points
-        self.data = self.coords
+        self._coords = self.tri.points
+        self._data = self._coords
         self.interpolate = self.tri.interpolate
 
         # functions / parameters that are required for compatibility among FlatMesh types
         self._derivative_grad_cartesian = self.derivative_grad
         self._radius = 1.0
+
+
+    @property
+    def data(self):
+        """
+        Cartesian coordinates of local mesh points.
+
+        `data` is of shape (npoints, 2)
+
+        Being a `TriMesh` object, `self.data` are identical to `self.coords`
+        """
+        return self._data
+    
+    @property
+    def coords(self):
+        """
+        Cartesian coordinates of local mesh points
+
+        `coords` is of shape (npoints, 2)
+
+        Being a `TriMesh` object, `self.coords` are identical to `self.data`
+        """
+        return self._coords
 
 
     def calculate_area_weights(self):
