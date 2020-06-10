@@ -798,7 +798,7 @@ class TopoMesh(object):
 
         return
 
-    def low_points_swamp_fill(self, its=1000, saddles=None, ref_height=0.0, ref_gradient=0.001, fluctuation_strength=0.0):
+    def low_points_swamp_fill(self, its=1000, saddles=None, ref_height=0.0, ref_gradient=1.0e-7, fluctuation_strength=0.0):
 
         import petsc4py
         from petsc4py import PETSc
@@ -902,15 +902,16 @@ class TopoMesh(object):
             if this_catchment < 0:
                 continue
 
+            gradient = ref_gradient / self.delta
             catchment_nodes = np.where(ctmt == this_catchment)
             separation_x = (self.coords[catchment_nodes,0] - spill['x'])
             separation_y = (self.coords[catchment_nodes,1] - spill['y'])
             distance = np.hypot(separation_x, separation_y)
-            fluctuation = fluctuation_strength * ref_gradient * distance.mean() * np.random.random(size=distance.shape)  # how does this work in the shadows ?
+            fluctuation = fluctuation_strength * gradient * distance.mean() * np.random.random(size=distance.shape)  # how does this work in the shadows ?
 
             ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
             ## We need a global measure of typical distance that can be used to scale this gradient (self.delta ?)
-            height2[catchment_nodes] = spill['h'] + ref_gradient * distance + fluctuation # A 'small' gradient 
+            height2[catchment_nodes] = spill['h'] + gradient * distance + fluctuation # A 'small' gradient 
 
         height2 = self.sync(height2)
 
