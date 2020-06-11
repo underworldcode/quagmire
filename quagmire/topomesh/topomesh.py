@@ -280,8 +280,7 @@ class TopoMesh(object):
         for i in range(0, self.downhill_neighbours):
             down_N = self.down_neighbour[i+1]
             grad = np.abs(height - height[down_N]+1.0e-10) / (1.0e-10 + \
-                   np.hypot(self.coords[:,0] - self.coords[down_N,0],
-                            self.coords[:,1] - self.coords[down_N,1] ))
+                   np.linalg.norm(self.data - self.data[down_N], axis=1))
 
             weights[i,:] = np.sqrt(grad)
 
@@ -761,7 +760,7 @@ class TopoMesh(object):
 
         return
 
-    def low_points_local_patch_fill(self, its=1, smoothing_steps=1, ref_height=0.0):
+    def low_points_local_patch_fill(self, its=1, smoothing_steps=1, ref_height=0.0, fraction=0.01):
 
         from petsc4py import PETSc
         t = perf_counter()
@@ -777,8 +776,8 @@ class TopoMesh(object):
             ## Note, the smoother has a communication barrier so needs to be called even if it has no work to do on this process
 
             for i in low_points:
-                delta_height[i] =  ( 0.75 * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).min() +
-                                     0.25 * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).max() 
+                delta_height[i] =  ( (1.0-fraction) * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).min() +
+                                      fraction * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).max() 
                                               - h[i] )
 
             ## Note, the smoother has a communication barrier so needs to be called even
@@ -799,11 +798,7 @@ class TopoMesh(object):
 
         return
 
-
-    def low_points_swamp_fill(self, its=1000, saddles=None, ref_height=0.0, ref_gradient=0.001):
-
-        if self.downhill_neighbours < 2 and saddles:
-            raise ValueError("Set downhill_neighbours >= 2 to use swamp filling algorithm with saddle point detection.")
+    def low_points_swamp_fill(self, its=1000, saddles=None, ref_height=0.0, ref_gradient=0.001, fluctuation_strength=0.0):
 
         import petsc4py
         from petsc4py import PETSc
@@ -829,16 +824,6 @@ class TopoMesh(object):
         if self.rank==0 and self.verbose:
             print("Build low point catchments - ", perf_counter() - t, " seconds")
 
-        # if saddles:  
-        #     # Find saddle points on the catchment edge - catchment detection is via down-neighbour 1,
-        #     # so neighbour 2 (or 3) is the earliest detection opportunity for a spill
-
-        #     cedges = np.where(ctmt[self.down_neighbour[2]] != ctmt )[0] ## local numbering
-        #     try:
-        #         cedges3 = np.where(ctmt[self.down_neighbour[3]] != ctmt )[0] ## local numbering
-        #         cedges = np.unique(np.hstack((cedges,cedges3)))
-        #     except:
-        #         pass
 
 # Possible problem - low point that should flow out the side of the domain boundary. 
 
@@ -921,15 +906,16 @@ class TopoMesh(object):
             separation_x = (self.coords[catchment_nodes,0] - spill['x'])
             separation_y = (self.coords[catchment_nodes,1] - spill['y'])
             distance = np.hypot(separation_x, separation_y)
+            fluctuation = fluctuation_strength * ref_gradient * distance.mean() * np.random.random(size=distance.shape)  # how does this work in the shadows ?
 
             ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
-            height2[catchment_nodes] = spill['h'] + ref_gradient * distance  # A 'small' gradient (should be a user-parameter)
+            ## We need a global measure of typical distance that can be used to scale this gradient (self.delta ?)
+            height2[catchment_nodes] = spill['h'] + ref_gradient * distance + fluctuation # A 'small' gradient 
 
         height2 = self.sync(height2)
 
         new_height = np.maximum(height, height2)
         new_height = self.sync(new_height)
-
 
         # We only need to update the height not all
         # surface process information that is associated with it.
@@ -938,13 +924,13 @@ class TopoMesh(object):
         self._update_height()
         self.topography.lock()
 
-
         if self.rank==0 and self.verbose:
             print("Low point swamp fill ",  perf_counter()-t0, " seconds")
 
         ## but now we need to rebuild the surface process information
         self._update_height_for_surface_flows()
         return
+
 
 
     def backfill_points(self, fill_points, heights, its):
