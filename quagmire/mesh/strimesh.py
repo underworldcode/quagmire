@@ -506,6 +506,10 @@ class sTriMesh(_CommonMesh):
         """
         nndist, nncloud = self.cKDTree.query(self.data, k=size)
         self.neighbour_cloud = nncloud
+
+        # find the arc distances
+        for n in range(1, size):
+            nndist[:,n] = distance_on_sphere(self.data, self.data[nncloud[:,n]], self.radius)
         self.neighbour_cloud_distances = nndist
 
         neighbours = np.bincount(self.tri.simplices.ravel(), minlength=self.npoints)
@@ -754,3 +758,35 @@ def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
     den = (r1*coslat)**2 + (r2*sinlat)**2
     return np.sqrt(num/den)
 
+
+def distance_on_sphere(A, B, radius=None):
+    """
+    Find the distance on the sphere between two sets of points (A and B)
+    If the radius of the sphere is not provided, then the radius is
+    estimated from A.
+
+    Parameters
+    ----------
+    A : ndarray
+        array of points with axis 0 or 1 being the same as B
+    B : ndarray
+        array of points with axis 0 or 1 being the same as A
+    radius : float or ndarray
+        radius of the sphere
+
+    Returns
+    -------
+    distance : ndarray
+        array of spherical distances the same shape as A or B
+        depending on which is larger
+    """
+    A = np.atleast_2d(A)
+    B = np.atleast_2d(B)
+
+    norm_cross = np.linalg.norm(np.cross(A, B), axis=1)
+    dot = (A*B).sum(axis=1)
+
+    if radius is None:
+        radius = np.linalg.norm(A, axis=1)
+
+    return np.arctan(norm_cross/dot) * radius
