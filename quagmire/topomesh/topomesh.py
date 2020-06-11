@@ -843,17 +843,23 @@ class TopoMesh(object):
         my_catchments = np.unique(ctmt)
 
         spills = np.empty((edges.shape[0]),
-                         dtype=np.dtype([('c', int), ('h', float), ('x', float), ('y', float)]))
+                         dtype=np.dtype([('c', int), ('h', float), ('x', float), ('y', float), ('z', float)]))
+
+        ndim = self.data.shape[1]
+        mesh_data_pt = np.zeros(3)
 
         ii = 0
         for l, this_low in enumerate(my_catchments):
             this_low_spills = edges[np.where(ctmt[edges] == this_low)]  ## local numbering
 
             for spill in this_low_spills:
+                mesh_data_pt[0:ndim] = self.data[spill]
+
                 spills['c'][ii] = this_low
                 spills['h'][ii] = height[spill]
-                spills['x'][ii] = self.coords[spill,0]
-                spills['y'][ii] = self.coords[spill,1]
+                spills['x'][ii] = mesh_data_pt[0]
+                spills['y'][ii] = mesh_data_pt[1]
+                spills['z'][ii] = mesh_data_pt[2]
                 ii += 1
 
         t = perf_counter()
@@ -904,9 +910,8 @@ class TopoMesh(object):
 
             gradient = ref_gradient / self.delta
             catchment_nodes = np.where(ctmt == this_catchment)
-            separation_x = (self.coords[catchment_nodes,0] - spill['x'])
-            separation_y = (self.coords[catchment_nodes,1] - spill['y'])
-            distance = np.hypot(separation_x, separation_y)
+            mesh_data_pt[:] = spill['x'], spill['y'], spill['z']
+            distance = np.linalg.norm(self.data[catchment_nodes] - mesh_data_pt[0:ndim], axis=1)
             fluctuation = fluctuation_strength * gradient * distance.mean() * np.random.random(size=distance.shape)  # how does this work in the shadows ?
 
             ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
