@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        os: ["ubuntu-latest", "macos-latest"]
         python-version: ["3.7"]
     steps:
       - uses: actions/checkout@v2
@@ -25,6 +25,7 @@ jobs:
         shell: bash -l {0}
         run: |
             conda install --channel conda-forge conda-build anaconda-client conda-verify
+            conda config --add channels underworldcode
             conda config --set anaconda_upload yes
             anaconda login --hostname github-actions-${{ matrix.os  }}-$RANDOM --username ${{ secrets.ANACONDA_USERNAME }} --password ${{ secrets.ANACONDA_PASSWORD }}
             conda-build --channel conda-forge --user underworldcode conda
