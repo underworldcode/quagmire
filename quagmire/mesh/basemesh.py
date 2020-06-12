@@ -137,7 +137,6 @@ class MeshVariable(_LazyEvaluation):
         if type(val) is float:
                 self._ldata.set(val)
         else:
-            from petsc4py import PETSc
             self._ldata.setArray(val)
 
 
@@ -265,6 +264,9 @@ class MeshVariable(_LazyEvaluation):
         Provided files must be in hdf5 format, and contain a vector the same
         size and with the same name as the current MeshVariable
         """
+        if self._locked:
+            raise ValueError("quagmire.MeshVariable: {} - is locked".format(self.description))
+
         from petsc4py import PETSc
         # need a global vector
         gdata = self._dm.getGlobalVec()
