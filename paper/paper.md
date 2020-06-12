@@ -38,7 +38,7 @@ aas-journal: Journal of Open Source Software
 
 Landscape evolution modelling simulates the erosion of mountain belts and deposition of sediment into basins in response to tectonic driving forces.
 Our work is driven by the challenge of interpreting how deep-seated and long-lived plate-scale geodynamic processes are expressed in the geological record that we can directly sample in the upper few kilometres of the crust.
-We present an efficient, parallel approach to modelling the physical evolution of topography.
+We present an efficient, modular, and parallel approach to modelling the physical evolution of topography.
 
 Quagmire is a Python surface process framework for building erosion and deposition models on structured and unstructured meshes distributed in parallel.
 Quagmire is built atop [PETSc](https://www.mcs.anl.gov/petsc/) using the `petsc4py` Python wrapper, which handles the partitioning of vectors and matrices that are mesh-dependent across multiple processors.
@@ -98,6 +98,7 @@ $$
 This integral computes the accumulated run-off for all of the areas which lie upstream of the point $\mathbf{x}$.
 The cumulative power of any given stream is intrinsically controlled by the inter-connectivity of nodes in the mesh that describe the network of tributaries.
 In this way, the discretisation of a landscape imparts a significant role on the integrated rainfall flux of a catchment.
+Quagmire offers a variety of meshes upon which to build surface process models in the `meshtools` module.
 
 
 ### Integrating upstream rainfall
@@ -146,6 +147,12 @@ These `DM` objects may be passed to `QuagMesh`, which automatically determines w
 mesh = quagmire.QuagMesh(DM, downhill_neighbours=2):
 ```
 
+Quagmire will initialise one of the following base mesh classes depending on the type of `DM` passed to `QuagMesh`:
+
+- `PixMesh`: structured Cartesian grid
+- `TriMesh`: unstructured Cartesian mesh
+- `sTriMesh`: unstructured spherical mesh
+
 ## Adding topography
 
 Mesh variables can be created to safely handle global operations in parallel.
@@ -164,7 +171,23 @@ To address this, the `low_points_swamp_fill` routine adds a small gradient to fl
 
 ## Functions interface
 
-Operator overloading. Lazy evaluation of functions that only get evaluated when explicitly asked.
+Functions enable users to assemble a series of building pieces to construct a workflow.
+These are designed to be parallel-safe and extensible with other Python packages, particularly within the [Underworld](https://www.underworldcode.org/) family of geodynamic codes.
+Functions use operator overloading to successively append a series of operations that only get evaluated when explicitly asked.
+To assemble the so-called __stream power law__, for example, the upstream integral and mesh gradients may be combined into a function,
+
+```python
+import quagmire.functions as fn
+fn_integral = mesh.upstream_integral_fn(rainfall)
+fn_stream_power = K * fn_integral**m * fn.math.slope(mesh.topography)**n
+fn_stream_power.evaluate(mesh) # evaluate on the mesh
+```
+
+## Jupyter notebook examples
+
+Quagmire is at home within the Jupyter environment.
+A series of Jupyter notebook tutorials are available in the [Quagmire community](https://github.com/underworld-community/quagmire-examples-and-workflows) repository along with worked examples that demonstrate how DEMs may be pre-processed to analyse stream networks and then simulate landscape evolution.
+We welcome [contributions](https://github.com/underworldcode/quagmire/blob/master/CONTRIBUTING.md) to the community repository that enrich the series of example notebooks and to the main Quagmire repository in the form of pull requests.
 
 # Acknowledgments
 
