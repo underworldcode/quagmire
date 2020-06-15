@@ -1,3 +1,7 @@
+fortran_compiler:              # [unix or win64]
+  - gfortran                   # [(linux64 or osx)]
+  - gfortran                   # [aarch64 or ppc64le or armv7l]
+  - flang                      # [win64]
 
 numpy:
   - 1.16

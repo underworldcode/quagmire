@@ -16,8 +16,6 @@
 
 from .meshtools import create_DMPlex_from_hdf5 as _create_DMPlex_from_hdf5
 from .meshtools import create_DMDA as _create_DMDA
-from mpi4py import MPI as _MPI
-_comm = _MPI.COMM_WORLD
 
 def load_quagmire_project(filename):
     """
@@ -47,36 +45,65 @@ def load_quagmire_project(filename):
     """
 
     from quagmire import QuagMesh
+    from mpi4py import MPI
+    comm = MPI.COMM_WORLD
     import h5py
+    import numpy as np
 
     filename = str(filename)
     if not filename.endswith('.h5'):
         filename += '.h5'
 
-    with h5py.File(filename, mode='r', driver='mpio', comm=_comm) as h5:
-        quag = h5['quagmire']
-        verbose         = quag.attrs['verbose']
-        mesh_id         = quag.attrs['id']
-        radius          = quag.attrs['radius']
-        down_neighbours = quag.attrs['downhill_neighbours']
-        topo_modified   = quag.attrs['topography_modified']
+    base_mesh_types = {1: "PixMesh", 2: "TriMesh", 3: "sTriMesh"}
 
-        if mesh_id.startswith('pixmesh'):
-            geom = h5['geometry']
-            minX, maxX = geom.attrs['minX'], geom.attrs['maxX']
-            minY, maxY = geom.attrs['minY'], geom.attrs['maxY']
-            resX, resY = geom.attrs['resX'], geom.attrs['resY']
+    # create numpy storage dictionaries
+    mesh_attrs = np.empty(1, dtype=np.dtype([('v', bool), ('i', int), ('r', float), ('n', int), ('t', int)]))
+    mesh_pix   = np.empty(2, dtype=np.dtype([('x', float), ('y', float), ('r', int)]))
+
+    if comm.rank == 0:
+        with h5py.File(filename, mode='r') as h5:
+            quag = h5['quagmire']
+            mesh_id = quag.attrs['id']
+
+            for mesh_type in base_mesh_types:
+                if mesh_id.startswith(base_mesh_types[mesh_type].lower()):
+                    break
+
+            # put this into a numpy dictionary
+            mesh_attrs['i'] = mesh_type
+            mesh_attrs['v'] = quag.attrs['verbose']
+            mesh_attrs['r'] = quag.attrs['radius']
+            mesh_attrs['n'] = quag.attrs['downhill_neighbours']
+            mesh_attrs['t'] = quag.attrs['topography_modified']
+
+            if mesh_id.startswith('pixmesh'):
+                geom = h5['geometry']
+                mesh_pix['x'] = geom.attrs['minX'], geom.attrs['maxX']
+                mesh_pix['y'] = geom.attrs['minY'], geom.attrs['maxY']
+                mesh_pix['r'] = geom.attrs['resX'], geom.attrs['resY']
+    
+    comm.bcast(mesh_attrs, root=0)
+    comm.bcast(mesh_pix, root=0)
 
 
-    # create DM object
-    if mesh_id.startswith("pixmesh"):
+    # unpack variables
+    verbose         = mesh_attrs['v']
+    mesh_id         = mesh_attrs['i']
+    radius          = mesh_attrs['r']
+    down_neighbours = mesh_attrs['n']
+    topo_modified   = mesh_attrs['t']
+
+    if mesh_id == 1:
+        minX, maxX = mesh_pix['x']
+        minY, maxY = mesh_pix['y']
+        resX, resY = mesh_pix['r']
+
         DM = _create_DMDA(minX, maxX, minY, maxY, resX, resY)
     else:
         DM = _create_DMPlex_from_hdf5(filename)
 
 
     mesh = QuagMesh(DM, downhill_neighbours=down_neighbours, verbose=verbose)
-    mesh.__id = mesh_id
     mesh._topography_modified_count = topo_modified
     if mesh.id.startswith('strimesh'):    
         if not radius:

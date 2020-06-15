@@ -262,13 +262,14 @@ class CommonMesh(object):
         # data structures. For this we need to crack open the HDF5
         # file we just saved and write attributes on a 'quagmire' group
 
-        with h5py.File(file, mode='r+', driver='mpio', comm=comm) as h5:
-            quag = h5.create_group('quagmire')
-            quag.attrs['id']                  = self.id
-            quag.attrs['verbose']             = self.verbose
-            quag.attrs['radius']              = radius
-            quag.attrs['downhill_neighbours'] = self.downhill_neighbours
-            quag.attrs['topography_modified'] = self._topography_modified_count
+        if comm.rank == 0:
+            with h5py.File(file, mode='r+') as h5:
+                quag = h5.create_group('quagmire')
+                quag.attrs['id']                  = self.id
+                quag.attrs['verbose']             = self.verbose
+                quag.attrs['radius']              = radius
+                quag.attrs['downhill_neighbours'] = self.downhill_neighbours
+                quag.attrs['topography_modified'] = self._topography_modified_count
 
         return
 
@@ -324,14 +325,15 @@ class CommonMesh(object):
             (minX, maxX), (minY, maxY) = self.dm.getBoundingBox()
             resX, resY = self.dm.getSizes()
 
-            with h5py.File(hdf5_filename, mode='r+', driver='mpio', comm=comm) as h5:
-                geom = h5.create_group('geometry')
-                geom.attrs['minX'] = minX
-                geom.attrs['maxX'] = maxX
-                geom.attrs['minY'] = minY
-                geom.attrs['maxY'] = maxY
-                geom.attrs['resX'] = resX
-                geom.attrs['resY'] = resY
+            if comm.rank == 0:
+                with h5py.File(hdf5_filename, mode='r+') as h5:
+                    geom = h5.create_group('geometry')
+                    geom.attrs['minX'] = minX
+                    geom.attrs['maxX'] = maxX
+                    geom.attrs['minY'] = minY
+                    geom.attrs['maxY'] = maxY
+                    geom.attrs['resX'] = resX
+                    geom.attrs['resY'] = resY
 
 
     def save_field_to_hdf5(self, hdf5_filename, *args, **kwargs):
