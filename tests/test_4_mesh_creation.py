@@ -168,11 +168,7 @@ def test_mesh_save_to_hdf5(load_triangulated_mesh):
     dm = meshtools.create_DMPlex(x, y, simplices)
 
     # save to hdf5 file
-    #meshtools.save_DM_to_hdf5(DM, "test_mesh.h5")
-    ViewHDF5 = PETSc.Viewer()
-    ViewHDF5.createHDF5('test.h5', mode='w')
-    ViewHDF5.view(obj=dm)
-    ViewHDF5 = None
+    meshtools.save_DM_to_hdf5(dm, "test_mesh.h5")
 
 
 # This fails in conda (we need our own PETSc build with hdf5)
