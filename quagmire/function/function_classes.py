@@ -236,6 +236,72 @@ class LazyEvaluation(object):
         newLazyFn.dependency_list |= self.dependency_list | exponent.dependency_list
         return newLazyFn
 
+    def __lt__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) < other.evaluate(*args, **kwargs)
+        newLazyFn.description = "({})<({})".format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+
+    def __le__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) <= other.evaluate(*args, **kwargs)
+        newLazyFn.description = "({})<=({})".format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+
+    def __eq__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) == other.evaluate(*args, **kwargs)
+        newLazyFn.description = "({})==({})".format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+    
+    def __ne__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) != other.evaluate(*args, **kwargs)
+        newLazyFn.description = "({})!=({})".format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+
+    def __ge__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) >= other.evaluate(*args, **kwargs)
+        newLazyFn.description = "({})>=({})".format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+    
+    def __gt__(self, other):
+        other = self.convert(other)
+        mesh = self._mesh
+        if mesh == None:
+            mesh = other._mesh
+        newLazyFn = LazyEvaluation(mesh=mesh)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) > other.evaluate(*args, **kwargs)
+        newLazyFn.description = "({})>({})".format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+        
 
 class LazyGradientEvaluation(LazyEvaluation):
 
