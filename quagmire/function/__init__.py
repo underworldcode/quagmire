@@ -1,8 +1,9 @@
-from .function_classes import LazyEvaluation, LazyGradientEvaluation, parameter
+from .function_classes import LazyEvaluation, LazyGradientEvaluation, parameter, input
 from . import math
 from . import misc
 from . import stats
 
+coords = input
 
 def check_dependency(this_fn, that_fn):
     """Does this_fn depend upon that_fn ?"""
