@@ -22,9 +22,8 @@ from .function_classes import LazyEvaluation as _LazyEvaluation
 ## Functions of a single variable
 
 def _make_npmath_op(op, name, lazyFn):
-    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+    newLazyFn = _LazyEvaluation()
     newLazyFn.evaluate = lambda *args, **kwargs : op(lazyFn.evaluate(*args, **kwargs))
-    newLazyFn.gradient = lambda *args, **kwargs : op(lazyFn.gradient(*args, **kwargs))
     newLazyFn.description = "{}({})".format(name,lazyFn.description)
     newLazyFn.dependency_list = lazyFn.dependency_list
     return newLazyFn
@@ -149,7 +148,7 @@ def div(*args):
     if len(lazyFn_id) > 1:
         raise ValueError("Meshes must be identical")
 
-    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+    newLazyFn = _LazyEvaluation()
     newLazyFn.evaluate = lambda *args, **kwargs : _div(lazyFn_list, *args, **kwargs)
     newLazyFn.description = lazyFn_description
     newLazyFn.dependency_list = lazyFn_dependency
@@ -165,7 +164,7 @@ def curl(*args):
         if lazyFn_x._mesh.id != lazyFn_y._mesh.id:
             raise ValueError("Both meshes must be identical")
         
-        newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
+        newLazyFn = _LazyEvaluation()
         fn_dvydx = lazyFn_y.fn_gradient[0]
         fn_dvxdy = lazyFn_x.fn_gradient[1]
         newLazyFn.evaluate = lambda *args, **kwargs : fn_dvydx.evaluate(*args, **kwargs) - fn_dvxdy.evaluate(*args, **kwargs)
@@ -179,7 +178,7 @@ def curl(*args):
         if lazyFn_x._mesh.id != lazyFn_y._mesh.id != lazyFn_z._mesh.id :
             raise ValueError("All meshes must be identical")
         
-        newLazyFn = _LazyEvaluation(mesh=lazyFn_x._mesh)
+        newLazyFn = _LazyEvaluation()
         fn_dvxdx, fn_dvxdy, fn_dvxdz = lazyFn_x.fn_gradient
         fn_dvydx, fn_dvydy, fn_dvydz = lazyFn_y.fn_gradient
         fn_dvzdx, fn_dvzdy, fn_dvzdz = lazyFn_z.fn_gradient
@@ -213,7 +212,7 @@ def hypot(*args):
         lazyFn_dependency.union(lazyFn.dependency_list)
     lazyFn_description = lazyFn_description[:-3]
 
-    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+    newLazyFn = _LazyEvaluation()
     newLazyFn.evaluate = lambda *args, **kwargs : _hyp(lazyFn_list, *args, **kwargs)
     newLazyFn.description = "sqrt({})".format(lazyFn_description)
     newLazyFn.dependency_list = lazyFn_dependency
@@ -237,7 +236,7 @@ def arctan2(*args):
         lazyFn_dependency.union(lazyFn.dependency_list)
     lazyFn_description = lazyFn_description[:-1]
 
-    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+    newLazyFn = _LazyEvaluation()
     newLazyFn.evaluate = lambda *args, **kwargs : _arctan2(lazyFn_list, *args, **kwargs)
     newLazyFn.description = "arctan2({})".format(lazyFn_description)
     newLazyFn.dependency_list = lazyFn_dependency
@@ -245,32 +244,32 @@ def arctan2(*args):
     return newLazyFn
 
 
-def slope(lazyFn):
+def slope(meshVar):
     """Lazy evaluation of the slope of a scalar field"""
     
     # need to take a few lines from `function_classes` gradient method
 
-    if lazyFn._mesh is None:
+    if meshVar._mesh is None:
         raise RuntimeError("fn_gradient is a numerical differentiation routine based on " + \
             "derivatives of a fitted spline function on a mesh. " + \
-            "The function {} has no associated mesh. ".format(lazyFn.__repr__())) + \
+            "The function {} has no associated mesh. ".format(meshVar.__repr__())) + \
             "To obtain *numerical* derivatives of this function, " + \
             "you can provide a mesh to the gradient function. " + \
             "The usual reason for this error is that your function is not based upon " + \
             "mesh variables and can, perhaps, be differentiated without resort to interpolating splines. "
 
-    elif lazyFn._mesh is not None:
-        diff_mesh = lazyFn._mesh
+    elif meshVar._mesh is not None:
+        diff_mesh = meshVar._mesh
     else:
         import quagmire
         quagmire.mesh.check_object_is_a_q_mesh_and_raise(mesh)
         diff_mesh = mesh
 
     def new_fn_slope(*args, **kwargs):
-        local_array = lazyFn.evaluate(diff_mesh)
+        local_array = meshVar.evaluate(diff_mesh)
         df_tuple = diff_mesh._derivative_grad_cartesian(local_array, nit=10, tol=1e-8)
 
-        grad_f = _np.hypot(*df_tuple)/diff_mesh._radius
+        grad_f = _np.hypot(df_tuple[:,0], df_tuple[:, 1])/diff_mesh._radius
 
         if len(args) == 1 and args[0] == diff_mesh:
             return grad_f
@@ -287,11 +286,12 @@ def slope(lazyFn):
             err_msg += "Input a valid mesh or coordinates in x,y directions"
             raise ValueError(err_msg)
 
-    newLazyFn = _LazyEvaluation(mesh=diff_mesh)
+    newLazyFn = _LazyEvaluation()
     newLazyFn.evaluate = new_fn_slope
-    newLazyFn.description = "sqrt(d({0})/dX^2 + d({0})/dY^2)".format(lazyFn.description)
-    newLazyFn.dependency_list = lazyFn.dependency_list
+    newLazyFn.description = "sqrt(d({0})/dX^2 + d({0})/dY^2)".format(meshVar.description)
+    newLazyFn.dependency_list = meshVar.dependency_list
     return newLazyFn
+
 
 ## These are not defined yet (LM)
 

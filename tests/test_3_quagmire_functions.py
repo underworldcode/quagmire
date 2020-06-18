@@ -24,15 +24,14 @@ def test_parameters():
     ## And this is how to update A
 
     A.value = 100.0
-    assert fn.math.exp(A).evaluate(0.0,0.0) == np.exp(100.0)
+    assert fn.math.exp(A).evaluate() == np.exp(100.0)
 
     ## This works too ... and note the floating point conversion
     A(101)
-    assert fn.math.exp(A).evaluate(0.0,0.0) == np.exp(101.0)
+    assert fn.math.exp(A).evaluate() == np.exp(101.0)
 
     ## More complicated examples
-    assert (fn.math.sin(A)**2.0 + fn.math.cos(A)**2.0).evaluate(0.0,0.0) == 1.0
-
+    assert (fn.math.sin(A)**2.0 + fn.math.cos(A)**2.0).evaluate() == 1.0
 
 
 def test_fn_description():

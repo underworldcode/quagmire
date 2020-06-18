@@ -29,8 +29,8 @@ def test_mesh_variable_instance(DM):
     assert np.isclose(phi.interpolate(0.01,1.0), 1.0)
     assert np.isclose(psi.interpolate(0.01,1.0), 1.0)
 
-    assert np.isclose(phi.evaluate(0.01,1.0),    1.0)
-    assert np.isclose(psi.evaluate(0.01,1.0),    1.0)
+    assert np.isclose(phi.evaluate([0.01,1.0]),    1.0)
+    assert np.isclose(psi.evaluate([0.01,1.0]),    1.0)
 
     ## This is the alternate interface to access the same code
 
@@ -83,7 +83,7 @@ def test_mesh_variable_derivative(DM):
     phi.data = np.sin(mesh.coords[:,0])
     psi.data = np.cos(mesh.coords[:,0])
 
-    assert(np.isclose(phi.fn_gradient[0].evaluate(0.0,0.0), psi.evaluate(0.0,0.0), rtol=0.01))
+    assert(np.isclose(phi.fn_gradient()[0].evaluate([0.0,0.0]), psi.evaluate([0.0,0.0]), rtol=0.01))
 
 
     return

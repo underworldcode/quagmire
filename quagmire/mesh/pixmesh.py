@@ -39,6 +39,7 @@ from petsc4py import PETSc
 from time import perf_counter
 from .commonmesh import CommonMesh as _CommonMesh
 from scipy.ndimage import map_coordinates as _map_coordinates
+from quagmire.function import LazyEvaluation as _LazyEvaluation
 
 try: range = xrange
 except: pass
@@ -307,8 +308,11 @@ class PixMesh(_CommonMesh):
         """
         u = PHI.reshape(self.ny, self.nx)
         u_y, u_x = np.gradient(u, self.dy, self.dx)
+        grads = np.ndarray((self.nx * self.ny, 2))
+        grads[:, 0] = u_x.ravel()
+        grads[:, 1] = u_y.ravel()
 
-        return u_x.ravel(), u_y.ravel()
+        return grads
 
 
     def derivative_div(self, PHIx, PHIy):
@@ -331,8 +335,8 @@ class PixMesh(_CommonMesh):
         del2PHI : ndarray of floats, shape (n,)
             second derivative of PHI
         """
-        u_xx, u_xy = self.derivative_grad(PHIx)
-        u_yx, u_yy = self.derivative_grad(PHIy)
+        u_xx = self.derivative_grad(PHIx)[:, 0]
+        u_yy = self.derivative_grad(PHIy)[:, 1]
 
         return u_xx + u_yy
 
@@ -592,7 +596,7 @@ class PixMesh(_CommonMesh):
                 return smooth_node_values
 
 
-            def smooth_fn(inner_self, lazyFn, iterations=None):
+            def smooth_fn(inner_self, meshVar, iterations=None):
 
                 if iterations is None:
                         iterations = inner_self.iterations
@@ -600,13 +604,13 @@ class PixMesh(_CommonMesh):
                 def smoother_fn(*args, **kwargs):
                     import quagmire
 
-                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(lazyFn, iterations=iterations)
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(meshVar, iterations=iterations)
 
-                    if len(args) == 1 and args[0] == lazyFn._mesh:
+                    if len(args) == 1 and args[0] == meshVar._mesh:
                         return smooth_node_values
                     elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
                         mesh = args[0]
-                        return inner_self._mesh.interpolate(lazyFn._mesh.coords[:,0], lazyFn._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                        return inner_self._mesh.interpolate(meshVar._mesh.coords[:,0], meshVar._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
                     else:
                         xi = np.atleast_1d(args[0])
                         yi = np.atleast_1d(args[1])
@@ -614,9 +618,9 @@ class PixMesh(_CommonMesh):
                         return i
 
 
-                newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+                newLazyFn = _LazyEvaluation()
                 newLazyFn.evaluate = smoother_fn
-                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(lazyFn.description, inner_self.delta, iterations)
+                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(meshVar.description, inner_self.delta, iterations)
 
                 return newLazyFn
 

@@ -15,15 +15,18 @@ def test_derivatives_and_interpolation(DM):
     height = mesh.add_variable(name="h(x,y)")
     height.data = mesh.coords[:,0]**2 + mesh.coords[:,1]**2
 
-    dhdx = height.fn_gradient[0]
-    dhdy = height.fn_gradient[1]
+    dhdx = height.fn_gradient()[0]
+    dhdy = height.fn_gradient()[1]
+
+    dhdx.evaluate()
+    dhdx.evaluate()
 
     # interpolate onto a straight line
     # bounding box should be [-5,5,-5,5]
     xy_pts = np.linspace(0,3,10)
 
-    interp_x = dhdx.evaluate(xy_pts, xy_pts)
-    interp_y = dhdy.evaluate(xy_pts, xy_pts)
+    interp_x = dhdx.evaluate([xy_pts, xy_pts])
+    interp_y = dhdy.evaluate([xy_pts, xy_pts])
 
     ascending_x = ( np.diff(interp_x) > 0 ).all()
     ascending_y = ( np.diff(interp_y) > 0 ).all()
