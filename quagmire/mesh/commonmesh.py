@@ -117,6 +117,9 @@ class CommonMesh(object):
 
         return
 
+    def __len__(self):
+        return self.npoints
+
     def add_variable(self, name=None, locked=False):
         """
         Create a Quagmire mesh variable.
