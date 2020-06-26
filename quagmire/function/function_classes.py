@@ -479,24 +479,3 @@ class parameter(LazyEvaluation):
 
         else:
             return self.value
-
-
-class input(LazyEvaluation):
-
-    def __init__(self, *args, **kwargs):
-        super(input, self).__init__(*args, **kwargs)
-        return
-
-    def __getitem__(self, item):
-        def func(input):
-            if quagmire.mesh.check_object_is_a_q_mesh(input):
-                descriptions = ["X", "Y"]
-                self._description = descriptions[item]
-                return input.data[:, item]
-            elif hasattr(input, "value"):
-                return input.value[item]
-            else:
-                return input[item]
-        self.evaluate = func
-        return self
-

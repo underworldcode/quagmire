@@ -30,6 +30,46 @@ def _make_npmath_op(op, name, lazyFn):
 
     return newLazyFn
 
+## Trig
+
+def coord(dirn):
+
+    def extract_xs(*args, **kwargs):
+        """ If no arguments or the argument is the mesh, return the
+            coords at the nodes. In all other cases pass through the
+            coordinates given """
+
+        if len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
+            mesh = args[0]
+            return mesh.coords[:,0]
+        else:
+            return args[0]
+
+    def extract_ys(*args, **kwargs):
+        """ If no arguments or the argument is the mesh, return the
+            coords at the nodes. In all other cases pass through the
+            coordinates given """
+
+        if len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
+            mesh = args[0]
+            return mesh.coords[:,1]
+        else:
+            return args[1]
+
+
+    newLazyFn_xs = _LazyEvaluation(mesh=None)
+    newLazyFn_xs.evaluate = extract_xs
+    newLazyFn_xs.description = "X"
+
+    newLazyFn_ys = _LazyEvaluation(mesh=None)
+    newLazyFn_ys.evaluate = extract_ys
+    newLazyFn_ys.description = "Y"
+
+    if dirn == 0:
+        return newLazyFn_xs
+    else:
+        return newLazyFn_ys
+
 
 def levelset(lazyFn, alpha=0.5, invert=False):
 
