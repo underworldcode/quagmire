@@ -38,6 +38,32 @@ def test_mesh_variable_instance(DM):
 
     return
 
+
+def test_mesh_variable_evaluation_1(DM):
+    mesh = QuagMesh(DM, downhill_neighbours=1)
+    meshVar = mesh.add_variable(name="meshVar")
+    results = meshVar.evaluate()
+    assert(results.size == mesh.data[:, 0].size)
+
+def test_mesh_variable_evaluation_2(DM):
+    mesh = QuagMesh(DM, downhill_neighbours=1)
+    meshVar = mesh.add_variable(name="meshVar")
+    results = meshVar.evaluate([0.,0.])
+    assert(results.size == 1)
+
+def test_mesh_variable_evaluation_3(DM):
+    mesh = QuagMesh(DM, downhill_neighbours=1)
+    meshVar = mesh.add_variable(name="meshVar")
+    results = meshVar.evaluate(mesh)
+    assert(results.size == mesh.data[:, 0].size)
+
+def test_mesh_variable_evaluation_4(DM):
+    mesh = QuagMesh(DM, downhill_neighbours=1)
+    mesh2 = QuagMesh(DM, downhill_neighbours=1)
+    meshVar = mesh.add_variable(name="meshVar")
+    results = meshVar.evaluate(mesh2)
+    assert(results.size == mesh.data[:, 0].size)
+
 def test_mesh_variable_properties(DM):
 
     mesh = QuagMesh(DM, downhill_neighbours=1)
