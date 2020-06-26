@@ -15,8 +15,8 @@ def test_derivatives_and_interpolation(DM):
     height = mesh.add_variable(name="h(x,y)")
     height.data = mesh.coords[:,0]**2 + mesh.coords[:,1]**2
 
-    dhdx = height.fn_gradient()[0]
-    dhdy = height.fn_gradient()[1]
+    dhdx = height.fn_gradient[0]
+    dhdy = height.fn_gradient[1]
 
     dhdx.evaluate()
     dhdx.evaluate()

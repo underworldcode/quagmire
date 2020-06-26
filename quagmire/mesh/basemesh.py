@@ -282,8 +282,12 @@ class MeshVariable(_LazyEvaluation):
         self._dm.globalToLocal(gdata, self._ldata)
         self._dm.restoreGlobalVec(gdata)
 
+    @property
+    def fn_gradient(self):
+        return self._fn_gradient()
 
-    def fn_gradient(self, nit=10, tol=1e-8):
+    def _fn_gradient(self, nit=10, tol=1e-8):
+
         """
         Compute values of the derivatives of PHI in the x, y directions at the nodal points.
         This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
@@ -303,6 +307,7 @@ class MeshVariable(_LazyEvaluation):
         PHIy : ndarray of floats, shape (n,)
             first partial derivative of PHI in y direction
         """
+
         import quagmire
 
         class _gradient(_LazyEvaluation):
@@ -331,10 +336,8 @@ class MeshVariable(_LazyEvaluation):
                 return self
 
 
-        self._fn_gradient = _gradient(self, nit, tol)
+        return _gradient(self, nit, tol)
         
-        return self._fn_gradient
-
 
     def gradient_patch(self):
 
