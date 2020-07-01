@@ -282,6 +282,103 @@ class MeshVariable(_LazyEvaluation):
         self._dm.restoreGlobalVec(gdata)
 
 
+    def load_from_cloud_fs(self, cloud_hdf5_filename, cloud_location_handle=None):
+        """
+        Load the MeshVariable from a cloud_location pointed to by
+        a pyfilesystem object. 
+
+        Parameters
+        ----------
+
+        cloud_location: 
+
+        cloud_hdf5_filename: str
+            The filename for the hdf5 file in the cloud. It should be possible to do 
+            a cloud_location_handle.listdir(".") to check the file names
+
+        Notes
+        -----
+        Cloud files must be in hdf5 format, and contain a vector the same
+        size and with the same name as the current MeshVariable 
+        """
+
+        from quagmire.tools import cloud_fs
+
+        if not cloud_fs:
+            print("Cloud services are not available - they require fs and fs.webdav packages")
+            return
+
+        from petsc4py import PETSc
+        import os
+
+        from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, cloud_download
+
+        if self._locked:
+            raise ValueError("quagmire.MeshVariable: {} - is locked".format(self.description))
+
+        if cloud_location_handle is None:
+           cloud_location_handle = quagmire_cloud_fs
+
+
+        tempfile = os.path.join(quagmire_cloud_cache_dir_name, str(cloud_hdf5_filename))
+
+        from mpi4py import MPI
+            
+        if MPI.COMM_WORLD.Get_rank()  == 0:
+            cloud_download(cloud_hdf5_filename, tempfile, cloud_location_handle)
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(tempfile, mode='r')
+
+        gdata = self._dm.getGlobalVec()
+        gdata.setName(self._ldata.getName())
+        gdata.load(ViewHDF5)
+
+        ViewHDF5.destroy()
+        ViewHDF5 = None
+
+        self._dm.globalToLocal(gdata, self._ldata)
+        self._dm.restoreGlobalVec(gdata)
+
+        return
+
+
+    def load_from_url(self, url):
+        """ Load an hdf5 file pointed to by a publicly accessible url """
+
+        from quagmire.tools import cloud_fs
+
+        from petsc4py import PETSc
+        import os
+
+        from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, url_download
+
+        if self._locked:
+            raise ValueError("quagmire.MeshVariable: {} - is locked".format(self.description))
+
+        tempfile = os.path.join(quagmire_cloud_cache_dir_name, self._name+".h5") 
+        print("creating file {}".format(tempfile))
+
+        from mpi4py import MPI
+
+        if MPI.COMM_WORLD.Get_rank()  == 0:
+            url_download(url, tempfile)
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(tempfile, mode='r')
+
+        gdata = self._dm.getGlobalVec()
+        gdata.setName(self._ldata.getName())
+        gdata.load(ViewHDF5)
+
+        ViewHDF5.destroy()
+        ViewHDF5 = None
+
+        self._dm.globalToLocal(gdata, self._ldata)
+        self._dm.restoreGlobalVec(gdata)
+
+        return
+
     def gradient(self, nit=10, tol=1e-8):
         """
         Compute values of the derivatives of PHI in the x, y directions at the nodal points.
