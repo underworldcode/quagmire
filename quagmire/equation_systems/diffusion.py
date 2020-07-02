@@ -79,6 +79,7 @@ class DiffusionEquation(object):
         # create some global work vectors
         self._RHS = mesh.dm.createGlobalVec()
         self._PHI = mesh.dm.createGlobalVec()
+        self._RHS_outer = mesh.dm.createGlobalVec()
 
         # store this flag to make sure verify has been called before timestepping
         self._verified = False
@@ -217,7 +218,7 @@ class DiffusionEquation(object):
         return mat
 
 
-    def _set_boundary_conditions(self, matrix):
+    def _set_boundary_conditions(self, matrix, rhs):
 
         mesh = self._mesh
 
@@ -241,6 +242,13 @@ class DiffusionEquation(object):
             mesh.lvec.setArray(lvec_data)
             mesh.dm.localToGlobal(mesh.lvec, diag)
             matrix.setDiagonal(diag)
+
+
+            # set the RHS vector
+            lvec_data.fill(0.0)
+            lvec_data[dirichlet_mask] = self.phi.data[dirichlet_mask]
+            mesh.lvec.setArray(lvec_data)
+            mesh.dm.localToGlobal(mesh.lvec, rhs)
 
 
         # neumann BCs are by design of the matrix,
@@ -327,33 +335,47 @@ class DiffusionEquation(object):
 
 
         # Create LHS and RHS matrices
-        scale_LHS = timestep*self.theta
-        scale_RHS = timestep*(1.0 - self.theta)
+        scale_LHS = 0.5*timestep*self.theta
+        scale_RHS = 0.5*timestep*(1.0 - self.theta)
 
         mat_LHS = self._get_scaled_matrix(-scale_LHS) # LHS matrix
         mat_RHS = self._get_scaled_matrix(scale_RHS) # RHS matrix
 
 
+        PHI = self._PHI
+        RHS = self._RHS
+        BCS = self._RHS_outer
+
         # set boundary conditions
-        self._set_boundary_conditions(mat_LHS)
-        self._set_boundary_conditions(mat_RHS)
+        self._set_boundary_conditions(mat_LHS, BCS)
+        self._set_boundary_conditions(mat_RHS, BCS)
+        BCS.set(0.0)
+
+        dirichlet_mask = self.dirichlet_mask.evaluate(self._mesh).astype(bool)
+        dirichlet_BC = self.phi.data[dirichlet_mask].copy()
 
 
         # initialise solver
         self._initialise_solver(mat_LHS)
 
-
-        RHS = self._RHS
-        PHI = self._PHI
         self._mesh.dm.localToGlobal(self.phi._ldata, PHI)
-
 
         elapsed_time = 0.0
         
         for step in range(0, int(steps)):
 
-            mat_RHS.mult(PHI, RHS) # multiply RHS
-            self.ksp.solve(RHS, PHI) # solve SLE
+            # enforce Dirichlet BCs
+            self._mesh.dm.globalToLocal(PHI, self._mesh.lvec)
+            self._mesh.lvec.array[dirichlet_mask] = dirichlet_BC
+            self._mesh.dm.localToGlobal(self._mesh.lvec, PHI)
+
+
+            # evaluate right hand side
+            mat_RHS.mult(PHI, RHS)
+            RHS += BCS # add BCs
+
+            # find solution inside domain
+            self.ksp.solve(RHS, PHI)
 
             elapsed_time += timestep
 
@@ -372,22 +394,22 @@ class DiffusionEquation(object):
             self.verify()
 
         mat_LHS = self.matrix.copy()
+        RHS = self._RHS
+        PHI = self._PHI
 
 
         # set boundary conditions
-        self._set_boundary_conditions(mat_LHS)
+        self._set_boundary_conditions(mat_LHS, RHS)
 
         # initialise solver
         self._initialise_solver(mat_LHS)
 
 
-        RHS = self._RHS
-        PHI = self._PHI
         self._mesh.dm.localToGlobal(self.phi._ldata, PHI)
 
 
-        self.ksp.solve(PHI, RHS)
-        self._mesh.dm.globalToLocal(RHS, self.phi._ldata)
+        self.ksp.solve(RHS, PHI)
+        self._mesh.dm.globalToLocal(PHI, self.phi._ldata)
         return self.phi.data
 
 
