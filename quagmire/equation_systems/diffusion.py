@@ -186,6 +186,11 @@ class DiffusionEquation(object):
         mat.setPreallocationNNZ(nnz)
         # mat.setOption(mat.Option.NEW_NONZERO_ALLOCATION_ERR, False)
 
+        area = mesh.pointwise_area.evaluate(mesh)
+        neighbour_area = area[mesh.natural_neighbours]
+        neighbour_area[~mesh.natural_neighbours_mask] = 0.0 # mask non-neighbours
+        total_neighbour_area = neighbour_area.sum(axis=1)
+
 
         # vectorise along the matrix stencil
         mat.assemblyBegin()
@@ -197,13 +202,13 @@ class DiffusionEquation(object):
 
         for col in range(1, mesh.natural_neighbours.shape[1]):
             node_neighbours = mesh.natural_neighbours[:,col].astype(PETSc.IntType)
-            
+
             node_distance = np.linalg.norm(mesh.data - mesh.data[node_neighbours], axis=1)
             node_distance[node_distance == 0] += 0.000001 # do not divide by zero
-            delta = 1.0/(2.0*node_distance**2)
-            
-            vals = delta*(kappa + kappa[node_neighbours])
-            
+            weight = 3*area[node_neighbours]/(total_neighbour_area[node_neighbours]/3)
+
+            vals = weight*0.5*(kappa + kappa[node_neighbours])/node_distance**2
+
             mat.setValuesLocalCSR(nodes, node_neighbours, vals)
 
         mat.assemblyEnd()
