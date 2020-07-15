@@ -67,6 +67,12 @@ def cloud_download(cloud_filename, local_filename, cloud_fs_location_handle=None
             print("Not a valid cloud location - no files available", flush=True)
             return
 
+        if not cloud_fs_location_handle.exists(str(cloud_filename)):
+            print("Not a valid cloud file - {}".format(str(cloud_filename)), flush=True)
+            return
+
+
+
         from mpi4py import MPI
         comm = MPI.COMM_WORLD
         rank = comm.Get_rank()
@@ -74,6 +80,8 @@ def cloud_download(cloud_filename, local_filename, cloud_fs_location_handle=None
         if rank == 0:
             with open(str(local_filename), 'wb') as local_file:
                 cloud_fs_location_handle.download(str(cloud_filename), local_file)
+
+        comm.barrier()
 
         return
 
@@ -114,6 +122,8 @@ def url_download(url, local_filename):
                 if chunk:
                     f.write(chunk)
 
+    comm.barrier()
+
     return
 
 
@@ -126,7 +136,6 @@ def cloud_upload(cloud_filename, local_filename, cloud_fs_location_handle):
         ----------
 
         cloud_fs_location_handle: fs.base.FS
-
 
         cloud_filename: str
             The filename for the file in the cloud. It should be possible to do 
@@ -143,19 +152,31 @@ def cloud_upload(cloud_filename, local_filename, cloud_fs_location_handle):
             print("Not a valid cloud location - no data was uploaded", flush=True)
             return
 
+        # Note - this is not reliable and is unlikely to fail until the verification step
         if cloud_fs_location_handle.getmeta()["read_only"]:
             print("The cloud location you have provided is read only - no data was uploaded", flush=True)
             return
 
+        if cloud_fs_location_handle == quagmire_cloud_fs:
+            print("The quagmire cloud is read only - no data was uploaded", flush=True)
+            return
+
+    
         from mpi4py import MPI
         comm = MPI.COMM_WORLD
         rank = comm.Get_rank()
 
-        print("Trying to upload - {}".format(local_filename))
-
         if rank == 0:
             with open(local_filename, 'rb') as local_file:
                 cloud_fs_location_handle.upload(cloud_filename, local_file)
+
+        comm.barrier()
+
+        # Verify upload 
+        if not  cloud_fs_location_handle.exists(cloud_filename):
+            print("Warning: Upload can't be verified for file {}".format(cloud_filename), flush=True)
+
+
 
         return
 
@@ -210,22 +231,25 @@ def cloudstor(private=False, url=None, password=None, username=None):
 
             webdav_url = "webdav://{}:{}@cloudstor.aarnet.edu.au:443/plus/remote.php/webdav/".format(username, password)
 
-
-
         return fs.open_fs(webdav_url)
 
 
-_underworldcode_cloudstor_fs = cloudstor(url="https://cloudstor.aarnet.edu.au/plus/s/ladjou9ky26ZG0A", password="8M7idzp2Q7DXLMz()()()()()")
-quagmire_cloud_fs = _underworldcode_cloudstor_fs.opendir('quagmire')
+# _underworldcode_cloudstor_fs = cloudstor(url="https://cloudstor.aarnet.edu.au/plus/s/ladjou9ky26ZG0A", password="8M7idzp2Q7DXLMz()()()()()")
+_underworldcode_cloudstor_fs = cloudstor(url="https://cloudstor.aarnet.edu.au/plus/s/4SEAhkqSlTojYhv", password="8M7idzp2Q7DXLMz()()()()()")
+quagmire_cloud_fs = _underworldcode_cloudstor_fs.opendir('/')
+
+# This is a file drop location where developers can read 
+_underworldcode_cloudstor_fs = cloudstor(url="https://cloudstor.aarnet.edu.au/plus/s/eyOWXBY1u4bIrLg", password="8M7idzp2Q7DXLMz()()()()()")
+quagmire_cloud_filedrop_fs = _underworldcode_cloudstor_fs.opendir('/')
+
+del _underworldcode_cloudstor_fs
 
 # This is a temporary directory that we can pass around 
 # and use for unpacking cloud files etc. In parallel, 
 # we need a filesystem directory and name to pass around
 
 from mpi4py import MPI
-
 comm = MPI.COMM_WORLD
-size = comm.Get_size()
 rank = comm.Get_rank()
 
 if rank == 0:
@@ -234,4 +258,10 @@ if rank == 0:
 else:
     _quagmire_cloud_cache_root_path = None
 
+comm.barrier()
+
+
 quagmire_cloud_cache_dir_name = comm.bcast(_quagmire_cloud_cache_root_path, root=0)
+
+
+

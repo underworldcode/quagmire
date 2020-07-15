@@ -59,6 +59,19 @@ class MeshVariable(_LazyEvaluation):
         self._ldata.setName(name)
         return
 
+    def rename(self, name=None):
+        """
+        Rename this MeshVariable
+        """
+
+        if name is None:
+            return
+
+        self._name = str(name)
+        self._ldata.setName(name)
+        self.description = self._name
+
+
     def copy(self, name=None, locked=None):
         """
         Create a copy of this MeshVariable
@@ -249,7 +262,7 @@ class MeshVariable(_LazyEvaluation):
 
         return
 
-    def load(self, hdf5_filename):
+    def load(self, hdf5_filename, name=None):
         """
         Load the MeshVariable from disk.
 
@@ -270,7 +283,11 @@ class MeshVariable(_LazyEvaluation):
         from petsc4py import PETSc
         # need a global vector
         gdata = self._dm.getGlobalVec()
-        gdata.setName(self._ldata.getName())
+
+        if name is None:
+            gdata.setName(self._ldata.getName())
+        else:
+            gdata.setName(str(name))
 
         ViewHDF5 = PETSc.Viewer()
         ViewHDF5.createHDF5(str(hdf5_filename), mode='r')
@@ -282,7 +299,7 @@ class MeshVariable(_LazyEvaluation):
         self._dm.restoreGlobalVec(gdata)
 
 
-    def load_from_cloud_fs(self, cloud_hdf5_filename, cloud_location_handle=None):
+    def load_from_cloud_fs(self, cloud_hdf5_filename, cloud_location_handle=None, name=None):
         """
         Load the MeshVariable from a cloud_location pointed to by
         a pyfilesystem object. 
@@ -319,19 +336,20 @@ class MeshVariable(_LazyEvaluation):
         if cloud_location_handle is None:
            cloud_location_handle = quagmire_cloud_fs
 
-
-        tempfile = os.path.join(quagmire_cloud_cache_dir_name, str(cloud_hdf5_filename))
-
-        from mpi4py import MPI
+        local_filename = os.path.basename(cloud_hdf5_filename)
+        tempfile = os.path.join(quagmire_cloud_cache_dir_name, str(local_filename))
             
-        if MPI.COMM_WORLD.Get_rank()  == 0:
-            cloud_download(cloud_hdf5_filename, tempfile, cloud_location_handle)
+        cloud_download(cloud_hdf5_filename, tempfile, cloud_location_handle)
 
         ViewHDF5 = PETSc.Viewer()
         ViewHDF5.createHDF5(tempfile, mode='r')
 
         gdata = self._dm.getGlobalVec()
-        gdata.setName(self._ldata.getName())
+        if name is None:
+            gdata.setName(self._ldata.getName())
+        else:
+            gdata.setName(str(name))
+
         gdata.load(ViewHDF5)
 
         ViewHDF5.destroy()
@@ -343,7 +361,7 @@ class MeshVariable(_LazyEvaluation):
         return
 
 
-    def load_from_url(self, url):
+    def load_from_url(self, url, name=None):
         """ Load an hdf5 file pointed to by a publicly accessible url """
 
         from quagmire.tools import cloud_fs
@@ -357,18 +375,19 @@ class MeshVariable(_LazyEvaluation):
             raise ValueError("quagmire.MeshVariable: {} - is locked".format(self.description))
 
         tempfile = os.path.join(quagmire_cloud_cache_dir_name, self._name+".h5") 
-        print("creating file {}".format(tempfile))
+        # print("creating file {}".format(tempfile))
 
-        from mpi4py import MPI
 
-        if MPI.COMM_WORLD.Get_rank()  == 0:
-            url_download(url, tempfile)
+        url_download(url, tempfile)
 
         ViewHDF5 = PETSc.Viewer()
         ViewHDF5.createHDF5(tempfile, mode='r')
 
         gdata = self._dm.getGlobalVec()
-        gdata.setName(self._ldata.getName())
+        if name is None:
+            gdata.setName(self._ldata.getName())
+        else:
+            gdata.setName(str(name))
         gdata.load(ViewHDF5)
 
         ViewHDF5.destroy()
