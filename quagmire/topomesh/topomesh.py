@@ -360,30 +360,30 @@ class TopoMesh(object):
         self.sweepDownToOutflowMat = downSweepMat
 
 
-    def upstream_integral_fn(self, lazyFn):
+    def upstream_integral_fn(self, meshVar):
         """Upsream integral implemented as an area-weighted upstream summation"""
 
         import quagmire
 
         def integral_fn(*args, **kwargs):
-            node_values = lazyFn.evaluate(lazyFn._mesh) * lazyFn._mesh.area
+            node_values = meshVar.evaluate(meshVar._mesh) * meshVar._mesh.area
             node_integral = self.cumulative_flow(node_values)
 
-            if len(args) == 1 and args[0] == lazyFn._mesh:
+            if len(args) == 1 and args[0] == meshVar._mesh:
                 return node_integral
             elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
-                return lazyFn._mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=node_integral, **kwargs)
+                return meshVar._mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=node_integral, **kwargs)
             else:
                 xi = np.atleast_1d(args[0])
                 yi = np.atleast_1d(args[1])
-                i, e = lazyFn._mesh.interpolate(xi, yi, zdata=node_integral, **kwargs)
+                i, e = meshVar._mesh.interpolate(xi, yi, zdata=node_integral, **kwargs)
                 return i
 
-        newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+        newLazyFn = _LazyEvaluation()
         newLazyFn.evaluate = integral_fn
-        newLazyFn.description = "UpInt({})dA".format(lazyFn.description)
-        newLazyFn.dependency_list |= lazyFn.dependency_list
+        newLazyFn.description = "UpInt({})dA".format(meshVar.description)
+        newLazyFn.dependency_list |= meshVar.dependency_list
 
         return newLazyFn
 
@@ -461,16 +461,16 @@ class TopoMesh(object):
             return niter, self.lvec.array.copy()
 
 
-    def downhill_smoothing_fn(self, lazyFn, its=1, centre_weight=0.75):
+    def downhill_smoothing_fn(self, meshVar, its=1, centre_weight=0.75):
 
         import quagmire
 
         def new_fn(*args, **kwargs):
-            local_array = lazyFn.evaluate(self)
+            local_array = meshVar.evaluate(self)
             smoothed = self._downhill_smoothing(local_array, its=its, centre_weight=centre_weight)
             smoothed = self.sync(smoothed)
 
-            if len(args) == 1 and args[0] == lazyFn._mesh:
+            if len(args) == 1 and args[0] == meshVar._mesh:
                 return smoothed
             elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
 
@@ -482,10 +482,10 @@ class TopoMesh(object):
                 i, e = self.interpolate(xi, yi, zdata=smoothed, **kwargs)
                 return i
 
-        newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+        newLazyFn = _LazyEvaluation()
         newLazyFn.evaluate = new_fn
-        newLazyFn.description = "DnHSmooth({}), i={}, w={}".format(lazyFn.description,  its, centre_weight)
-        newLazyFn.dependency_list |= lazyFn.dependency_list
+        newLazyFn.description = "DnHSmooth({}), i={}, w={}".format(meshVar.description,  its, centre_weight)
+        newLazyFn.dependency_list |= meshVar.dependency_list
 
 
         return newLazyFn
@@ -517,16 +517,16 @@ class TopoMesh(object):
             return self.lvec.array.copy()
 
 
-    def uphill_smoothing_fn(self, lazyFn, its=1, centre_weight=0.75):
+    def uphill_smoothing_fn(self, meshVar, its=1, centre_weight=0.75):
 
         import quagmire
 
         def new_fn(*args, **kwargs):
-            local_array = lazyFn.evaluate(self)
+            local_array = meshVar.evaluate(self)
             smoothed = self._uphill_smoothing(local_array, its=its, centre_weight=centre_weight)
             smoothed = self.sync(smoothed)
 
-            if len(args) == 1 and args[0] == lazyFn._mesh:
+            if len(args) == 1 and args[0] == meshVar._mesh:
                 return smoothed
             elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
@@ -537,11 +537,10 @@ class TopoMesh(object):
                 i, e = self.interpolate(xi, yi, zdata=smoothed, **kwargs)
                 return i
 
-        newLazyFn = LazyEvaluation(mesh=lazyFn._mesh)
+        newLazyFn = _LazyEvaluation()
         newLazyFn.evaluate = new_fn
-        newLazyFn.description = "UpHSmooth({}), i={}, w={}".format(lazyFn.description, )
-        newLazyFn.dependency_list |= lazyFn.dependency_list
-
+        newLazyFn.description = "UpHSmooth({}), i={}, w={}".format(meshVar.description, )
+        newLazyFn.dependency_list |= meshVar.dependency_list
 
         return newLazyFn
 
@@ -579,34 +578,36 @@ class TopoMesh(object):
 
 
 
-    def streamwise_smoothing_fn(self, lazyFn, its=1, centre_weight=0.75):
+    def streamwise_smoothing_fn(self, meshVar, its=1, centre_weight=0.75):
 
         import quagmire
 
-        def new_fn(*args, **kwargs):
-            local_array = lazyFn.evaluate(self)
+        def new_fn(input=None, **kwargs):
+            local_array = meshVar.evaluate(self)
             smoothed = self._streamwise_smoothing(local_array, its=its, centre_weight=centre_weight)
             smoothed = self.sync(smoothed)
 
-            if len(args) == 1 and args[0] == lazyFn._mesh:
-                return smoothed
-            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
-                mesh = args[0]
-                return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=smoothed, **kwargs)
+            if input is not None:
+                if isinstance(input, (quagmire.mesh.trimesh.TriMesh, 
+                                      quagmire.mesh.pixmesh.PixMesh,
+                                      quagmire.mesh.strimesh.sTriMesh)):
+                    if input == meshVar._mesh:
+                        return smoothed
+                    else:
+                        return self.interpolate(input.coords[:,0], input.coords[:,1], zdata=smoothed, **kwargs)
+                elif isinstance(input, (tuple, list, np.ndarray)):
+                    input = np.array(input)
+                    input = np.reshape(input, (-1, 2))
+                    return self.interpolate(input[:, 0], input[:,1], zdata=smoothed, **kwargs)[0]
             else:
-                xi = np.atleast_1d(args[0])  # .resize(-1,1)
-                yi = np.atleast_1d(args[1])  # .resize(-1,1)
-                i, e = self.interpolate(xi, yi, zdata=smoothed, **kwargs)
-                return i
+                return smoothed
 
-        newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+        newLazyFn = _LazyEvaluation()
         newLazyFn.evaluate = new_fn
-        newLazyFn.description = "StmSmooth({}), i={}, w={}".format(lazyFn.description, its, centre_weight)
-        newLazyFn.dependency_list |= lazyFn.dependency_list
-
+        newLazyFn.description = "StmSmooth({}), i={}, w={}".format(meshVar.description, its, centre_weight)
+        newLazyFn.dependency_list |= meshVar.dependency_list
 
         return newLazyFn
-
 
 
 

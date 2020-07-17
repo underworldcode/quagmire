@@ -203,8 +203,6 @@ class sTriMesh(_CommonMesh):
 
         self.root = False
 
-        # functions / parameters that are required for compatibility among FlatMesh types
-        self._derivative_grad_cartesian = self.tri.gradient_xyz
 
 
 # We place these properties here to prevent users from mucking up the coordinates.
@@ -385,8 +383,20 @@ class sTriMesh(_CommonMesh):
             first partial derivative of PHI in y direction
         """
         PHIx, PHIy = self.tri.gradient_lonlat(PHI, nit, tol)
-        return np.radians(PHIx), np.radians(PHIy)
+        grads = np.ndarray((PHIx.size, 2))
+        grads[:, 0] = np.radians(PHIx)
+        grads[:, 1] = np.radians(PHIy)
 
+        return grads
+
+    # required for compatibility among FlatMesh types
+    def _derivative_grad_cartesian(self, *args, **kwargs):
+         u_x, u_y, u_z = self.tri.gradient_xyz(*args, **kwargs)
+         grads = np.ndarray((u_x.size, 3))
+         grads[:, 0] = u_x
+         grads[:, 1] = u_y
+         grads[:, 2] = u_z
+         return grads
 
     def derivative_div(self, PHIx, PHIy, PHIz, **kwargs):
         """
@@ -639,7 +649,7 @@ class sTriMesh(_CommonMesh):
                 return smooth_node_values
 
 
-            def smooth_fn(inner_self, lazyFn, iterations=None):
+            def smooth_fn(inner_self, meshVar, iterations=None):
 
                 if iterations is None:
                         iterations = inner_self.iterations
@@ -647,13 +657,13 @@ class sTriMesh(_CommonMesh):
                 def smoother_fn(*args, **kwargs):
                     import quagmire
 
-                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(lazyFn, iterations=iterations)
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(meshVar, iterations=iterations)
 
-                    if len(args) == 1 and args[0] == lazyFn._mesh:
+                    if len(args) == 1 and args[0] == meshVar._mesh:
                         return smooth_node_values
                     elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
                         mesh = args[0]
-                        return inner_self._mesh.interpolate(lazyFn._mesh.coords[:,0], lazyFn._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                        return inner_self._mesh.interpolate(meshVar._mesh.coords[:,0], meshVar._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
                     else:
                         xi = np.atleast_1d(args[0])
                         yi = np.atleast_1d(args[1])
@@ -661,9 +671,9 @@ class sTriMesh(_CommonMesh):
                         return i
 
 
-                newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+                newLazyFn = _LazyEvaluation()
                 newLazyFn.evaluate = smoother_fn
-                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(lazyFn.description, inner_self.delta, iterations)
+                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(meshVar.description, inner_self.delta, iterations)
 
                 return newLazyFn
 
@@ -702,7 +712,7 @@ class sTriMesh(_CommonMesh):
                 return smooth_node_values
 
 
-            def smooth_fn(inner_self, lazyFn, iterations=None):
+            def smooth_fn(inner_self, meshVar, iterations=None):
                 import quagmire
 
                 if iterations is None:
@@ -710,13 +720,13 @@ class sTriMesh(_CommonMesh):
 
                 def smoother_fn(*args, **kwargs):
 
-                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(lazyFn, iterations=iterations)
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(meshVar, iterations=iterations)
 
-                    if len(args) == 1 and args[0] == lazyFn._mesh:
+                    if len(args) == 1 and args[0] == meshVar._mesh:
                         return smooth_node_values
                     elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
                         mesh = args[0]
-                        return inner_self._mesh.interpolate(lazyFn._mesh.coords[:,0], lazyFn._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                        return inner_self._mesh.interpolate(meshVar._mesh.coords[:,0], meshVar._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
                     else:
                         xi = np.atleast_1d(args[0])
                         yi = np.atleast_1d(args[1])
@@ -724,9 +734,9 @@ class sTriMesh(_CommonMesh):
                         return i
 
 
-                newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+                newLazyFn = _LazyEvaluation()
                 newLazyFn.evaluate = smoother_fn
-                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(lazyFn.description, inner_self.delta, iterations)
+                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(meshVar.description, inner_self.delta, iterations)
 
                 return newLazyFn
 

@@ -42,9 +42,8 @@ def _all_reduce(array, name):
     return garray
 
 def _make_reduce_op(name, lazyFn):
-    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+    newLazyFn = _LazyEvaluation()
     newLazyFn.evaluate = lambda *args, **kwargs : _all_reduce(lazyFn.evaluate(*args, **kwargs), name)
-    newLazyFn.gradient = lambda *args, **kwargs : _all_reduce(lazyFn.gradient(*args, **kwargs), name)
     newLazyFn.description = "{}({})".format(name, lazyFn.description)
     newLazyFn.dependency_list = lazyFn.dependency_list
     return newLazyFn

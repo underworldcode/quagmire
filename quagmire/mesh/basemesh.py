@@ -28,6 +28,7 @@ except: pass
 ## These also need to be lazy evaluation objects
 
 from ..function import LazyEvaluation as _LazyEvaluation
+import numpy as np
 
 
 
@@ -398,7 +399,8 @@ class MeshVariable(_LazyEvaluation):
 
         return
 
-    def gradient(self, nit=10, tol=1e-8):
+    @property
+    def fn_gradient(self):
         """
         Compute values of the derivatives of PHI in the x, y directions at the nodal points.
         This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
@@ -418,13 +420,42 @@ class MeshVariable(_LazyEvaluation):
         PHIy : ndarray of floats, shape (n,)
             first partial derivative of PHI in y direction
         """
+        return self._fn_gradient()
 
-        dx, dy = self._mesh.derivative_grad(self._ldata.array, nit, tol)
+    def _fn_gradient(self, nit=10, tol=1e-8):
+        import quagmire
 
-        return dx, dy
+        class _gradient(_LazyEvaluation):
+        
+            def __init__(self, meshVariable, nit, tol, *args, **kwargs):
+                super(_gradient, self).__init__()
+                ldata = meshVariable._ldata.array
+                self._mesh = meshVariable._mesh
+                self.grads = meshVariable._mesh.derivative_grad(ldata, nit=nit, tol=tol)
+                return
 
+            def __getitem__(self, item):
+                def func(*args):
+                    if args:
+                        if args[0] == self._mesh:
+                            return self.grads[:, item]
+                        elif isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                            mesh = args[0]
+                            return self._mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=self.grads[:,item])[0]
+                        else:
+                            coords = args[0]
+                            return self._mesh.interpolate(coords[0], coords[1], zdata=self.grads[:, item])[0]
+                    else:
+                        return self.grads[:, item]
+                self.evaluate = func
+                return self
+
+
+        return _gradient(self, nit, tol)
+        
 
     def gradient_patch(self):
+
         """
         Compute values of the derivatives of PHI in the x, y directions at the nodal points.
         This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
@@ -520,7 +551,7 @@ class MeshVariable(_LazyEvaluation):
             return i
 
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, input=None, **kwargs):
         """
         If the argument is a mesh, return the values at the nodes.
         In all other cases call the `interpolate` method.
@@ -528,14 +559,20 @@ class MeshVariable(_LazyEvaluation):
 
         import quagmire
 
-        if len(args) == 1 and args[0] == self._mesh:
-            return self._ldata.array
-        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
-            mesh = args[0]
-            return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], **kwargs)
+        if input is not None:
+            if isinstance(input, (quagmire.mesh.trimesh.TriMesh, 
+                                  quagmire.mesh.pixmesh.PixMesh,
+                                  quagmire.mesh.strimesh.sTriMesh)):
+                if input == self._mesh:
+                    return self._ldata.array
+                else:
+                    return self.interpolate(input.coords[:,0], input.coords[:,1], **kwargs)
+            elif isinstance(input, (tuple, list, np.ndarray)):
+                input = np.array(input)
+                input = np.reshape(input, (-1, 2))
+                return self.interpolate(input[:, 0], input[:,1], **kwargs)
         else:
-            return self.interpolate(*args, **kwargs)
-
+            return self._ldata.array
 
 
     ## Basic global operations provided by petsc4py

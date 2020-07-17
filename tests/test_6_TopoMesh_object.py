@@ -127,12 +127,15 @@ def test_streamwise_smoothing(DM):
     rainfall = mesh.add_variable("rainfall")
     rainfall.data = np.random.random(size=mesh.npoints)
 
-    sm1 = np.std(rainfall.evaluate(stream_x, stream_y))
+    stream = np.ndarray((stream_x.size, 2))
+    stream[:, 0] = stream_x
+    stream[:, 1] = stream_y
+    sm1 = np.std(rainfall.evaluate(stream))
 
     for i in range(1,4):
         sm0 = float(sm1)
         smooth_fn = mesh.streamwise_smoothing_fn(rainfall, its=i)
-        sm1 = np.std(smooth_fn.evaluate(stream_x, stream_y))
+        sm1 = np.std(smooth_fn.evaluate(stream))
 
         assert sm1 < sm0, "{}: streamwise smoothing at its={} no smoother than its={}".format(mesh.id, i, i-1)
 
