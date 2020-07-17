@@ -73,6 +73,9 @@ def coord(dirn):
 
 def levelset(lazyFn, alpha=0.5, invert=False):
 
+    assert isinstance(lazyFn, _LazyEvaluation), """
+        lazyFn argument is not of type a function"""
+
     newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
 
     def threshold(*args, **kwargs):
@@ -94,6 +97,9 @@ def levelset(lazyFn, alpha=0.5, invert=False):
 
 
 def maskNaN(lazyFn, invert=False):
+    
+    assert isinstance(lazyFn, _LazyEvaluation), """
+        lazyFn argument is not of type a function"""
 
     newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
 
@@ -117,6 +123,9 @@ def maskNaN(lazyFn, invert=False):
 
 
 def replaceNan(lazyFn1, lazyFn2):
+    
+    lazyFn1 = _LazyEvaluation.convert(lazyFn1)
+    lazyFn2 = _LazyEvaluation.convert(lazyFn2)
 
     def replaceNan_nodebynode(*args, **kwargs):
 
@@ -136,6 +145,10 @@ def replaceNan(lazyFn1, lazyFn2):
 
 def where(maskFn, lazyFn1, lazyFn2):
 
+    maskFn = _LazyEvaluation.convert(maskFn)
+    lazyFn1 = _LazyEvaluation.convert(lazyFn1)
+    lazyFn2 = _LazyEvaluation.convert(lazyFn2)
+
     def mask_nodebynode(*args, **kwargs):
         values1     = lazyFn1.evaluate(*args, **kwargs)
         values2     = lazyFn2.evaluate(*args, **kwargs)
@@ -149,5 +162,41 @@ def where(maskFn, lazyFn1, lazyFn2):
     newLazyFn.description = "where({}: [{}]<-[{}])".format(maskFn.description, lazyFn1.description, lazyFn2.description)
     newLazyFn.dependency_list = maskFn.dependency_list |     lazyFn1.dependency_list | lazyFn2.dependency_list
 
+
+    return newLazyFn
+
+
+def conditional(clauses):
+
+    _clauses = []
+    _description = "("
+    _dependency_list = set()
+    for clause in clauses:
+        if not isinstance(clause, (list, tuple)):
+            raise TypeError("Clauses within the clause list must be of python type 'list' or 'tuple")
+        if len(clause) !=2:
+            raise ValueError("Clauses tuples must be of length 2.")
+        conditionFn = _LazyEvaluation.convert(clause[0])
+        resultantFn = _LazyEvaluation.convert(clause[1])
+        _clauses.append((conditionFn, resultantFn))
+        _description += "if ({0}) then ({1}), ".format(conditionFn, resultantFn)
+        _dependency_list |= conditionFn.dependency_list | resultantFn.dependency_list
+
+    def evaluate(*args, **kwargs):
+        mask = _LazyEvaluation().convert(1).evaluate(*args, **kwargs)
+        values = None
+        for clause in _clauses:
+            values = _np.where(clause[0].evaluate(*args, **kwargs) * mask,
+                               clause[1].evaluate(*args, **kwargs),
+                               values)
+            mask = _np.where(clause[0].evaluate(*args, **kwargs) * mask,
+                             0, mask) 
+        if _np.any(mask):
+            raise ValueError("")
+        return values
+                
+    newLazyFn = _LazyEvaluation()
+    newLazyFn.evaluate = evaluate
+    newLazyFn.description = _description[:-2] + " )" 
 
     return newLazyFn
