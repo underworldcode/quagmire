@@ -328,6 +328,135 @@ def create_DMPlex_from_hdf5(file):
     return dm
 
 
+def create_DMPlex_from_cloud_fs(cloud_hdf5_filename, cloud_location_handle=None):
+    """
+    Creates a DMPlex object from an HDF5 file accessible via a pyfilesystem handle.
+    This is useful for rebuilding a mesh that is saved from a
+    previous simulation.
+
+    Parameters
+    ----------
+    cloud_hdf5_filename : string
+        point to the cloud location of hdf5 file
+
+    cloud_location_handle : 
+
+    Returns
+    -------
+    DM : PETSc DMPlex object
+
+    Notes
+    -----
+    This function requires petsc4py >= 3.8
+    """
+
+    from quagmire.tools import cloud_fs
+
+    if not cloud_fs:
+        print("Cloud services are not available - they require fs and fs.webdav packages")
+        return
+
+    from petsc4py import PETSc
+    import os
+    from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, cloud_download
+
+    if cloud_location_handle is None:
+        cloud_location_handle = quagmire_cloud_fs
+
+    cloud_hdf5_filename = str(cloud_hdf5_filename)
+    if not cloud_hdf5_filename.endswith('.h5'):
+        cloud_hdf5_filename += '.h5'
+
+    
+    local_filename = os.path.basename(cloud_hdf5_filename)
+    tempfile = os.path.join(quagmire_cloud_cache_dir_name, str(local_filename))
+
+    from mpi4py import MPI
+            
+    if MPI.COMM_WORLD.Get_rank()  == 0:
+        cloud_download(cloud_hdf5_filename, tempfile, cloud_location_handle)
+
+    dm = PETSc.DMPlex().createFromFile(tempfile)
+
+    # define one DoF on the nodes
+    dm.setNumFields(1)
+    origSect = dm.createSection(1, [1,0,0])
+    origSect.setFieldName(0, "points")
+    origSect.setUp()
+    dm.setDefaultSection(origSect)
+
+    origVec = dm.createGlobalVector()
+
+    if PETSc.COMM_WORLD.size > 1:
+        # Distribute to other processors
+        sf = dm.distribute(overlap=1)
+        newSect, newVec = dm.distributeField(sf, origSect, origVec)
+        dm.setDefaultSection(newSect)
+
+    return dm
+
+def create_DMPlex_from_url(url):
+    """
+    Creates a DMPlex object from an HDF5 file accessible anonymously via a url.
+    This is useful for rebuilding a mesh that is saved from a
+    previous simulation.
+
+    Parameters
+    ----------
+    
+    url : str
+
+    Returns
+    -------
+    DM : PETSc DMPlex object
+
+    Notes
+    -----
+    This function requires petsc4py >= 3.8
+    """
+
+    from quagmire.tools import cloud_fs
+
+    if not cloud_fs:
+        print("Cloud services are not available - they require fs and fs.webdav packages")
+        return
+
+    from petsc4py import PETSc
+    import os
+    from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, url_download
+    import uuid
+
+    unique_filename = str(uuid.uuid4().hex) + ".h5"
+    tempfile = os.path.join(quagmire_cloud_cache_dir_name, unique_filename) 
+
+    from mpi4py import MPI
+
+    if MPI.COMM_WORLD.Get_rank()  == 0:
+        url_download(url, tempfile)
+
+    dm = PETSc.DMPlex().createFromFile(tempfile)
+
+    # define one DoF on the nodes
+    dm.setNumFields(1)
+    origSect = dm.createSection(1, [1,0,0])
+    origSect.setFieldName(0, "points")
+    origSect.setUp()
+    dm.setDefaultSection(origSect)
+
+    origVec = dm.createGlobalVector()
+
+    if PETSc.COMM_WORLD.size > 1:
+        # Distribute to other processors
+        sf = dm.distribute(overlap=1)
+        newSect, newVec = dm.distributeField(sf, origSect, origVec)
+        dm.setDefaultSection(newSect)
+
+    return dm
+
+
+
+
+
 def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
     """
     Create a box and fill with triangles up to a specified refinement

@@ -26,7 +26,7 @@ jobs:
           conda config --add channels conda-forge
           conda config --add channels underworldcode
           conda install petsc4py mpi4py compilers
-          conda install stripy h5py sympy pint
+          conda install stripy h5py sympy pint fs fs.webdavfs
       - name: Test quagmire
         shell: bash -l {0}
         run: |
