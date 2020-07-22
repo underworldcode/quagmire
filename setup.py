@@ -66,6 +66,7 @@ if __name__ == "__main__":
           ext_modules       = [ext],
           packages          = ['quagmire',
                                'quagmire.tools',
+                               'quagmire.tools.cloud',
                                'quagmire.equation_systems',
                                'quagmire.function',
                                'quagmire.scaling',
