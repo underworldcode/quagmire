@@ -6,7 +6,11 @@ import h5py
 import quagmire
 import petsc4py
 from quagmire.tools import io
-import quagmire.tools.cloud
+
+try:
+    import quagmire.tools.cloud
+except:
+    pass
 
 from mpi4py import MPI
 comm = MPI.COMM_WORLD
@@ -18,7 +22,7 @@ from conftest import load_pixelated_mesh_DM
 from quagmire.tools import cloud_fs 
 
 pyfilesystem = pytest.importorskip("fs")
-
+pywebdav = pytest.importorskip("webdavfs")
 
 
 def test_fs_access():

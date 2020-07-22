@@ -2,6 +2,8 @@
 
 import pytest
 
+pyfilesystem = pytest.importorskip("fs")
+pywebdav = pytest.importorskip("webdavfs")
 # ==========================
 
 def test_numpy_import():
@@ -41,10 +43,13 @@ def test_quagmire_modules():
     from quagmire import function
     from quagmire import mesh
     from quagmire import tools
-    import quagmire.tools.cloud  # by default this is not imported by tools
     from quagmire import scaling
     from quagmire import QuagMesh
     from quagmire import _fortran
+
+def test_quagmire_cloud_modules():
+    import quagmire.tools.cloud  # by default this is not imported by tools
+    from quagmire.tools.cloud import quagmire_cloud_fs
 
 def test_jupyter_available():
     from subprocess import check_output

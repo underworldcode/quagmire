@@ -6,7 +6,10 @@ import h5py
 import quagmire
 import petsc4py
 from quagmire.tools import io
-import quagmire.tools.cloud
+try:
+    import quagmire.tools.cloud
+except:
+    pass
 
 from quagmire.tools import meshtools
 from quagmire import QuagMesh
@@ -22,6 +25,8 @@ google_drive_phi_gurl  = "https://drive.google.com/file/d/1n-zdsKLNLtI9-ZOP5dMVT
 google_drive_psi_gurl  = "https://drive.google.com/file/d/17t8jbPFmnB8aHhyYDbxjGrzKqtq6IlCa/view?usp=sharing"
 
 
+pyfilesystem = pytest.importorskip("fs")
+pywebdav = pytest.importorskip("webdavfs")
 
 def test_dropbox_url():
 
@@ -46,7 +51,7 @@ def test_dropbox_url():
 
     return
 
-
+@pytest.mark.skipif(webdavfs is False, reason="webdavfs and/or fs is not installed")
 def test_google_drive_url():
 
     from quagmire.tools.cloud import quagmire_cloud_fs, google_drive_convert_link
