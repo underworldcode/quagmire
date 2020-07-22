@@ -105,7 +105,7 @@ class LazyEvaluation(object):
 
         local_array = self.evaluate(diff_mesh)
 
-        df_tuple = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+        df_tuple = diff_mesh.derivative_grad(local_array, nit=100, tol=1e-8)
         ndim = len(df_tuple)
 
         if len(args) == 1 and args[0] == diff_mesh:

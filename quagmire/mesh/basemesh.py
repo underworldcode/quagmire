@@ -442,38 +442,39 @@ class MeshVariable(_LazyEvaluation):
             first partial derivative of PHI in y direction
         """
 
-        def bf_gradient_node(node):
+        import numpy as np
 
-            xx = self.coords[node,0]
-            yy = self.coords[node,1]
+        # def bf_gradient_node(node):
 
-            from scipy.optimize import curve_fit
+        #     xx = self.coords[node,0]
+        #     yy = self.coords[node,1]
 
-            def linear_fit_2D(X, a, b, c):
-                # (1+x) * (1+y) etc
-                x,y = X
-                fit = a + b * x + c * y
-                return fit
+        #     from scipy.optimize import curve_fit
 
-            location = np.array([xx,yy]).T
+        #     def linear_fit_2D(X, a, b, c):
+        #         # (1+x) * (1+y) etc
+        #         x,y = X
+        #         fit = a + b * x + c * y
+        #         return fit
 
-            ## Just try near neighbours ?
-            stencil_size=mesh.near_neighbours[node]
+        #     location = np.array([xx,yy]).T
+
+        #     ## Just try near neighbours ?
+        #     stencil_size=self._mesh.near_neighbours[node]
+
+        #     d, patch_points = self._mesh.cKDTree.query(location, k=stencil_size)
+        #     x,y = self.coords[patch_points].T
+        #     data = temperature.evaluate(x, y)
+        #     popt, pcov = curve_fit(linear_fit_2D, (x,y), data)
+        #     ddx = popt[1]
+        #     ddy = popt[2]
+
+        #     return(ddx, ddy)
 
 
-            d, patch_points = self.cKDTree.query(location, k=stencil_size)
-            x,y = self.coords[patch_points].T
-            data = temperature.evaluate(x, y)
-            popt, pcov = curve_fit(linear_fit_2D, (x,y), data)
-            ddx = popt[1]
-            ddy = popt[2]
+        dx = np.empty(self._mesh.tri.npoints)
 
-            return(ddx, ddy)
-
-
-        dx = np.empty(self.npoints)
-
-        dx, dy = self._mesh.derivative_grad(self._ldata.array, nit, tol)
+        dx, dy = self._mesh.derivative_grad(self._ldata.array, nit=10, tol=1.0e-8)
 
         return dx, dy
 
