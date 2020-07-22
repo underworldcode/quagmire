@@ -50,7 +50,18 @@ def test_fn_description():
     assert (fn.math.sin(A)**2.0 + fn.math.cos(A)**2.0).description == "((sin(10.0))**(2.0))+((cos(10.0))**(2.0))"
 
 
-    return
+def test_fn_description_derivatives(DM):
+
+    mesh = QuagMesh(DM, down_neighbours=1)
+
+    PHI = mesh.add_variable(name="PHI")
+
+    description = PHI.fn_gradient.__repr__()
+    assert description.endswith("d({0})/dX,d({0})/dY".format("PHI"))
+
+    description = PHI.fn_gradient[0].__repr__()
+    assert description.endswith("d({0})/dX".format("PHI"))
+
 
 def test_fn_mesh_variables(DM):
 
@@ -71,6 +82,44 @@ def test_fn_mesh_variables(DM):
     height.unlock()
 
     assert scaled_height.evaluate(mesh).max() == 12.0
+
+
+def test_fn_first_derivative(DM):
+
+    mesh = QuagMesh(DM, down_neighbours=2)
+
+    fn_xcoord = fn.misc.coord(dirn=0)
+    phi = fn.math.sin(fn_xcoord)
+    psi = fn.math.cos(fn_xcoord)
+
+    assert(np.isclose(phi.fn_gradient[0].evaluate([0.0,0.0]), psi.evaluate([0.0,0.0]), rtol=0.01))
+
+def test_fn_second_derivative(DM):
+
+    mesh = QuagMesh(DM, down_neighbours=2)
+
+    fn_xcoord = fn.misc.coord(dirn=0)
+    phi = fn.math.sin(fn_xcoord)
+    psi = fn.math.cos(fn_xcoord)
+
+    assert(np.isclose(phi.fn_gradient[0].fn_gradient[0].evaluate([0.0,0.0]), psi.fn_gradient[0].evaluate([0.0,0.0]), rtol=0.01))
+
+
+def test_fn_math(DM):
+
+    mesh = QuagMesh(DM, down_neighbours=2)
+
+    psi = mesh.add_variable(name="PSI")
+    psi.data = mesh.coords[:,0]
+
+    dx, dy = fn.math.grad(psi)
+
+    fn.math.curl(dx, dy).evaluate(mesh)
+    fn.math.div(dx, dy).evaluate(mesh)
+    fn.math.curl(dx, dy).evaluate(mesh)
+    fn.math.hypot(dx, dy).evaluate(mesh)
+    fn.math.arctan2(dx, dy).evaluate(mesh)
+
 
 def test_function_mul(DM):
     mesh = QuagMesh(DM, downhill_neighbours=1)

@@ -96,7 +96,7 @@ def test_mesh_variable_properties(DM):
 
 
 
-def test_mesh_variable_derivative(DM):
+def test_mesh_variable_first_derivative(DM):
 
     mesh = QuagMesh(DM, downhill_neighbours=1)
 
@@ -115,3 +115,16 @@ def test_mesh_variable_derivative(DM):
     return
 
 
+def test_mesh_variable_second_derivative(DM):
+
+    mesh = QuagMesh(DM, downhill_neighbours=1)
+
+    # Functions we can differentiate easily
+
+    phi = mesh.add_variable(name="PHI(X,Y)")
+    psi = mesh.add_variable(name="PSI(X,Y)")
+
+    phi.data = np.sin(mesh.coords[:,0])
+    psi.data = np.cos(mesh.coords[:,0])
+
+    assert(np.isclose(phi.fn_gradient[0].fn_gradient[0].evaluate([0.0,0.0]), psi.fn_gradient[0].evaluate([0.0,0.0]), rtol=0.01))
