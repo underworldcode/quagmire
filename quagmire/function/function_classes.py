@@ -17,7 +17,6 @@
 import numpy as np
 import quagmire
 
-
 class LazyEvaluation(object):
 
     __count = 0
