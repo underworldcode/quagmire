@@ -399,8 +399,7 @@ class MeshVariable(_LazyEvaluation):
 
         return
 
-    @property
-    def fn_gradient(self):
+    def gradient(self, nit=10, tol=1e-8):
         """
         Compute values of the derivatives of PHI in the x, y directions at the nodal points.
         This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
@@ -413,6 +412,7 @@ class MeshVariable(_LazyEvaluation):
             number of iterations to reach convergence
         tol : float optional (default: 1e-8)
             convergence is reached when this tolerance is met
+
         Returns
         -------
         PHIx : ndarray of floats, shape (n,)
@@ -420,39 +420,7 @@ class MeshVariable(_LazyEvaluation):
         PHIy : ndarray of floats, shape (n,)
             first partial derivative of PHI in y direction
         """
-        return self._fn_gradient()
-
-    def _fn_gradient(self, nit=10, tol=1e-8):
-        import quagmire
-
-        class _gradient(_LazyEvaluation):
-        
-            def __init__(self, meshVariable, nit, tol, *args, **kwargs):
-                super(_gradient, self).__init__()
-                ldata = meshVariable._ldata.array
-                self._mesh = meshVariable._mesh
-                self.grads = meshVariable._mesh.derivative_grad(ldata, nit=nit, tol=tol)
-                return
-
-            def __getitem__(self, item):
-                def func(*args):
-                    if args:
-                        if args[0] == self._mesh:
-                            return self.grads[:, item]
-                        elif isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
-                            mesh = args[0]
-                            return self._mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=self.grads[:,item])[0]
-                        else:
-                            coords = args[0]
-                            return self._mesh.interpolate(coords[0], coords[1], zdata=self.grads[:, item])[0]
-                    else:
-                        return self.grads[:, item]
-                self.evaluate = func
-                return self
-
-
-        return _gradient(self, nit, tol)
-        
+        return self._mesh.derivative_grad(self._ldata.array, nit, tol)
 
     def gradient_patch(self):
 
