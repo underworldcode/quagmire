@@ -140,13 +140,10 @@ def div(*args):
     lazyFn_description = ""
     lazyFn_dependency = set()
     for f, lazyFn in enumerate(args):
-        lazyFn_id.add(lazyFn._mesh.id)
         lazyFn_list.append(lazyFn.fn_gradient[f])
         lazyFn_description += "diff({},{}) + ".format(lazyFn.description, dims[f])
         lazyFn_dependency.union(lazyFn.dependency_list)
     lazyFn_description = lazyFn_description[:-3]
-    if len(lazyFn_id) > 1:
-        raise ValueError("Meshes must be identical")
 
     newLazyFn = _LazyEvaluation()
     newLazyFn.evaluate = lambda *args, **kwargs : _div(lazyFn_list, *args, **kwargs)
@@ -161,8 +158,6 @@ def curl(*args):
     if len(args) == 2:
         lazyFn_x = args[0]
         lazyFn_y = args[1]
-        if lazyFn_x._mesh.id != lazyFn_y._mesh.id:
-            raise ValueError("Both meshes must be identical")
         
         newLazyFn = _LazyEvaluation()
         fn_dvydx = lazyFn_y.fn_gradient[0]
@@ -172,11 +167,10 @@ def curl(*args):
         newLazyFn.dependency_list = lazyFn_x.dependency_list | lazyFn_y.dependency_list
 
     elif len(args) == 3:
+        raise NotImplementedError
         lazyFn_x = args[0]
         lazyFn_y = args[1]
         lazyFn_z = args[2]
-        if lazyFn_x._mesh.id != lazyFn_y._mesh.id != lazyFn_z._mesh.id :
-            raise ValueError("All meshes must be identical")
         
         newLazyFn = _LazyEvaluation()
         fn_dvxdx, fn_dvxdy, fn_dvxdz = lazyFn_x.fn_gradient
@@ -269,7 +263,8 @@ def slope(meshVar):
         local_array = meshVar.evaluate(diff_mesh)
         df_tuple = diff_mesh._derivative_grad_cartesian(local_array, nit=10, tol=1e-8)
 
-        grad_f = _np.hypot(df_tuple[:,0], df_tuple[:, 1])/diff_mesh._radius
+        # need to input tuple because spherical grads are nx3
+        grad_f = _np.hypot(*list(df_tuple.T))/diff_mesh._radius
 
         if len(args) == 1 and args[0] == diff_mesh:
             return grad_f
