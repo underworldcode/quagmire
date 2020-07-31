@@ -800,7 +800,10 @@ def lloyd_mesh_improvement(x, y, bmask, iterations):
 
 ## These are not very well cooked - we need boundary points etc
 
-def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0, refinement_levels=0):
+## I suggest we push most of this down to stripy and add bmasks to those mesh collections
+## The cloud-of-points plus boundary markers would be useful to access independently 
+
+def square_triangulation(minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0, refinement_levels=0):
     """
     Generate a square mesh using stripy
     """
@@ -813,7 +816,7 @@ def square_mesh(minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0, re
     return tri.x, tri.y, tri.simplices
 
 
-def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0, refinement_levels=0):
+def elliptical_triangulation(minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0, refinement_levels=0):
     """
     Generate an elliptical mesh using stripy
     """
@@ -826,84 +829,15 @@ def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0
     return tri.x, tri.y, tri.simplices
 
 
-def elliptical_base_mesh_points(axisX, axisY, spacing):
+def elliptical_equispaced_triangulation(axisX, axisY, spacing, refinement_levels=0, tree=False, remove_artifacts=True):
     """
-    Generate well-spaced points in an ellipse - assumes the ellipse is axis-aligned and centred on the origin
+    Generate a numerically well-formed elliptical mesh using stripy
     """
+    from stripy import cartesian_meshes
 
-    import numpy as np 
-    import scipy as sp 
+    tri = cartesian_meshes.elliptical_equispaced_mesh(axisX, axisY, spacing, refinement_levels=refinement_levels, tree=tree, remove_artifacts=remove_artifacts)
 
-    b = axisX
-    a = axisY
-
-    def equal_angles_in_ellipse(arc_length, a, b):
-        """ This is a routine that returns equal spaced points around the perimeter of an ellipse
-        """
-       
-        if a == b: 
-            tot_size = 2.0 * np.pi * a 
-            num = tot_size // arc_length
-            angles = 2 * np.pi * np.arange(num) / num
-            
-            return a * np.cos(angles), a * np.sin(angles)
-            
-        if (a < b):
-            e = (1.0 - a ** 2.0 / b ** 2.0) ** 0.5
-        else:
-            e = (1.0 - b ** 2.0 / a ** 2.0) ** 0.5       
-            
-        
-        # approximate perimeter of this ellipse    
-        h = (a-b)**2 / (a+b)**2
-        length = np.pi * (a+b) * ( 1.0 + 3.0 * h / (10.0 + np.sqrt(4.0-3*h)))    
-        num = length // arc_length
-            
-        # This is normalised 
-        tot_size = sp.special.ellipeinc(2.0 * np.pi, e)
-        arc_size = tot_size / num
-        
-        # starting points for search
-        angles = 2 * np.pi * np.arange(num) / num
-    
-        arcs = np.arange(num) * arc_size 
-        res = sp.optimize.root(
-            lambda x: (sp.special.ellipeinc(x, e) - arcs), angles)
-        
-        angles = res.x 
-        
-        if a < b: 
-            return b * np.sin(angles), a * np.cos(angles)
-        else:
-            return b * np.cos(angles), a * np.sin(angles)
-
-  
-    pointsx, pointsy = equal_angles_in_ellipse( spacing, a, b)
-    bmask = np.full_like(pointsx, 0, dtype=np.bool)
-    a -= spacing 
-    b -= spacing 
-
-    while (a >= 0.0 and b >= 0.0):
-        points = equal_angles_in_ellipse( spacing, a, b)
-        pointsx = np.append(pointsx,points[0])
-        pointsy = np.append(pointsy,points[1])
-        bmask   = np.append(bmask, np.full_like(points[0], 1, dtype=np.bool))
-        a -= spacing 
-        b -= spacing 
-
-
-    # The mesh can have some artefacts close to the longer axis so we drop a small fraction of points in that case
-
-    from quagmire._fortran import ntriw
-    from stripy import Triangulation
-
-    tri = Triangulation(pointsx, pointsy)
-    area, weight = ntriw(pointsx, pointsy, tri.simplices.T+1)
-    tiny = np.logical_and(bmask, area < np.mean(area)*0.2)
-
-    return pointsx[~tiny], pointsy[~tiny], bmask[~tiny]
-
-
+    return tri.x, tri.y, tri.simplices
 
 
 
