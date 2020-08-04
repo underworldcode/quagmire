@@ -51,6 +51,10 @@ def _make_reduce_op(name, lazyFn):
 
 ## global-safe reduction operations
 
+## The array size seems problematic here since it is a mesh property 
+## and meshes may be different for different pieces of the function
+## Does it not only work this way if a mesh is the argument ?
+
 def min(lazyFn, axis=None):
     return _make_reduce_op("MIN", lazyFn)
 

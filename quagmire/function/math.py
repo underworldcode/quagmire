@@ -18,6 +18,7 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as _np
 from .function_classes import LazyEvaluation as _LazyEvaluation
+from .function_classes import parameter as _parameter 
 
 ## Functions of a single variable
 
@@ -31,87 +32,138 @@ def _make_npmath_op(op, name, lazyFn):
 ## Trig
 
 def sin(lazyFn):
-    return _make_npmath_op(_np.sin, "sin", lazyFn)
+    newFn = _make_npmath_op(_np.sin, "sin", lazyFn)
+    newFn.sderivative = lambda dirn : cos( lazyFn ) * lazyFn.sderivative(dirn)
+    return newFn
 
 def asin(lazyFn):
-    return _make_npmath_op(_np.arcsin, "asin", lazyFn)
+    newFn = _make_npmath_op(_np.arcsin, "asin", lazyFn)
+    newFn.sderivative = lambda dirn : lazyFn.sderivative(dirn) / sqrt(_parameter(1.0) - lazyFn**2) 
+    return newFn
 
 def arcsin(lazyFn):
-    return _make_npmath_op(_np.arcsin, "arcsin", lazyFn)
+    newFn = _make_npmath_op(_np.arcsin, "arcsin", lazyFn)
+    newFn.sderivative = lambda dirn : lazyFn.sderivative(dirn) / sqrt(_parameter(1.0) - lazyFn**2) 
+    return newFn
 
 def cos(lazyFn):
-    return _make_npmath_op(_np.cos, "cos", lazyFn)
+    newFn = _make_npmath_op(_np.cos, "cos", lazyFn)
+    newFn.sderivative = lambda dirn : -sin( lazyFn ) * lazyFn.sderivative(dirn)
+    return newFn
 
 def acos(lazyFn):
-    return _make_npmath_op(_np.arccos, "acos", lazyFn)
+    newFn = _make_npmath_op(_np.arcsin, "acos", lazyFn)
+    newFn.sderivative = lambda dirn : - lazyFn.sderivative(dirn) / sqrt(_parameter(1.0) - lazyFn**2) 
+    return newFn
 
-def arccos(lazyFn):
-    return _make_npmath_op(_np.arccos, "arccos", lazyFn)
+def acos(lazyFn):
+    newFn = _make_npmath_op(_np.arcsin, "arccos", lazyFn)
+    newFn.sderivative = lambda dirn : - lazyFn.sderivative(dirn) / sqrt(_parameter(1.0) - lazyFn**2) 
+    return newFn
 
 def tan(lazyFn):
-    return _make_npmath_op(_np.tan, "tan", lazyFn)
+    newFn = _make_npmath_op(_np.tan, "tan", lazyFn)
+    newFn.sderivative = lambda dirn : (_parameter(1.0) + tan(lazyFn)**2 ) * lazyFn.sderivative(dirn)
+    return newFn
 
 def atan(lazyFn):
-    return _make_npmath_op(_np.arctan, "atan", lazyFn)
+    newFn = _make_npmath_op(_np.arcsin, "atan", lazyFn)
+    newFn.sderivative = lambda dirn : lazyFn.sderivative(dirn) / (_parameter(1.0) + lazyFn**2) 
+    return newFn
 
-def arctan(lazyFn):
-    return _make_npmath_op(_np.arctan, "arctan", lazyFn)
-
+def atan(lazyFn):
+    newFn = _make_npmath_op(_np.arcsin, "arctan", lazyFn)
+    newFn.sderivative = lambda dirn : lazyFn.sderivative(dirn) / (_parameter(1.0) + lazyFn**2) 
+    return newFn
 
 ## Hyperbolic
 
 def sinh(lazyFn):
-    return _make_npmath_op(_np.sinh, "sinh", lazyFn)
+    newFn = _make_npmath_op(_np.sinh, "sinh", lazyFn)
+    newFn.sderivative = lambda dirn : cosh( lazyFn ) * lazyFn.sderivative(dirn)
+    return newFn
 
 def asinh(lazyFn):
-    return _make_npmath_op(_np.arcsinh, "asinh", lazyFn)
+    newFn = _make_npmath_op(_np.arcsinh, "asinh", lazyFn)
+    newFn.sderivative = lambda dirn : lazyFn.sderivative(dirn) / sqrt(_parameter(1.0) + lazyFn**2) 
+    return newFn
 
 def arcsinh(lazyFn):
-    return _make_npmath_op(_np.arcsinh, "arcsinh", lazyFn)
+    newFn = _make_npmath_op(_np.arcsinh, "arcsinh", lazyFn)
+    newFn.sderivative = lambda dirn : lazyFn.sderivative(dirn) / sqrt(_parameter(1.0) + lazyFn**2) 
+    return newFn
 
 def cosh(lazyFn):
-    return _make_npmath_op(_np.cosh, "cosh", lazyFn)
+    newFn = _make_npmath_op(_np.cosh, "cosh", lazyFn)
+    newFn.sderivative = lambda dirn : sinh( lazyFn ) * lazyFn.sderivative(dirn)
+    return newFn
 
 def acosh(lazyFn):
-    return _make_npmath_op(_np.arccosh, "acosh", lazyFn)
+    newFn = _make_npmath_op(_np.arccosh, "acosh", lazyFn)
+    newFn.sderivative = lambda dirn : lazyFn.sderivative(dirn) / sqrt(_parameter(-1.0) + lazyFn**2) 
+    return newFn
 
 def arccosh(lazyFn):
-    return _make_npmath_op(_np.arccosh, "arccosh", lazyFn)
+    newFn = _make_npmath_op(_np.arccosh, "acosh", lazyFn)
+    newFn.sderivative = lambda dirn : lazyFn.sderivative(dirn) / sqrt(_parameter(-1.0) + lazyFn**2) 
+    return newFn
 
 def tanh(lazyFn):
-    return _make_npmath_op(_np.tanh, "tanh", lazyFn)
+    newFn = _make_npmath_op(_np.tanh, "tanh", lazyFn)
+    newFn.sderivative = lambda dirn : (_parameter(1.0) - lazyFn.sderivative(dirn)**2) * lazyFn.sderivative(dirn)
+    return newFn
 
 def atanh(lazyFn):
-    return _make_npmath_op(_np.arctanh, "atanh", lazyFn)
+    newFn = _make_npmath_op(_np.arctanh, "atanh", lazyFn)
+    newFn.sderivative = lambda dirn : lazyFn.sderivative(dirn) / (_parameter(1.0) - lazyFn**2) 
+    return newFn
 
 def arctanh(lazyFn):
-    return _make_npmath_op(_np.arctanh, "arctanh", lazyFn)
+    newFn = _make_npmath_op(_np.arctanh, "arctanh", lazyFn)
+    newFn.sderivative = lambda dirn : lazyFn.sderivative(dirn) / (_parameter(1.0) - lazyFn**2) 
+    return newFn    
 
 
 ## exponentiation
 
 def exp(lazyFn):
-    return _make_npmath_op(_np.exp, "exp", lazyFn)
+    newFn =  _make_npmath_op(_np.exp, "exp", lazyFn)
+    newFn.sderivative = lambda dirn : exp(lazyFn) * lazyFn.sderivative(dirn)
+    return newFn
 
 def log(lazyFn):
-    return _make_npmath_op(_np.log, "log", lazyFn)
+    newFn =  _make_npmath_op(_np.log, "log", lazyFn)
+    newFn.sderivative = lambda dirn :  lazyFn.sderivative(dirn) / lazyFn
+    return newFn
 
 def log10(lazyFn):
-    return _make_npmath_op(_np.log10, "log10", lazyFn)
+    newFn =  _make_npmath_op(_np.log10, "log10", lazyFn)
+    ## See definition of d/dx(log10(x))
+    newFn.sderivative = lambda dirn :  _parameter(0.434294481903) * lazyFn.sderivative(dirn) / lazyFn
+    return newFn
+
+def sqrt(lazyFn):
+    newFn = _make_npmath_op(_np.sqrt, "sqrt", lazyFn)
+    newFn.sderivative = lambda dirn : (_parameter(1.0) / lazyFn**2) * lazyFn.sderivative(dirn)
+    return newFn
+
 
 # misc
+
+## These might not be exactly right (wrap around for degrees ? what about fabs at origin ?)
 
 def fabs(lazyFn):
     return _make_npmath_op(_np.fabs, "fabs", lazyFn)
 
-def sqrt(lazyFn):
-    return _make_npmath_op(_np.sqrt, "sqrt", lazyFn)
-
 def degrees(lazyFn):
-    return _make_npmath_op(_np.degrees, "180/pi*", lazyFn)
+    newFn = _make_npmath_op(_np.degrees, "180/pi*", lazyFn)
+    newFn.sderivative = lambda dirn : _parameter(180.0/_np.pi) * lazyFn.sderivative(dirn)
+    return newFn
 
 def radians(lazyFn):
-    return _make_npmath_op(_np.radians, "pi/180*", lazyFn)
+    newFn = _make_npmath_op(_np.radians, "pi/180*", lazyFn)
+    newFn.sderivative = lambda dirn : _parameter(_np.pi/180.0) * lazyFn.sderivative(dirn)
+    return newFn
 
 def rad2deg(lazyFn):
     return degrees(lazyFn)
@@ -119,6 +171,8 @@ def rad2deg(lazyFn):
 def deg2rad(lazyFn):
     return radians(lazyFn)
 
+
+## ToDo: No sderivatives for these yet
 
 # grad
 

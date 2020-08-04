@@ -399,6 +399,16 @@ class MeshVariable(_LazyEvaluation):
 
         return
 
+    def sderivative(self, dirn):
+        """ (Lazy) Derivative in direction given by dirn """
+
+        if str(dirn) in "1Y":
+            lazyFn = self.derivative[1]
+        else:
+            lazyFn = self.derivative[0]
+
+        return lazyFn
+
     def gradient(self, nit=10, tol=1e-8):
         """
         Compute values of the derivatives of PHI in the x, y directions at the nodal points.

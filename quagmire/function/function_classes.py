@@ -111,6 +111,25 @@ class LazyEvaluation(object):
         newLazyGradient.dependency_list = self.dependency_list
         return newLazyGradient
 
+    def sderivative(self, dirn):
+        """
+        Compute values of the derivatives of PHI in the x, y directions at the nodal points.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Parameters
+        ----------
+        dirn : ['0', 'X'] or ['1', 'Y']
+
+        """
+
+        if str(dirn) in "1Y":
+            dirn = 1
+        else:
+            dirn = 0
+
+        raise NotImplementedError
+     
+
 
     def _fn_gradient(self, *args, **kwargs):
 
@@ -171,6 +190,10 @@ class LazyEvaluation(object):
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})*({})".format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+
+        newLazyFn.sderivative = lambda dirn : self.sderivative (dirn) * other +  \
+                                              self * other.sderivative(dirn) 
+                     
         return newLazyFn
     
     def __rmul__(self, other):
@@ -179,14 +202,22 @@ class LazyEvaluation(object):
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})*({})".format(other.description, self.description)
         newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
+
+        newLazyFn.sderivative = lambda dirn : other.sderivative (dirn) * self +  \
+                                              other * self.sderivative(dirn) 
+  
         return newLazyFn
 
     def __add__(self, other):
         other = self.convert(other)
+
         newLazyFn = LazyEvaluation()
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})+({})".format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+
+        newLazyFn.sderivative = lambda dirn : self.sderivative(dirn) + other.sderivative(dirn)
+
         return newLazyFn
     
     def __radd__(self, other):
@@ -195,6 +226,9 @@ class LazyEvaluation(object):
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})+({})".format(other.description, self.description)
         newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
+
+        newLazyFn.sderivative = lambda dirn : self.sderivative(dirn) + other.sderivative(dirn)
+
         return newLazyFn
 
     def __truediv__(self, other):
@@ -204,6 +238,8 @@ class LazyEvaluation(object):
         newLazyFn.description = "({})/({})".format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
 
+        newLazyFn.sderivative = lambda dirn : -1.0 *  self * other.sderivative(dirn) / (other * other) + self.sderivative(dirn) / other
+
         return newLazyFn
 
     def __sub__(self, other):
@@ -212,6 +248,9 @@ class LazyEvaluation(object):
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})-({})".format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+
+        newLazyFn.sderivative = lambda dirn : self.sderivative(dirn) - other.sderivative(dirn)
+
         return newLazyFn
     
     def __rsub__(self, other):
@@ -220,6 +259,9 @@ class LazyEvaluation(object):
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})-({})".format(other.description, self.description)
         newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
+
+        newLazyFn.sderivative = lambda dirn : other.sderivative(dirn) - self.sderivative(dirn) 
+
         return newLazyFn
 
     def __neg__(self):
@@ -228,19 +270,26 @@ class LazyEvaluation(object):
         newLazyFn.description = "-({})".format(self.description)
         newLazyFn.dependency_list |= self.dependency_list
 
+        newLazyFn.sderivative = lambda dirn : -1.0 * self.sderivative(dirn)
+
         return newLazyFn
 
     def __pow__(self, exponent):
         if isinstance(exponent, (float, int)):
-            exponent = parameter(float(exponent))
+            exponent = parameter(exponent)
         newLazyFn = LazyEvaluation()
         newLazyFn.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
         newLazyFn.description = "({})**({})".format(self.description, exponent.description)
         newLazyFn.dependency_list |= self.dependency_list | exponent.dependency_list
+                
+        newLazyFn.sderivative = lambda dirn : exponent * self.sderivative(dirn) * (self) ** (exponent-1.0)
+        
         return newLazyFn
 
 
 ## Logical operations
+
+## I am not sure how to differentiate these yet !
 
     def __lt__(self, other):
         other = self.convert(other)
@@ -324,6 +373,9 @@ class parameter(LazyEvaluation):
             return self.value * np.ones(mesh.npoints)
         else:
             return self.value
+
+    def sderivative(self, *args, **kwargs):
+        return parameter(0.0)
 
 
 class LazyGradientEvaluation(LazyEvaluation):

@@ -19,6 +19,7 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 import numpy as _np
 import quagmire
 from .function_classes import LazyEvaluation as _LazyEvaluation
+from .function_classes import parameter as _parameter 
 
 
 def _make_npmath_op(op, name, lazyFn):
@@ -29,7 +30,7 @@ def _make_npmath_op(op, name, lazyFn):
 
     return newLazyFn
 
-## Trig
+
 def coord(dirn):
 
     def extract_xs(*args, **kwargs):
@@ -54,19 +55,23 @@ def coord(dirn):
         else:
             return args[1]
 
-
     newLazyFn_xs = _LazyEvaluation()
     newLazyFn_xs.evaluate = extract_xs
     newLazyFn_xs.description = "X"
+    newLazyFn_xs.sderivative = lambda ddirn : _parameter(1.0) if str(ddirn) in '0X' else _parameter(0.0)
 
     newLazyFn_ys = _LazyEvaluation()
     newLazyFn_ys.evaluate = extract_ys
     newLazyFn_ys.description = "Y"
+    newLazyFn_ys.sderivative = lambda ddirn : _parameter(1.0) if str(ddirn) in '1Y' else _parameter(0.0)
 
     if dirn == 0:
         return newLazyFn_xs
     else:
         return newLazyFn_ys
+
+
+## ToDo: No sderivatives for these yet
 
 
 def levelset(lazyFn, alpha=0.5, invert=False):
