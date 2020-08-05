@@ -31,12 +31,9 @@ from ..function import LazyEvaluation as _LazyEvaluation
 import numpy as np
 
 
-
-class MeshVariable(_LazyEvaluation):
+class MeshFunction(_LazyEvaluation):
     """
-    The MeshVariable class generates a variable supported on the mesh.
-
-    To set/read nodal values, use the numpy interface via the 'self.data' property.
+    A class of Lazy Evaluation Functions that require an underlying mesh.
 
     Parameters
     ----------
@@ -45,20 +42,18 @@ class MeshVariable(_LazyEvaluation):
     mesh : quagmire mesh object
         The supporting mesh for the variable
     """
-    def __init__(self, name=None, mesh=None, locked=False):
-        super(MeshVariable, self).__init__()
+    
+    def __init__(self, name=None, mesh=None):
+        super(MeshFunction, self).__init__()
 
         self._mesh = mesh
         self._dm = mesh.dm
         self._name = str(name)
         self.description = self._name
-        self._locked = locked
-        self.mesh_data = True
+        self.mesh_data = False
 
-        # mesh variable vector
-        self._ldata = self._dm.createLocalVector()
-        self._ldata.setName(name)
         return
+
 
     def rename(self, name=None):
         """
@@ -72,6 +67,171 @@ class MeshVariable(_LazyEvaluation):
         self._ldata.setName(name)
         self.description = self._name
 
+    def evaluate(self, input=None, **kwargs):
+        """
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+
+        But note the way that interpolate calls this method with the mesh to 
+        get values at the mesh nodes - this needs to be implemente correctly or 
+        the interpolate method needs to be over-ridden as well.
+        """
+
+        ## This should be NotImplemented ... evaluate is to be defined 
+        ## for any subclass
+
+        import quagmire
+
+        ## this should be replaced by an operation that returns the
+        ## np.array of the correct dimension
+
+        array = np.zeros(self._mesh.npoints)
+
+        if input is not None:
+            if isinstance(input, (quagmire.mesh.trimesh.TriMesh, 
+                                  quagmire.mesh.pixmesh.PixMesh,
+                                  quagmire.mesh.strimesh.sTriMesh)):
+                if input == self._mesh:
+                    return array
+                else:
+                    return self.interpolate(input.coords[:,0], input.coords[:,1], **kwargs)
+
+            elif isinstance(input, (tuple, list, np.ndarray)):
+                input = np.array(input)
+                input = np.reshape(input, (-1, 2))
+                return self.interpolate(input[:, 0], input[:,1], **kwargs)
+        else:
+            return array
+
+    def interpolate(self, xi, yi, err=False, **kwargs):
+        """
+        Interpolate function to a set of coordinates
+
+        This method just passes the coordinates to the interpolation
+        methods on the mesh object.
+
+        Parameters
+        ----------
+        xi : array of floats, shape (l,)
+            interpolation coordinates in the x direction
+        yi : array of floats, shape (l,)
+            interpolation coordinates in the y direction
+        err : bool (default: False)
+            toggle whether to return error information
+        **kwargs : keyword arguments
+            optional arguments to pass through to the interpolation method
+
+        Returns
+        -------
+        interp : array of floats, shape (l,)
+            interpolated values of MeshVariable at xi,yi coordinates
+        err : array of ints, shape (l,)
+            error information to diagnose interpolation / extrapolation
+        """
+        ## pass through for the mesh's interpolate method
+        import numpy as np
+
+        mesh = self._mesh
+        PHI = self.evaluate(input=self._mesh)
+
+        xi_array = np.array(xi).reshape(-1,1)
+        yi_array = np.array(yi).reshape(-1,1)
+
+        i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
+
+        if err:
+            return i, e
+        else:
+            return i
+
+    def sderivative(self, dirn):
+        return self.fn_gradient(dirn)
+
+    def fn_gradient(self, dirn):
+        """
+        The generic mechanism for obtaining the gradient of a lazy variable is
+        to evaluate the values on the mesh at the time in question and use the mesh gradient
+        operators to compute the new values.
+        Sub classes may have more efficient approaches. MeshVariables have
+        stored data and don't need to evaluate values. Parameters have Gradients
+        that are identically zero ... etc
+        """
+
+        import quagmire
+
+        diff_mesh = self._mesh
+
+        def new_fn_x(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] == diff_mesh:
+                return dxy[:,0]
+
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,0], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,0])
+                return i
+
+        def new_fn_y(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] == diff_mesh:
+                return dxy[:,1]
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,1], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,1])
+                return i
+
+        newLazyFn_dx = MeshFunction(name="ddx-"+self._name, mesh=self._mesh)
+        newLazyFn_dx.evaluate = new_fn_x
+        newLazyFn_dx.description = "d({})/dX".format(self.description)
+
+        newLazyFn_dy = MeshFunction(name="ddy-"+self._name, mesh=self._mesh)
+        newLazyFn_dy.evaluate = new_fn_y
+        newLazyFn_dy.description = "d({})/dY".format(self.description)
+
+        if dirn == 0:
+            return newLazyFn_dx
+        else:
+            return newLazyFn_dy
+
+
+
+class MeshVariable(MeshFunction):
+    """
+    The MeshVariable class generates a variable supported on the mesh.
+
+    To set/read nodal values, use the numpy interface via the 'self.data' property.
+
+    Parameters
+    ----------
+    name : str
+        Assign the MeshVariable a unique identifier
+    mesh : quagmire mesh object
+        The supporting mesh for the variable
+    """
+    def __init__(self, name=None, mesh=None, locked=False):
+        super(MeshVariable, self).__init__(name=name, mesh=mesh)
+
+        self._locked = locked
+        self.mesh_data = True
+
+        # mesh variable vector
+        self._ldata = self._dm.createLocalVector()
+        self._ldata.setName(name)
+        return
+
+    def __repr__(self):
+        return "quagmire.MeshFunction: {}".format(self.description)
+    
 
     def copy(self, name=None, locked=None):
         """
@@ -402,12 +562,16 @@ class MeshVariable(_LazyEvaluation):
     def sderivative(self, dirn):
         """ (Lazy) Derivative in direction given by dirn """
 
-        if str(dirn) in "1Y":
-            lazyFn = self.derivative[1]
+        if str(dirn) in "1":
+            lazyFn = self.fn_gradient(1)
         else:
-            lazyFn = self.derivative[0]
+            lazyFn = self.fn_gradient(0)
+
+        # lazyFn.sderivative = lambda dirn: lazyFn.sderivative(dirn)
+        # lazyFn._mesh = self._mesh
 
         return lazyFn
+
 
     def gradient(self, nit=10, tol=1e-8):
         """

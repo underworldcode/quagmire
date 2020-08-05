@@ -109,6 +109,12 @@ class LazyEvaluation(object):
         newLazyGradient.evaluate = self._fn_gradient
         newLazyGradient.description = "d({0})/dX,d({0})/dY".format(self.description)
         newLazyGradient.dependency_list = self.dependency_list
+
+        try:
+            newLazyGradient._mesh = self._mesh
+        except:
+            pass
+    
         return newLazyGradient
 
     def sderivative(self, dirn):
@@ -118,11 +124,11 @@ class LazyEvaluation(object):
 
         Parameters
         ----------
-        dirn : ['0', 'X'] or ['1', 'Y']
+        dirn : ['0'] or ['1']
 
         """
 
-        if str(dirn) in "1Y":
+        if int(dirn) == 1:
             dirn = 1
         else:
             dirn = 0
@@ -141,12 +147,20 @@ class LazyEvaluation(object):
             return mesh.derivative_grad(local_array)
 
         elif len(args) == 1 and hasattr(self, "_mesh"):
+
             mesh = self._mesh # we are a mesh variable
             local_array = self.evaluate()
             grads = mesh.derivative_grad(local_array)
 
-            coords = np.atleast_2d(args[0])
+            coords = np.array(args[0]).reshape(-1,2)
+            print(coords, coords.shape)
             
+            i0, ierr = mesh.interpolate(coords[:,0], coords[:,1], grads[:,0])
+            i1, ierr = mesh.interpolate(coords[:,0], coords[:,1], grads[:,1])
+            return np.c_[i0,i1]
+
+        elif len(args) == 2:
+            coords = np.array(args).reshape(-1,2)
             i0, ierr = mesh.interpolate(coords[:,0], coords[:,1], grads[:,0])
             i1, ierr = mesh.interpolate(coords[:,0], coords[:,1], grads[:,1])
             return np.c_[i0,i1]
@@ -160,31 +174,29 @@ class LazyEvaluation(object):
         else:
             raise NotImplementedError("why don't you don't supply a mesh...?")
 
-        # if len(args) == 1 and args[0] == diff_mesh:
-        #     return df_tuple
-        # elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
-        #     mesh = args[0]
-        #     df_interp = []
-        #     for df in df_tuple:
-        #         result = diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=df, **kwargs)
-        #         df_interp.append(result)
-        #     return df_interp
-        # elif len(args) > 1:
-        #     xi = np.atleast_1d(args[0])  # .resize(-1,1)
-        #     yi = np.atleast_1d(args[1])  # .resize(-1,1)
-        #     df_interp = []
-        #     for df in df_tuple:
-        #         i, e = diff_mesh.interpolate(xi, yi, zdata=df, **kwargs)
-        #         df_interp.append(i)
-        #     return df_interp
-        # else:
-        #     err_msg = "Invalid number of arguments\n"
-        #     err_msg += "Input a valid mesh or coordinates in x,y directions"
-        #     raise ValueError(err_msg)
+ 
 
 ## Arithmetic operations
 
     def __mul__(self, other):
+
+        # Some special cases: 
+
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return parameter(0.0)
+            if other.value == 1.0:
+                return self
+            if isinstance(self, parameter):
+                return parameter(self.value * other.value)
+
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return parameter(0.0)
+            if self.value == 1.0:
+                return other
+
+
         other = self.convert(other)
         newLazyFn = LazyEvaluation()
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
@@ -195,20 +207,24 @@ class LazyEvaluation(object):
                                               self * other.sderivative(dirn) 
                      
         return newLazyFn
+
     
-    def __rmul__(self, other):
-        other = self.convert(other)
-        newLazyFn = LazyEvaluation()
-        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
-        newLazyFn.description = "({})*({})".format(other.description, self.description)
-        newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
-
-        newLazyFn.sderivative = lambda dirn : other.sderivative (dirn) * self +  \
-                                              other * self.sderivative(dirn) 
-  
-        return newLazyFn
-
     def __add__(self, other):
+
+        # Some special cases:
+
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return self
+            if isinstance(self, parameter):
+                return parameter(self.value + other.value)
+
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return other 
+
+        # Otherwise    
+
         other = self.convert(other)
 
         newLazyFn = LazyEvaluation()
@@ -220,18 +236,12 @@ class LazyEvaluation(object):
 
         return newLazyFn
     
-    def __radd__(self, other):
-        other = self.convert(other)
-        newLazyFn = LazyEvaluation()
-        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
-        newLazyFn.description = "({})+({})".format(other.description, self.description)
-        newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
-
-        newLazyFn.sderivative = lambda dirn : self.sderivative(dirn) + other.sderivative(dirn)
-
-        return newLazyFn
-
     def __truediv__(self, other):
+
+        # Special case:
+        if isinstance(self, parameter) and self.value == 0.0:
+            return self
+
         other = self.convert(other)
         newLazyFn = LazyEvaluation()
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) / other.evaluate(*args, **kwargs)
@@ -243,6 +253,19 @@ class LazyEvaluation(object):
         return newLazyFn
 
     def __sub__(self, other):
+
+        # Some special cases:
+
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return self
+            if isinstance(self, parameter):
+                return parameter(self.value - other.value)
+
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return -other   
+
         other = self.convert(other)
         newLazyFn = LazyEvaluation()
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
@@ -253,17 +276,6 @@ class LazyEvaluation(object):
 
         return newLazyFn
     
-    def __rsub__(self, other):
-        other = self.convert(other)
-        newLazyFn = LazyEvaluation()
-        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
-        newLazyFn.description = "({})-({})".format(other.description, self.description)
-        newLazyFn.dependency_list |= other.dependency_list | self.dependency_list
-
-        newLazyFn.sderivative = lambda dirn : other.sderivative(dirn) - self.sderivative(dirn) 
-
-        return newLazyFn
-
     def __neg__(self):
         newLazyFn = LazyEvaluation()
         newLazyFn.evaluate = lambda *args, **kwargs : -1.0 * self.evaluate(*args, **kwargs)
@@ -275,21 +287,30 @@ class LazyEvaluation(object):
         return newLazyFn
 
     def __pow__(self, exponent):
+
         if isinstance(exponent, (float, int)):
             exponent = parameter(exponent)
+
+        # special cases:
+
+        if exponent.value == 0.0:
+            return parameter(1.0)
+        if exponent.value == 1.0:
+            return self 
+
         newLazyFn = LazyEvaluation()
         newLazyFn.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
         newLazyFn.description = "({})**({})".format(self.description, exponent.description)
         newLazyFn.dependency_list |= self.dependency_list | exponent.dependency_list
                 
-        newLazyFn.sderivative = lambda dirn : exponent * self.sderivative(dirn) * (self) ** (exponent-1.0)
+        newLazyFn.sderivative = lambda dirn : exponent * self.sderivative(dirn) * (self) ** (exponent-parameter(1.0))
         
         return newLazyFn
 
 
 ## Logical operations
 
-## I am not sure how to differentiate these yet !
+## I am not sure how to differentiate these yet - perhaps leave as NotImplemented
 
     def __lt__(self, other):
         other = self.convert(other)
@@ -403,12 +424,14 @@ class LazyGradientEvaluation(LazyEvaluation):
         """
 
         def new_fn_dir(*args, **kwargs):
-            if len(args) == 1:
-                grads = self.evaluate(args[0], **kwargs)
-                return grads[:,dirn]
-            else:
+            if len(args) == 0 :
                 grads = self.evaluate()
                 return grads[:,dirn]
+            else:
+
+                grads = self.evaluate(args, **kwargs)
+                return grads[:,dirn]
+
 
         d1 = len(self.description)//2
         d2 = d1 + 1
@@ -417,4 +440,10 @@ class LazyGradientEvaluation(LazyEvaluation):
         newLazyFn = LazyEvaluation()
         newLazyFn.evaluate = new_fn_dir
         newLazyFn.description = new_description[dirn]
+
+        try:
+            newLazyFn._mesh = self._mesh
+        except:
+            pass
+        
         return newLazyFn

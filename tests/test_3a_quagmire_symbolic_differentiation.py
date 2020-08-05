@@ -15,6 +15,12 @@ from numpy.random import random
 
 from conftest import load_multi_mesh_DM as DM
 
+## We want to be able to evaluate at arbitrary points in different formats
+points   = np.array([[1.0,1.0,2.0],[0.0, 1.0, 3.0]])
+pointst  = (0.1,0.1)
+pointsl  = [0.1,0.1]
+pointsl2 = [[1.0,1.0,2.0],[0.0, 1.0, 3.0]]
+
 def test_parameters():
 
     ## Assignment
@@ -36,8 +42,8 @@ def test_fn_description():
     ## These will flush out any changes in the interface
 
     assert B.description == 'sin((10.0)*(X))'
-    assert B.sderivative(0).description == '(cos((10.0)*(X)))*(((0.0)*(X))+((10.0)*(1.0)))'
-    assert B.sderivative(1).description == '(cos((10.0)*(X)))*(((0.0)*(X))+((10.0)*(0.0)))'
+    assert B.sderivative(0).description == '(cos((10.0)*(X)))*(10.0)'
+    assert B.sderivative(1).description == '0.0'
 
 def test_fn_sderivative_values():
 
@@ -72,8 +78,10 @@ def test_fn_sderivatives_defined():
     assert np.fabs((SX**2 + CX**2).evaluate(random(),random()) - 1.0)  < 1.0e-8
     assert SX.sderivative(0).evaluate(0.0,0.0) == 1.0 
 
-    assert CX2.sderivative(0).description == '(-(sin((X)**(2.0))))*(((2.0)*(1.0))*((X)**((2.0)-(1.0))))'
-    assert CX2.sderivative(1).description == '(-(sin((X)**(2.0))))*(((2.0)*(0.0))*((X)**((2.0)-(1.0))))'
+    assert CX2.sderivative(0).description == '(-(sin((X)**(2.0))))*((2.0)*(X))'
+    assert CX2.sderivative(1).description == '0.0'
+
+    ## Some random collection of things that should not throw errors
 
     assert fn.math.cos(X).sderivative(1)
     assert fn.math.cos(Y).sderivative(1)
@@ -105,8 +113,15 @@ def test_fn_sderivative_meshvar(DM):
     Y  = fn.misc.coord(1)
     P = PHI * X**2 
 
-    assert fn.math.sin(P).sderivative(0).description == '(cos((PHI)*((X)**(2.0))))*(((d(PHI)/dX)*((X)**(2.0)))+((PHI)*(((2.0)*(1.0))*((X)**((2.0)-(1.0))))))'
+    assert fn.math.sin(P).sderivative(0).description == '(cos((PHI)*((X)**(2.0))))*(((d(PHI)/dX)*((X)**(2.0)))+((PHI)*((2.0)*(X))))'
+    # assert fn.math.sin(P).evaluate((0.0,0.0))
+    # assert fn.math.sin(P).evaluate(0.0,0.0)
+
 
     return
 
 
+
+
+
+## Test nested derivatives ... 

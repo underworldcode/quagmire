@@ -150,7 +150,7 @@ def sqrt(lazyFn):
 
 # misc
 
-## These might not be exactly right (wrap around for degrees ? what about fabs at origin ?)
+## Not sure about the absolute value and symbolic derivative
 
 def fabs(lazyFn):
     return _make_npmath_op(_np.fabs, "fabs", lazyFn)
