@@ -73,7 +73,7 @@ class MeshFunction(_LazyEvaluation):
         In all other cases call the `interpolate` method.
 
         But note the way that interpolate calls this method with the mesh to 
-        get values at the mesh nodes - this needs to be implemente correctly or 
+        get values at the mesh nodes - this needs to be implemented correctly or 
         the interpolate method needs to be over-ridden as well.
         """
 
@@ -102,6 +102,8 @@ class MeshFunction(_LazyEvaluation):
                 return self.interpolate(input[:, 0], input[:,1], **kwargs)
         else:
             return array
+
+
 
     def interpolate(self, xi, yi, err=False, **kwargs):
         """
@@ -144,7 +146,7 @@ class MeshFunction(_LazyEvaluation):
         else:
             return i
 
-    def sderivative(self, dirn):
+    def derivative(self, dirn):
         return self.fn_gradient(dirn)
 
     def fn_gradient(self, dirn):
@@ -165,7 +167,7 @@ class MeshFunction(_LazyEvaluation):
             local_array = self.evaluate(diff_mesh)
             dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
 
-            if len(args) == 1 and args[0] == diff_mesh:
+            if len(args) == 1 and args[0] is diff_mesh:
                 return dxy[:,0]
 
             elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
@@ -559,16 +561,13 @@ class MeshVariable(MeshFunction):
 
         return
 
-    def sderivative(self, dirn):
+    def derivative(self, dirn):
         """ (Lazy) Derivative in direction given by dirn """
 
         if str(dirn) in "1":
             lazyFn = self.fn_gradient(1)
         else:
             lazyFn = self.fn_gradient(0)
-
-        # lazyFn.sderivative = lambda dirn: lazyFn.sderivative(dirn)
-        # lazyFn._mesh = self._mesh
 
         return lazyFn
 
@@ -596,59 +595,59 @@ class MeshVariable(MeshFunction):
         """
         return self._mesh.derivative_grad(self._ldata.array, nit, tol)
 
-    def gradient_patch(self):
+    # def gradient_patch(self):
 
-        """
-        Compute values of the derivatives of PHI in the x, y directions at the nodal points.
-        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+    #     """
+    #     Compute values of the derivatives of PHI in the x, y directions at the nodal points.
+    #     This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
 
-        Parameters
-        ----------
-        PHI : ndarray of floats, shape (n,)
-            compute the derivative of this array
+    #     Parameters
+    #     ----------
+    #     PHI : ndarray of floats, shape (n,)
+    #         compute the derivative of this array
 
-        Returns
-        -------
-        PHIx : ndarray of floats, shape(n,)
-            first partial derivative of PHI in x direction
-        PHIy : ndarray of floats, shape(n,)
-            first partial derivative of PHI in y direction
-        """
+    #     Returns
+    #     -------
+    #     PHIx : ndarray of floats, shape(n,)
+    #         first partial derivative of PHI in x direction
+    #     PHIy : ndarray of floats, shape(n,)
+    #         first partial derivative of PHI in y direction
+    #     """
 
-        def bf_gradient_node(node):
+    #     def bf_gradient_node(node):
 
-            xx = self.coords[node,0]
-            yy = self.coords[node,1]
+    #         xx = self.coords[node,0]
+    #         yy = self.coords[node,1]
 
-            from scipy.optimize import curve_fit
+    #         from scipy.optimize import curve_fit
 
-            def linear_fit_2D(X, a, b, c):
-                # (1+x) * (1+y) etc
-                x,y = X
-                fit = a + b * x + c * y
-                return fit
+    #         def linear_fit_2D(X, a, b, c):
+    #             # (1+x) * (1+y) etc
+    #             x,y = X
+    #             fit = a + b * x + c * y
+    #             return fit
 
-            location = np.array([xx,yy]).T
+    #         location = np.array([xx,yy]).T
 
-            ## Just try near neighbours ?
-            stencil_size=mesh.near_neighbours[node]
-
-
-            d, patch_points = self.cKDTree.query(location, k=stencil_size)
-            x,y = self.coords[patch_points].T
-            data = temperature.evaluate(x, y)
-            popt, pcov = curve_fit(linear_fit_2D, (x,y), data)
-            ddx = popt[1]
-            ddy = popt[2]
-
-            return(ddx, ddy)
+    #         ## Just try near neighbours ?
+    #         stencil_size=mesh.near_neighbours[node]
 
 
-        dx = np.empty(self.npoints)
+    #         d, patch_points = self.cKDTree.query(location, k=stencil_size)
+    #         x,y = self.coords[patch_points].T
+    #         data = temperature.evaluate(x, y)
+    #         popt, pcov = curve_fit(linear_fit_2D, (x,y), data)
+    #         ddx = popt[1]
+    #         ddy = popt[2]
 
-        dx, dy = self._mesh.derivative_grad(self._ldata.array, nit, tol)
+    #         return(ddx, ddy)
 
-        return dx, dy
+
+    #     dx = np.empty(self.npoints)
+
+    #     dx, dy = self._mesh.derivative_grad(self._ldata.array, nit, tol)
+
+    #     return dx, dy
 
 
 
@@ -693,7 +692,7 @@ class MeshVariable(MeshFunction):
             return i
 
 
-    def evaluate(self, input=None, **kwargs):
+    def evaluate(self, *args, **kwargs):
         """
         If the argument is a mesh, return the values at the nodes.
         In all other cases call the `interpolate` method.
@@ -701,20 +700,17 @@ class MeshVariable(MeshFunction):
 
         import quagmire
 
-        if input is not None:
-            if isinstance(input, (quagmire.mesh.trimesh.TriMesh, 
-                                  quagmire.mesh.pixmesh.PixMesh,
-                                  quagmire.mesh.strimesh.sTriMesh)):
-                if input == self._mesh:
-                    return self._ldata.array
-                else:
-                    return self.interpolate(input.coords[:,0], input.coords[:,1], **kwargs)
-            elif isinstance(input, (tuple, list, np.ndarray)):
-                input = np.array(input)
-                input = np.reshape(input, (-1, 2))
-                return self.interpolate(input[:, 0], input[:,1], **kwargs)
-        else:
+        if len(args) == 0:
             return self._ldata.array
+
+        if (len(args) == 1 and args[0] is self._mesh):
+            return self._ldata.array
+        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            mesh = args[0]
+            return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], **kwargs).reshape(-1)
+        else:
+            coords = np.array(args).reshape(-1,2)
+            return self.interpolate(coords[:,0], coords[:,1], **kwargs).reshape(-1)
 
 
     ## Basic global operations provided by petsc4py

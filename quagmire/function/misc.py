@@ -47,7 +47,7 @@ def coord(dirn):
             else:
                 # coerce to np.array 
                 arr = _np.array(args[0]).reshape(-1,2)
-                return arr[:,0]
+                return arr[:,0].reshape(-1)
         else:
             return args[0]
 
@@ -63,19 +63,19 @@ def coord(dirn):
             else:
                 # coerce to np.array 
                 arr = _np.array(args[0]).reshape(-1,2)
-                return arr[:,1]
+                return arr[:,1].reshape(-1)
         else:
             return args[1]
 
     newLazyFn_xs = _LazyEvaluation()
     newLazyFn_xs.evaluate = extract_xs
     newLazyFn_xs.description = "X"
-    newLazyFn_xs.sderivative = lambda ddirn : _parameter(1.0) if str(ddirn) in '0Xx' else _parameter(0.0)
+    newLazyFn_xs.derivative = lambda ddirn : _parameter(1.0) if str(ddirn) in '0Xx' else _parameter(0.0)
 
     newLazyFn_ys = _LazyEvaluation()
     newLazyFn_ys.evaluate = extract_ys
     newLazyFn_ys.description = "Y"
-    newLazyFn_ys.sderivative = lambda ddirn : _parameter(1.0) if str(ddirn) in '1Yy' else _parameter(0.0)
+    newLazyFn_ys.derivative = lambda ddirn : _parameter(1.0) if str(ddirn) in '1Yy' else _parameter(0.0)
 
     if dirn == 0:
         return newLazyFn_xs
@@ -83,9 +83,9 @@ def coord(dirn):
         return newLazyFn_ys
 
 
-## ToDo: No sderivatives for these yet
+## ToDo: No derivatives for these yet
 
-    ### sderivative should probably be a zero parameter everywhere:
+    ### derivative should probably be a zero parameter everywhere:
     ### as we do not want to include the derivatives of these functions 
     ### as part of the chain rule. 
 
@@ -111,7 +111,7 @@ def levelset(lazyFn, alpha=0.5, invert=False):
     else:
         newLazyFn.description = "(level({}) < {}".format(lazyFn.description, alpha)
 
-    newLazyFn.sderivative = _parameter(0.0)
+    newLazyFn.derivative = _parameter(0.0)
 
     return newLazyFn
 
