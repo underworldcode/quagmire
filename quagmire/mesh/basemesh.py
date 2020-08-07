@@ -28,8 +28,11 @@ except: pass
 ## These also need to be lazy evaluation objects
 
 from ..function import LazyEvaluation as _LazyEvaluation
-import numpy as np
+from ..function import x_0 as _x_0
+from ..function import x_1 as _x_1
 
+
+import numpy as np
 
 class MeshFunction(_LazyEvaluation):
     """
@@ -43,7 +46,7 @@ class MeshFunction(_LazyEvaluation):
         The supporting mesh for the variable
     """
     
-    def __init__(self, name=None, mesh=None):
+    def __init__(self, name=None, mesh=None, lname=None):
         super(MeshFunction, self).__init__()
 
         self._mesh = mesh
@@ -52,10 +55,15 @@ class MeshFunction(_LazyEvaluation):
         self.description = self._name
         self.mesh_data = False
 
+        if lname is not None:
+            self.latex = lname+r"\left({},{}\right)".format(_x_0.latex, _x_1.latex)
+        else:
+            self.latex = self.description
+
         return
 
 
-    def rename(self, name=None):
+    def rename(self, name=None, lname=None):
         """
         Rename this MeshVariable
         """
@@ -66,6 +74,12 @@ class MeshFunction(_LazyEvaluation):
         self._name = str(name)
         self._ldata.setName(name)
         self.description = self._name
+
+        if lname is not None:
+            self.latex = lname+r"\left({},{}\right)".format(_x_0.latex, _x_1.latex)
+        else:
+            self.latex = self.description
+
 
     def evaluate(self, input=None, **kwargs):
         """
@@ -102,7 +116,6 @@ class MeshFunction(_LazyEvaluation):
                 return self.interpolate(input[:, 0], input[:,1], **kwargs)
         else:
             return array
-
 
 
     def interpolate(self, xi, yi, err=False, **kwargs):
@@ -149,7 +162,13 @@ class MeshFunction(_LazyEvaluation):
     def derivative(self, dirn):
         return self.fn_gradient(dirn)
 
-    def fn_gradient(self, dirn):
+    def fn_slope(self):
+        return self.fn_gradient(-1)
+
+    ## No appreciable acceleration for grad by itself, or div 
+
+
+    def fn_gradient(self, dirn=None):
         """
         The generic mechanism for obtaining the gradient of a lazy variable is
         to evaluate the values on the mesh at the time in question and use the mesh gradient
@@ -182,7 +201,7 @@ class MeshFunction(_LazyEvaluation):
             local_array = self.evaluate(diff_mesh)
             dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
 
-            if len(args) == 1 and args[0] == diff_mesh:
+            if len(args) == 1 and args[0] is diff_mesh:
                 return dxy[:,1]
             elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
                 mesh = args[0]
@@ -192,19 +211,45 @@ class MeshFunction(_LazyEvaluation):
                 i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,1])
                 return i
 
+        def new_fn_slope(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return np.hypot(dxy[:,0], dxy[:,1])
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=np.hypot(dxy[:,0], dxy[:,1]), **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=np.hypot(dxy[:,0], dxy[:,1]))
+                return i
+
         newLazyFn_dx = MeshFunction(name="ddx-"+self._name, mesh=self._mesh)
         newLazyFn_dx.evaluate = new_fn_x
         newLazyFn_dx.description = "d({})/dX".format(self.description)
+        newLazyFn_dx.latex = r"\frac{{ \partial }}{{\partial x}}{}".format(self.latex)
+        newLazyFn_dx.exposed_operator = "d"
 
         newLazyFn_dy = MeshFunction(name="ddy-"+self._name, mesh=self._mesh)
         newLazyFn_dy.evaluate = new_fn_y
         newLazyFn_dy.description = "d({})/dY".format(self.description)
+        newLazyFn_dy.latex = r"\frac{{\partial}}{{\partial y}}{}".format(self.latex)
+        newLazyFn_dy.exposed_operator = "d"
+
+        newLazyFn_slope = MeshFunction(name="slope-"+self._name, mesh=self._mesh)
+        newLazyFn_slope.evaluate = new_fn_slope
+        newLazyFn_slope.description = "slope({})".format(self.description)
+        newLazyFn_slope.latex = r"\left| \nabla {} \right|".format(self.latex)
+        newLazyFn_slope.exposed_operator = "S"
+
 
         if dirn == 0:
             return newLazyFn_dx
-        else:
+        elif dirn == 1:
             return newLazyFn_dy
-
+        else:
+            return newLazyFn_slope
 
 
 class MeshVariable(MeshFunction):
@@ -220,8 +265,8 @@ class MeshVariable(MeshFunction):
     mesh : quagmire mesh object
         The supporting mesh for the variable
     """
-    def __init__(self, name=None, mesh=None, locked=False):
-        super(MeshVariable, self).__init__(name=name, mesh=mesh)
+    def __init__(self, name=None, mesh=None, lname=None, locked=False):
+        super(MeshVariable, self).__init__(name=name, mesh=mesh, lname=lname)
 
         self._locked = locked
         self.mesh_data = True
@@ -594,61 +639,6 @@ class MeshVariable(MeshFunction):
             first partial derivative of PHI in y direction
         """
         return self._mesh.derivative_grad(self._ldata.array, nit, tol)
-
-    # def gradient_patch(self):
-
-    #     """
-    #     Compute values of the derivatives of PHI in the x, y directions at the nodal points.
-    #     This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
-
-    #     Parameters
-    #     ----------
-    #     PHI : ndarray of floats, shape (n,)
-    #         compute the derivative of this array
-
-    #     Returns
-    #     -------
-    #     PHIx : ndarray of floats, shape(n,)
-    #         first partial derivative of PHI in x direction
-    #     PHIy : ndarray of floats, shape(n,)
-    #         first partial derivative of PHI in y direction
-    #     """
-
-    #     def bf_gradient_node(node):
-
-    #         xx = self.coords[node,0]
-    #         yy = self.coords[node,1]
-
-    #         from scipy.optimize import curve_fit
-
-    #         def linear_fit_2D(X, a, b, c):
-    #             # (1+x) * (1+y) etc
-    #             x,y = X
-    #             fit = a + b * x + c * y
-    #             return fit
-
-    #         location = np.array([xx,yy]).T
-
-    #         ## Just try near neighbours ?
-    #         stencil_size=mesh.near_neighbours[node]
-
-
-    #         d, patch_points = self.cKDTree.query(location, k=stencil_size)
-    #         x,y = self.coords[patch_points].T
-    #         data = temperature.evaluate(x, y)
-    #         popt, pcov = curve_fit(linear_fit_2D, (x,y), data)
-    #         ddx = popt[1]
-    #         ddy = popt[2]
-
-    #         return(ddx, ddy)
-
-
-    #     dx = np.empty(self.npoints)
-
-    #     dx, dy = self._mesh.derivative_grad(self._ldata.array, nit, tol)
-
-    #     return dx, dy
-
 
 
     def interpolate(self, xi, yi, err=False, **kwargs):

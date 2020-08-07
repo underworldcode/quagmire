@@ -22,15 +22,6 @@ from .function_classes import LazyEvaluation as _LazyEvaluation
 from .function_classes import parameter as _parameter 
 
 
-# def _make_npmath_op(op, name, lazyFn):
-#     newLazyFn = _LazyEvaluation()
-#     newLazyFn.evaluate = lambda *args, **kwargs : op(lazyFn.evaluate(*args, **kwargs))
-#     newLazyFn.description = "{}({})".format(name, lazyFn.description)
-#     newLazyFn.dependency_list = lazyFn.dependency_list
-
-#     return newLazyFn
-
-
 def coord(dirn):
 
     def extract_xs(*args, **kwargs):
@@ -70,12 +61,14 @@ def coord(dirn):
     newLazyFn_xs = _LazyEvaluation()
     newLazyFn_xs.evaluate = extract_xs
     newLazyFn_xs.description = "X"
-    newLazyFn_xs.derivative = lambda ddirn : _parameter(1.0) if str(ddirn) in '0Xx' else _parameter(0.0)
+    newLazyFn_xs.latex = r"\xi_0"
+    newLazyFn_xs.derivative = lambda ddirn : _parameter(1.0) if str(ddirn) in '0' else _parameter(0.0)
 
     newLazyFn_ys = _LazyEvaluation()
     newLazyFn_ys.evaluate = extract_ys
     newLazyFn_ys.description = "Y"
-    newLazyFn_ys.derivative = lambda ddirn : _parameter(1.0) if str(ddirn) in '1Yy' else _parameter(0.0)
+    newLazyFn_ys.latex = r"\xi_1"
+    newLazyFn_ys.derivative = lambda ddirn : _parameter(1.0) if str(ddirn) in '1' else _parameter(0.0)
 
     if dirn == 0:
         return newLazyFn_xs
@@ -83,37 +76,37 @@ def coord(dirn):
         return newLazyFn_ys
 
 
-## ToDo: No derivatives for these yet
 
-    ### derivative should probably be a zero parameter everywhere:
-    ### as we do not want to include the derivatives of these functions 
-    ### as part of the chain rule. 
 
-def levelset(lazyFn, alpha=0.5, invert=False):
+# def levelset(fn2mask, lazyFn, alpha=0.5, invert=False):
 
-    assert isinstance(lazyFn, _LazyEvaluation), """
-        lazyFn argument is not of type a function"""
+#     assert isinstance(lazyFn, _LazyEvaluation), """
+#         lazyFn argument is not of type a function"""
 
-    newLazyFn = _LazyEvaluation()
+#     newLazyFn = _LazyEvaluation()
 
-    def threshold(*args, **kwargs):
-        if not invert:
-            values = (lazyFn.evaluate(*args, **kwargs) > alpha).astype(float)
-        else:
-            values = (lazyFn.evaluate(*args, **kwargs) < alpha).astype(float)
+#     def threshold(*args, **kwargs):
+#         if not invert:
+#             values = fn2mask.evaluate(*args, **kwargs) * (lazyFn.evaluate(*args, **kwargs) > alpha).astype(float)
+#         else:
+#             values = fn2mask.evaluate(*args, **kwargs) * (lazyFn.evaluate(*args, **kwargs) < alpha).astype(float)
 
-        return values
+#         return values
 
-    newLazyFn.evaluate = threshold
-    newLazyFn.dependency_list = lazyFn.dependency_list
-    if not invert:
-        newLazyFn.description = "(level({}) > {}".format(lazyFn.description, alpha)
-    else:
-        newLazyFn.description = "(level({}) < {}".format(lazyFn.description, alpha)
+#     newLazyFn.evaluate = threshold
+#     newLazyFn.dependency_list = lazyFn.dependency_list
 
-    newLazyFn.derivative = _parameter(0.0)
+#     if not invert:
+#         newLazyFn.description = "({} if {} > {} else 0".format(fn2mask.description, lazyFn.description, alpha)
+#         newLazyFn.latex = r"\left\{{{} \textrm{{ if}} \;\; {} \gt {}; \;\;\textrm{{ else 0}} \right\}}".format(fn2mask.latex, lazyFn.latex, alpha)
+#     else:
+#         newLazyFn.description = "({} if {} < {} else 0".format(fn2mask.description, lazyFn.description, alpha)
+#         newLazyFn.latex = r"\left\{{{} \textrm{{ if}} \;\; {} \lt {}; \;\; \textrm{{ else 0}} \right\}}".format(fn2mask.latex, lazyFn.latex, alpha)
 
-    return newLazyFn
+
+#     newLazyFn.derivative = lambda dirn : levelset(fn2mask.derivative(dirn), lazyFn, alpha, invert)
+
+#     return newLazyFn
 
 
 def maskNaN(lazyFn, invert=False):
@@ -163,6 +156,7 @@ def replaceNan(lazyFn1, lazyFn2):
     return newLazyFn
 
 
+# ToDo - add derivative 
 def where(maskFn, lazyFn1, lazyFn2):
 
     maskFn = _LazyEvaluation.convert(maskFn)
@@ -174,14 +168,17 @@ def where(maskFn, lazyFn1, lazyFn2):
         values2     = lazyFn2.evaluate(*args, **kwargs)
         mask_values = maskFn.evaluate(*args, **kwargs)
 
-        replaced_values  = _np.where(mask_values < 0.5, values1, values2)
+        replaced_values  = _np.where(mask_values > 0.0, values1, values2)
         return replaced_values
 
     newLazyFn = _LazyEvaluation()
     newLazyFn.evaluate = mask_nodebynode
     newLazyFn.description = "where({}: [{}]<-[{}])".format(maskFn.description, lazyFn1.description, lazyFn2.description)
-    newLazyFn.dependency_list = maskFn.dependency_list |     lazyFn1.dependency_list | lazyFn2.dependency_list
+    newLazyFn.latex = r"\left\{{{} \textrm{{ if}} \; {} \textrm{{> 0; else}} \;\; {}\right\}}".format(lazyFn1.latex, maskFn.latex, lazyFn2.latex)
 
+    newLazyFn.dependency_list = maskFn.dependency_list | lazyFn1.dependency_list | lazyFn2.dependency_list
+
+    newLazyFn.derivative = lambda dirn: where(maskFn, lazyFn1.derivative(dirn), lazyFn2.derivative(dirn))
 
     return newLazyFn
 

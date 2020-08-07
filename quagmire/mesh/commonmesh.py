@@ -120,7 +120,7 @@ class CommonMesh(object):
     def __len__(self):
         return self.npoints
 
-    def add_variable(self, name=None, locked=False):
+    def add_variable(self, name=None, lname=None, locked=False):
         """
         Create a Quagmire mesh variable.
 
@@ -137,7 +137,7 @@ class CommonMesh(object):
             Instantiate a `quagmire.mesh.basemesh.MeshVariable`.
         """
         from quagmire.mesh import MeshVariable
-        return MeshVariable(name=name, mesh=self, locked=locked)
+        return MeshVariable(name=name, mesh=self, lname=lname, locked=locked)
 
     def get_label(self, label):
         """

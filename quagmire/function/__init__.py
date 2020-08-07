@@ -4,6 +4,21 @@ from . import misc
 from . import stats
 
 
+## Define a default coordinate system
+
+x_0 = misc.coord(0)
+x_1 = misc.coord(1)
+
+## A display function that tries the object methods first 
+
+def display(fn_object):
+
+    try:
+        fn_object.display()
+    except:
+        print(fn_object)
+
+
 def check_dependency(this_fn, that_fn):
     """Does this_fn depend upon that_fn ?"""
 
