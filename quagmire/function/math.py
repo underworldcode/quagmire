@@ -27,6 +27,8 @@ def _make_npmath_op(op, name, lazyFn, lformat):
     newLazyFn.evaluate = lambda *args, **kwargs : op(lazyFn.evaluate(*args, **kwargs))
     newLazyFn.description = "{}({})".format(name,lazyFn.description)
     newLazyFn.latex = lformat.format(lazyFn.latex)
+    newLazyFn.math  = lambda : lformat.format(lazyFn.math())
+
     newLazyFn.dependency_list = lazyFn.dependency_list
     return newLazyFn
 
@@ -34,7 +36,7 @@ def _make_npmath_op(op, name, lazyFn, lformat):
 
 def sin(lazyFn):
     newFn = _make_npmath_op(_np.sin, "sin", lazyFn, r"\sin\left({}\right)")
-    newFn.derivative = lambda dirn : cos( lazyFn ) * lazyFn.derivative(dirn)
+    newFn.derivative = lambda dirn : lazyFn.derivative(dirn) * cos( lazyFn ) 
     return newFn
 
 def asin(lazyFn):
@@ -49,7 +51,7 @@ def arcsin(lazyFn):
 
 def cos(lazyFn):
     newFn = _make_npmath_op(_np.cos, "cos", lazyFn, r"\cos\left({}\right)")
-    newFn.derivative = lambda dirn : -sin( lazyFn ) * lazyFn.derivative(dirn)
+    newFn.derivative = lambda dirn : -lazyFn.derivative(dirn) * sin( lazyFn ) 
     return newFn
 
 def acos(lazyFn):
@@ -64,7 +66,7 @@ def arccos(lazyFn):
 
 def tan(lazyFn):
     newFn = _make_npmath_op(_np.tan, "tan", lazyFn, r"\tan\left({}\right)")
-    newFn.derivative = lambda dirn : (_parameter(1.0) + tan(lazyFn)**2 ) * lazyFn.derivative(dirn)
+    newFn.derivative = lambda dirn : lazyFn.derivative(dirn) * (_parameter(1.0) + tan(lazyFn)**2 ) 
     return newFn
 
 def atan(lazyFn):
@@ -81,7 +83,7 @@ def arctan(lazyFn):
 
 def sinh(lazyFn):
     newFn = _make_npmath_op(_np.sinh, "sinh", lazyFn, r"\sinh\left({}\right)")
-    newFn.derivative = lambda dirn : cosh( lazyFn ) * lazyFn.derivative(dirn)
+    newFn.derivative = lambda dirn : lazyFn.derivative(dirn) * cosh( lazyFn ) 
     return newFn
 
 def asinh(lazyFn):
@@ -96,7 +98,7 @@ def arcsinh(lazyFn):
 
 def cosh(lazyFn):
     newFn = _make_npmath_op(_np.cosh, "cosh", lazyFn, r"\cosh\left({}\right)")
-    newFn.derivative = lambda dirn : sinh( lazyFn ) * lazyFn.derivative(dirn)
+    newFn.derivative = lambda dirn : lazyFn.derivative(dirn) * sinh( lazyFn ) 
     return newFn
 
 def acosh(lazyFn):
@@ -111,7 +113,7 @@ def arccosh(lazyFn):
 
 def tanh(lazyFn):
     newFn = _make_npmath_op(_np.tanh, "tanh", lazyFn, r"\tanh\left({}\right)")
-    newFn.derivative = lambda dirn : (_parameter(1.0) - lazyFn.derivative(dirn)**2) * lazyFn.derivative(dirn)
+    newFn.derivative = lambda dirn : lazyFn.derivative(dirn) * (_parameter(1.0) - lazyFn.derivative(dirn)**2) 
     return newFn
 
 def atanh(lazyFn):
@@ -129,7 +131,7 @@ def arctanh(lazyFn):
 
 def exp(lazyFn):
     newFn =  _make_npmath_op(_np.exp, "exp", lazyFn, r"\exp\left({}\right)")
-    newFn.derivative = lambda dirn : exp(lazyFn) * lazyFn.derivative(dirn)
+    newFn.derivative = lambda dirn : lazyFn.derivative(dirn) * exp(lazyFn) 
     return newFn
 
 def log(lazyFn):

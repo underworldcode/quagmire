@@ -62,12 +62,14 @@ def coord(dirn):
     newLazyFn_xs.evaluate = extract_xs
     newLazyFn_xs.description = "X"
     newLazyFn_xs.latex = r"\xi_0"
+    newLazyFn_xs.math = lambda : newLazyFn_xs.latex
     newLazyFn_xs.derivative = lambda ddirn : _parameter(1.0) if str(ddirn) in '0' else _parameter(0.0)
 
     newLazyFn_ys = _LazyEvaluation()
     newLazyFn_ys.evaluate = extract_ys
     newLazyFn_ys.description = "Y"
     newLazyFn_ys.latex = r"\xi_1"
+    newLazyFn_ys.math = lambda : newLazyFn_ys.latex
     newLazyFn_ys.derivative = lambda ddirn : _parameter(1.0) if str(ddirn) in '1' else _parameter(0.0)
 
     if dirn == 0:

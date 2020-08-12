@@ -60,6 +60,16 @@ class MeshFunction(_LazyEvaluation):
         else:
             self.latex = self.description
 
+
+        ## Attach a coordinate system to the mesh:
+
+
+        if isinstance(input, (quagmire.mesh.trimesh.TriMesh, 
+                                  quagmire.mesh.pixmesh.PixMesh):
+
+            self.coordinates = function.coordinates.Car
+
+
         return
 
 

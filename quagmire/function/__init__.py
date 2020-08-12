@@ -1,7 +1,8 @@
-from .function_classes import LazyEvaluation, parameter
+from .function_classes import LazyEvaluation, parameter, symbol, convert
 from . import math
 from . import misc
 from . import stats
+from . import coordinates
 
 
 ## Define a default coordinate system
@@ -39,3 +40,4 @@ def check_object_is_a_mesh_variable(fn_object):
 	""" Is this object a quagmire MeshVariable or VectorMeshVariable ?"""
 
 	return fn_object.mesh_data
+
