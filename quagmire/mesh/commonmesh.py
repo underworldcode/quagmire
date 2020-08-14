@@ -115,6 +115,20 @@ class CommonMesh(object):
         self.lgmap_col = lgmap_c
 
 
+        ## Attach a coordinate system to the mesh:
+
+        import quagmire
+
+        if isinstance(self, (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh)):
+            self.coordinates = quagmire.function.coordinates.CartesianCoordinates2D()
+            self.geometry    = self.coordinates
+            self.coordinate_system = self.coordinates
+        else:
+            self.coordinates = quagmire.function.coordinates.SphericalSurfaceLonLat2D()
+            self.geometry    = self.coordinates
+            self.coordinate_system = self.coordinates
+
+
         return
 
     def __len__(self):

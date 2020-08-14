@@ -19,11 +19,15 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 import numpy as _np
 from .function_classes import LazyEvaluation as _LazyEvaluation
 from .function_classes import parameter as _parameter 
+from .function_classes import convert as _convert
+
 
 ## Functions of a single variable
 
 def _make_npmath_op(op, name, lazyFn, lformat):
+    lazyFn = _convert(lazyFn)
     newLazyFn = _LazyEvaluation()
+    newLazyFn.coordinate_system = lazyFn.coordinate_system
     newLazyFn.evaluate = lambda *args, **kwargs : op(lazyFn.evaluate(*args, **kwargs))
     newLazyFn.description = "{}({})".format(name,lazyFn.description)
     newLazyFn.latex = lformat.format(lazyFn.latex)
@@ -175,142 +179,8 @@ def deg2rad(lazyFn):
     return radians(lazyFn)
 
 
-## Vector Operators  (Cartesian assumed here - beware !!)
+##  ?? Are these geometry safe ? Probably not !
 
-def grad(lazyFn):
-    """Lazy evaluation of gradient operator on a scalar field"""
-
-    if isinstance(lazyFn, (float, int, _parameter)):
-        return _parameter(0.0)
-
-
-    # check if this function has a fn_grad method, otherwise brute force
-
-    try:
-        return lazyFn.fn_grad()
-    except:
-        return lazyFn.derivative(0), lazyFn.derivative(1)
-
-def div(lazyFn_0, lazyFn_1):
-    """Lazy evaluation of divergence operator on a vector field"""
-
-    if isinstance(lazyFn_0, (float, int, _parameter)):
-        lazyFn_0x = _parameter(0.0)
-    else:
-        lazyFn_0x = lazyFn_0.derivative(0)
-
-    if isinstance(lazyFn_1, (float, int, _parameter)):
-        lazyFn_1x = _parameter(0.0)
-    else:
-        lazyFn_1x = lazyFn_1.derivative(0)
-
-    return lazyFn_0x + lazyFn_1x
- 
-
-def laplacian(lazyFn, lazyFn_coeff=None):
-    """Lazy evaluation of Laplacian with variable coefficient"""
-
-    if isinstance(lazyFn, (float, int, _parameter)):
-        return _parameter(0.0)
-
-    if lazyFn_coeff is None:
-        lazyFn_coeff = _parameter(1.0)
-
-    try:
-        return lazyFn.fn_laplacian(lazyFn_coeff)
-    except:
-        
-        f1, f2 = grad(lazyFn)
-        fl = div(lazyFn_coeff*f1, lazyFn_coeff*f1)
-        fl.description = "div.grad({})".format(lazyFn.description)
-        fl.latex = r"\nabla^2\left( {} \right)".format(lazyFn.latex)
-        fl.exposed_operator = "S"
-        return fl
-
-def slope(lazyFn):
-    """Lazy evaluation of gradient operator on a scalar field"""
-
-    if isinstance(lazyFn, (float, int, _parameter)):
-        return _parameter(0.0)
-
-    # check if this function has a fn_slope method, otherwise brute force
-
-    try:
-        return lazyFn.fn_slope()
-    except:
-        newlazyFn = sqrt(lazyFn.derivative(0)**2 + lazyFn.derivative(1)**2)
-        newlazyFn.description = "slope({})".format(lazyFn.description)
-        newlazyFn.latex = r"\left| \nabla {} \right|".format(lazyFn.description)
-        newlazyFn.exposed_operator = "S"
-        return newlazyFn
-
-  
-
-
-# def div(*args):
-#     """Lazy evaluation of divergence operator on a N-D vector field"""
-#     def _div(lazyFn_list, *args, **kwargs):
-#         lazy_ev = 0.0
-#         for lazyFn in lazyFn_list:
-#             lazy_ev += lazyFn.evaluate(*args, **kwargs)
-#         return lazy_ev
-
-#     dims = ['X', 'Y', 'Z']
-#     lazyFn_id = set()
-#     lazyFn_list = []
-#     lazyFn_description = ""
-#     lazyFn_dependency = set()
-#     for f, lazyFn in enumerate(args):
-#         lazyFn_list.append(lazyFn.fn_gradient[f])
-#         lazyFn_description += "diff({},{}) + ".format(lazyFn.description, dims[f])
-#         lazyFn_dependency.union(lazyFn.dependency_list)
-#     lazyFn_description = lazyFn_description[:-3]
-
-#     newLazyFn = _LazyEvaluation()
-#     newLazyFn.evaluate = lambda *args, **kwargs : _div(lazyFn_list, *args, **kwargs)
-#     newLazyFn.description = lazyFn_description
-#     newLazyFn.dependency_list = lazyFn_dependency
-
-#     return newLazyFn
-
-def curl(*args):
-    """Lazy evaluation of curl operator on a 2D vector field"""
-
-    if len(args) == 2:
-        lazyFn_x = args[0]
-        lazyFn_y = args[1]
-        
-        newLazyFn = _LazyEvaluation()
-        fn_dvydx = lazyFn_y.derivative(0)
-        fn_dvxdy = lazyFn_x.derivative(1)
-        newLazyFn.evaluate = lambda *args, **kwargs : fn_dvydx.evaluate(*args, **kwargs) - fn_dvxdy.evaluate(*args, **kwargs)
-        newLazyFn.description = "diff({},X) - diff({},Y)".format(lazyFn_y.description, lazyFn_x.description)
-        newLazyFn.latex = r"\partial \left( {} \right) / \partial x_0 - \partial \left( {} \right) / \partial x_1".format(lazyFn_x.latex, lazyFn_y.latex)
-        newLazyFn.dependency_list = lazyFn_x.dependency_list | lazyFn_y.dependency_list
-
-    # elif len(args) == 3:
-    #     raise NotImplementedError
-    #     lazyFn_x = args[0]
-    #     lazyFn_y = args[1]
-    #     lazyFn_z = args[2]
-        
-    #     newLazyFn = _LazyEvaluation()
-    #     fn_dvxdx, fn_dvxdy, fn_dvxdz = lazyFn_x.fn_gradient
-    #     fn_dvydx, fn_dvydy, fn_dvydz = lazyFn_y.fn_gradient
-    #     fn_dvzdx, fn_dvzdy, fn_dvzdz = lazyFn_z.fn_gradient
-    #     fn_curl = (fn_dvzdy-fn_dvydz) + (fn_dvxdz-fn_dvzdx) + (fn_dvydx-fn_dvxdy)
-    #     newLazyFn.evaluate = lambda *args, **kwargs : fn_curl.evaluate(*args, **kwargs)
-    #     desc = "(diff({},dy) - diff({},dz)) + (diff({},dz) - diff({},dx)) + (diff({},dx) - diff({},dy))"
-    #     newLazyFn.description = desc.format(\
-    #         lazyFn_z.description, lazyFn_y.description, \
-    #         lazyFn_x.description, lazyFn_z.description, \
-    #         lazyFn_y.description, lazyFn_x.description)
-    #     newLazyFn.dependency_list = lazyFn_x.dependency_list | lazyFn_y.dependency_list | lazyFn_z.dependency_list
-
-    # else:
-    #     raise ValueError("Enter a valid number of arguments")
-
-    return newLazyFn
 
 def hypot(*args):
     """Lazy evaluation of hypot operator on N fields"""

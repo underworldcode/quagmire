@@ -1,23 +1,29 @@
-from .function_classes import LazyEvaluation, parameter, symbol, convert
+from .function_classes import LazyEvaluation, parameter, symbol, vector_field, convert
 from . import math
 from . import misc
 from . import stats
-from . import coordinates
+from . import coordinate_geometry as coordinates
+from . import coordinate_geometry as geometry
 
 
-## Define a default coordinate system
 
-x_0 = misc.coord(0)
-x_1 = misc.coord(1)
 
 ## A display function that tries the object methods first 
 
 def display(fn_object):
 
-    try:
-        fn_object.display()
-    except:
-        print(fn_object)
+    if hasattr(fn_object, '__iter__'):
+        for o in fn_object:
+            try:
+                o.display()
+            except:
+                print(o)
+    else:
+        try:
+            fn_object.display()
+        except:
+            print(fn_object)
+
 
 
 def check_dependency(this_fn, that_fn):

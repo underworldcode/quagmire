@@ -37,7 +37,8 @@ class LazyEvaluation(object):
         self.latex = ""
         self.dependency_list = set([self.id])
         self._exposed_operator = "S"  # Singleton unless over-ridden with operator
-        self.math = lambda : ""
+        self.math = lambda : self.latex
+        self.coordinate_system = None
 
         return
 
@@ -53,6 +54,20 @@ class LazyEvaluation(object):
             self._ipython_display_()
         except:
             print(self.__repr__)
+
+    def validate_coordinate_system(self, obj):
+
+        if self.coordinate_system is not None:
+            if obj.coordinate_system is not None:
+                assert self.coordinate_system == obj.coordinate_system
+
+    def compatible_coordinate_system(self, obj):
+
+        self.validate_coordinate_system(obj)
+        if obj.coordinate_system is not None:
+            return obj.coordinate_system
+        else:
+            return self.coordinate_system
 
 
     @staticmethod
@@ -74,13 +89,7 @@ class LazyEvaluation(object):
         LazyEvaluation function or None.
         """
 
-        if isinstance(obj, (LazyEvaluation, type(None))):
-            return obj
-        else:
-            try:
-                return parameter(obj)
-            except Exception as e:
-                raise e
+        return convert(obj)
 
     def evaluate(self, *args, **kwargs):
         raise(NotImplementedError)
@@ -93,9 +102,11 @@ class LazyEvaluation(object):
     def description(self, value):
         self._description = "{}".format(value)
 
-    @property
-    def fn_gradient(self):
-        return self.derivative
+    def fn_gradient(self, dirn):
+        try:
+            return self.coordinate_system.grad(self)[dirn]
+        except:
+            return None
 
     @property
     def exposed_operator(self):
@@ -105,7 +116,6 @@ class LazyEvaluation(object):
     def exposed_operator(self, value):
         self._exposed_operator = value
         
-
     def derivative(self, dirn):
         """
         Compute values of the derivatives of PHI in the x, y directions at the nodal points.
@@ -166,6 +176,8 @@ class LazyEvaluation(object):
         newLazyFn.derivative = lambda dirn : self.derivative (dirn) * other +  \
                                               self * other.derivative(dirn) 
                      
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+
         return newLazyFn
 
     def __rmul__(self, other):
@@ -211,6 +223,8 @@ class LazyEvaluation(object):
         # Otherwise    
 
         newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
         newLazyFn.description = "{} + {}".format(self.description, other.description)
         newLazyFn.latex       = "{} + {}".format(self.latex, other.latex)
@@ -220,6 +234,7 @@ class LazyEvaluation(object):
         newLazyFn.exposed_operator = "+"
 
         newLazyFn.derivative = lambda dirn : self.derivative(dirn) + other.derivative(dirn)
+
 
         return newLazyFn
 
@@ -260,6 +275,8 @@ class LazyEvaluation(object):
         fstring += "({})" if not other.exposed_operator in "S^" else "{}"
 
         newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) / other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})/({})".format(self.description, other.description)
         newLazyFn.latex = r"\frac{{ {} }}{{ {}  }}".format(self.latex, other.latex)
@@ -302,9 +319,9 @@ class LazyEvaluation(object):
             if self.value == 0.0:
                 return -other   
 
-        
-
         newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
         newLazyFn.description = "{} - {}".format(self.description, other.description)
         newLazyFn.latex       = "{} - {}".format(self.latex, other.latex)
@@ -347,6 +364,8 @@ class LazyEvaluation(object):
         fstring  = "-{}" if self.exposed_operator in "S^*/" else "-({})"
 
         newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.coordinate_system
+
         newLazyFn.evaluate = lambda *args, **kwargs : -1.0 * self.evaluate(*args, **kwargs)
         newLazyFn.description = "-{}".format(self.description)
         newLazyFn.latex       = "-{}".format(self.latex)
@@ -375,6 +394,8 @@ class LazyEvaluation(object):
         lstring  = r"\left({}\right)^{{{}}}" if not self.exposed_operator in "S" else r"{}^{{{}}}"
 
         newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.coordinate_system
+
         newLazyFn.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
         newLazyFn.description = fstring.format(self.description, exponent.description)
         newLazyFn.latex       = lstring.format(self.latex, exponent.latex)
@@ -395,6 +416,7 @@ class LazyEvaluation(object):
     def __lt__(self, other):
         other = self.convert(other)
         newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) < other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})<({})".format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
@@ -403,6 +425,7 @@ class LazyEvaluation(object):
     def __le__(self, other):
         other = self.convert(other)
         newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) <= other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})<=({})".format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
@@ -411,6 +434,7 @@ class LazyEvaluation(object):
     def __eq__(self, other):
         other = self.convert(other)
         newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) == other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})==({})".format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
@@ -419,6 +443,7 @@ class LazyEvaluation(object):
     def __ne__(self, other):
         other = self.convert(other)
         newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) != other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})!=({})".format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
@@ -427,6 +452,7 @@ class LazyEvaluation(object):
     def __ge__(self, other):
         other = self.convert(other)
         newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) >= other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})>=({})".format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
@@ -435,6 +461,7 @@ class LazyEvaluation(object):
     def __gt__(self, other):
         other = self.convert(other)
         newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
         newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) > other.evaluate(*args, **kwargs)
         newLazyFn.description = "({})>({})".format(self.description, other.description)
         newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
@@ -500,7 +527,7 @@ class symbol(LazyEvaluation):
         self.description = lazyFn.description
 
         before = self.math()
-        self.math = lambda : r"{} \leftarrow ({})".format(lazyFn.math(),before)
+        self.math = lambda : r"\left\{{  {} \leftarrow {}\right\}}".format(before, lazyFn.math())
         self.latex = lazyFn.latex 
 
 class parameter(LazyEvaluation):
@@ -549,6 +576,161 @@ class parameter(LazyEvaluation):
     def derivative(self, *args, **kwargs):
         return parameter(0.0)
 
+class vector_field(tuple, LazyEvaluation):
+
+    def __new__ (cls, a, b, name=None, lname=None):
+
+        a1 = convert(a)
+        b1 = convert(b)
+
+        return super(vector_field, cls).__new__(cls, (a1,b1))
+
+    def __init__(self, a, b, name=None, lname=None):
+
+        LazyEvaluation.__init__(self)
+
+        self.coordinate_system = a.compatible_coordinate_system(b)
+
+        if name is not None:
+            self._name = name
+        else:
+            self._name = "v_{}".format(self.id)
+
+        if name is not None:
+            self.description = name 
+        else:
+            self.description = "({} , {})".format(self[0].description, self[1].description)
+
+        if lname is not None:
+            self.latex = lname
+            self._lname = lname
+        else:
+            self.latex = "({} , {})".format(self[0].latex, self[1].latex)
+            self._lname = None
+
+        self.math = lambda : self.latex 
+
+    def __repr__(self):
+        return self.description
+
+    
+    def evaluate(self, *args, **kwargs):
+
+        return ( self[0].evaluate(*args, **kwargs), self[1].evaluate(*args, **kwargs))
+
+    def derivative(self, dirn, expand=False):
+
+        new_vector_field = vector_field( self[0].derivative(dirn), self[1].derivative(dirn))
+
+        if self._lname is None or expand == True:
+            new_vector_field.latex = r"\left( {}, {} \right)".format(self[0].derivative(dirn).latex, self[1].derivative(dirn).latex  )
+        else:
+            new_vector_field.latex = r"\frac{{ \partial }} {{ \partial {} }} {}".format(self.coordinate_system.xi[dirn].latex, self.latex, )
+
+        return new_vector_field
+
+    def __mul__(self, other):
+
+        if isinstance(other, vector_field):
+            newLazyFn = self[0] * other[0] + self[1] * other[1]
+            return newLazyFn
+
+        else:
+            other = convert(other)
+
+            if isinstance(other, LazyEvaluation):
+                newVectorField = vector_field( self[0] * other,  self[1] * other )
+                return newVectorField
+
+            else:
+                raise NotImplementedError
+
+    def __rmul__(self, other):
+
+        other = convert(other)
+        if isinstance(other, LazyEvaluation):
+            return other.__mul__(self)
+        else:
+            raise NotImplementedError
+
+
+    def __add__(self, other):
+
+        if isinstance(other, vector_field):
+            newVectorField = vector_field( self[0] + other[0],  self[1] + other[1] )
+            return newVectorField
+
+        else:
+            other = convert(other)
+
+            if isinstance(other, LazyEvaluation):
+                newVectorField = vector_field( self[0] + other,  self[1] + other )
+                return newVectorField
+
+            else:
+                raise NotImplementedError
+
+    def __radd__(self, other):
+
+        other = convert(other)
+        if isinstance(other, LazyEvaluation):
+            return other.__add__(self)
+        else:
+            raise NotImplementedError
+
+    def __neg__(self):
+
+        newVectorField = vector_field( -self[0] ,  -self[1] )
+        return newVectorField
+
+    def __sub__(self, other):
+
+        if isinstance(other, vector_field):
+            newVectorField = vector_field( self[0] - other[0],  self[1] - other[1] )
+            return newVectorField
+
+        else:
+            other = convert(other)
+
+            if isinstance(other, LazyEvaluation):
+                newVectorField = vector_field( self[0] - other,  self[1] - other )
+                return newVectorField
+
+            else:
+                raise NotImplementedError
+
+    def __rsub__(self, other):
+
+        other = convert(other)
+
+        if isinstance(other, LazyEvaluation):
+            newVectorField = vector_field( other - self[0], other - self[1] )
+            return newVectorField
+
+        else:
+            raise NotImplementedError
+
+    def __truediv__(self, other): 
+
+        if isinstance(other, vector_field):
+            
+            raise ValueError("Cannot divide by vector field")
+        else:
+            newVectorField = vector_field( self[0] / other, self[1] / other )
+            return newVectorField
+
+
+    def __rtruediv__(self, other):
+
+        raise ValueError("Cannot divide by vector field")
+
+    def __pow__(self, exponent):
+
+        raise NotImplementedError
+    
+
+    
+    
 
 
 def convert(lazyFnCandidate):
@@ -578,5 +760,3 @@ def convert(lazyFnCandidate):
                 return parameter(lazyFnCandidate)
             except Exception as e:
                 raise e
-
-        

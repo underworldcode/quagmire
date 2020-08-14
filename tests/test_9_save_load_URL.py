@@ -15,7 +15,6 @@ from quagmire.tools import meshtools
 from quagmire import QuagMesh
 from quagmire.mesh import MeshVariable
 
-
 dropbox_mesh_url = "https://www.dropbox.com/s/iih150l1jtm0fp6/Ex1a-circular_mesh.h5?dl=0"
 dropbox_phi_url  = "https://www.dropbox.com/s/nekzkmvx5h82r2l/Ex1a-circular_mesh_phi.h5?dl=0"
 dropbox_psi_url  = "https://www.dropbox.com/s/5dzujlo3ayo5s35/Ex1a-circular_mesh_psi.h5?dl=0"
@@ -27,6 +26,8 @@ google_drive_psi_gurl  = "https://drive.google.com/file/d/17t8jbPFmnB8aHhyYDbxjG
 
 pyfilesystem = pytest.importorskip("fs")
 pywebdav = pytest.importorskip("webdavfs")
+
+import fs, webdavfs
 
 def test_dropbox_url():
 

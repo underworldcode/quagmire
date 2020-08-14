@@ -55,9 +55,6 @@ class TopoMesh(object):
         ## TODO: Should be able to fix upstream area as a "partial" function of upstream area
         ## with a parameter value of 1.0 in the argument (or 1.0 above a ref height)
 
-        # Slope (function)
-        self.slope = fn.math.slope(self.topography)
-
         self._heightVariable = self.topography
 
 

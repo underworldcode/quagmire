@@ -284,6 +284,9 @@ class PixMesh(_CommonMesh):
         
         return ival, inside_bounds.astype(np.int)
 
+    def derivatives(self, PHI, **kwargs):
+        return self.derivative_grad(PHI, **kwargs)
+
 
     def derivative_grad(self, PHI, **kwargs):
         """

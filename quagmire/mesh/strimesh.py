@@ -361,9 +361,38 @@ class sTriMesh(_CommonMesh):
         return self.natural_neighbours[point,1:self.natural_neighbours_count[point]]
 
 
-    def derivative_grad(self, PHI, nit=10, tol=1e-8):
+    def derivatives(self, PHI, nit=10, tol=1e-8):
         """
         Compute derivatives of PHI in the x, y directions.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Arguments
+        ---------
+        PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+        nit : int optional (default: 10)
+            number of iterations to reach convergence
+        tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+
+        Returns
+        -------
+        PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+        PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
+        """
+
+        PHIx, PHIy = self.tri.derivatives_lonlat(PHI, nit, tol)
+        grads = np.ndarray((PHIx.size, 2))
+        grads[:, 0] = np.radians(PHIx)
+        grads[:, 1] = np.radians(PHIy)
+
+        return grads       
+
+    def derivative_grad(self, PHI, nit=10, tol=1e-8):
+        """
+        Compute gradients of PHI in the x, y directions.
         This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
 
         Arguments
@@ -400,7 +429,7 @@ class sTriMesh(_CommonMesh):
 
     def derivative_div(self, PHIx, PHIy, PHIz, **kwargs):
         """
-        Compute second order derivative from flux fields PHIx, PHIy
+        Compute second order derivative from flux fields PHIx, PHIy, PHIz
         We evaluate the gradient on these fields using the derivative-grad method.
 
         Arguments
