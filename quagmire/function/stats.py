@@ -19,6 +19,8 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 import quagmire
 import numpy as _np
 from .function_classes import LazyEvaluation as _LazyEvaluation
+from .function_classes import parameter as _parameter
+
 from mpi4py import MPI as _MPI
 _comm = _MPI.COMM_WORLD
 
@@ -46,6 +48,7 @@ def _make_reduce_op(name, lazyFn):
     newLazyFn.evaluate = lambda *args, **kwargs : _all_reduce(lazyFn.evaluate(*args, **kwargs), name)
     newLazyFn.description = "{}({})".format(name, lazyFn.description)
     newLazyFn.dependency_list = lazyFn.dependency_list
+    newLazyFn.derivative = lambda dirn : _parameter(0.0)
     return newLazyFn
 
 

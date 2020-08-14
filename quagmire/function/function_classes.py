@@ -525,10 +525,10 @@ class symbol(LazyEvaluation):
         self.evaluate    = lazyFn.evaluate
         self.derivative  = lazyFn.derivative 
         self.description = lazyFn.description
+        self.exposed_operator = "S"
+        self.latex = r"\left\{{  {} \leftarrow {}\right\}}".format(self._lname, lazyFn.math())
 
-        before = self.math()
-        self.math = lambda : r"\left\{{  {} \leftarrow {}\right\}}".format(before, lazyFn.math())
-        self.latex = lazyFn.latex 
+        self.math = lambda : self.latex
 
 class parameter(LazyEvaluation):
     """Floating point parameter / coefficient for lazy evaluation of functions"""
@@ -605,7 +605,7 @@ class vector_field(tuple, LazyEvaluation):
             self.latex = lname
             self._lname = lname
         else:
-            self.latex = "({} , {})".format(self[0].latex, self[1].latex)
+            self.latex = r"\left( {} , {} \right)".format(self[0].latex, self[1].latex)
             self._lname = None
 
         self.math = lambda : self.latex 
@@ -629,6 +629,14 @@ class vector_field(tuple, LazyEvaluation):
 
         return new_vector_field
 
+    def div(self, expand=False):
+
+        try:
+            return self.coordinate_system.div(self, expand)
+        except:
+            raise NotImplementedError("No coordinate system - use CoordinateSystem.div( vector_object ) directly")
+
+
     def __mul__(self, other):
 
         if isinstance(other, vector_field):
@@ -649,7 +657,8 @@ class vector_field(tuple, LazyEvaluation):
 
         other = convert(other)
         if isinstance(other, LazyEvaluation):
-            return other.__mul__(self)
+            newVectorField = vector_field( other * self[0] , other *  self[1] )
+            return newVectorField
         else:
             raise NotImplementedError
 
@@ -726,8 +735,8 @@ class vector_field(tuple, LazyEvaluation):
 
     def __pow__(self, exponent):
 
-        raise NotImplementedError
-    
+        raise NotImplementedError("Use repeated multiplication to achieve vector power")
+
 
     
     
