@@ -28,6 +28,7 @@ except: pass
 
 from quagmire import function as fn
 from quagmire.mesh import MeshVariable as _MeshVariable
+from quagmire.mesh.basemesh import MeshFunction as _MeshFunction
 from quagmire.function import LazyEvaluation as _LazyEvaluation
 
 class TopoMesh(object):
@@ -363,25 +364,24 @@ class TopoMesh(object):
         import quagmire
 
         def integral_fn(*args, **kwargs):
-            node_values = meshVar.evaluate(meshVar._mesh) * meshVar._mesh.area
+            node_values = meshVar.evaluate(self) * self.area
             node_integral = self.cumulative_flow(node_values)
 
-            if len(args) == 1 and args[0] == meshVar._mesh:
+            if len(args) == 1 and args[0] == self:
                 return node_integral
             elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
-                return meshVar._mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=node_integral, **kwargs)
+                return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=node_integral, **kwargs)
             else:
-                xi = np.atleast_1d(args[0])
-                yi = np.atleast_1d(args[1])
-                i, e = meshVar._mesh.interpolate(xi, yi, zdata=node_integral, **kwargs)
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = self.interpolate(coords[:,0], coords[:,1], zdata=node_integral)
                 return i
 
-        newLazyFn = _LazyEvaluation()
+        newLazyFn = _MeshFunction(name="int", mesh=self)
         newLazyFn.evaluate = integral_fn
         newLazyFn.description = "UpInt({})dA".format(meshVar.description)
-        newLazyFn.dependency_list |= meshVar.dependency_list
-
+        newLazyFn.latex = r"\int {}".format(meshVar.latex) + r" \mathrm{dA}"
+        newLazyFn.exposed_operator = "I"
         return newLazyFn
 
 
