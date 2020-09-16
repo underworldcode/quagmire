@@ -115,12 +115,26 @@ class CommonMesh(object):
         self.lgmap_col = lgmap_c
 
 
+        ## Attach a coordinate system to the mesh:
+
+        import quagmire
+
+        if isinstance(self, (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh)):
+            self.coordinates = quagmire.function.coordinates.CartesianCoordinates2D()
+            self.geometry    = self.coordinates
+            self.coordinate_system = self.coordinates
+        else:
+            self.coordinates = quagmire.function.coordinates.SphericalSurfaceLonLat2D()
+            self.geometry    = self.coordinates
+            self.coordinate_system = self.coordinates
+
+
         return
 
     def __len__(self):
         return self.npoints
 
-    def add_variable(self, name=None, locked=False):
+    def add_variable(self, name=None, lname=None, locked=False):
         """
         Create a Quagmire mesh variable.
 
@@ -137,7 +151,7 @@ class CommonMesh(object):
             Instantiate a `quagmire.mesh.basemesh.MeshVariable`.
         """
         from quagmire.mesh import MeshVariable
-        return MeshVariable(name=name, mesh=self, locked=locked)
+        return MeshVariable(name=name, mesh=self, lname=lname, locked=locked)
 
     def get_label(self, label):
         """

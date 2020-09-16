@@ -24,9 +24,10 @@ def test_derivatives_and_interpolation(DM):
     # interpolate onto a straight line
     # bounding box should be [-5,5,-5,5]
     xy_pts = np.linspace(0,3,10)
+    icoords = np.column_stack([xy_pts, xy_pts])
 
-    interp_x = dhdx.evaluate([xy_pts, xy_pts])
-    interp_y = dhdy.evaluate([xy_pts, xy_pts])
+    interp_x = dhdx.evaluate(icoords)
+    interp_y = dhdy.evaluate(icoords)
 
     ascending_x = ( np.diff(interp_x) > 0 ).all()
     ascending_y = ( np.diff(interp_y) > 0 ).all()

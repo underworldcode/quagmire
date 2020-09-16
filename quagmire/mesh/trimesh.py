@@ -262,6 +262,9 @@ class TriMesh(_CommonMesh):
         """
         return self.natural_neighbours[point,1:self.natural_neighbours_count[point]]
 
+    def derivatives(self, PHI, nit=10, tol=1e-8):
+        return self.derivative_grad(PHI, nit=10, tol=1e-8)
+
 
     def derivative_grad(self, PHI, nit=10, tol=1e-8):
         """
