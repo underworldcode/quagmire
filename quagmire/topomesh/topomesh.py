@@ -363,19 +363,25 @@ class TopoMesh(object):
 
         import quagmire
 
-        def integral_fn(*args, **kwargs):
+        def integral_fn(input=None, **kwargs):
             node_values = meshVar.evaluate(self) * self.area
             node_integral = self.cumulative_flow(node_values)
 
-            if len(args) == 1 and args[0] == self:
-                return node_integral
-            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
-                mesh = args[0]
-                return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=node_integral, **kwargs)
+            if input is not None:
+                if isinstance(input, (quagmire.mesh.trimesh.TriMesh, 
+                                      quagmire.mesh.pixmesh.PixMesh,
+                                      quagmire.mesh.strimesh.sTriMesh)):
+                    if input == self:
+                        return node_integral
+                    else:
+                        return self.interpolate(input.coords[:,0], input.coords[:,1], zdata=node_integral)
+
+                elif isinstance(input, (tuple, list, np.ndarray)):
+                    input = np.array(input)
+                    input = np.reshape(input, (-1, 2))
+                    return self.interpolate(input[:,0], input[:,1], zdata=node_integral)
             else:
-                coords = np.array(args).reshape(-1,2)
-                i, ierr = self.interpolate(coords[:,0], coords[:,1], zdata=node_integral)
-                return i
+                return node_integral
 
         newLazyFn = _MeshFunction(name="int", mesh=self)
         newLazyFn.evaluate = integral_fn
