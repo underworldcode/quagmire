@@ -1,0 +1,21 @@
+# This is the environment needed to build stripy. As this will be cached, we can include any stripy dependencies
+# so they are not downloaded again - this should save a bit of time
+
+name: conda-build
+channels: 
+  - conda-forge
+dependencies:
+  - compilers
+  - libgfortran 
+  - pytest
+  - numpy>=1.16.0
+  - scipy>=1.0.0
+  - petsc4py
+  - h5py
+  - mpi4py
+  - petsc 
+  - pint 
+  - geo-down-under::stripy==2.0.5b2
+  - conda-build 
+  - conda-verify
+  - anaconda-client

@@ -1,0 +1,1273 @@
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Example 1 - creating structured and unstructured meshes &#8212; Quagmire.tex</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
+    <link href="../_static/css/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/spanels-index--0afa1ebdab0bb23b98b56d34c23d9f57.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/spanels-variables--ffc7f74dcb1b9eecba2dbcbc22818714.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/sphinx-book-theme.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="quagmire.mesh MeshVariable" href="Ex1a-QuagmireMeshVariables.html" />
+    <link rel="prev" title="Introduction to Quagmire" href="../FrontPage.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="docsearch:language" content="en">
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">Quagmire.tex</h1>
+  
+</a>
+</div>
+
+<form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../FrontPage.html">
+   Introduction to Quagmire
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Tutorial
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Example 1 - creating structured and unstructured meshes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#structured-grids">
+   Structured grids
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#unstructured-meshes">
+   Unstructured meshes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#elliptical-mesh">
+   Elliptical mesh
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#mesh-improvement">
+   Mesh improvement
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#mesh-refinement">
+   Mesh refinement
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#spherical-meshes">
+   Spherical meshes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#save-mesh-to-file">
+   Save mesh to file
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html">
+   quagmire.mesh MeshVariable
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html#derivatives-gradients">
+   Derivatives / gradients
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html#higher-derivatives">
+   Higher derivatives
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html#saving-and-loading-mesh-variables">
+   Saving and loading mesh variables
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1b-QuagmireLazyFunctions.html">
+   Quagmire.function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1b-QuagmireLazyFunctions.html#vector-functions">
+   Vector functions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1c-QuagmireCoordinateGeometry.html">
+   Quagmire.function.geometry
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1c-QuagmireCoordinateGeometry.html#naked-coordinate-systems">
+   Naked coordinate systems
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1c-QuagmireCoordinateGeometry.html#symbols">
+   Symbols
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1c-QuagmireCoordinateGeometry.html#the-same-sort-of-thing-but-with-some-mesh-variables">
+   The same sort of thing but with some mesh variables
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html">
+   quagmire.tools.cloud
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html#my-cloud">
+   My cloud ?
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html#my-cloud-but-not-cloudstor">
+   My cloud, but not cloudstor ?
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html#i-want-to-share-a-file-for-others-to-access">
+   I want to share a file for others to access
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html#upload-download-tools">
+   Upload / download tools
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex2-Topography-Meshes.html">
+   Example 2 - Meshes for Topography
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex2-Topography-Meshes.html#height-field">
+   Height field
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex2-Topography-Meshes.html#derivatives-and-slopes">
+   Derivatives and slopes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex2-Topography-Meshes.html#smoothing">
+   Smoothing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex3-Surface-Process-Meshes.html">
+   Example 3 - Meshes for Surface Process Models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex3-Surface-Process-Meshes.html#height-field-and-rainfall">
+   Height field and Rainfall
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex3-Surface-Process-Meshes.html#upstream-area-and-stream-power">
+   Upstream area and stream power
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex3-Surface-Process-Meshes.html#outflow-analysis">
+   Outflow analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html">
+   Example 4 - Matrix approaches - multiple paths
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html#build-a-test-mesh">
+   Build a test mesh
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html#downhill-neighbours">
+   1-2-3 downhill neighbours
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html#computational-efficiency">
+   Computational Efficiency
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html#dense-downhill-matrices">
+   Dense downhill matrices
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex5-PreprocessingSurfaces.html">
+   Example 5 - Preprocessing a surface
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex5-PreprocessingSurfaces.html#notebook-contents">
+   Notebook contents
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex6-Catchment-Analysis.html">
+   Example 6- Catchment analysis from the matrix transpose.
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex7-LinearDiffusion.html">
+   Linear diffusion - time evolution / benchmarking
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex7-LinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
+   Spatially variable diffusivity (circular “inclusion”)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex7a-NonLinearDiffusion.html">
+   Non-Linear diffusion - a critical-slope diffusion implementation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex7a-NonLinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
+   Spatially variable diffusivity (circular “inclusion”)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex8-ErosionDeposition.html">
+   Example 8 - Incision and Deposition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex9-LandscapeEvolution.html">
+   Example 9 - Landscape Evolution
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Worked Examples (Building landscapes from data)
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx1-ETOPO1-workflow.html">
+   Meshing ETOPO1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx1b-ETOPO1-highres-workflow.html">
+   Meshing ETOPO1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx2-ETOPO1-Tasmania.html">
+   Etopo1 Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html#retrieve-geoscience-australia-9s-dem-using-ga-wcs-service">
+   Retrieve Geoscience Australia 9s DEM using GA WCS service
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4-GADEM9H-Tasmania-Catchments.html#apply-pit-filling-local-flooding-swamp-filling-algorithm">
+   Apply pit filling / local-flooding / swamp filling algorithm
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4p-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4p-GADEM9H-Tasmania-Catchments.html#apply-pit-filling-local-flooding-swamp-filling-algorithm">
+   Apply pit filling / local-flooding / swamp filling algorithm
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4s-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4s-GADEM9H-Tasmania-Catchments.html#apply-pit-filling-local-flooding-swamp-filling-algorithm">
+   Apply pit filling / local-flooding / swamp filling algorithm
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx5-GlobalModels.html">
+   Models on the Sphere
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-Preliminary-crop.html">
+   Spherical mesh of Australia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-spherical-mesh-of-Australia.html">
+   Spherical mesh of Australia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-UsingStoredMeshes.html">
+   Models from the cloud
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx7-Diffusion.html">
+   Diffusion
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx7-Diffusion.html#let-s-try-letting-this-height-diffuse-with-time">
+   Let’s try letting this height diffuse with time
+  </a>
+ </li>
+</ul>
+
+</nav>
+
+ <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        <div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        <a class="dropdown-buttons"
+            href="../_sources/Tutorial/Ex1-Creating-Meshes.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download notebook file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/Tutorial/Ex1-Creating-Meshes.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+    
+</div>
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/underworldcode/quagmire"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/underworldcode/quagmire/dev?urlpath=tree/jupyterbook/Tutorial/Ex1-Creating-Meshes.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#contents">
+   Contents
+  </a>
+ </li>
+</ul>
+
+        </nav>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="example-1-creating-structured-and-unstructured-meshes">
+<h1>Example 1 - creating structured and unstructured meshes<a class="headerlink" href="#example-1-creating-structured-and-unstructured-meshes" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">Quagmire</span></code> can model surface processess on a structured rectangular grid or unstructured triangulated points. These use-cases are bundled into two objects:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PixMesh</span></code>: meshing on a rectangular grid</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TriMesh</span></code>: meshing on unstructured triangular points</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sTriMesh</span></code>: meshing on unstructured triangular points on the sphere</p></li>
+</ul>
+<p>All meshes are generated and handed to Quagmire using a <code class="docutils literal notranslate"><span class="pre">DM</span></code> object where the selection of <code class="docutils literal notranslate"><span class="pre">PixMesh</span></code>, <code class="docutils literal notranslate"><span class="pre">TriMesh</span></code>, or <code class="docutils literal notranslate"><span class="pre">sTriMesh</span></code> is identified automatically by <code class="docutils literal notranslate"><span class="pre">QuagMesh</span></code>. The following data structures are built:</p>
+<ul class="simple">
+<li><p>Delaunay triangulation</p></li>
+<li><p>node neighbour array</p></li>
+<li><p>pointwise area and weights</p></li>
+<li><p>boundary information</p></li>
+<li><p>Rbf smoothing kernel</p></li>
+</ul>
+<p>In this notebook we setup different <code class="docutils literal notranslate"><span class="pre">DM</span></code> objects using meshes found in the <code class="docutils literal notranslate"><span class="pre">quagmire.tools.meshtools</span></code> path and hand them to <code class="docutils literal notranslate"><span class="pre">QuagMesh</span></code>.</p>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="#Structured-grids">Structured grids</a></p></li>
+<li><p><a class="reference external" href="#Unstructured-meshes">Unstructued meshes</a></p></li>
+<li><p><a class="reference external" href="#Elliptical-mesh">Elliptical mesh</a></p></li>
+<li><p><a class="reference external" href="#Mesh-improvement">Mesh improvement</a></p></li>
+<li><p><a class="reference external" href="#Mesh-refinement">Mesh refinement</a></p></li>
+<li><p><a class="reference external" href="#Spherical-meshes">Spherical meshes</a></p></li>
+<li><p><a class="reference external" href="#Save-mesh-to-file">Save mesh to file</a></p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools</span> <span class="kn">import</span> <span class="n">meshtools</span>
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">21</span><span class="n">d1dda366d3</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">quagmire.tools</span> <span class="kn">import</span> <span class="n">meshtools</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;quagmire&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="structured-grids">
+<h1>Structured grids<a class="headerlink" href="#structured-grids" title="Permalink to this headline">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span>
+<span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span>
+
+<span class="n">resX</span> <span class="o">=</span> <span class="mi">75</span>
+<span class="n">resY</span> <span class="o">=</span> <span class="mi">75</span>
+
+<span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMDA</span><span class="p">(</span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span><span class="p">,</span> <span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span><span class="p">,</span> <span class="n">resX</span><span class="p">,</span> <span class="n">resY</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">DM</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">2</span><span class="o">-</span><span class="n">f8723a4bbf9c</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">resY</span> <span class="o">=</span> <span class="mi">75</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> 
+<span class="ne">----&gt; </span><span class="mi">7</span> <span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMDA</span><span class="p">(</span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span><span class="p">,</span> <span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span><span class="p">,</span> <span class="n">resX</span><span class="p">,</span> <span class="n">resY</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> 
+<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">DM</span><span class="p">))</span>
+
+<span class="ne">NameError</span>: name &#39;meshtools&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<p>This is a native PETSc data management object for structured grids (<code class="docutils literal notranslate"><span class="pre">DMDA</span></code>). This object has a number of
+useful methods and attached data which can be listed with</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">DM</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We hand this to <code class="docutils literal notranslate"><span class="pre">QuagMesh</span></code> to generate the necessary data structures for gradient operations, smoothing, neighbour allocation, etc.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">0108</span><span class="n">fa15765d</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">mesh</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;QuagMesh&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<p>We attach data to a mesh solely through mesh variables (see <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html"><span class="doc std std-doc">Example notebook</span></a> for details)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">mesh_variable</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data1&quot;</span><span class="p">)</span>
+    <span class="n">mesh_variable</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">mesh_variable</span><span class="o">.</span><span class="n">sync</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">sync</span></code> operation ensures data is coherent across processors -
+it is harmless and relatively inexpensive so is safe to use even
+in cases like this where there is no way for information to be out
+of sync between domains.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh_variable</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data1&quot;</span><span class="p">)</span>
+<span class="n">mesh_variable</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<span class="n">mesh_variable</span><span class="o">.</span><span class="n">sync</span><span class="p">()</span>
+
+<span class="n">mesh_variable2</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data2&quot;</span><span class="p">)</span>
+<span class="n">mesh_variable2</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> 
+<span class="n">mesh_variable2</span><span class="o">.</span><span class="n">sync</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">4</span><span class="o">-</span><span class="mi">57349</span><span class="n">c29d2bf</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">mesh_variable</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data1&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">mesh_variable</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">mesh_variable</span><span class="o">.</span><span class="n">sync</span><span class="p">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> 
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">mesh_variable2</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;data2&quot;</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;mesh&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
+
+<span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">500</span><span class="p">,</span><span class="mi">500</span><span class="p">],</span> <span class="n">near</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">)</span>
+
+<span class="n">lvmesh</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">quads</span><span class="p">(</span><span class="n">dims</span><span class="o">=</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">ny</span><span class="p">),</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">lvmesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+<span class="n">lvmesh</span><span class="o">.</span><span class="n">values</span><span class="p">(</span> <span class="n">mesh_variable</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;sinx&quot;</span><span class="p">)</span>
+<span class="n">lvmesh</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;#FF0000, #555555 #0000FF&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">])</span>
+
+<span class="c1"># The mesh can be given a height mapping like this</span>
+
+<span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">vertices</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span>
+<span class="n">vertices</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>   <span class="o">=</span> <span class="n">mesh_variable2</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="mf">0.5</span>
+
+<span class="n">lvmesh2</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">quads</span><span class="p">(</span><span class="n">dims</span><span class="o">=</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">ny</span><span class="p">),</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">lvmesh2</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span>
+<span class="n">lvmesh2</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">mesh_variable2</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="s2">&quot;sinxcosy&quot;</span><span class="p">)</span>
+<span class="n">lvmesh2</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;#FF0000, #FFFFFF:0.5 #0000FF&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">])</span>
+
+
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">Panel</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">ObjectList</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="n">a317088c1bc7</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">500</span><span class="p">,</span><span class="mi">500</span><span class="p">],</span> <span class="n">near</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> 
+<span class="ne">----&gt; </span><span class="mi">5</span> <span class="n">lvmesh</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">quads</span><span class="p">(</span><span class="n">dims</span><span class="o">=</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">ny</span><span class="p">),</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">lvmesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">lvmesh</span><span class="o">.</span><span class="n">values</span><span class="p">(</span> <span class="n">mesh_variable</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;sinx&quot;</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;mesh&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="unstructured-meshes">
+<h1>Unstructured meshes<a class="headerlink" href="#unstructured-meshes" title="Permalink to this headline">¶</a></h1>
+<p>This is handled by PETSc’s <code class="docutils literal notranslate"><span class="pre">DMPlex</span></code> object, which requires the connectivity of a set of points. The connectivity between points can be triangulated using the built-in mesh creation tools:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">simplices</span> <span class="o">=</span> <span class="n">square_mesh</span><span class="p">(</span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span><span class="p">,</span> <span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span><span class="p">,</span> <span class="n">spacingX</span><span class="p">,</span> <span class="n">spacingY</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">simplices</span> <span class="o">=</span> <span class="n">elliptical_mesh</span><span class="p">(</span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span><span class="p">,</span> <span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span><span class="p">,</span> <span class="n">spacingX</span><span class="p">,</span> <span class="n">spacingY</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and handed to <code class="docutils literal notranslate"><span class="pre">DMPlex</span></code> using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">simplices</span><span class="p">,</span> <span class="n">boundary_vertices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>Alternatively, an arbitrary set of points (without duplicates) can be triangulated and processed as a <code class="docutils literal notranslate"><span class="pre">DMPlex</span></code> object using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_points</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">bmask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If no boundary information is provided, the boundary is assumed to be the convex hull of points.</p>
+<div class="section" id="parallel-notes">
+<h2>Parallel notes<a class="headerlink" href="#parallel-notes" title="Permalink to this headline">¶</a></h2>
+<p>The triangulation from the root processor is distributed to other processors using the <code class="docutils literal notranslate"><span class="pre">DM</span></code> object, including boundary points and boundary edges. The mesh can be refined efficiently in parallel using the <code class="docutils literal notranslate"><span class="pre">refine_dm</span></code> method. The order of this operation is important:</p>
+<ol class="simple">
+<li><p>Triangulate points</p></li>
+<li><p>Mark boundary edges</p></li>
+<li><p>Distribute <code class="docutils literal notranslate"><span class="pre">DMPlex</span></code> to other processors</p></li>
+<li><p>Refine the mesh</p></li>
+</ol>
+</div>
+</div>
+<div class="section" id="elliptical-mesh">
+<h1>Elliptical mesh<a class="headerlink" href="#elliptical-mesh" title="Permalink to this headline">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">spacingX</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">spacingY</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">simplices</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">elliptical_mesh</span><span class="p">(</span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span><span class="p">,</span> <span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span><span class="p">,</span> <span class="n">spacingX</span><span class="p">,</span> <span class="n">spacingY</span><span class="p">)</span>
+<span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">simplices</span><span class="p">)</span>
+
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">)</span>
+
+
+<span class="n">mesh_equant</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">neighbour_cloud_distances</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">area</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="mi">81495</span><span class="n">bb9a432</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">spacingY</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> 
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">simplices</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">elliptical_mesh</span><span class="p">(</span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span><span class="p">,</span> <span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span><span class="p">,</span> <span class="n">spacingX</span><span class="p">,</span> <span class="n">spacingY</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">simplices</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> 
+
+<span class="ne">NameError</span>: name &#39;meshtools&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
+
+<span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">1000</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">near</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">)</span>
+
+<span class="c1"># lavavu also works in 3D - so need to stitch in a Z component  (zero or a height)</span>
+
+<span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">vertices</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span>
+<span class="c1"># vertices[:,2] = heights</span>
+
+<span class="n">bnodes</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="s2">&quot;Boundary Points&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">pointtype</span><span class="o">=</span><span class="s2">&quot;shiny&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="n">bnodes</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">vertices</span><span class="p">[</span><span class="o">~</span><span class="n">mesh</span><span class="o">.</span><span class="n">bmask</span><span class="p">])</span>
+
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="s2">&quot;All Points&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">pointtype</span><span class="o">=</span><span class="s2">&quot;shiny&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="n">nodes</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span>
+
+<span class="n">simp</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;Triangle Edges&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#442222&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="n">simp</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span>
+<span class="n">simp</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+
+<span class="n">tris</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;Triangle Areas&quot;</span><span class="p">,</span>  <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#77ff88&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">tris</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">vertices</span><span class="o">-</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.01</span><span class="p">))</span>
+<span class="n">tris</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+<span class="n">tris</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">mesh_equant</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;pointwise_area&quot;</span><span class="p">)</span>
+
+<span class="n">tris</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;#000000, #FFFFFF&quot;</span><span class="p">)</span>
+<span class="n">cb</span> <span class="o">=</span> <span class="n">tris</span><span class="o">.</span><span class="n">colourbar</span><span class="p">()</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">Panel</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">ObjectList</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">fcd6dd3d31ec</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="nn">      5 # lavavu also works in 3D - so need to stitch</span> in <span class="ni">a Z component  </span><span class="nt">(zero or a height)</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> 
+<span class="ne">----&gt; </span><span class="mi">7</span> <span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">3</span><span class="p">))</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">vertices</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="c1"># vertices[:,2] = heights</span>
+
+<span class="ne">NameError</span>: name &#39;np&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="mesh-improvement">
+<h1>Mesh improvement<a class="headerlink" href="#mesh-improvement" title="Permalink to this headline">¶</a></h1>
+<p>Applies Lloyd’s algorithm of iterated voronoi construction to improve the mesh point locations. This distributes the points to a more uniform spacing with more equant triangles. It can be very slow for anything but a small mesh. <a class="reference external" href="#Mesh-refinement">Refining</a> the mesh a few times will produce a large, well-spaced mesh.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bmask</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">bmask</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">lloyd_mesh_improvement</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">bmask</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_points</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">bmask</span><span class="p">)</span>
+
+<span class="n">mesh1</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="mi">8</span><span class="n">fb39863d05a</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">bmask</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">bmask</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> 
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">lloyd_mesh_improvement</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">bmask</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_points</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">bmask</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> 
+
+<span class="ne">NameError</span>: name &#39;mesh&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh1_equant</span> <span class="o">=</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">neighbour_cloud_distances</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mesh1</span><span class="o">.</span><span class="n">area</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">9</span><span class="o">-</span><span class="n">e9f85f30f409</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">mesh1_equant</span> <span class="o">=</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">neighbour_cloud_distances</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mesh1</span><span class="o">.</span><span class="n">area</span><span class="p">))</span>
+
+<span class="ne">NameError</span>: name &#39;mesh1&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
+
+<span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">1000</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">near</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">)</span>
+
+<span class="c1"># lavavu assumes 3D - so need to stitch in a Z component  (zero or a height)</span>
+
+<span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mesh1</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">vertices</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span>
+
+<span class="n">bnodes</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="s2">&quot;Boundary Points&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">pointtype</span><span class="o">=</span><span class="s2">&quot;shiny&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="n">bnodes</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">vertices</span><span class="p">[</span><span class="o">~</span><span class="n">mesh1</span><span class="o">.</span><span class="n">bmask</span><span class="p">])</span>
+
+<span class="n">simp</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;Triangle Edges&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#442222&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="n">simp</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span>
+<span class="n">simp</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh1</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+
+<span class="n">tris</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;Triangle Areas&quot;</span><span class="p">,</span>  <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#77ff88&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">tris</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">vertices</span><span class="o">-</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.01</span><span class="p">))</span>
+<span class="n">tris</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh1</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+<span class="n">tris</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">mesh1_equant</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;pointwise_area&quot;</span><span class="p">)</span>
+
+<span class="n">tris</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;#000000, #FFFFFF&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.9</span><span class="o">*</span><span class="n">mesh1_equant</span><span class="o">.</span><span class="n">mean</span><span class="p">()])</span>
+
+<span class="n">cb</span> <span class="o">=</span> <span class="n">tris</span><span class="o">.</span><span class="n">colourbar</span><span class="p">()</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">Panel</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">ObjectList</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="n">ef7ecad6ac7a</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="nn">      5 # lavavu assumes 3D - so need to stitch</span> in <span class="ni">a Z component  </span><span class="nt">(zero or a height)</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> 
+<span class="ne">----&gt; </span><span class="mi">7</span> <span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mesh1</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">3</span><span class="p">))</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">vertices</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> 
+
+<span class="ne">NameError</span>: name &#39;np&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Comparison of point-wise area for original and improved mesh</span>
+
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+
+<span class="n">ax1</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">mesh_equant</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">mesh1_equant</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;original mesh&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;improved mesh&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="n">b89b62338f9c</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> 
+<span class="ne">---&gt; </span><span class="mi">10</span> <span class="n">ax1</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">mesh_equant</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="n">ax2</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">mesh1_equant</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span> 
+
+<span class="ne">NameError</span>: name &#39;mesh_equant&#39; is not defined
+</pre></div>
+</div>
+<img alt="../_images/Ex1-Creating-Meshes_17_1.png" src="../_images/Ex1-Creating-Meshes_17_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="mesh-refinement">
+<h1>Mesh refinement<a class="headerlink" href="#mesh-refinement" title="Permalink to this headline">¶</a></h1>
+<p>Triangulating a large set of points on a single processor then distributing the mesh across multiple processors can be very slow. A more time effective workflow is to create an initial <code class="docutils literal notranslate"><span class="pre">DM</span></code> with a small number of points, then refine the mesh in parallel. This is achieved by adding the midpoint of each line segment to the mesh and can be iteratively refined until the desired level of detail is reached.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">refine_DM</span><span class="p">(</span><span class="n">dm</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">spacingX</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">spacingY</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">simplices</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">elliptical_mesh</span><span class="p">(</span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span><span class="p">,</span> <span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span><span class="p">,</span> <span class="n">spacingX</span><span class="p">,</span> <span class="n">spacingY</span><span class="p">)</span>
+<span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">simplices</span><span class="p">)</span>
+
+<span class="n">DM_r1</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">refine_DM</span><span class="p">(</span><span class="n">DM</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">DM_r2</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">refine_DM</span><span class="p">(</span><span class="n">DM</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="c1"># verbose=False turns off the timings</span>
+
+<span class="n">mesh0</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">mesh1</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM_r1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">mesh2</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM_r2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="n">v</span> <span class="o">=</span> <span class="n">DM_r1</span><span class="o">.</span><span class="n">getCoordinates</span><span class="p">()</span>
+<span class="n">v</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">4799</span><span class="n">b0a39694</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">spacingY</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> 
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">simplices</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">elliptical_mesh</span><span class="p">(</span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span><span class="p">,</span> <span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span><span class="p">,</span> <span class="n">spacingX</span><span class="p">,</span> <span class="n">spacingY</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">simplices</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> 
+
+<span class="ne">NameError</span>: name &#39;meshtools&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_points</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>    
+    <span class="n">lv_pts</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">lv_pts</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lv_pts</span>
+
+<span class="k">def</span> <span class="nf">plot_triangles</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">triangles</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">lv_tri</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">lv_tri</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+    <span class="n">lv_tri</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">triangles</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lv_tri</span>
+
+
+<span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">1000</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">near</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">)</span>
+
+<span class="n">bnodes0</span> <span class="o">=</span> <span class="n">plot_points</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh0</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="o">~</span><span class="n">mesh0</span><span class="o">.</span><span class="n">bmask</span><span class="p">],</span> <span class="s2">&quot;boundary_points_r0&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">bnodes1</span> <span class="o">=</span> <span class="n">plot_points</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="o">~</span><span class="n">mesh1</span><span class="o">.</span><span class="n">bmask</span><span class="p">],</span> <span class="s2">&quot;boundary_points_r1&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">bnodes2</span> <span class="o">=</span> <span class="n">plot_points</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh2</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="o">~</span><span class="n">mesh2</span><span class="o">.</span><span class="n">bmask</span><span class="p">],</span> <span class="s2">&quot;boundary_points_r2&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#336611&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">tri0</span> <span class="o">=</span> <span class="n">plot_triangles</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh0</span><span class="o">.</span><span class="n">coords</span><span class="p">,</span> <span class="n">mesh0</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">,</span> <span class="s2">&quot;mesh_r0&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+<span class="n">tri1</span> <span class="o">=</span> <span class="n">plot_triangles</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">coords</span><span class="p">,</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">,</span> <span class="s2">&quot;mesh_r1&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+<span class="n">tri2</span> <span class="o">=</span> <span class="n">plot_triangles</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh2</span><span class="o">.</span><span class="n">coords</span><span class="p">,</span> <span class="n">mesh2</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">,</span> <span class="s2">&quot;mesh_r2&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#336611&quot;</span><span class="p">)</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">Panel</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">ObjectList</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">13</span><span class="o">-</span><span class="n">c4d670338bdd</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">1000</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">near</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">14</span> 
+<span class="ne">---&gt; </span><span class="mi">15</span> <span class="n">bnodes0</span> <span class="o">=</span> <span class="n">plot_points</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh0</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="o">~</span><span class="n">mesh0</span><span class="o">.</span><span class="n">bmask</span><span class="p">],</span> <span class="s2">&quot;boundary_points_r0&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span> <span class="n">bnodes1</span> <span class="o">=</span> <span class="n">plot_points</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="o">~</span><span class="n">mesh1</span><span class="o">.</span><span class="n">bmask</span><span class="p">],</span> <span class="s2">&quot;boundary_points_r1&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="n">bnodes2</span> <span class="o">=</span> <span class="n">plot_points</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh2</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="o">~</span><span class="n">mesh2</span><span class="o">.</span><span class="n">bmask</span><span class="p">],</span> <span class="s2">&quot;boundary_points_r2&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#336611&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;mesh0&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<p>The DM contains two labels – “coarse” and “boundary” – which contain the vertices of boundary nodes and the unrefined mesh, respectively. They can be retrieved using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="s2">&quot;boundary&quot;</span><span class="p">)</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="s2">&quot;coarse&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or a new label can be set using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">&quot;my_label&quot;</span><span class="p">,</span> <span class="n">indices</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coarse_pts0</span> <span class="o">=</span> <span class="n">mesh0</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="s2">&quot;coarse&quot;</span><span class="p">)</span>
+<span class="n">coarse_pts1</span> <span class="o">=</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="s2">&quot;coarse&quot;</span><span class="p">)</span>
+<span class="n">coarse_pts2</span> <span class="o">=</span> <span class="n">mesh2</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="s2">&quot;coarse&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> boundary points&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">mesh0</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="s2">&quot;boundary&quot;</span><span class="p">))</span> <span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> boundary points&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">mesh1</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="s2">&quot;boundary&quot;</span><span class="p">))</span> <span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> boundary points&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">mesh2</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="s2">&quot;boundary&quot;</span><span class="p">))</span> <span class="p">))</span>
+
+
+<span class="c1"># the coarse point vertices should be identical</span>
+<span class="c1"># refinement adds new points to the end of the x,y arrays</span>
+
+<span class="nb">set</span><span class="p">(</span><span class="n">coarse_pts0</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">coarse_pts1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">coarse_pts2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">14</span><span class="o">-</span><span class="mf">804949e94</span><span class="n">e93</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">coarse_pts0</span> <span class="o">=</span> <span class="n">mesh0</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="s2">&quot;coarse&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">coarse_pts1</span> <span class="o">=</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="s2">&quot;coarse&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">coarse_pts2</span> <span class="o">=</span> <span class="n">mesh2</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="s2">&quot;coarse&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> 
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> boundary points&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">mesh0</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="s2">&quot;boundary&quot;</span><span class="p">))</span> <span class="p">))</span>
+
+<span class="ne">NameError</span>: name &#39;mesh0&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="spherical-meshes">
+<h1>Spherical meshes<a class="headerlink" href="#spherical-meshes" title="Permalink to this headline">¶</a></h1>
+<p>This unstructed mesh uses PETSc’s <code class="docutils literal notranslate"><span class="pre">DMPlex</span></code> object, and uses <a class="reference external" href="https://github.com/underworldcode/stripy">stripy</a> to triangulate on the unit sphere. Multiple meshes may be created, including:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_spherical_DMPlex</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">simplices</span><span class="p">,</span> <span class="n">boundary_vertices</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_spherical_points</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">simplices</span><span class="p">,</span> <span class="n">bmask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If no boundary information is provided, the boundary is calculated from any line segments that do not share a triangle with another.a</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">bmask</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">generate_elliptical_points</span><span class="p">(</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="o">-</span><span class="mi">80</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1500</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+<span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_spherical_points</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">bmask</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">DM_r1</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_spherical_points</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">bmask</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">DM_r2</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_spherical_points</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">bmask</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">mesh0</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">)</span>
+<span class="n">mesh1</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM_r1</span><span class="p">)</span>
+<span class="n">mesh2</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM_r2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">15</span><span class="o">-</span><span class="mi">76</span><span class="n">ede5c82484</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">bmask</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">generate_elliptical_points</span><span class="p">(</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="o">-</span><span class="mi">80</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1500</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> 
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_spherical_points</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">bmask</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">DM_r1</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_spherical_points</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">bmask</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">DM_r2</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_spherical_points</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">bmask</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;meshtools&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">1000</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">near</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">)</span>
+
+<span class="n">bnodes0</span> <span class="o">=</span> <span class="n">plot_points</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh0</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">mesh0</span><span class="o">.</span><span class="n">bmask</span><span class="p">],</span> <span class="s2">&quot;boundary_points_r0&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">bnodes1</span> <span class="o">=</span> <span class="n">plot_points</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">mesh1</span><span class="o">.</span><span class="n">bmask</span><span class="p">],</span> <span class="s2">&quot;boundary_points_r1&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">bnodes2</span> <span class="o">=</span> <span class="n">plot_points</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh2</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">mesh2</span><span class="o">.</span><span class="n">bmask</span><span class="p">],</span> <span class="s2">&quot;boundary_points_r2&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#336611&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">tri0</span> <span class="o">=</span> <span class="n">plot_triangles</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh0</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">mesh0</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">,</span> <span class="s2">&quot;mesh_r0&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+<span class="n">tri1</span> <span class="o">=</span> <span class="n">plot_triangles</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">,</span> <span class="s2">&quot;mesh_r1&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+<span class="n">tri2</span> <span class="o">=</span> <span class="n">plot_triangles</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh2</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">mesh2</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">,</span> <span class="s2">&quot;mesh_r2&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#336611&quot;</span><span class="p">)</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">Panel</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">ObjectList</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">16</span><span class="o">-</span><span class="mi">23</span><span class="n">d71f72863c</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">1000</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">near</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> 
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">bnodes0</span> <span class="o">=</span> <span class="n">plot_points</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh0</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">mesh0</span><span class="o">.</span><span class="n">bmask</span><span class="p">],</span> <span class="s2">&quot;boundary_points_r0&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">bnodes1</span> <span class="o">=</span> <span class="n">plot_points</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh1</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">mesh1</span><span class="o">.</span><span class="n">bmask</span><span class="p">],</span> <span class="s2">&quot;boundary_points_r1&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">bnodes2</span> <span class="o">=</span> <span class="n">plot_points</span><span class="p">(</span><span class="n">lv</span><span class="p">,</span> <span class="n">mesh2</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">mesh2</span><span class="o">.</span><span class="n">bmask</span><span class="p">],</span> <span class="s2">&quot;boundary_points_r2&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#336611&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;mesh0&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="save-mesh-to-file">
+<h1>Save mesh to file<a class="headerlink" href="#save-mesh-to-file" title="Permalink to this headline">¶</a></h1>
+<p>A mesh can be saved and imported later. The <code class="docutils literal notranslate"><span class="pre">QuagMesh</span></code> object has the <code class="docutils literal notranslate"><span class="pre">save_mesh_to_hdf5</span></code> method for this, as does <code class="docutils literal notranslate"><span class="pre">meshtools</span></code>.</p>
+<p><strong>Note:</strong> Requires PETSc 3.8 or higher</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;Ex1-refined_mesh.h5&quot;</span>
+
+<span class="c1"># save from QuagMesh object:</span>
+<span class="c1"># mesh2.save_mesh_to_hdf5(filename)</span>
+
+<span class="c1"># save from meshtools:</span>
+<span class="n">meshtools</span><span class="o">.</span><span class="n">save_DM_to_hdf5</span><span class="p">(</span><span class="n">DM_r2</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+<span class="c1"># load DM from file</span>
+<span class="n">DM_r2</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_hdf5</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+<span class="n">mesh2</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM_r2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">17</span><span class="o">-</span><span class="mi">6</span><span class="n">caea6c4ceaf</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> 
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="c1"># save from meshtools:</span>
+<span class="ne">----&gt; </span><span class="mi">7</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">save_DM_to_hdf5</span><span class="p">(</span><span class="n">DM_r2</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> 
+<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="c1"># load DM from file</span>
+
+<span class="ne">NameError</span>: name &#39;meshtools&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">mesh2</span><span class="o">.</span><span class="n">npoints</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mesh2</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">18</span><span class="o">-</span><span class="n">d3b6a7f9a253</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="nb">print</span><span class="p">(</span><span class="n">mesh2</span><span class="o">.</span><span class="n">npoints</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="nb">print</span><span class="p">(</span><span class="n">mesh2</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;mesh2&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<p>The next example is <a class="reference internal" href="Ex2-Topography-Meshes.html"><span class="doc std std-doc">Ex2-Topography-Meshes</span></a></p>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./Tutorial"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="../FrontPage.html" title="previous page">Introduction to Quagmire</a>
+    <a class='right-next' id="next-link" href="Ex1a-QuagmireMeshVariables.html" title="next page">quagmire.mesh MeshVariable</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Louis Moresi, Ben Mather, Romain Beucher<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    <script src="../_static/js/index.js"></script>
+    
+  </body>
+</html>

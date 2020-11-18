@@ -1,0 +1,26 @@
+# This is the environment needed to run the stripy examples in binder / thebe 
+# Note jupytext and other extensions to the server
+
+name: conda-build-docs
+channels: 
+  - conda-forge
+  - geo-down-under
+dependencies:
+  - geo-down-under::stripy==2.0.5b2  # won't fetch a beta unless forced
+  - geo-down-under::litho1pt0
+  - geo-down-under::quagmire=0.9.5b1
+  - matplotlib
+  - pyproj
+  - pyepsg
+  - h5netcdf
+  - netcdf4
+  - cartopy
+  - xarray
+  - xvfbwrapper  # to avoid errors 
+  - jupytext
+  - pip 
+  
+  - pip:
+    - jupyter-book
+    - lavavu
+
