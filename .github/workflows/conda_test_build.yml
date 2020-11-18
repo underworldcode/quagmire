@@ -33,7 +33,7 @@ jobs:
           path: |
             ~/conda_pkgs_dir
             ~/.cache/pip
-            
+
           key: ${{ matrix.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('.github/workflows/resources/conda_build_environment.yml') }}
 
       - name: Miniconda 
@@ -49,4 +49,4 @@ jobs:
         shell: bash -l {0}
         run: |
             conda config --set anaconda_upload no
-            conda-build --channel conda-forge  conda
+            conda-build --channel conda-forge conda
