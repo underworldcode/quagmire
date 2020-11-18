@@ -4,15 +4,8 @@
 name: conda-build
 channels: 
   - conda-forge
-  - geo-down-under
 dependencies:
-  - conda-forge::petsc4py
-  # - conda-forge::h5py
-  # - conda-forge::mpi4py
-  # - pint 
-  - geo-down-under::stripy==2.0.5b2
-  - fortran-compiler
-  - pytest
   - conda-build 
+  - conda-verify
 
 
