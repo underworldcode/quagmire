@@ -1,6 +1,5 @@
 ---
 jupytext:
-  formats: ../../Notebooks/WorkedExamples//ipynb,py:light
   text_representation:
     extension: .md
     format_name: myst

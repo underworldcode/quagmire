@@ -62,6 +62,7 @@ def test_mesh_variable_evaluation_4(DM):
     mesh2 = QuagMesh(DM, downhill_neighbours=1)
     meshVar = mesh.add_variable(name="meshVar")
     results = meshVar.evaluate(mesh2)
+
     assert(results.size == mesh.data[:, 0].size)
 
 def test_mesh_variable_properties(DM):
@@ -109,7 +110,7 @@ def test_mesh_variable_first_derivative(DM):
     phi.data = np.sin(mesh.coords[:,0])
     psi.data = np.cos(mesh.coords[:,0])
 
-    assert(np.isclose(phi.fn_gradient[0].evaluate([0.0,0.0]), psi.evaluate([0.0,0.0]), rtol=0.01))
+    assert(np.isclose(phi.derivative(0).evaluate([0.0,0.0]), psi.evaluate([0.0,0.0]), rtol=0.01))
 
 
     return
@@ -127,4 +128,4 @@ def test_mesh_variable_second_derivative(DM):
     phi.data = np.sin(mesh.coords[:,0])
     psi.data = np.cos(mesh.coords[:,0])
 
-    assert(np.isclose(phi.fn_gradient[0].fn_gradient[0].evaluate([0.0,0.0]), psi.fn_gradient[0].evaluate([0.0,0.0]), rtol=0.01))
+    assert(np.isclose(phi.derivative(0).derivative(0).evaluate([0.5,0.1]), psi.derivative(0).evaluate([0.5,0.1]), rtol=0.05))

@@ -163,7 +163,6 @@ def test_swamp_fill(DM):
     with mesh.deform_topography():
         mesh.topography.data = height
 
-
     # slope at idx should be zero everywhere, and non-zero where the landscape is repaired.
     # this does not happen in practise because there is a high slope at the boundary.
 

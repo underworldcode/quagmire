@@ -763,7 +763,9 @@ class MeshVariable(MeshFunction):
 
         if (len(args) == 1 and args[0] is self._mesh):
             return self._ldata.array
-        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, 
+                                                     quagmire.mesh.pixmesh.PixMesh,
+                                                     quagmire.mesh.strimesh.sTriMesh) ):
             mesh = args[0]
             return self._interpolate(mesh.coords[:,0], mesh.coords[:,1], **kwargs).reshape(-1)
         else:

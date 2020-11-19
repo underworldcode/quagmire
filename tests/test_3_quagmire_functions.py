@@ -23,15 +23,16 @@ def test_parameters():
 
     ## And this is how to update A
 
-    A.value = 100.0
-    assert fn.math.exp(A).evaluate() == np.exp(100.0)
+    A.value = 10.0
+    assert fn.math.exp(A).evaluate([0.0,0.0]) == np.exp(10.0)
 
     ## This works too ... and note the floating point conversion
-    A(101)
-    assert fn.math.exp(A).evaluate() == np.exp(101.0)
+
+    A(11)
+    assert fn.math.exp(A).evaluate([0.0,0.0]) == np.exp(11.0)
 
     ## More complicated examples
-    assert (fn.math.sin(A)**2.0 + fn.math.cos(A)**2.0).evaluate() == 1.0
+    assert (fn.math.sin(A)**2.0 + fn.math.cos(A)**2.0).evaluate([0.0,0.0]) == 1.0
 
 
 def test_fn_description():
@@ -43,11 +44,11 @@ def test_fn_description():
 
     ## These will flush out any changes in the interface
 
-    assert A.description == "10.0"
-    assert B.description == "3.0"
+    assert A.description == "10"
+    assert B.description == "3"
 
-    assert (fn.math.sin(A)+fn.math.cos(B)).description == "(sin(10.0))+(cos(3.0))"
-    assert (fn.math.sin(A)**2.0 + fn.math.cos(A)**2.0).description == "((sin(10.0))**(2.0))+((cos(10.0))**(2.0))"
+    assert (fn.math.sin(A)+fn.math.cos(B)).description == "sin(10) + cos(3)"
+    assert (fn.math.sin(A)**2.0 + fn.math.cos(A)**2.0).description == "sin(10)^2 + cos(10)^2"
 
 
 def test_fn_description_derivatives(DM):
@@ -56,11 +57,12 @@ def test_fn_description_derivatives(DM):
 
     PHI = mesh.add_variable(name="PHI")
 
-    description = PHI.fn_gradient.__repr__()
-    assert description.endswith("d({0})/dX,d({0})/dY".format("PHI"))
+    description = PHI.derivative(0).description
+    assert description == 'grad(PHI)|x0'
 
-    description = PHI.fn_gradient[0].__repr__()
-    assert description.endswith("d({0})/dX".format("PHI"))
+    description = PHI.derivative(1).description
+    assert description == 'grad(PHI)|x1'
+
 
 
 def test_fn_mesh_variables(DM):
@@ -92,7 +94,7 @@ def test_fn_first_derivative(DM):
     phi = fn.math.sin(fn_xcoord)
     psi = fn.math.cos(fn_xcoord)
 
-    assert(np.isclose(phi.fn_gradient[0].evaluate([0.0,0.0]), psi.evaluate([0.0,0.0]), rtol=0.01))
+    assert(np.isclose(phi.derivative(0).evaluate([0.0,0.0]), psi.evaluate([0.0,0.0]), rtol=0.01))
 
 def test_fn_second_derivative(DM):
 
@@ -102,7 +104,7 @@ def test_fn_second_derivative(DM):
     phi = fn.math.sin(fn_xcoord)
     psi = fn.math.cos(fn_xcoord)
 
-    assert(np.isclose(phi.fn_gradient[0].fn_gradient[0].evaluate([0.0,0.0]), psi.fn_gradient[0].evaluate([0.0,0.0]), rtol=0.01))
+    assert(np.isclose(phi.derivative(0).derivative(0).evaluate([0.0,0.0]), psi.derivative(0).evaluate([0.0,0.0]), rtol=0.05))
 
 
 def test_fn_math(DM):
@@ -111,12 +113,10 @@ def test_fn_math(DM):
 
     psi = mesh.add_variable(name="PSI")
     psi.data = mesh.coords[:,0]
+    dx, dy = psi.grad()
 
-    dx, dy = fn.math.grad(psi)
-
-    fn.math.curl(dx, dy).evaluate(mesh)
-    fn.math.div(dx, dy).evaluate(mesh)
-    fn.math.curl(dx, dy).evaluate(mesh)
+    # fn.math.div(dx, dy).evaluate(mesh)
+    # fn.math.curl(dx, dy).evaluate(mesh)
     fn.math.hypot(dx, dy).evaluate(mesh)
     fn.math.arctan2(dx, dy).evaluate(mesh)
 

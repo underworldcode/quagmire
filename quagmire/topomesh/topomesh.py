@@ -58,6 +58,8 @@ class TopoMesh(object):
 
         self._heightVariable = self.topography
 
+        self.slope = self.topography.fn_gradient("Slope")
+
 
 
     @property
@@ -1119,12 +1121,11 @@ class TopoMesh(object):
         return outflow_nodes
 
 
+# This seems to be out of date 
     def identify_flat_spots(self):
 
-        slope = self.slope.evaluate(self.slope._mesh)
+        slope = self.slope.evaluate(self.topography._mesh)
         smooth_grad1 = self.local_area_smoothing(slope, its=1, centre_weight=0.5)
-
-        # flat_spot_field = np.where(smooth_grad1 < smooth_grad1.max()/100, 0.0, 1.0)
 
         flat_spots = np.where(smooth_grad1 < smooth_grad1.max()/1000.0, True, False)
 

@@ -71,8 +71,11 @@ def load_pixelated_mesh_DM():
 
 @pytest.fixture(scope="module", params=["PixMesh", "TriMesh", "sTriMesh"])
 def load_multi_mesh_DM(request, load_pixelated_mesh_DM, load_triangulated_mesh_DM, load_triangulated_spherical_mesh_DM):
+    
     DM_dict = {"PixMesh": load_pixelated_mesh_DM, \
                "TriMesh": load_triangulated_mesh_DM, \
               "sTriMesh": load_triangulated_spherical_mesh_DM }
+    
     DM_type = request.param
+    
     return DM_dict[DM_type]

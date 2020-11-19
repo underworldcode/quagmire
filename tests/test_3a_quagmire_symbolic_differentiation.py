@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import pytest
 
 # ==========================
@@ -88,10 +87,11 @@ def test_fn_description():
     B = fn.math.sin(A * X)
 
     ## These will flush out any changes in the interface
-
+    
     assert B.description == 'sin(10*X)'
-    assert B.derivative(0).description == 'cos(10*X)*10'
+    assert B.derivative(0).description == '10*cos(10*X)'
     assert B.derivative(1).description == '0'
+    
 
 
 def test_fn_derivative_values():
@@ -126,8 +126,10 @@ def test_fn_derivatives_defined():
 
     assert np.fabs((SX**2 + CX**2).evaluate(random(),random()) - 1.0)  < 1.0e-8
     assert SX.derivative(0).evaluate(0.0,0.0) == 1.0 
+    
+    print(CX2.derivative(0).description)
 
-    assert CX2.derivative(0).description == '-sin(X^2)*2*X'
+    assert CX2.derivative(0).description == '-2*X*sin(X^2)'
     assert CX2.derivative(1).description == '0'
 
     ## Some random collection of things that should not throw errors
@@ -145,6 +147,7 @@ def test_fn_derivatives_defined():
     ### Continue to exhaustion here 
 
     return
+
 
 def test_fn_derivative_meshvar(DM):
 
@@ -171,7 +174,7 @@ def test_fn_derivative_meshvar(DM):
 
     PHI.data = (S * T * X * Y).evaluate(mesh)
 
-    assert fn.math.sin(P).derivative(0).description == 'cos(PHI*X^2)*(d(PHI)/dX*X^2 + PHI*2*X)'
+    assert fn.math.sin(P).derivative(0).description == '(grad(PHI)|x0*X^2 + PHI*2*X)*cos(PHI*X^2)'
 
     ## Should be able to evaluate at mesh, points in the form of tuple, list or array, points as 2 args
     ## Check the raw variable and the derivative
@@ -204,8 +207,8 @@ def test_fn_derivative_meshvar(DM):
 
     ## Check symbolic representation is reasonable
 
-    assert P.derivative(0).description == 'd(PHI)/dX*X^2 + PHI*2*X'
-    assert P.derivative(1).description == 'd(PHI)/dY*X^2'
+    assert P.derivative(0).description == 'grad(PHI)|x0*X^2 + PHI*2*X'
+    assert P.derivative(1).description == 'grad(PHI)|x1*X^2'
 
     F = SX2 + CX2 + SX**2 + CX**2
 
@@ -215,7 +218,7 @@ def test_fn_derivative_meshvar(DM):
     return
 
 
-## Test nested derivatives ... the chain rule should be OK but object recursion may be tricky for some cases
+# Test nested derivatives ... the chain rule should be OK but object recursion may be tricky for some cases
 
 def test_higher_derivatives(DM):
 
@@ -244,7 +247,7 @@ def test_higher_derivatives(DM):
     dF2dY2  = F.derivative(1).derivative(1)  # This one should be the derivative of a constant 
 
     assert dF2dXdY.description == '0'
-    assert dF2dX2.description == '-sin(X^2)*2*X*2*X + cos(X^2)*2 + -1*cos(X^2)*2*X*2*X + -sin(X^2)*2 + 2*-sin(X)*sin(X) + 2*cos(X)*cos(X) + 2*-1*cos(X)*cos(X) + 2*-sin(X)*-sin(X)'
+    assert dF2dX2.description == '2*cos(X^2) + 2*X*-2*X*sin(X^2) + -2*sin(X^2) + -2*X*2*X*cos(X^2) + 2*-1*sin(X)*sin(X) + 2*cos(X)*cos(X) + 2*-1*cos(X)*cos(X) + 2*-1*sin(X)*-1*sin(X)'
 
     # check these don't fail (numeric)
 
@@ -254,12 +257,12 @@ def test_higher_derivatives(DM):
 
     ## Triple nesting
 
-    assert PHI.derivative(0).derivative(0).derivative(1).description == 'd(d(d(PHI)/dX)/dX)/dY'
+    assert PHI.derivative(0).derivative(0).derivative(1).description == 'd(d(grad(PHI)|x0)/d0)/dY'
 
     # Mixtures of symbolic plus numeric
 
     FP = PHI * SX2 + PHI**2 * CX2 + SX**2 + CX**2 
-    assert FP.derivative(1).derivative(0).description == 'd(d(PHI)/dY)/dX*sin(X^2) + d(PHI)/dY*cos(X^2)*2*X + (2*d(d(PHI)/dY)/dX*PHI + 2*d(PHI)/dY*d(PHI)/dX)*cos(X^2) + 2*d(PHI)/dY*PHI*-sin(X^2)*2*X'
+    assert FP.derivative(1).derivative(0).description == 'd(grad(PHI)|x1)/d0*sin(X^2) + grad(PHI)|x1*2*X*cos(X^2) + (2*d(grad(PHI)|x1)/d0*PHI + 2*grad(PHI)|x1*grad(PHI)|x0)*cos(X^2) + 2*grad(PHI)|x1*PHI*-2*X*sin(X^2)'
 
     FP.derivative(1).derivative(0).evaluate(0.0,0.0)    
     FP.derivative(1).derivative(0).evaluate(mesh2)

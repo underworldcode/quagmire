@@ -1,11 +1,10 @@
 ---
 jupytext:
-  formats: Notebooks/Tutorial//ipynb,Examples/Tutorial//py:light
   text_representation:
     extension: .md
     format_name: myst
     format_version: 0.12
-    jupytext_version: 1.6.0
+    jupytext_version: 1.7.1
 kernelspec:
   display_name: Python 3
   language: python
@@ -33,14 +32,13 @@ In this notebook we setup a height field and calculate its derivatives on an uns
 - [Upstream area and stream power](#Upstream-area-and-stream-power)
 - [Hill slopes](#Derivatives-and-slopes)
 
-
-```{code-cell}
+```{code-cell} ipython3
 from quagmire.tools import meshtools
 from quagmire import QuagMesh, QuagMesh
 from quagmire import function as fn
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 import matplotlib.pyplot as plt
 import numpy as np
 # from scipy.ndimage import imread
@@ -49,7 +47,7 @@ import numpy as np
 %matplotlib inline
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 minX, maxX = -5.0, 5.0
 minY, maxY = -5.0, 5.0,
 dx, dy = 0.02, 0.02
@@ -59,7 +57,7 @@ x, y, simplices = meshtools.elliptical_mesh(minX, maxX, minY, maxY, dx, dy)
 DM = meshtools.create_DMPlex_from_points(x, y, bmask=None)
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 mesh = QuagMesh(DM, downhill_neighbours=1)
 
 print ("Triangulation has {} points".format(mesh.npoints))
@@ -69,7 +67,7 @@ print ("Triangulation has {} points".format(mesh.npoints))
 
 We generate a cylindrically symmetry domed surface and add multiple channels incised along the boundary. The height and slope fields reside as attributes on the `QuagMesh` instance.
 
-```{code-cell}
+```{code-cell} ipython3
 radius  = np.sqrt((x**2 + y**2))
 theta   = np.arctan2(y,x) + 0.1
 
@@ -78,7 +76,7 @@ height  += 0.5 * (1.0-0.2*radius)
 height  += np.random.random(height.size) * 0.01 # random noise
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 # This fails because the topography variable is locked
 mesh.topography.data = height
 
@@ -90,13 +88,18 @@ with mesh.deform_topography():
     mesh.topography.data = height + 0.01
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 mesh.topography.data
+```
+
+```{code-cell} ipython3
+s = mesh.slope
+s
 ```
 
 ## Derivatives and slopes
 
-The slope of the topography is defined through a built in function `mesh.fn_slope` (which was described in the Functions notebook). Other gradients are available through the usual quagmire mathematics functions. 
+The slope of the topography is defined through a built in lazy-evaluate function `mesh.slope` (which was described in the Functions notebook). Other gradients are available through the usual quagmire mathematics functions. 
 
 ---
 
@@ -106,8 +109,6 @@ If you want more control of the underlying operations, derivatives can also be e
 dfdx, dfdy = mesh.derivative_grad(f, nit=10, tol=1e-8):
 ```
 where `nit` and `tol` control the convergence criteria.
-
-
 
 +++
 
@@ -131,14 +132,13 @@ print(rbf1.smooth_fn(height, iterations=1).evaluate(0.0,0.0))
 print(rbf01.smooth_fn(rainfall, iterations=1).evaluate(0.0,0.0))
 ```
 
-
-```{code-cell}
+```{code-cell} ipython3
 rbf005 = mesh.build_rbf_smoother(0.05, 1)
 rbf010 = mesh.build_rbf_smoother(0.10, 1)
 rbf050 = mesh.build_rbf_smoother(0.50, 1)
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 rbf_slope005 = rbf005.smooth_fn(mesh.slope).evaluate(mesh)
 rbf_slope010 = rbf010.smooth_fn(mesh.slope).evaluate(mesh)
 rbf_slope050 = rbf050.smooth_fn(mesh.slope).evaluate(mesh)
@@ -146,7 +146,7 @@ rbf_slope050 = rbf050.smooth_fn(mesh.slope).evaluate(mesh)
 
 **NOTE** - Building the RBF smoothing machinery is expensive and cannot be reused if the kernel properties are changed. We therefore have a two-stage implementation which builds and caches the smoothing matrices and defines a quagmire function that can be used in the usual way.
 
-```{code-cell}
+```{code-cell} ipython3
 import lavavu
 
 points = np.column_stack([mesh.tri.points, height])
@@ -171,6 +171,6 @@ tri1.control.List(options=["slope", "smooth_slope_a", "smooth_slope_b", "smooth_
 lv.control.show()
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 
 ```

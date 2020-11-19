@@ -15,15 +15,16 @@ def test_derivatives_and_interpolation(DM):
     height = mesh.add_variable(name="h(x,y)")
     height.data = mesh.coords[:,0]**2 + mesh.coords[:,1]**2
 
-    dhdx = height.fn_gradient[0]
-    dhdy = height.fn_gradient[1]
+    dhdx = height.derivative(0)
+    dhdy = height.derivative(1)
 
-    dhdx.evaluate()
-    dhdx.evaluate()
+    dhdx.evaluate(mesh)
+    dhdx.evaluate(mesh)
 
     # interpolate onto a straight line
-    # bounding box should be [-5,5,-5,5]
-    xy_pts = np.linspace(0,3,10)
+    # bounding box should be [-5,5,-5,5]  (not on the sphere ... )
+    
+    xy_pts = np.linspace(0,1.5,10)
     icoords = np.column_stack([xy_pts, xy_pts])
 
     interp_x = dhdx.evaluate(icoords)
@@ -34,6 +35,7 @@ def test_derivatives_and_interpolation(DM):
 
     assert ascending_x, "Derivative evaluation failed in the x direction"
     assert ascending_y, "Derivative evaluation failed in the y direction"
+    
 
 
 def test_smoothing(DM):
