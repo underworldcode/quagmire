@@ -25,7 +25,7 @@ meshes, pre-computed topography etc can be provided. These are typically too lar
 # Let the fs package be directly available to users
 
 import fs
-from webdavfs.webdavfs import WebDAVFS
+# from webdavfs.webdavfs import WebDAVFS
 
 
 def verify_cloud_fs(cloud_fs_location):
