@@ -39,7 +39,7 @@ test:
     - pytest 
 
   source_files:
-      - quagmire/tests
+      - tests
 
   commands:
     - pytest
