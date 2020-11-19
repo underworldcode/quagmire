@@ -6,7 +6,7 @@ on:
   push:
     branches: 
       - master 
-      - dev
+      # - dev
 
   workflow_run:
     workflows: ["Conda Deployment"]
@@ -50,7 +50,7 @@ jobs:
         shell: bash -l {0}
         run: |
           VERSION=`python setup.py --version`
-          conda install -c geo-down-under quagmire 
+          conda install -c geo-down-under quagmire==0.9.5b1
           # That will install what we need, now blast it with the source in this repo
           pip install -e .
   
