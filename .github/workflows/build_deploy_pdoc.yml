@@ -46,8 +46,7 @@ jobs:
         shell: bash -l {0}
         run: |
           VERSION=`python setup.py --version`
-          conda install -c geo-down-under quagmire==0.9.5b1
-          # That will install what we need, now blast it with the source in this repo
+          # install latest quagmire via conda, then over-ride with this source code
           pip install -e .
 
       - name: Build docs with pdoc

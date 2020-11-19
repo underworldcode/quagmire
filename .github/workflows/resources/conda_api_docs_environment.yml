@@ -6,6 +6,7 @@ channels:
   - conda-forge
   - geo-down-under
 dependencies:
+  - compilers
   - geo-down-under::quagmire==0.9.5b1 # latest would be better if not in beta !
   - pdoc3
   - fs 
