@@ -6,6 +6,7 @@ channels:
   - conda-forge
   - geo-down-under
 dependencies:
+  - compilers
   - numpy>=1.16.0
   - scipy>=1.0.0
   - pdoc3
