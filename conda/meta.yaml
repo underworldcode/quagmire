@@ -30,6 +30,23 @@ requirements:
     - mpi4py
     - h5py
     - pint
+    - fs
+    - fs.webdavfs
+
+
+test:
+  requires:
+    - pytest 
+
+  source_files:
+      - quagmire/tests
+
+  commands:
+    - pytest
+
+
+
+    
 
 about:
   home: "https://github.com/underworldcode/quagmire"
