@@ -6,8 +6,8 @@ channels:
   - conda-forge
   - geo-down-under
 dependencies:
-  - compilers
   - geo-down-under::quagmire==0.9.5b1 # latest would be better if not in beta !
+  - conda-forge::fortran-compiler
   - pdoc3
   - fs 
   - fs.webdavfs
