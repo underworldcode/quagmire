@@ -1,0 +1,964 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quagmire.function.geometry &#8212; Quagmire.tex</title>
+    
+  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="quagmire.tools.cloud" href="Ex1d-QuagmireCloud.html" />
+    <link rel="prev" title="Quagmire.function" href="Ex1b-QuagmireLazyFunctions.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">Quagmire.tex</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../FrontPage.html">
+   Introduction to Quagmire
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Tutorial
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html">
+   Example 1 - creating structured and unstructured meshes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#structured-grids">
+   Structured grids
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#unstructured-meshes">
+   Unstructured meshes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#elliptical-mesh">
+   Elliptical mesh
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#mesh-improvement">
+   Mesh improvement
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#mesh-refinement">
+   Mesh refinement
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#spherical-meshes">
+   Spherical meshes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#save-mesh-to-file">
+   Save mesh to file
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html">
+   quagmire.mesh MeshVariable
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html#derivatives-gradients">
+   Derivatives / gradients
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html#higher-derivatives">
+   Higher derivatives
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html#saving-and-loading-mesh-variables">
+   Saving and loading mesh variables
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1b-QuagmireLazyFunctions.html">
+   Quagmire.function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1b-QuagmireLazyFunctions.html#vector-functions">
+   Vector functions
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Quagmire.function.geometry
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#naked-coordinate-systems">
+   Naked coordinate systems
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#symbols">
+   Symbols
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#the-same-sort-of-thing-but-with-some-mesh-variables">
+   The same sort of thing but with some mesh variables
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html">
+   quagmire.tools.cloud
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html#my-cloud">
+   My cloud ?
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html#my-cloud-but-not-cloudstor">
+   My cloud, but not cloudstor ?
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html#i-want-to-share-a-file-for-others-to-access">
+   I want to share a file for others to access
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html#upload-download-tools">
+   Upload / download tools
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex2-Topography-Meshes.html">
+   Example 2 - Meshes for Topography
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex2-Topography-Meshes.html#height-field">
+   Height field
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex2-Topography-Meshes.html#derivatives-and-slopes">
+   Derivatives and slopes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex2-Topography-Meshes.html#smoothing">
+   Smoothing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex3-Surface-Process-Meshes.html">
+   Example 3 - Meshes for Surface Process Models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex3-Surface-Process-Meshes.html#height-field-and-rainfall">
+   Height field and Rainfall
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex3-Surface-Process-Meshes.html#upstream-area-and-stream-power">
+   Upstream area and stream power
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex3-Surface-Process-Meshes.html#outflow-analysis">
+   Outflow analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html">
+   Example 4 - Matrix approaches - multiple paths
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html#build-a-test-mesh">
+   Build a test mesh
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html#downhill-neighbours">
+   1-2-3 downhill neighbours
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html#computational-efficiency">
+   Computational Efficiency
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html#dense-downhill-matrices">
+   Dense downhill matrices
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex5-PreprocessingSurfaces.html">
+   Example 5 - Preprocessing a surface
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex5-PreprocessingSurfaces.html#notebook-contents">
+   Notebook contents
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex6-Catchment-Analysis.html">
+   Example 6- Catchment analysis from the matrix transpose.
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex7-LinearDiffusion.html">
+   Linear diffusion - time evolution / benchmarking
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex7-LinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
+   Spatially variable diffusivity (circular “inclusion”)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex7a-NonLinearDiffusion.html">
+   Non-Linear diffusion - a critical-slope diffusion implementation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex7a-NonLinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
+   Spatially variable diffusivity (circular “inclusion”)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex8-ErosionDeposition.html">
+   Example 8 - Incision and Deposition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex9-LandscapeEvolution.html">
+   Example 9 - Landscape Evolution
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Worked Examples (Building landscapes from data)
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx1-ETOPO1-workflow.html">
+   Meshing ETOPO1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx1b-ETOPO1-highres-workflow.html">
+   Meshing ETOPO1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx2-ETOPO1-Tasmania.html">
+   Etopo1 Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html#retrieve-geoscience-australia-9s-dem-using-ga-wcs-service">
+   Retrieve Geoscience Australia 9s DEM using GA WCS service
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4-GADEM9H-Tasmania-Catchments.html#apply-pit-filling-local-flooding-swamp-filling-algorithm">
+   Apply pit filling / local-flooding / swamp filling algorithm
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4p-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4p-GADEM9H-Tasmania-Catchments.html#apply-pit-filling-local-flooding-swamp-filling-algorithm">
+   Apply pit filling / local-flooding / swamp filling algorithm
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4s-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4s-GADEM9H-Tasmania-Catchments.html#apply-pit-filling-local-flooding-swamp-filling-algorithm">
+   Apply pit filling / local-flooding / swamp filling algorithm
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx5-GlobalModels.html">
+   Models on the Sphere
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-Preliminary-crop.html">
+   Spherical mesh of Australia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-spherical-mesh-of-Australia.html">
+   Spherical mesh of Australia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-UsingStoredMeshes.html">
+   Models from the cloud
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx7-Diffusion.html">
+   Diffusion
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx7-Diffusion.html#let-s-try-letting-this-height-diffuse-with-time">
+   Let’s try letting this height diffuse with time
+  </a>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        <a class="dropdown-buttons"
+            href="../_sources/Tutorial/Ex1c-QuagmireCoordinateGeometry.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download notebook file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/Tutorial/Ex1c-QuagmireCoordinateGeometry.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/underworldcode/quagmire"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/underworldcode/quagmire/dev?urlpath=tree/jupyterbook/Tutorial/Ex1c-QuagmireCoordinateGeometry.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Quagmire.function.geometry
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#naked-coordinate-systems">
+   Naked coordinate systems
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#vector-operators">
+     Vector operators
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#symbols">
+   Symbols
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-same-sort-of-thing-but-with-some-mesh-variables">
+   The same sort of thing but with some mesh variables
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="quagmire-function-geometry">
+<h1>Quagmire.function.geometry<a class="headerlink" href="#quagmire-function-geometry" title="Permalink to this headline">¶</a></h1>
+<p>Quagmire mesh variables are numerically differentiable and the various operators defined in the quagmire functions module also support limited (symbolic) differentiation</p>
+<p>This is to allow the construction of more complicated operators that are equivalent on the flat plane and the surface of the spehre.</p>
+<p>This functionality is supported through the <code class="docutils literal notranslate"><span class="pre">quagmire.function.geometry</span></code> package.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">quagmire.function</span> <span class="kn">import</span> <span class="n">display</span>
+
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span> 
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">tools</span> <span class="k">as</span> <span class="n">meshtools</span>
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">function</span> <span class="k">as</span> <span class="n">fn</span>
+<span class="kn">from</span> <span class="nn">quagmire.function</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+
+<span class="kn">import</span> <span class="nn">lavavu</span>
+<span class="kn">import</span> <span class="nn">stripy</span>
+<span class="n">comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="naked-coordinate-systems">
+<h1>Naked coordinate systems<a class="headerlink" href="#naked-coordinate-systems" title="Permalink to this headline">¶</a></h1>
+<p>Quagmire supports flat 2D meshes and logically 2D meshes on the surface of a sphere. When a mesh is defined, it attaches a geometry to itself which is the starting point for computing
+any differential operators that include mesh variables. It is also possible to access the coordinate system definitions directly to see how the various operators are defined. Let us first
+access a simple, 2D, Cartesian Coordinate Geometry</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CartesianCoordinates</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">CartesianCoordinates2D</span><span class="p">()</span>
+<span class="n">SphericalCoordinates</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">SphericalSurfaceLonLat2D</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># These are the coordinate directions is symbolic form. They are also functions that </span>
+<span class="c1"># mask the appropriate member of a coordinate tuple</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">CartesianCoordinates</span><span class="o">.</span><span class="n">xi0</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">CartesianCoordinates</span><span class="o">.</span><span class="n">xi1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">2.0</span><span class="p">))</span>
+
+<span class="c1"># Another example:</span>
+
+<span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">points</span><span class="p">))</span>
+
+<span class="n">S</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># These are equivalent</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.0 2.0
+[0.         0.33069396 0.66138793 0.99208189 1.32277585 1.65346982
+ 1.98416378 2.31485774 2.64555171 2.97624567 3.30693964 3.6376336
+ 3.96832756 4.29902153 4.62971549 4.96040945 5.29110342 5.62179738
+ 5.95249134 6.28318531]
+[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="vector-operators">
+<h2>Vector operators<a class="headerlink" href="#vector-operators" title="Permalink to this headline">¶</a></h2>
+<p>Partial differential equations are often the balancing of gradients of different quantities. The physical gradients may be very different when expressed in different coordinate systems and therefore we have to be careful to develop coordinate-independent expression for gradients that appear in PDEs. We do this by constructing operators such as div, grad, curl and the Laplacian that are expressed independently of the geometry but understand the underlying coordinate system.</p>
+<p>When we calculate a derivative, they should be symbolically equivalent but the gradients are not.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">CoordinateSystem</span> <span class="ow">in</span> <span class="p">[</span><span class="n">CartesianCoordinates</span><span class="p">,</span> <span class="n">SphericalCoordinates</span><span class="p">]:</span>
+    
+    <span class="n">xi0</span> <span class="o">=</span> <span class="n">CoordinateSystem</span><span class="o">.</span><span class="n">xi0</span>
+    <span class="n">xi1</span> <span class="o">=</span> <span class="n">CoordinateSystem</span><span class="o">.</span><span class="n">xi1</span>
+    
+    <span class="c1">## Derivatives:</span>
+    
+    <span class="n">A</span> <span class="o">=</span> <span class="n">xi0</span> <span class="o">*</span> <span class="n">fn</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">xi0</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span>  <span class="n">xi1</span> <span class="o">*</span> <span class="n">fn</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">xi1</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span>  <span class="n">xi0</span> <span class="o">*</span> <span class="n">xi1</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Derivatives&quot;</span><span class="p">)</span>
+    <span class="n">ddx0</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ddx1</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">ddx0</span><span class="p">)</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">ddx1</span><span class="p">)</span>
+
+    <span class="n">gradA</span> <span class="o">=</span> <span class="n">CoordinateSystem</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Grad 0&quot;</span><span class="p">)</span>
+    <span class="n">gradA</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Grad 1&quot;</span><span class="p">)</span>
+    <span class="n">gradA</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;div.grad&quot;</span><span class="p">)</span>
+    <span class="n">CoordinateSystem</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">gradA</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Laplacian&quot;</span><span class="p">)</span>
+    <span class="n">CoordinateSystem</span><span class="o">.</span><span class="n">laplacian</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>  <span class="c1"># Note this is written for variable coefficient problems</span>
+
+    <span class="n">CoordinateSystem</span><span class="o">.</span><span class="n">laplacian</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">xi0</span><span class="o">*</span><span class="n">xi1</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>  <span class="c1">## Neater for display purposes only</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Derivatives
+</pre></div>
+</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \sin\left(x^{2}\right) \, + \, x \;2 \;x \;\cos\left(x^{2}\right) \, + \, y\]</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \sin\left(y^{2}\right) \, + \, y \;2 \;y \;\cos\left(y^{2}\right) \, + \, x\]</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Grad 0
+</pre></div>
+</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \sin\left(x^{2}\right) \, + \, x \;2 \;x \;\cos\left(x^{2}\right) \, + \, y\]</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Grad 1
+</pre></div>
+</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \sin\left(y^{2}\right) \, + \, y \;2 \;y \;\cos\left(y^{2}\right) \, + \, x\]</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>div.grad
+</pre></div>
+</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle 2 \;x \;\cos\left(x^{2}\right) \, + \, 2 \;x \;\cos\left(x^{2}\right) \, + \, x \;(2 \;\cos\left(x^{2}\right) \, + \, 2 \;x \;-2 \;x \;\sin\left(x^{2}\right)) \, + \, 2 \;y \;\cos\left(y^{2}\right) \, + \, 2 \;y \;\cos\left(y^{2}\right) \, + \, y \;(2 \;\cos\left(y^{2}\right) \, + \, 2 \;y \;-2 \;y \;\sin\left(y^{2}\right))\]</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Laplacian
+</pre></div>
+</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle 2 \;x \;\cos\left(x^{2}\right) \, + \, 2 \;x \;\cos\left(x^{2}\right) \, + \, x \;(2 \;\cos\left(x^{2}\right) \, + \, 2 \;x \;-2 \;x \;\sin\left(x^{2}\right)) \, + \, 2 \;y \;\cos\left(y^{2}\right) \, + \, 2 \;y \;\cos\left(y^{2}\right) \, + \, y \;(2 \;\cos\left(y^{2}\right) \, + \, 2 \;y \;-2 \;y \;\sin\left(y^{2}\right))\]</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \nabla \left( x \;y \cdot \nabla \left(  x \;\sin\left(x^{2}\right) \, + \, y \;\sin\left(y^{2}\right) \, + \, x \;y \right)\right)\]</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Derivatives
+</pre></div>
+</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \sin\left(\theta^{2}\right) \, + \, \theta \;2 \;\theta \;\cos\left(\theta^{2}\right) \, + \, \phi' \]</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \sin\left(\phi' ^{2}\right) \, + \, \phi'  \;2 \;\phi'  \;\cos\left(\phi' ^{2}\right) \, + \, \theta\]</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Grad 0
+</pre></div>
+</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \frac{ \sin\left(\theta^{2}\right) \, + \, \theta \;2 \;\theta \;\cos\left(\theta^{2}\right) \, + \, \phi'  }{ \cos\left(\phi' \right)  }\]</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Grad 1
+</pre></div>
+</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \sin\left(\phi' ^{2}\right) \, + \, \phi'  \;2 \;\phi'  \;\cos\left(\phi' ^{2}\right) \, + \, \theta\]</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>div.grad
+</pre></div>
+</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \frac{ \frac{ 2 \;\theta \;\cos\left(\theta^{2}\right) \, + \, 2 \;\theta \;\cos\left(\theta^{2}\right) \, + \, \theta \;(2 \;\cos\left(\theta^{2}\right) \, + \, 2 \;\theta \;-2 \;\theta \;\sin\left(\theta^{2}\right)) }{ \cos\left(\phi' \right)  } }{ \cos\left(\theta\right)  } \, + \, \frac{ (2 \;\phi'  \;\cos\left(\phi' ^{2}\right) \, + \, 2 \;\phi'  \;\cos\left(\phi' ^{2}\right) \, + \, \phi'  \;(2 \;\cos\left(\phi' ^{2}\right) \, + \, 2 \;\phi'  \;-2 \;\phi'  \;\sin\left(\phi' ^{2}\right))) \;\cos\left(\theta\right) }{ \cos\left(\theta\right)  }\]</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Laplacian
+</pre></div>
+</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \frac{ \frac{ 2 \;\theta \;\cos\left(\theta^{2}\right) \, + \, 2 \;\theta \;\cos\left(\theta^{2}\right) \, + \, \theta \;(2 \;\cos\left(\theta^{2}\right) \, + \, 2 \;\theta \;-2 \;\theta \;\sin\left(\theta^{2}\right)) }{ \cos\left(\phi' \right)  } }{ \cos\left(\theta\right)  } \, + \, \frac{ (2 \;\phi'  \;\cos\left(\phi' ^{2}\right) \, + \, 2 \;\phi'  \;\cos\left(\phi' ^{2}\right) \, + \, \phi'  \;(2 \;\cos\left(\phi' ^{2}\right) \, + \, 2 \;\phi'  \;-2 \;\phi'  \;\sin\left(\phi' ^{2}\right))) \;\cos\left(\theta\right) }{ \cos\left(\theta\right)  }\]</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \nabla \left( \theta \;\phi'  \cdot \nabla \left(  \theta \;\sin\left(\theta^{2}\right) \, + \, \phi'  \;\sin\left(\phi' ^{2}\right) \, + \, \theta \;\phi'  \right)\right)\]</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="symbols">
+<h1>Symbols<a class="headerlink" href="#symbols" title="Permalink to this headline">¶</a></h1>
+<p>These are placeholders for developing a function that you can then substitute later. This is most useful as an aid to debugging functions …</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">k0</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;k_0&quot;</span><span class="p">,</span> <span class="n">lname</span><span class="o">=</span><span class="s2">&quot;k_0&quot;</span><span class="p">)</span>
+<span class="n">k1</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;k_1&quot;</span><span class="p">,</span> <span class="n">lname</span><span class="o">=</span><span class="s2">&quot;k_1&quot;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">((</span><span class="n">k0</span><span class="p">,</span> <span class="n">k1</span><span class="p">))</span>
+
+<span class="n">H</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">fn</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">k0</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">k0</span><span class="o">/</span><span class="p">(</span><span class="n">k1</span><span class="o">+</span><span class="n">x</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">H</span><span class="o">.</span><span class="n">evaluate</span><span class="p">((</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">1.0</span><span class="p">))</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot evaluate H ... try making a subsitution&quot;</span><span class="p">)</span>
+
+<span class="n">k0</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">k1</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">))</span>
+
+
+<span class="n">display</span><span class="p">(</span><span class="n">k1</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;H evaluated at (0.1,1.0): &quot;</span><span class="p">,</span><span class="n">H</span><span class="o">.</span><span class="n">evaluate</span><span class="p">((</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle k_0\]</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle k_1\]</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle x \;\sin\left(k_0 \;x \, + \, \frac{ k_0 }{ k_1 \, + \, x  }\right)\]</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Cannot evaluate H ... try making a subsitution
+</pre></div>
+</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \left\{  k_1 \leftarrow 0.0001\right\}\]</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle x \;\sin\left(\left\{  k_0 \leftarrow 4\right\} \;x \, + \, \frac{ \left\{  k_0 \leftarrow 4\right\} }{ \left\{  k_1 \leftarrow 0.0001\right\} \, + \, x  }\right)\]</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>H evaluated at (0.1,1.0):  [0.04623685]
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="the-same-sort-of-thing-but-with-some-mesh-variables">
+<h1>The same sort of thing but with some mesh variables<a class="headerlink" href="#the-same-sort-of-thing-but-with-some-mesh-variables" title="Permalink to this headline">¶</a></h1>
+<p>Mesh variables have an associated geometry that they obtain from their mesh and they have some numerical differentiation routines
+that are used when a derivative or gradient needs to be evaluated.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Add a mesh</span>
+
+<span class="n">st0</span> <span class="o">=</span> <span class="n">stripy</span><span class="o">.</span><span class="n">spherical_meshes</span><span class="o">.</span><span class="n">icosahedral_mesh</span><span class="p">(</span><span class="n">refinement_levels</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">include_face_points</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">dm</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_spherical_DMPlex</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">st0</span><span class="o">.</span><span class="n">lons</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">st0</span><span class="o">.</span><span class="n">lats</span><span class="p">),</span> <span class="n">st0</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">dm</span><span class="p">,</span> <span class="n">downhill_neighbours</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">permute</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">lon</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">xi0</span>
+<span class="n">lat</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">xi1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: sTriMesh
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.38492066499998145s
+0 - Calculate node weights and area 0.04904606600001671s
+0 - Find boundaries 0.0026932210000154555s
+0 - cKDTree 0.026738717999990058s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 1.239985425000043s, (0.8704484030000117s + 0.36948792399999775s)
+0 - Construct rbf weights 0.06221786800000473s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">F</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="n">lname</span><span class="o">=</span><span class="s2">&quot;\cal</span><span class="si">{F}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">l0</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>
+<span class="n">l1</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="n">G</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">l0</span> <span class="o">*</span> <span class="n">fn</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lon</span><span class="p">))</span> <span class="o">*</span> <span class="n">fn</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">l1</span> <span class="o">*</span> <span class="n">fn</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat</span><span class="p">))</span>
+<span class="n">F</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<span class="n">G</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \cal{F}\left(\theta,\phi' \right)\]</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \cos\left(5 \;\frac{\pi}{180}\theta\right) \;\sin\left(2 \;\frac{\pi}{180}\phi' \right)\]</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">fn_gradient</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">G</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \frac{ -0.0873 \;\sin\left(5 \;\frac{\pi}{180}\theta\right) \;\sin\left(2 \;\frac{\pi}{180}\phi' \right) }{ \cos\left(\phi' \right)  }\]</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle -0.0873 \;\sin\left(5 \;\frac{\pi}{180}\theta\right) \;\sin\left(2 \;\frac{\pi}{180}\phi' \right)\]</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \frac{ -0.0873 \;\sin\left(5 \;\frac{\pi}{180}\theta\right) \;\sin\left(2 \;\frac{\pi}{180}\phi' \right) }{ \cos\left(\phi' \right)  }\]</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Something with symbols we can substitute</span>
+
+<span class="n">m0</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;m_0&quot;</span><span class="p">,</span> <span class="n">lname</span><span class="o">=</span><span class="s2">&quot;m_0&quot;</span><span class="p">)</span>
+<span class="n">m1</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;m_1&quot;</span><span class="p">,</span> <span class="n">lname</span><span class="o">=</span><span class="s2">&quot;m_1&quot;</span><span class="p">)</span>
+
+<span class="n">H</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">m0</span> <span class="o">*</span> <span class="n">fn</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lon</span><span class="p">))</span> <span class="o">*</span> <span class="n">fn</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">m1</span> <span class="o">*</span> <span class="n">fn</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat</span><span class="p">))</span>
+<span class="n">H</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+<span class="n">m0</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">F</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">m1</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">F</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">H</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+<span class="n">m0</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">F</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">m1</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">F</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">H</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+
+<span class="c1"># G.fn_gradient(1)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \cos\left(m_0 \;\frac{\pi}{180}\theta\right) \;\sin\left(m_1 \;\frac{\pi}{180}\phi' \right)\]</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \cos\left(\left\{  m_0 \leftarrow \cal{F}\left(\theta,\phi' \right)^{2}\right\} \;\frac{\pi}{180}\theta\right) \;\sin\left(\left\{  m_1 \leftarrow \cal{F}\left(\theta,\phi' \right)^{4}\right\} \;\frac{\pi}{180}\phi' \right)\]</div>
+<div class="output text_latex math notranslate nohighlight">
+\[\displaystyle \cos\left(\left\{  m_0 \leftarrow \cal{F}\left(\theta,\phi' \right) \, + \, 1\right\} \;\frac{\pi}{180}\theta\right) \;\sin\left(\left\{  m_1 \leftarrow \cal{F}\left(\theta,\phi' \right) - 1\right\} \;\frac{\pi}{180}\phi' \right)\]</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">H</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([-1.        , -0.09259669,  0.03942575, ...,  0.34680752,
+        0.40071064,  0.23890213])
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./Tutorial"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="Ex1b-QuagmireLazyFunctions.html" title="previous page">Quagmire.function</a>
+    <a class='right-next' id="next-link" href="Ex1d-QuagmireCloud.html" title="next page">quagmire.tools.cloud</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Louis Moresi, Ben Mather, Romain Beucher<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>

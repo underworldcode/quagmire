@@ -1,0 +1,1324 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Example 6- Catchment analysis from the matrix transpose. &#8212; Quagmire.tex</title>
+    
+  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Linear diffusion - time evolution / benchmarking" href="Ex7-LinearDiffusion.html" />
+    <link rel="prev" title="Example 5 - Preprocessing a surface" href="Ex5-PreprocessingSurfaces.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">Quagmire.tex</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../FrontPage.html">
+   Introduction to Quagmire
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Tutorial
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html">
+   Example 1 - creating structured and unstructured meshes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#structured-grids">
+   Structured grids
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#unstructured-meshes">
+   Unstructured meshes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#elliptical-mesh">
+   Elliptical mesh
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#mesh-improvement">
+   Mesh improvement
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#mesh-refinement">
+   Mesh refinement
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#spherical-meshes">
+   Spherical meshes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1-Creating-Meshes.html#save-mesh-to-file">
+   Save mesh to file
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html">
+   quagmire.mesh MeshVariable
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html#derivatives-gradients">
+   Derivatives / gradients
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html#higher-derivatives">
+   Higher derivatives
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html#saving-and-loading-mesh-variables">
+   Saving and loading mesh variables
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1b-QuagmireLazyFunctions.html">
+   Quagmire.function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1b-QuagmireLazyFunctions.html#vector-functions">
+   Vector functions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1c-QuagmireCoordinateGeometry.html">
+   Quagmire.function.geometry
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1c-QuagmireCoordinateGeometry.html#naked-coordinate-systems">
+   Naked coordinate systems
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1c-QuagmireCoordinateGeometry.html#symbols">
+   Symbols
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1c-QuagmireCoordinateGeometry.html#the-same-sort-of-thing-but-with-some-mesh-variables">
+   The same sort of thing but with some mesh variables
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html">
+   quagmire.tools.cloud
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html#my-cloud">
+   My cloud ?
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html#my-cloud-but-not-cloudstor">
+   My cloud, but not cloudstor ?
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html#i-want-to-share-a-file-for-others-to-access">
+   I want to share a file for others to access
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex1d-QuagmireCloud.html#upload-download-tools">
+   Upload / download tools
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex2-Topography-Meshes.html">
+   Example 2 - Meshes for Topography
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex2-Topography-Meshes.html#height-field">
+   Height field
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex2-Topography-Meshes.html#derivatives-and-slopes">
+   Derivatives and slopes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex2-Topography-Meshes.html#smoothing">
+   Smoothing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex3-Surface-Process-Meshes.html">
+   Example 3 - Meshes for Surface Process Models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex3-Surface-Process-Meshes.html#height-field-and-rainfall">
+   Height field and Rainfall
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex3-Surface-Process-Meshes.html#upstream-area-and-stream-power">
+   Upstream area and stream power
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex3-Surface-Process-Meshes.html#outflow-analysis">
+   Outflow analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html">
+   Example 4 - Matrix approaches - multiple paths
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html#build-a-test-mesh">
+   Build a test mesh
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html#downhill-neighbours">
+   1-2-3 downhill neighbours
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html#computational-efficiency">
+   Computational Efficiency
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html#dense-downhill-matrices">
+   Dense downhill matrices
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex5-PreprocessingSurfaces.html">
+   Example 5 - Preprocessing a surface
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex5-PreprocessingSurfaces.html#notebook-contents">
+   Notebook contents
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Example 6- Catchment analysis from the matrix transpose.
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex7-LinearDiffusion.html">
+   Linear diffusion - time evolution / benchmarking
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex7-LinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
+   Spatially variable diffusivity (circular “inclusion”)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex7a-NonLinearDiffusion.html">
+   Non-Linear diffusion - a critical-slope diffusion implementation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex7a-NonLinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
+   Spatially variable diffusivity (circular “inclusion”)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex8-ErosionDeposition.html">
+   Example 8 - Incision and Deposition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Ex9-LandscapeEvolution.html">
+   Example 9 - Landscape Evolution
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Worked Examples (Building landscapes from data)
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx1-ETOPO1-workflow.html">
+   Meshing ETOPO1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx1b-ETOPO1-highres-workflow.html">
+   Meshing ETOPO1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx2-ETOPO1-Tasmania.html">
+   Etopo1 Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html#retrieve-geoscience-australia-9s-dem-using-ga-wcs-service">
+   Retrieve Geoscience Australia 9s DEM using GA WCS service
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4-GADEM9H-Tasmania-Catchments.html#apply-pit-filling-local-flooding-swamp-filling-algorithm">
+   Apply pit filling / local-flooding / swamp filling algorithm
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4p-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4p-GADEM9H-Tasmania-Catchments.html#apply-pit-filling-local-flooding-swamp-filling-algorithm">
+   Apply pit filling / local-flooding / swamp filling algorithm
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4s-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4s-GADEM9H-Tasmania-Catchments.html#apply-pit-filling-local-flooding-swamp-filling-algorithm">
+   Apply pit filling / local-flooding / swamp filling algorithm
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx5-GlobalModels.html">
+   Models on the Sphere
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-Preliminary-crop.html">
+   Spherical mesh of Australia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-spherical-mesh-of-Australia.html">
+   Spherical mesh of Australia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-UsingStoredMeshes.html">
+   Models from the cloud
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx7-Diffusion.html">
+   Diffusion
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx7-Diffusion.html#let-s-try-letting-this-height-diffuse-with-time">
+   Let’s try letting this height diffuse with time
+  </a>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        <a class="dropdown-buttons"
+            href="../_sources/Tutorial/Ex6-Catchment-Analysis.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download notebook file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/Tutorial/Ex6-Catchment-Analysis.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/underworldcode/quagmire"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/underworldcode/quagmire/dev?urlpath=tree/jupyterbook/Tutorial/Ex6-Catchment-Analysis.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#notebook-contents">
+   Notebook contents
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#construct-the-swamp-mountain-mesh">
+   Construct the swamp-mountain mesh
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#process-the-surface-to-fill-swamps-and-lakes">
+   Process the surface to fill swamps and lakes
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#locating-and-viewing-the-outflow-points">
+   Locating and viewing the outflow points
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#set-neighbours-to-1-and-compute-uphill-connectivity">
+   Set neighbours to 1 and compute “uphill” connectivity
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#visualise-the-catchment-information">
+   Visualise the catchment information
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="example-6-catchment-analysis-from-the-matrix-transpose">
+<h1>Example 6- Catchment analysis from the matrix transpose.<a class="headerlink" href="#example-6-catchment-analysis-from-the-matrix-transpose" title="Permalink to this headline">¶</a></h1>
+<p>We start with “Swamp Mountain” from the previous notebooks. This is slightly modified so that there are no lakes / pits right at the boundary.</p>
+<p>The catchments are identified by first finding all the outflow points of the mesh (local minima that correspond to the boundary mask) and then using the transpose of the downhill-propagation matrix <span class="math notranslate nohighlight">\(D^T\)</span> to run information (the unique ID of each outflow points) up to the top of the catchment.</p>
+<p>The stopping condition is that no further change occurs.</p>
+<p><em>Note</em> in the context of multiple pathways, this operation produces a fuzzy catchment. The first thing we do in this notebook is to specify <code class="docutils literal notranslate"><span class="pre">downhill_neighbours=1</span></code></p>
+<div class="section" id="notebook-contents">
+<h2>Notebook contents<a class="headerlink" href="#notebook-contents" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="#1-2-3-downhill-neighbours">1-2-3 downhill neighbours</a></p></li>
+<li><p><a class="reference external" href="#Set-neighbours-to-1-and-compute-%22uphill%22-connectivity">Upstream propogation</a></p></li>
+<li><p><a class="reference external" href="#Dense-downhill-matrices">Dense downhill matrices</a></p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">tools</span> <span class="k">as</span> <span class="n">meshtools</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="construct-the-swamp-mountain-mesh">
+<h2>Construct the swamp-mountain mesh<a class="headerlink" href="#construct-the-swamp-mountain-mesh" title="Permalink to this headline">¶</a></h2>
+<p>This time we take care to avoid lakes etc on the boundaries as this makes the catchment analysis more complicated. Visualise the mesh to make sure that this works.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span> 
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span> <span class="c1"># all routines we need are within this class</span>
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span>
+
+<span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span>
+<span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span>
+
+<span class="n">spacingX</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">spacingY</span> <span class="o">=</span> <span class="mf">0.05</span>
+
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">simplices</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">elliptical_mesh</span><span class="p">(</span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span><span class="p">,</span> <span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span><span class="p">,</span> <span class="n">spacingX</span><span class="p">,</span> <span class="n">spacingY</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+
+<span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">simplices</span><span class="p">)</span>
+<span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">refine_DM</span><span class="p">(</span><span class="n">DM</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">,</span> <span class="n">downhill_neighbours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Note ... this is what refinement does </span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Number of points in the triangulation: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">npoints</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.5679670110000075s
+0 - Calculate node weights and area 0.01946778799998583s
+0 - Find boundaries 0.004364871000007042s
+0 - cKDTree 0.038908770000034565s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 1.058089241999994s, (0.5668912149999983s + 0.49115241800001286s)
+0 - Construct rbf weights 0.10038998300001367s
+
+Number of points in the triangulation: 156925
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">radius</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">theta</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="mf">0.1</span>
+
+<span class="n">height</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.025</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.2</span><span class="o">*</span><span class="n">radius</span><span class="p">)</span><span class="o">**</span><span class="mi">4</span>  <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">5.0</span><span class="o">*</span><span class="n">theta</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="c1">## Less so</span>
+<span class="n">height</span>  <span class="o">+=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="mf">0.2</span><span class="o">*</span><span class="n">radius</span><span class="p">)</span>
+<span class="n">height</span>  <span class="o">-=</span> <span class="n">height</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+
+<span class="c1">## Add smoothed random noise to make some &quot;lakes&quot; </span>
+
+<span class="n">mesh</span><span class="o">.</span><span class="n">_construct_rbf_weights</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="n">mesh</span><span class="o">.</span><span class="n">delta</span><span class="o">*</span><span class="mf">3.0</span><span class="p">)</span>
+
+<span class="n">randpts1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">height</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">&gt;</span><span class="mf">0.995</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">hrand1</span>   <span class="o">=</span> <span class="mf">20.0</span> <span class="o">*</span> <span class="n">mesh</span><span class="o">.</span><span class="n">rbf_smoother</span><span class="p">(</span><span class="n">randpts1</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">heightn</span> <span class="o">=</span> <span class="n">height</span> <span class="o">+</span> <span class="n">hrand1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">radius</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">15.0</span><span class="p">)</span> 
+
+
+<span class="k">with</span> <span class="n">mesh</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
+    <span class="n">mesh</span><span class="o">.</span><span class="n">downhill_neighbours</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">heightn</span>
+
+
+<span class="c1"># let&#39;s use a rainfall proportional to height (any choice is ok)</span>
+
+<span class="n">rainfall_fn</span>  <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topography</span> <span class="o">**</span> <span class="mf">2.0</span>
+<span class="n">flowrate_fn</span>  <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">rainfall_fn</span><span class="p">)</span>
+<span class="n">str_power_fn</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">rainfall_fn</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">mesh</span><span class="o">.</span><span class="n">slope</span> <span class="o">**</span> <span class="mf">2.0</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.22303867299996227s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.31932925600000317s
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="process-the-surface-to-fill-swamps-and-lakes">
+<h2>Process the surface to fill swamps and lakes<a class="headerlink" href="#process-the-surface-to-fill-swamps-and-lakes" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Quagmire also has a swamp filling algorithm</span>
+
+<span class="n">mesh1s</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
+    <span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span>
+    
+<span class="n">mesh1s</span><span class="o">.</span><span class="n">low_points_local_patch_fill</span><span class="p">(</span><span class="n">its</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">smoothing_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">50</span><span class="p">):</span>
+    <span class="n">mesh1s</span><span class="o">.</span><span class="n">low_points_swamp_fill</span><span class="p">(</span><span class="n">ref_height</span><span class="o">=-</span><span class="mf">0.01</span><span class="p">)</span>
+    
+    <span class="c1"># In parallel, we can&#39;t break if ANY processor has work to do (barrier / sync issue)</span>
+    <span class="n">low_points2</span> <span class="o">=</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">identify_global_low_points</span><span class="p">()</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">low_points2</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="n">low_points2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">break</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.5188420999999721s
+0 - Calculate node weights and area 0.014606468000010864s
+0 - Find boundaries 0.0033126509999874543s
+0 - cKDTree 0.03656298099997457s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 1.0411325559999796s, (0.558402338999997s + 0.48268250799998214s)
+0 - Construct rbf weights 0.07824083899998868s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19708472999997184s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.31959672600004296s
+Low point local patch fill
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.1973713190000126s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.1969466379999858s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19829789599998549s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.1973649999999907s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.1968054929999994s
+Low point local patch fill  1.173423979000006  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.3241186770000013s
+105  iterations, time =  0.14079667200002177
+Build low point catchments -  0.14168694100004586  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.012013881000029869
+0  Gather spill data -  0.00015923000000839238
+0  Sort all spills -  0.00013402500002257511
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.20445663100002776s
+Low point swamp fill  0.5115893969999661  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.5696544890000155s
+0 : 41
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>237  iterations, time =  0.3023617470000204
+Build low point catchments -  0.303224809000028  seconds
+0  Sort spills -  0.006310189000032551
+0  Gather spill data -  0.0004272799999966992
+0  Sort all spills -  0.00030445800001643875
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.20413184599999568s
+Low point swamp fill  0.6044271369999592  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6689164430000005s
+1 : 18
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>331  iterations, time =  0.4084601859999566
+Build low point catchments -  0.40948247700004003  seconds
+0  Sort spills -  0.0037161939999919014
+0  Gather spill data -  0.00010852100001557119
+0  Sort all spills -  6.911299999501352e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19928902000003745s
+Low point swamp fill  0.6726935349999508  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6711581680000336s
+2 : 14
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>332  iterations, time =  0.40754501800000753
+Build low point catchments -  0.408486790999973  seconds
+0  Sort spills -  0.0028131170000165184
+0  Gather spill data -  0.0001225230000159172
+0  Sort all spills -  8.031400000163558e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.1973005339999645s
+Low point swamp fill  0.6622073890000024  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6734621829999696s
+3 : 8
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.43487554200004297
+Build low point catchments -  0.43593983699997807  seconds
+0  Sort spills -  0.0020692769999755
+0  Gather spill data -  0.00011122000000796106
+0  Sort all spills -  7.021300001497366e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.20071035199998732s
+Low point swamp fill  0.6872899129999723  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6793812120000098s
+4 : 5
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.4189342550000106
+Build low point catchments -  0.4198991289999867  seconds
+0  Sort spills -  0.0012330230000543452
+0  Gather spill data -  0.0003648660000408199
+0  Sort all spills -  0.00029335300001775977
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19675353100001303s
+Low point swamp fill  0.6590005080000196  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6831289329999777s
+5 : 3
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.4170332250000115
+Build low point catchments -  0.417992895999987  seconds
+0  Sort spills -  0.001228317999959927
+0  Gather spill data -  0.00037566700001434583
+0  Sort all spills -  0.0002930520000177239
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19697537800004739s
+Low point swamp fill  0.6564278359999776  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6769896870000025s
+6 : 3
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.42897793500003445
+Build low point catchments -  0.4299745110000117  seconds
+0  Sort spills -  0.0005489970000098765
+0  Gather spill data -  0.0001225209999802246
+0  Sort all spills -  7.141200001115067e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19621054999998933s
+Low point swamp fill  0.6633951119999892  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6836806439999918s
+7 : 3
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.42018416600001274
+Build low point catchments -  0.42111782899996797  seconds
+0  Sort spills -  0.0005725999999981468
+0  Gather spill data -  0.0001230209999789622
+0  Sort all spills -  7.811400001855873e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19675351900002624s
+Low point swamp fill  0.6554323060000229  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6772639590000153s
+8 : 2
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.41574400299998615
+Build low point catchments -  0.4167364730000145  seconds
+0  Sort spills -  0.0005775989999960984
+0  Gather spill data -  0.00010581799995179608
+0  Sort all spills -  5.9710999948947574e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19715184699998645s
+Low point swamp fill  0.6514816760000031  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6892582659999675s
+9 : 2
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.41616294600004267
+Build low point catchments -  0.41713771299998825  seconds
+0  Sort spills -  0.000587499999994634
+0  Gather spill data -  0.0001077179999811051
+0  Sort all spills -  5.791000000954227e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.1965829650000046s
+Low point swamp fill  0.6512015580000252  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.689234574000011s
+10 : 2
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.4148284250000529
+Build low point catchments -  0.4157596819999867  seconds
+0  Sort spills -  0.0005772979999960626
+0  Gather spill data -  0.0003675620000080926
+0  Sort all spills -  0.00029084900000952985
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19718122299997276s
+Low point swamp fill  0.6498012270000117  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6853703179999684s
+11 : 3
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.41689767000002576
+Build low point catchments -  0.41787183100001357  seconds
+0  Sort spills -  0.0005504910000126984
+0  Gather spill data -  0.00010881899999048983
+0  Sort all spills -  5.9710000016366394e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19690107999997508s
+Low point swamp fill  0.6523096420000343  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6756257490000053s
+12 : 3
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.418003490999979
+Build low point catchments -  0.4189926550000109  seconds
+0  Sort spills -  0.0005518910000432697
+0  Gather spill data -  0.00010651700000607889
+0  Sort all spills -  5.380900000773181e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.1964438289999748s
+Low point swamp fill  0.6534022310000296  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6760035040000503s
+13 : 2
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.41705825700000787
+Build low point catchments -  0.41802911499996753  seconds
+0  Sort spills -  0.0005475890000070649
+0  Gather spill data -  0.00010441699998864351
+0  Sort all spills -  6.09090000125434e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.1957522759999506s
+Low point swamp fill  0.6518599040000481  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6758822599999803s
+14 : 2
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.4229936340000222
+Build low point catchments -  0.4239814929999852  seconds
+0  Sort spills -  0.0005447880000133409
+0  Gather spill data -  0.0001051169999755075
+0  Sort all spills -  6.201000002192814e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19636790500004508s
+Low point swamp fill  0.6581346600000302  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6769005140000104s
+15 : 2
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.421884413999976
+Build low point catchments -  0.4228866729999936  seconds
+0  Sort spills -  0.0005441860000132692
+0  Gather spill data -  0.0001020170000174403
+0  Sort all spills -  5.9309999983270245e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19603078500000493s
+Low point swamp fill  0.6564402270000187  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6765487870000015s
+16 : 3
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.42173402299999907
+Build low point catchments -  0.42273097899999357  seconds
+0  Sort spills -  0.0006403010000894938
+0  Gather spill data -  0.00010551600007602246
+0  Sort all spills -  5.690900002264243e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19631798600005368s
+Low point swamp fill  0.6567107059998989  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6761823550000372s
+17 : 3
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.4128174550000949
+Build low point catchments -  0.413896922000049  seconds
+0  Sort spills -  0.0005533859999786728
+0  Gather spill data -  0.00010871699998915574
+0  Sort all spills -  5.770900008883473e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19633624699997654s
+Low point swamp fill  0.6480841399999235  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6770235980000052s
+18 : 2
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.41371571300010146
+Build low point catchments -  0.4148054800000409  seconds
+0  Sort spills -  0.00056908699991709
+0  Gather spill data -  0.00010191600006237422
+0  Sort all spills -  5.83089999963704e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19680196000001615s
+Low point swamp fill  0.6491700169999604  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6785586120000744s
+19 : 2
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.41061790100002327
+Build low point catchments -  0.4115913500000943  seconds
+0  Sort spills -  0.0005479829999330832
+0  Gather spill data -  0.00010791600004722568
+0  Sort all spills -  6.030899999132089e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19552684600000703s
+Low point swamp fill  0.6447567330000084  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6781272069999886s
+20 : 2
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.41499584299992875
+Build low point catchments -  0.41595378700003494  seconds
+0  Sort spills -  0.0005411809999031902
+0  Gather spill data -  0.00010881699995479721
+0  Sort all spills -  5.5009000107020256e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.1960939899998948s
+Low point swamp fill  0.6496613159999924  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6755672809999851s
+21 : 3
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.4124558920000254
+Build low point catchments -  0.4134276370000407  seconds
+0  Sort spills -  0.0005464809999011777
+0  Gather spill data -  0.0001082159999441501
+0  Sort all spills -  5.550800005948986e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19695666799998435s
+Low point swamp fill  0.647925483999984  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6767474819999961s
+22 : 3
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>333  iterations, time =  0.41354393100004927
+Build low point catchments -  0.4145182749999776  seconds
+0  Sort spills -  0.0005862859999297143
+0  Gather spill data -  0.00010581599997294688
+0  Sort all spills -  5.5308000014520076e-05
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall_fn_1s</span>  <span class="o">=</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span> <span class="o">**</span> <span class="mf">2.0</span>
+<span class="n">flowrate_fn_1s</span>  <span class="o">=</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">rainfall_fn_1s</span><span class="p">)</span>
+<span class="n">str_power_fn_1s</span> <span class="o">=</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">rainfall_fn_1s</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">mesh</span><span class="o">.</span><span class="n">slope</span> <span class="o">**</span> <span class="mf">2.0</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="locating-and-viewing-the-outflow-points">
+<h2>Locating and viewing the outflow points<a class="headerlink" href="#locating-and-viewing-the-outflow-points" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">quagmire</span></code> provides a mechanism to find the outflow points of a domain and return the node values. <em>Note:</em> in parallel these are the local node numbers and are not a unique ID. To do this, we can obtain the global ID from PETSc but it does also help to have the indices all be small numbers so we can map colours effectively.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">outflows</span> <span class="o">=</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">identify_outflow_points</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mesh has </span><span class="si">{}</span><span class="s2"> outflows&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outflows</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">quagmire</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">quagmire</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">check_object_is_a_q_mesh_and_raise</span><span class="p">(</span><span class="n">mesh1s</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
+
+<span class="n">outpoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">outflows</span><span class="p">],</span> <span class="n">heightn</span><span class="p">[</span><span class="n">outflows</span><span class="p">]])</span>
+<span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">heightn</span><span class="p">])</span>
+
+<span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">600</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">near</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">)</span>
+
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">pointtype</span><span class="o">=</span><span class="s2">&quot;shiny&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#FF0000&quot;</span> <span class="p">)</span>
+<span class="n">nodes</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">outpoints</span><span class="p">)</span>
+
+<span class="n">tri1</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;triangles&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">tri1</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+<span class="n">tri1</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+
+<span class="n">tri1</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">flowrate_fn_1s</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh1s</span><span class="p">)),</span> <span class="s2">&quot;cum-rain-swamp&quot;</span><span class="p">)</span>
+<span class="n">tri1</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">flowrate_fn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)),</span>     <span class="s2">&quot;cumulative rain&quot;</span><span class="p">)</span>
+
+<span class="n">tri1</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;#BBEEBB #889988 #000099&quot;</span><span class="p">)</span>
+<span class="n">tri1</span><span class="o">.</span><span class="n">colourbar</span><span class="p">()</span>
+
+<span class="c1">## Swamped</span>
+
+<span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">-</span><span class="mf">0.01</span><span class="p">])</span>
+
+<span class="n">tri2</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;triangles2&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">tri2</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+<span class="n">tri2</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+
+<span class="n">tri2</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">-</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>   <span class="s2">&quot;swamps&quot;</span><span class="p">)</span>
+<span class="n">tri2</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="p">),</span> <span class="s2">&quot;blank&quot;</span><span class="p">)</span>
+<span class="n">tri2</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">flowrate_fn_1s</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh1s</span><span class="p">)),</span> <span class="s2">&quot;cum-rain-swamp&quot;</span><span class="p">)</span>
+
+<span class="n">tri2</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;#003366:0.5, #000099:0.8, #000099&quot;</span><span class="p">)</span>
+<span class="n">tri2</span><span class="o">.</span><span class="n">colourbar</span><span class="p">()</span>
+
+
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">Panel</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">ObjectList</span><span class="p">()</span>
+<span class="n">tri1</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cum-rain-swamp&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;cumulative rain&quot;</span><span class="p">,</span> 
+                   <span class="p">],</span> <span class="nb">property</span><span class="o">=</span><span class="s2">&quot;colourby&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s2">&quot;redraw&quot;</span><span class="p">)</span>
+
+<span class="n">tri2</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;blank&quot;</span><span class="p">,</span> <span class="s2">&quot;swamps&quot;</span><span class="p">,</span> 
+                   <span class="s2">&quot;cum-rain-swamp&quot;</span><span class="p">],</span> <span class="nb">property</span><span class="o">=</span><span class="s2">&quot;colourby&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s2">&quot;redraw&quot;</span><span class="p">)</span>
+
+
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Stream power / slope where the lakes / swamps are located:</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="set-neighbours-to-1-and-compute-uphill-connectivity">
+<h2>Set neighbours to 1 and compute “uphill” connectivity<a class="headerlink" href="#set-neighbours-to-1-and-compute-uphill-connectivity" title="Permalink to this headline">¶</a></h2>
+<p>In serial, i.e. for this demonstration, we number the outflow points by their order in the local mesh numbering. We can then use the <code class="docutils literal notranslate"><span class="pre">mesh.uphill_propagation</span></code> routine to propagate this information from the outflow to the top of the catchment.</p>
+<p>This routine returns the mesh data (for this processor) of a globally synchronised map of the information propagated from the selected points.</p>
+<p>The routine is used in the computation of flood fills for the swamp algorithm and should be polished up a bit (sorry).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Unique catchments requires the downhill matrix with downhill_neighbours=1</span>
+
+<span class="n">mesh1s</span><span class="o">.</span><span class="n">near_neighbours</span><span class="o">=</span><span class="mi">1</span>
+<span class="c1"># mesh1s.update_height(mesh1s.heightVariable.data)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Need a unique ID that works in parallel ... global node number would work but </span>
+<span class="c1">## not that easy to map to colours in lavavu </span>
+
+<span class="kn">from</span> <span class="nn">petsc4py</span> <span class="kn">import</span> <span class="n">PETSc</span>
+<span class="n">outflows</span>
+<span class="n">outflowID</span> <span class="o">=</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">lgmap_row</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">outflows</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">PETSc</span><span class="o">.</span><span class="n">IntType</span><span class="p">))</span>
+
+<span class="c1"># But on 1 proc, this is easier / better:</span>
+
+<span class="n">outflowID</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">outflows</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">ctmt</span> <span class="o">=</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">uphill_propagation</span><span class="p">(</span><span class="n">outflows</span><span class="p">,</span>  <span class="n">outflowID</span><span class="p">,</span> <span class="n">its</span><span class="o">=</span><span class="mi">99999</span><span class="p">,</span> <span class="n">fill</span><span class="o">=-</span><span class="mi">999999</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="visualise-the-catchment-information">
+<h2>Visualise the catchment information<a class="headerlink" href="#visualise-the-catchment-information" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
+
+<span class="n">outpoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">outflows</span><span class="p">],</span> <span class="n">heightn</span><span class="p">[</span><span class="n">outflows</span><span class="p">]])</span>
+<span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="p">])</span>
+
+<span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">900</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">near</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">)</span>
+
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">pointtype</span><span class="o">=</span><span class="s2">&quot;shiny&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#FF0000&quot;</span> <span class="p">)</span>
+<span class="n">nodes</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">outpoints</span><span class="p">)</span>
+
+<span class="n">tri1</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;triangles&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">tri1</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+<span class="n">tri1</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+<span class="n">tri1</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">flowrate_fn_1s</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh1s</span><span class="p">)),</span><span class="s2">&quot;cum-rain-swamp&quot;</span><span class="p">)</span>
+
+<span class="n">tri1</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;#BBEEBB:0.0, #889988:0.2, #889988:0.2, #0000FF:0.2, #0000FF&quot;</span><span class="p">)</span>
+<span class="n">tri1</span><span class="o">.</span><span class="n">colourbar</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1">## Swamped</span>
+
+<span class="n">tri2</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;triangles2&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">tri2</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="o">-</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.01</span><span class="p">))</span>
+<span class="n">tri2</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+
+<span class="n">tri2</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">ctmt</span><span class="p">,</span>   <span class="s2">&quot;catchments&quot;</span><span class="p">)</span>
+
+<span class="n">tri2</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;spectral&quot;</span><span class="p">,</span> <span class="n">discrete</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">outflows</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">tri2</span><span class="o">.</span><span class="n">colourbar</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">tri3</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;triangles3&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">tri3</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="o">-</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.005</span><span class="p">))</span>
+
+<span class="n">tri3</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+<span class="n">tri3</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">-</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>   <span class="s2">&quot;swamps&quot;</span><span class="p">)</span>
+<span class="n">tri3</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;#003366:0.0, #000099,  #000099, #000099, #0000FF&quot;</span><span class="p">)</span>
+<span class="n">tri3</span><span class="o">.</span><span class="n">colourbar</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">Panel</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">ObjectList</span><span class="p">()</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./Tutorial"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="Ex5-PreprocessingSurfaces.html" title="previous page">Example 5 - Preprocessing a surface</a>
+    <a class='right-next' id="next-link" href="Ex7-LinearDiffusion.html" title="next page">Linear diffusion - time evolution / benchmarking</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Louis Moresi, Ben Mather, Romain Beucher<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>
