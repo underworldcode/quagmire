@@ -1,0 +1,2938 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>quagmire.mesh.basemesh API documentation</title>
+<meta name="description" content="Create mesh variables that interface with functions …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>quagmire.mesh.basemesh</code></h1>
+</header>
+<section id="section-intro">
+<p>Create mesh variables that interface with functions</p>
+<p>Initialise a <code><a title="quagmire.mesh.basemesh.MeshVariable" href="#quagmire.mesh.basemesh.MeshVariable">MeshVariable</a></code> for scalar fields or <code><a title="quagmire.mesh.basemesh.VectorMeshVariable" href="#quagmire.mesh.basemesh.VectorMeshVariable">VectorMeshVariable</a></code> for vectors
+on the mesh. These inherit the <code><a title="quagmire.function" href="../function/index.html">quagmire.function</a></code> classes that exploit lazy evaluation.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># Copyright 2016-2020 Louis Moresi, Ben Mather, Romain Beucher
+# 
+# This file is part of Quagmire.
+# 
+# Quagmire is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or any later version.
+# 
+# Quagmire is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+
+&#34;&#34;&#34;
+Create mesh variables that interface with functions
+
+Initialise a `MeshVariable` for scalar fields or `VectorMeshVariable` for vectors
+on the mesh. These inherit the `quagmire.function` classes that exploit lazy evaluation.
+&#34;&#34;&#34;
+
+try: range = xrange
+except: pass
+
+
+## These also need to be lazy evaluation objects
+
+from ..function import LazyEvaluation as _LazyEvaluation
+from ..function import vector_field as _vector
+
+
+import numpy as np
+
+class MeshFunction(_LazyEvaluation):
+    &#34;&#34;&#34;
+    A class of Lazy Evaluation Functions that require an underlying mesh.
+
+    Parameters
+    ----------
+    name : str
+        Assign the MeshVariable a unique identifier
+    mesh : quagmire mesh object
+        The supporting mesh for the variable
+    &#34;&#34;&#34;
+    
+    def __init__(self, name, mesh, lname=None):
+        super(MeshFunction, self).__init__()
+
+        self._mesh = mesh
+        self._dm = mesh.dm
+        self._name = str(name)
+        self.description = self._name
+        self.mesh_data = False
+
+        xi0 = self._mesh.coordinates.xi0
+        xi1 = self._mesh.coordinates.xi1
+
+        self.coordinate_system = mesh.coordinate_system
+
+        if lname is not None:
+            self.latex = lname+r&#34;\left({},{}\right)&#34;.format(xi0.latex, xi1.latex)
+        else:
+            self.latex = self.description
+
+
+    def rename(self, name=None, lname=None):
+        &#34;&#34;&#34;
+        Rename this MeshVariable
+        &#34;&#34;&#34;
+
+        if name is None:
+            return
+
+        self._name = str(name)
+        self._ldata.setName(name)
+        self.description = self._name
+
+        xi0 = self._mesh.coordinates.xi0
+        xi1 = self._mesh.coordinates.xi1
+
+
+        if lname is not None:
+            self.latex = lname+r&#34;\left({},{}\right)&#34;.format(xi0.latex, xi1.latex)
+        else:
+            self.latex = self.description
+
+
+    def evaluate(self, input=None, **kwargs):
+        &#34;&#34;&#34;
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+
+        But note the way that interpolate calls this method with the mesh to 
+        get values at the mesh nodes - this needs to be implemented correctly or 
+        the interpolate method needs to be over-ridden as well.
+        &#34;&#34;&#34;
+
+        ## This should be NotImplemented ... evaluate is to be defined 
+        ## for any subclass
+
+        import quagmire
+
+        ## this should be replaced by an operation that returns the
+        ## np.array of the correct dimension
+
+        array = np.zeros(self._mesh.npoints)
+
+        if input is not None:
+            if isinstance(input, (quagmire.mesh.trimesh.TriMesh, 
+                                  quagmire.mesh.pixmesh.PixMesh,
+                                  quagmire.mesh.strimesh.sTriMesh)):
+                if input == self._mesh:
+                    return array
+                else:
+                    return self._interpolate(input.coords[:,0], input.coords[:,1], **kwargs)
+
+            elif isinstance(input, (tuple, list, np.ndarray)):
+                input = np.array(input)
+                input = np.reshape(input, (-1, 2))
+                return self._interpolate(input[:, 0], input[:,1], **kwargs)
+        else:
+            return array
+
+
+    def _interpolate(self, xi, yi, err=False, **kwargs):
+        &#34;&#34;&#34;
+        Interpolate function to a set of coordinates
+
+        This method just passes the coordinates to the interpolation
+        methods on the mesh object.
+
+        Parameters
+        ----------
+        xi : array of floats, shape (l,)
+            interpolation coordinates in the x direction
+        yi : array of floats, shape (l,)
+            interpolation coordinates in the y direction
+        err : bool (default: False)
+            toggle whether to return error information
+        **kwargs : keyword arguments
+            optional arguments to pass through to the interpolation method
+
+        Returns
+        -------
+        interp : array of floats, shape (l,)
+            interpolated values of MeshVariable at xi,yi coordinates
+        err : array of ints, shape (l,)
+            error information to diagnose interpolation / extrapolation
+        &#34;&#34;&#34;
+        ## pass through for the mesh&#39;s interpolate method
+        import numpy as np
+
+        mesh = self._mesh
+        PHI = self.evaluate(input=self._mesh)
+
+        xi_array = np.array(xi).reshape(-1,1)
+        yi_array = np.array(yi).reshape(-1,1)
+
+        i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
+
+        if err:
+            return i, e
+        else:
+            return i
+
+
+
+    def derivative(self, dirn):
+        &#34;&#34;&#34;Numerical derivative on the mesh - Note this is the derivative rather than the
+        gradient for a curvilinear mesh - hence the companion derivative_grad function&#34;&#34;&#34;
+
+        import quagmire
+
+        diff_mesh = self._mesh
+
+        def new_fn_x(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return dxy[:,0]
+
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,0], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,0])
+                return i
+
+        def new_fn_y(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return dxy[:,1]
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,1], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,1])
+                return i
+
+        newLazyFn_dx = MeshFunction(name=&#34;ddx0-&#34;+self._name, mesh=self._mesh)
+        newLazyFn_dx.evaluate = new_fn_x
+        newLazyFn_dx.description = &#34;d({})/d0&#34;.format(self.description)
+        newLazyFn_dx.latex = r&#34;\frac{{ \partial }}{{\partial \xi_0}}{}&#34;.format(self.latex)
+        newLazyFn_dx.exposed_operator = &#34;d&#34;
+
+        newLazyFn_dy = MeshFunction(name=&#34;ddx1-&#34;+self._name, mesh=self._mesh)
+        newLazyFn_dy.evaluate = new_fn_y
+        newLazyFn_dy.description = &#34;d({})/dY&#34;.format(self.description)
+        newLazyFn_dy.latex = r&#34;\frac{{\partial}}{{\partial \xi_1}}{}&#34;.format(self.latex)
+        newLazyFn_dy.exposed_operator = &#34;d&#34;
+
+
+        if dirn == 0:
+            return newLazyFn_dx
+        elif dirn == 1:
+            return newLazyFn_dy
+
+
+    ## No appreciable acceleration for grad by itself, or div 
+
+    def grad(self):
+        return self.fn_gradient(dirn =-1)
+
+    def slope(self):
+        return self.fn_gradient(dirn = &#34;Slope&#34;)
+
+    def fn_gradient(self, dirn=None):
+        &#34;&#34;&#34;
+        The generic mechanism for obtaining the gradient of a lazy variable is
+        to evaluate the values on the mesh at the time in question and use the mesh gradient
+        operators to compute the new values.
+        Sub classes may have more efficient approaches. MeshVariables have
+        stored data and don&#39;t need to evaluate values. Parameters have Gradients
+        that are identically zero ... etc
+        &#34;&#34;&#34;
+
+        import quagmire
+
+        diff_mesh = self._mesh
+
+        def new_fn_x(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return dxy[:,0]
+
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,0], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,0])
+                return i
+
+        def new_fn_y(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return dxy[:,1]
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,1], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,1])
+                return i
+
+        def new_fn_slope(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return np.hypot(dxy[:,0], dxy[:,1])
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=np.hypot(dxy[:,0], dxy[:,1]), **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=np.hypot(dxy[:,0], dxy[:,1]))
+                return i
+
+        newLazyFn_dx = MeshFunction(name=&#34;grad0-&#34;+self._name, mesh=self._mesh)
+        newLazyFn_dx.coordinate_system = self._mesh.coordinate_system
+        newLazyFn_dx.evaluate = new_fn_x
+        newLazyFn_dx.description = &#34;grad({})|x0&#34;.format(self.description)
+        newLazyFn_dx.latex = r&#34;\left. \nabla({})\right|_0&#34;.format(self.latex)
+        newLazyFn_dx.exposed_operator = &#34;S&#34;
+
+        newLazyFn_dy = MeshFunction(name=&#34;grad1-&#34;+self._name, mesh=self._mesh)
+        newLazyFn_dy.coordinate_system = self._mesh.coordinate_system
+        newLazyFn_dy.evaluate = new_fn_y
+        newLazyFn_dy.description = &#34;grad({})|x1&#34;.format(self.description)
+        newLazyFn_dy.latex = r&#34;\left. \nabla({})\right|_1&#34;.format(self.latex)
+        newLazyFn_dy.exposed_operator = &#34;S&#34;
+
+        newLazyFn_slope = MeshFunction(name=&#34;slope-&#34;+self._name, mesh=self._mesh)
+        newLazyFn_slope.coordinate_system = self._mesh.coordinate_system
+        newLazyFn_slope.evaluate = new_fn_slope
+        newLazyFn_slope.description = &#34;slope({})&#34;.format(self.description)
+        newLazyFn_slope.latex = r&#34;\left| \nabla {} \right|&#34;.format(self.latex)
+        newLazyFn_slope.exposed_operator = &#34;S&#34;
+
+
+        if dirn == 0:
+            return newLazyFn_dx
+        elif dirn == 1:
+            return newLazyFn_dy
+        elif dirn == -1:
+            return _vector(newLazyFn_dx, newLazyFn_dy)
+        else:
+            return newLazyFn_slope
+
+
+class MeshVariable(MeshFunction):
+    &#34;&#34;&#34;
+    The MeshVariable class generates a variable supported on the mesh.
+
+    To set/read nodal values, use the numpy interface via the &#39;self.data&#39; property.
+
+    Parameters
+    ----------
+    name : str
+        Assign the MeshVariable a unique identifier
+    mesh : quagmire mesh object
+        The supporting mesh for the variable
+    &#34;&#34;&#34;
+    def __init__(self, name=None, mesh=None, lname=None, locked=False):
+        super(MeshVariable, self).__init__(name=name, mesh=mesh, lname=lname)
+
+        self._locked = locked
+        self.mesh_data = True
+
+        # mesh variable vector
+        self._ldata = self._dm.createLocalVector()
+        self._ldata.setName(name)
+        return
+
+    def __repr__(self):
+        return &#34;quagmire.MeshFunction: {}&#34;.format(self.description)
+    
+
+    def copy(self, name=None, locked=None):
+        &#34;&#34;&#34;
+        Create a copy of this MeshVariable
+
+        Parameters
+        ----------
+        name : str
+            set a name to this MeshVariable, otherwise &#34;copy&#34;
+            is appended to the original name
+        locked : bool (default: False)
+            lock the mesh variable from accidental modification
+
+        Returns
+        -------
+        MeshVariable : object
+            Instantiate a MeshVariable copy.
+        &#34;&#34;&#34;
+
+        if name is None:
+            name = self._name+&#34;_copy&#34;
+
+        if locked is None:
+            locked = self._locked
+
+        new_mesh_variable = MeshVariable(name=name, mesh=self._mesh, locked=False)
+        new_mesh_variable.data = self.data
+
+        if locked:
+            new_mesh_variable.lock()
+
+        return new_mesh_variable
+
+    def lock(self):
+        self._locked = True
+
+    def unlock(self):
+        self._locked = False
+
+## This is a redundancy - @property definition is nuked by the @ .getter
+## LM: See this: https://stackoverflow.com/questions/51244348/use-of-propertys-getter-in-python
+
+## Don&#39;t sync on get / set as this prevents doing a series of computations on the array and
+## doing the sync when finished. I can also imagine this going wrong if sync nukes values
+## in the shadow zone unexpectedly. Also get is called for any indexing operation ...  ugh !
+
+    @property
+    def data(self):
+        &#34;&#34;&#34; View of MeshVariable data of shape (n,) &#34;&#34;&#34;
+        pass
+
+    @data.getter
+    def data(self):
+        # This step is necessary because the numpy array is writeable
+        # through to the petsc vector and this cannot be blocked.
+        # Access to the numpy array will not automatically be sync&#39;d and this
+        # would also be a way to circumvent access to locked arrays - where such
+        # locking is intended to ensure we update dependent data when the variable is
+        # updated
+
+# if self._locked:
+        view = self._ldata.array[:]
+        view.setflags(write=False)
+        return view
+
+#        else:
+#            return self._ldata.array
+
+    @data.setter
+    def data(self, val):
+        if self._locked:
+            import quagmire
+            if quagmire.mpi_rank == 0:
+                print(&#34;quagmire.MeshVariable: {} - is locked&#34;.format(self.description))
+            return
+
+        if type(val) is float:
+                self._ldata.set(val)
+        else:
+            self._ldata.setArray(val)
+
+
+
+    ## For printing and other introspection we actually want to look through to the
+    ## meshVariable&#39;s own description
+
+    def __repr__(self):
+        if self._locked:
+            return &#34;quagmire.MeshVariable: {} - RO&#34;.format(self.description)
+        else:
+            return &#34;quagmire.MeshVariable: {} - RW&#34;.format(self.description)
+
+
+    def getGlobalVector(self, gdata):
+        &#34;&#34;&#34;
+        Obtain a PETSc global vector of the MeshVariable
+        &#34;&#34;&#34;
+        from petsc4py import PETSc
+        self._dm.localToGlobal(self._ldata, gdata, addv=PETSc.InsertMode.INSERT_VALUES)
+        return
+
+
+    def sync(self, mergeShadow=False):
+        &#34;&#34;&#34;
+        Explicit global sync of data
+        &#34;&#34;&#34;
+
+        from petsc4py import PETSc
+
+        if mergeShadow:
+            addv = PETSc.InsertMode.ADD_VALUES
+        else:
+            addv = PETSc.InsertMode.INSERT_VALUES
+
+        # need a global vector
+        gdata = self._dm.getGlobalVec()
+
+        # self._dm.localToLocal(self._ldata, self._gdata)
+        self._dm.localToGlobal(self._ldata, gdata, addv=addv)
+        self._dm.globalToLocal(gdata, self._ldata)
+
+        self._dm.restoreGlobalVec(gdata)
+
+        return
+
+
+    def xdmf(self, hdf5_filename, hdf5_mesh_filename=None, xdmf_filename=None):
+        &#34;&#34;&#34;
+        Creates an xdmf file associating the saved HDF5 file with the mesh
+
+        &#34;&#34;&#34;
+        from quagmire.tools.generate_xdmf import generateXdmf
+        from quagmire import mpi_rank
+
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
+
+        if mpi_rank == 0:
+            generateXdmf(hdf5_filename, hdf5_mesh_filename, xdmf_filename)
+        return
+
+
+    def save(self, hdf5_filename, append=False):
+        &#34;&#34;&#34;
+        Save the MeshVariable to disk.
+
+        Parameters
+        ----------
+        hdf5_filename : str (optional)
+            The name of the output file. Relative or absolute paths may be
+            used, but all directories must exist.
+        append : bool (default is True)
+            Append to existing file if it exists
+
+        Notes
+        -----
+        This method must be called collectively by all processes.
+        &#34;&#34;&#34;
+        from petsc4py import PETSc
+        import os
+
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
+
+        if self._mesh.id.startswith(&#34;pixmesh&#34;):
+            # save mesh info to the hdf5 if DMDA object
+            # this is so tiny that I/O hit is negligible
+            self._mesh.save_mesh_to_hdf5(hdf5_filename)
+
+        mode = &#34;w&#34;
+        if append and os.path.exists(hdf5_filename):
+            mode = &#34;a&#34;
+
+        # need a global vector
+        vname = self._ldata.getName()
+        gdata = self._dm.getGlobalVec()
+        gdata.setName(vname)
+        self._dm.localToGlobal(self._ldata, gdata)
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(hdf5_filename, mode=mode)
+        ViewHDF5(gdata)
+        ViewHDF5.destroy()
+        ViewHDF5 = None
+
+        self._dm.restoreGlobalVec(gdata)
+
+        return
+
+    def load(self, hdf5_filename, name=None):
+        &#34;&#34;&#34;
+        Load the MeshVariable from disk.
+
+        Parameters
+        ----------
+        hdf5_filename: str
+            The filename for the saved file. Relative or absolute paths may be
+            used, but all directories must exist.
+
+        Notes
+        -----
+        Provided files must be in hdf5 format, and contain a vector the same
+        size and with the same name as the current MeshVariable
+        &#34;&#34;&#34;
+        if self._locked:
+            raise ValueError(&#34;quagmire.MeshVariable: {} - is locked&#34;.format(self.description))
+
+        from petsc4py import PETSc
+        # need a global vector
+        gdata = self._dm.getGlobalVec()
+
+        if name is None:
+            gdata.setName(self._ldata.getName())
+        else:
+            gdata.setName(str(name))
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(str(hdf5_filename), mode=&#39;r&#39;)
+        gdata.load(ViewHDF5)
+        ViewHDF5.destroy()
+        ViewHDF5 = None
+
+        self._dm.globalToLocal(gdata, self._ldata)
+        self._dm.restoreGlobalVec(gdata)
+
+
+    def load_from_cloud_fs(self, cloud_hdf5_filename, cloud_location_handle=None, name=None):
+        &#34;&#34;&#34;
+        Load the MeshVariable from a cloud_location pointed to by
+        a pyfilesystem object. 
+
+        Parameters
+        ----------
+
+        cloud_location: 
+
+        cloud_hdf5_filename: str
+            The filename for the hdf5 file in the cloud. It should be possible to do 
+            a cloud_location_handle.listdir(&#34;.&#34;) to check the file names
+
+        Notes
+        -----
+        Cloud files must be in hdf5 format, and contain a vector the same
+        size and with the same name as the current MeshVariable 
+        &#34;&#34;&#34;
+
+        from quagmire.tools import cloud_fs
+
+        if not cloud_fs:
+            print(&#34;Cloud services are not available - they require fs and fs.webdav packages&#34;)
+            return
+
+        from petsc4py import PETSc
+        import os
+
+        from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, cloud_download
+
+        if self._locked:
+            raise ValueError(&#34;quagmire.MeshVariable: {} - is locked&#34;.format(self.description))
+
+        if cloud_location_handle is None:
+           cloud_location_handle = quagmire_cloud_fs
+
+        local_filename = os.path.basename(cloud_hdf5_filename)
+        tempfile = os.path.join(quagmire_cloud_cache_dir_name, str(local_filename))
+            
+        cloud_download(cloud_hdf5_filename, tempfile, cloud_location_handle)
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(tempfile, mode=&#39;r&#39;)
+
+        gdata = self._dm.getGlobalVec()
+        if name is None:
+            gdata.setName(self._ldata.getName())
+        else:
+            gdata.setName(str(name))
+
+        gdata.load(ViewHDF5)
+
+        ViewHDF5.destroy()
+        ViewHDF5 = None
+
+        self._dm.globalToLocal(gdata, self._ldata)
+        self._dm.restoreGlobalVec(gdata)
+
+        return
+
+
+    def load_from_url(self, url, name=None):
+        &#34;&#34;&#34; Load an hdf5 file pointed to by a publicly accessible url &#34;&#34;&#34;
+
+        from quagmire.tools import cloud_fs
+
+        from petsc4py import PETSc
+        import os
+
+        from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, url_download
+
+        if self._locked:
+            raise ValueError(&#34;quagmire.MeshVariable: {} - is locked&#34;.format(self.description))
+
+        tempfile = os.path.join(quagmire_cloud_cache_dir_name, self._name+&#34;.h5&#34;) 
+        # print(&#34;creating file {}&#34;.format(tempfile))
+
+
+        url_download(url, tempfile)
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(tempfile, mode=&#39;r&#39;)
+
+        gdata = self._dm.getGlobalVec()
+        if name is None:
+            gdata.setName(self._ldata.getName())
+        else:
+            gdata.setName(str(name))
+        gdata.load(ViewHDF5)
+
+        ViewHDF5.destroy()
+        ViewHDF5 = None
+
+        self._dm.globalToLocal(gdata, self._ldata)
+        self._dm.restoreGlobalVec(gdata)
+
+        return
+
+    def derivative(self, dirn):
+        &#34;&#34;&#34; (Lazy) Derivative in direction given by dirn &#34;&#34;&#34;
+
+        if str(dirn) in &#34;1&#34;:
+            lazyFn = self.fn_gradient(1)
+        else:
+            lazyFn = self.fn_gradient(0)
+
+        return lazyFn
+
+
+    def _gradient(self, nit=10, tol=1e-8):
+        &#34;&#34;&#34;
+        Compute values of the derivatives of PHI in the x, y directions at the nodal points.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Parameters
+        ----------
+        PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+        nit : int optional (default: 10)
+            number of iterations to reach convergence
+        tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+
+        Returns
+        -------
+        PHIx : ndarray of floats, shape (n,)
+            first partial derivative of PHI in x direction
+        PHIy : ndarray of floats, shape (n,)
+            first partial derivative of PHI in y direction
+        &#34;&#34;&#34;
+        return self._mesh.derivative_grad(self._ldata.array, nit, tol)
+
+
+    def interpolate(self, xi, yi, err=False, **kwargs):
+        &#34;&#34;&#34;
+        Interpolate mesh data to a set of coordinates
+
+        This method just passes the coordinates to the interpolation
+        methods on the mesh object.
+
+        Parameters
+        ----------
+        xi : array of floats, shape (l,)
+            interpolation coordinates in the x direction
+        yi : array of floats, shape (l,)
+            interpolation coordinates in the y direction
+        err : bool (default: False)
+            toggle whether to return error information
+        **kwargs : keyword arguments
+            optional arguments to pass through to the interpolation method
+
+        Returns
+        -------
+        interp : array of floats, shape (l,)
+            interpolated values of MeshVariable at xi,yi coordinates
+        err : array of ints, shape (l,)
+            error information to diagnose interpolation / extrapolation
+        &#34;&#34;&#34;
+        ## pass through for the mesh&#39;s interpolate method
+        import numpy as np
+
+        mesh = self._mesh
+        PHI = self._ldata.array
+        xi_array = np.array(xi).reshape(-1,1)
+        yi_array = np.array(yi).reshape(-1,1)
+
+        i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
+
+        if err:
+            return i, e
+        else:
+            return i
+
+
+    def evaluate(self, *args, **kwargs):
+        &#34;&#34;&#34;
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+        &#34;&#34;&#34;
+
+        import quagmire
+
+        if len(args) == 0:
+            return self._ldata.array
+
+        if (len(args) == 1 and args[0] is self._mesh):
+            return self._ldata.array
+        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, 
+                                                     quagmire.mesh.pixmesh.PixMesh,
+                                                     quagmire.mesh.strimesh.sTriMesh) ):
+            mesh = args[0]
+            return self._interpolate(mesh.coords[:,0], mesh.coords[:,1], **kwargs).reshape(-1)
+        else:
+            coords = np.array(args).reshape(-1,2)
+            return self._interpolate(coords[:,0], coords[:,1], **kwargs).reshape(-1)
+
+
+    ## Basic global operations provided by petsc4py
+
+    def max(self):
+        &#34;&#34;&#34; Retrieve the maximum value &#34;&#34;&#34;
+        gdata = self._dm.getGlobalVec()
+        self._dm.localToGlobal(self._ldata, gdata)
+        idx, val = gdata.max()
+        return val
+
+    def min(self):
+        &#34;&#34;&#34; Retrieve the minimum value &#34;&#34;&#34;
+        gdata = self._dm.getGlobalVec()
+        self._dm.localToGlobal(self._ldata, gdata)
+        idx, val = gdata.min()
+        return val
+
+    def sum(self):
+        &#34;&#34;&#34; Calculate the sum of all entries &#34;&#34;&#34;
+        gdata = self._dm.getGlobalVec()
+        self._dm.localToGlobal(self._ldata, gdata)
+        return gdata.sum()
+
+    def mean(self):
+        &#34;&#34;&#34; Calculate the mean value &#34;&#34;&#34;
+        gdata = self._dm.getGlobalVec()
+        size = gdata.getSize()
+        self._dm.localToGlobal(self._ldata, gdata)
+        return gdata.sum()/size
+
+    def std(self):
+        &#34;&#34;&#34; Calculate the standard deviation &#34;&#34;&#34;
+        from math import sqrt
+        gdata = self._dm.getGlobalVec()
+        size = gdata.getSize()
+        self._dm.localToGlobal(self._ldata, gdata)
+        mu = gdata.sum()/size
+        gdata -= mu
+        return sqrt((gdata.sum())**2) / size
+
+
+class VectorMeshVariable(MeshVariable):
+    &#34;&#34;&#34;
+    The VectorMeshVariable class generates a vector variable supported on the mesh.
+
+    To set/read nodal values, use the numpy interface via the &#39;self.data&#39; property.
+
+    Parameters
+    ----------
+    name : str
+        Assign the MeshVariable a unique identifier
+    mesh : quagmire mesh object
+        The supporting mesh for the variable
+
+    Notes
+    -----
+    This class inherits several methods from the `MeshVariable` class.
+    &#34;&#34;&#34;
+    def __init__(self, name, mesh):
+        self._mesh = mesh
+        self._dm = mesh.dm.getCoordinateDM()
+
+        name = str(name)
+
+        # mesh variable vector
+        self._ldata = self._dm.createLocalVector()
+        self._ldata.setName(name)
+        return
+
+    @property
+    def data(self):
+        &#34;&#34;&#34; View of MeshVariable data of shape (n,) &#34;&#34;&#34;
+        pass
+
+    @data.getter
+    def data(self):
+        return self._ldata.array.reshape(-1,2)
+
+    @data.setter
+    def data(self, val):
+        import numpy as np
+        if type(val) is float:
+            self._ldata.set(val)
+        elif np.shape(val) == (self._mesh.npoints,2):
+            self._ldata.setArray(np.ravel(val))
+        else:
+            raise ValueError(&#34;NumPy array must be of shape ({},{})&#34;.format(self._mesh.npoints,2))
+
+    def gradient(self):
+        raise TypeError(&#34;VectorMeshVariable does not currently support gradient operations&#34;)
+
+    def interpolate(self, xi, yi, err=False, **kwargs):
+        raise TypeError(&#34;VectorMeshVariable does not currently support interpolate operations&#34;)
+
+    def evaluate(self, xi, yi, err=False, **kwargs):
+        &#34;&#34;&#34;
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+        &#34;&#34;&#34;
+        return self._interpolate(*args, **kwargs)
+
+
+    def norm(self, axis=1):
+        &#34;&#34;&#34; evaluate the normal vector of the data along the specified axis &#34;&#34;&#34;
+        import numpy as np
+        return np.linalg.norm(self.data, axis=axis)
+
+
+    # We should wait to do this one for global operations</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="quagmire.mesh.basemesh.MeshFunction"><code class="flex name class">
+<span>class <span class="ident">MeshFunction</span></span>
+<span>(</span><span>name, mesh, lname=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A class of Lazy Evaluation Functions that require an underlying mesh.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>Assign the MeshVariable a unique identifier</dd>
+<dt><strong><code>mesh</code></strong> :&ensp;<code><a title="quagmire" href="../index.html">quagmire</a> mesh object</code></dt>
+<dd>The supporting mesh for the variable</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MeshFunction(_LazyEvaluation):
+    &#34;&#34;&#34;
+    A class of Lazy Evaluation Functions that require an underlying mesh.
+
+    Parameters
+    ----------
+    name : str
+        Assign the MeshVariable a unique identifier
+    mesh : quagmire mesh object
+        The supporting mesh for the variable
+    &#34;&#34;&#34;
+    
+    def __init__(self, name, mesh, lname=None):
+        super(MeshFunction, self).__init__()
+
+        self._mesh = mesh
+        self._dm = mesh.dm
+        self._name = str(name)
+        self.description = self._name
+        self.mesh_data = False
+
+        xi0 = self._mesh.coordinates.xi0
+        xi1 = self._mesh.coordinates.xi1
+
+        self.coordinate_system = mesh.coordinate_system
+
+        if lname is not None:
+            self.latex = lname+r&#34;\left({},{}\right)&#34;.format(xi0.latex, xi1.latex)
+        else:
+            self.latex = self.description
+
+
+    def rename(self, name=None, lname=None):
+        &#34;&#34;&#34;
+        Rename this MeshVariable
+        &#34;&#34;&#34;
+
+        if name is None:
+            return
+
+        self._name = str(name)
+        self._ldata.setName(name)
+        self.description = self._name
+
+        xi0 = self._mesh.coordinates.xi0
+        xi1 = self._mesh.coordinates.xi1
+
+
+        if lname is not None:
+            self.latex = lname+r&#34;\left({},{}\right)&#34;.format(xi0.latex, xi1.latex)
+        else:
+            self.latex = self.description
+
+
+    def evaluate(self, input=None, **kwargs):
+        &#34;&#34;&#34;
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+
+        But note the way that interpolate calls this method with the mesh to 
+        get values at the mesh nodes - this needs to be implemented correctly or 
+        the interpolate method needs to be over-ridden as well.
+        &#34;&#34;&#34;
+
+        ## This should be NotImplemented ... evaluate is to be defined 
+        ## for any subclass
+
+        import quagmire
+
+        ## this should be replaced by an operation that returns the
+        ## np.array of the correct dimension
+
+        array = np.zeros(self._mesh.npoints)
+
+        if input is not None:
+            if isinstance(input, (quagmire.mesh.trimesh.TriMesh, 
+                                  quagmire.mesh.pixmesh.PixMesh,
+                                  quagmire.mesh.strimesh.sTriMesh)):
+                if input == self._mesh:
+                    return array
+                else:
+                    return self._interpolate(input.coords[:,0], input.coords[:,1], **kwargs)
+
+            elif isinstance(input, (tuple, list, np.ndarray)):
+                input = np.array(input)
+                input = np.reshape(input, (-1, 2))
+                return self._interpolate(input[:, 0], input[:,1], **kwargs)
+        else:
+            return array
+
+
+    def _interpolate(self, xi, yi, err=False, **kwargs):
+        &#34;&#34;&#34;
+        Interpolate function to a set of coordinates
+
+        This method just passes the coordinates to the interpolation
+        methods on the mesh object.
+
+        Parameters
+        ----------
+        xi : array of floats, shape (l,)
+            interpolation coordinates in the x direction
+        yi : array of floats, shape (l,)
+            interpolation coordinates in the y direction
+        err : bool (default: False)
+            toggle whether to return error information
+        **kwargs : keyword arguments
+            optional arguments to pass through to the interpolation method
+
+        Returns
+        -------
+        interp : array of floats, shape (l,)
+            interpolated values of MeshVariable at xi,yi coordinates
+        err : array of ints, shape (l,)
+            error information to diagnose interpolation / extrapolation
+        &#34;&#34;&#34;
+        ## pass through for the mesh&#39;s interpolate method
+        import numpy as np
+
+        mesh = self._mesh
+        PHI = self.evaluate(input=self._mesh)
+
+        xi_array = np.array(xi).reshape(-1,1)
+        yi_array = np.array(yi).reshape(-1,1)
+
+        i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
+
+        if err:
+            return i, e
+        else:
+            return i
+
+
+
+    def derivative(self, dirn):
+        &#34;&#34;&#34;Numerical derivative on the mesh - Note this is the derivative rather than the
+        gradient for a curvilinear mesh - hence the companion derivative_grad function&#34;&#34;&#34;
+
+        import quagmire
+
+        diff_mesh = self._mesh
+
+        def new_fn_x(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return dxy[:,0]
+
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,0], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,0])
+                return i
+
+        def new_fn_y(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return dxy[:,1]
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,1], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,1])
+                return i
+
+        newLazyFn_dx = MeshFunction(name=&#34;ddx0-&#34;+self._name, mesh=self._mesh)
+        newLazyFn_dx.evaluate = new_fn_x
+        newLazyFn_dx.description = &#34;d({})/d0&#34;.format(self.description)
+        newLazyFn_dx.latex = r&#34;\frac{{ \partial }}{{\partial \xi_0}}{}&#34;.format(self.latex)
+        newLazyFn_dx.exposed_operator = &#34;d&#34;
+
+        newLazyFn_dy = MeshFunction(name=&#34;ddx1-&#34;+self._name, mesh=self._mesh)
+        newLazyFn_dy.evaluate = new_fn_y
+        newLazyFn_dy.description = &#34;d({})/dY&#34;.format(self.description)
+        newLazyFn_dy.latex = r&#34;\frac{{\partial}}{{\partial \xi_1}}{}&#34;.format(self.latex)
+        newLazyFn_dy.exposed_operator = &#34;d&#34;
+
+
+        if dirn == 0:
+            return newLazyFn_dx
+        elif dirn == 1:
+            return newLazyFn_dy
+
+
+    ## No appreciable acceleration for grad by itself, or div 
+
+    def grad(self):
+        return self.fn_gradient(dirn =-1)
+
+    def slope(self):
+        return self.fn_gradient(dirn = &#34;Slope&#34;)
+
+    def fn_gradient(self, dirn=None):
+        &#34;&#34;&#34;
+        The generic mechanism for obtaining the gradient of a lazy variable is
+        to evaluate the values on the mesh at the time in question and use the mesh gradient
+        operators to compute the new values.
+        Sub classes may have more efficient approaches. MeshVariables have
+        stored data and don&#39;t need to evaluate values. Parameters have Gradients
+        that are identically zero ... etc
+        &#34;&#34;&#34;
+
+        import quagmire
+
+        diff_mesh = self._mesh
+
+        def new_fn_x(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return dxy[:,0]
+
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,0], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,0])
+                return i
+
+        def new_fn_y(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return dxy[:,1]
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,1], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,1])
+                return i
+
+        def new_fn_slope(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return np.hypot(dxy[:,0], dxy[:,1])
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=np.hypot(dxy[:,0], dxy[:,1]), **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=np.hypot(dxy[:,0], dxy[:,1]))
+                return i
+
+        newLazyFn_dx = MeshFunction(name=&#34;grad0-&#34;+self._name, mesh=self._mesh)
+        newLazyFn_dx.coordinate_system = self._mesh.coordinate_system
+        newLazyFn_dx.evaluate = new_fn_x
+        newLazyFn_dx.description = &#34;grad({})|x0&#34;.format(self.description)
+        newLazyFn_dx.latex = r&#34;\left. \nabla({})\right|_0&#34;.format(self.latex)
+        newLazyFn_dx.exposed_operator = &#34;S&#34;
+
+        newLazyFn_dy = MeshFunction(name=&#34;grad1-&#34;+self._name, mesh=self._mesh)
+        newLazyFn_dy.coordinate_system = self._mesh.coordinate_system
+        newLazyFn_dy.evaluate = new_fn_y
+        newLazyFn_dy.description = &#34;grad({})|x1&#34;.format(self.description)
+        newLazyFn_dy.latex = r&#34;\left. \nabla({})\right|_1&#34;.format(self.latex)
+        newLazyFn_dy.exposed_operator = &#34;S&#34;
+
+        newLazyFn_slope = MeshFunction(name=&#34;slope-&#34;+self._name, mesh=self._mesh)
+        newLazyFn_slope.coordinate_system = self._mesh.coordinate_system
+        newLazyFn_slope.evaluate = new_fn_slope
+        newLazyFn_slope.description = &#34;slope({})&#34;.format(self.description)
+        newLazyFn_slope.latex = r&#34;\left| \nabla {} \right|&#34;.format(self.latex)
+        newLazyFn_slope.exposed_operator = &#34;S&#34;
+
+
+        if dirn == 0:
+            return newLazyFn_dx
+        elif dirn == 1:
+            return newLazyFn_dy
+        elif dirn == -1:
+            return _vector(newLazyFn_dx, newLazyFn_dy)
+        else:
+            return newLazyFn_slope</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="quagmire.function.function_classes.LazyEvaluation" href="../function/function_classes.html#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="quagmire.mesh.basemesh.MeshVariable" href="#quagmire.mesh.basemesh.MeshVariable">MeshVariable</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="quagmire.mesh.basemesh.MeshFunction.derivative"><code class="name flex">
+<span>def <span class="ident">derivative</span></span>(<span>self, dirn)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Numerical derivative on the mesh - Note this is the derivative rather than the
+gradient for a curvilinear mesh - hence the companion derivative_grad function</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivative(self, dirn):
+    &#34;&#34;&#34;Numerical derivative on the mesh - Note this is the derivative rather than the
+    gradient for a curvilinear mesh - hence the companion derivative_grad function&#34;&#34;&#34;
+
+    import quagmire
+
+    diff_mesh = self._mesh
+
+    def new_fn_x(*args, **kwargs):
+        local_array = self.evaluate(diff_mesh)
+        dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+        if len(args) == 1 and args[0] is diff_mesh:
+            return dxy[:,0]
+
+        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            mesh = args[0]
+            return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,0], **kwargs)
+        else:
+            coords = np.array(args).reshape(-1,2)
+            i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,0])
+            return i
+
+    def new_fn_y(*args, **kwargs):
+        local_array = self.evaluate(diff_mesh)
+        dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+        if len(args) == 1 and args[0] is diff_mesh:
+            return dxy[:,1]
+        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            mesh = args[0]
+            return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,1], **kwargs)
+        else:
+            coords = np.array(args).reshape(-1,2)
+            i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,1])
+            return i
+
+    newLazyFn_dx = MeshFunction(name=&#34;ddx0-&#34;+self._name, mesh=self._mesh)
+    newLazyFn_dx.evaluate = new_fn_x
+    newLazyFn_dx.description = &#34;d({})/d0&#34;.format(self.description)
+    newLazyFn_dx.latex = r&#34;\frac{{ \partial }}{{\partial \xi_0}}{}&#34;.format(self.latex)
+    newLazyFn_dx.exposed_operator = &#34;d&#34;
+
+    newLazyFn_dy = MeshFunction(name=&#34;ddx1-&#34;+self._name, mesh=self._mesh)
+    newLazyFn_dy.evaluate = new_fn_y
+    newLazyFn_dy.description = &#34;d({})/dY&#34;.format(self.description)
+    newLazyFn_dy.latex = r&#34;\frac{{\partial}}{{\partial \xi_1}}{}&#34;.format(self.latex)
+    newLazyFn_dy.exposed_operator = &#34;d&#34;
+
+
+    if dirn == 0:
+        return newLazyFn_dx
+    elif dirn == 1:
+        return newLazyFn_dy</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshFunction.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, input=None, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>If the argument is a mesh, return the values at the nodes.
+In all other cases call the <code>interpolate</code> method.</p>
+<p>But note the way that interpolate calls this method with the mesh to
+get values at the mesh nodes - this needs to be implemented correctly or
+the interpolate method needs to be over-ridden as well.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, input=None, **kwargs):
+    &#34;&#34;&#34;
+    If the argument is a mesh, return the values at the nodes.
+    In all other cases call the `interpolate` method.
+
+    But note the way that interpolate calls this method with the mesh to 
+    get values at the mesh nodes - this needs to be implemented correctly or 
+    the interpolate method needs to be over-ridden as well.
+    &#34;&#34;&#34;
+
+    ## This should be NotImplemented ... evaluate is to be defined 
+    ## for any subclass
+
+    import quagmire
+
+    ## this should be replaced by an operation that returns the
+    ## np.array of the correct dimension
+
+    array = np.zeros(self._mesh.npoints)
+
+    if input is not None:
+        if isinstance(input, (quagmire.mesh.trimesh.TriMesh, 
+                              quagmire.mesh.pixmesh.PixMesh,
+                              quagmire.mesh.strimesh.sTriMesh)):
+            if input == self._mesh:
+                return array
+            else:
+                return self._interpolate(input.coords[:,0], input.coords[:,1], **kwargs)
+
+        elif isinstance(input, (tuple, list, np.ndarray)):
+            input = np.array(input)
+            input = np.reshape(input, (-1, 2))
+            return self._interpolate(input[:, 0], input[:,1], **kwargs)
+    else:
+        return array</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshFunction.fn_gradient"><code class="name flex">
+<span>def <span class="ident">fn_gradient</span></span>(<span>self, dirn=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The generic mechanism for obtaining the gradient of a lazy variable is
+to evaluate the values on the mesh at the time in question and use the mesh gradient
+operators to compute the new values.
+Sub classes may have more efficient approaches. MeshVariables have
+stored data and don't need to evaluate values. Parameters have Gradients
+that are identically zero &hellip; etc</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fn_gradient(self, dirn=None):
+    &#34;&#34;&#34;
+    The generic mechanism for obtaining the gradient of a lazy variable is
+    to evaluate the values on the mesh at the time in question and use the mesh gradient
+    operators to compute the new values.
+    Sub classes may have more efficient approaches. MeshVariables have
+    stored data and don&#39;t need to evaluate values. Parameters have Gradients
+    that are identically zero ... etc
+    &#34;&#34;&#34;
+
+    import quagmire
+
+    diff_mesh = self._mesh
+
+    def new_fn_x(*args, **kwargs):
+        local_array = self.evaluate(diff_mesh)
+        dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+        if len(args) == 1 and args[0] is diff_mesh:
+            return dxy[:,0]
+
+        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            mesh = args[0]
+            return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,0], **kwargs)
+        else:
+            coords = np.array(args).reshape(-1,2)
+            i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,0])
+            return i
+
+    def new_fn_y(*args, **kwargs):
+        local_array = self.evaluate(diff_mesh)
+        dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+        if len(args) == 1 and args[0] is diff_mesh:
+            return dxy[:,1]
+        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            mesh = args[0]
+            return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,1], **kwargs)
+        else:
+            coords = np.array(args).reshape(-1,2)
+            i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,1])
+            return i
+
+    def new_fn_slope(*args, **kwargs):
+        local_array = self.evaluate(diff_mesh)
+        dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+        if len(args) == 1 and args[0] is diff_mesh:
+            return np.hypot(dxy[:,0], dxy[:,1])
+        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+            mesh = args[0]
+            return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=np.hypot(dxy[:,0], dxy[:,1]), **kwargs)
+        else:
+            coords = np.array(args).reshape(-1,2)
+            i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=np.hypot(dxy[:,0], dxy[:,1]))
+            return i
+
+    newLazyFn_dx = MeshFunction(name=&#34;grad0-&#34;+self._name, mesh=self._mesh)
+    newLazyFn_dx.coordinate_system = self._mesh.coordinate_system
+    newLazyFn_dx.evaluate = new_fn_x
+    newLazyFn_dx.description = &#34;grad({})|x0&#34;.format(self.description)
+    newLazyFn_dx.latex = r&#34;\left. \nabla({})\right|_0&#34;.format(self.latex)
+    newLazyFn_dx.exposed_operator = &#34;S&#34;
+
+    newLazyFn_dy = MeshFunction(name=&#34;grad1-&#34;+self._name, mesh=self._mesh)
+    newLazyFn_dy.coordinate_system = self._mesh.coordinate_system
+    newLazyFn_dy.evaluate = new_fn_y
+    newLazyFn_dy.description = &#34;grad({})|x1&#34;.format(self.description)
+    newLazyFn_dy.latex = r&#34;\left. \nabla({})\right|_1&#34;.format(self.latex)
+    newLazyFn_dy.exposed_operator = &#34;S&#34;
+
+    newLazyFn_slope = MeshFunction(name=&#34;slope-&#34;+self._name, mesh=self._mesh)
+    newLazyFn_slope.coordinate_system = self._mesh.coordinate_system
+    newLazyFn_slope.evaluate = new_fn_slope
+    newLazyFn_slope.description = &#34;slope({})&#34;.format(self.description)
+    newLazyFn_slope.latex = r&#34;\left| \nabla {} \right|&#34;.format(self.latex)
+    newLazyFn_slope.exposed_operator = &#34;S&#34;
+
+
+    if dirn == 0:
+        return newLazyFn_dx
+    elif dirn == 1:
+        return newLazyFn_dy
+    elif dirn == -1:
+        return _vector(newLazyFn_dx, newLazyFn_dy)
+    else:
+        return newLazyFn_slope</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshFunction.grad"><code class="name flex">
+<span>def <span class="ident">grad</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def grad(self):
+    return self.fn_gradient(dirn =-1)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshFunction.rename"><code class="name flex">
+<span>def <span class="ident">rename</span></span>(<span>self, name=None, lname=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Rename this MeshVariable</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rename(self, name=None, lname=None):
+    &#34;&#34;&#34;
+    Rename this MeshVariable
+    &#34;&#34;&#34;
+
+    if name is None:
+        return
+
+    self._name = str(name)
+    self._ldata.setName(name)
+    self.description = self._name
+
+    xi0 = self._mesh.coordinates.xi0
+    xi1 = self._mesh.coordinates.xi1
+
+
+    if lname is not None:
+        self.latex = lname+r&#34;\left({},{}\right)&#34;.format(xi0.latex, xi1.latex)
+    else:
+        self.latex = self.description</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshFunction.slope"><code class="name flex">
+<span>def <span class="ident">slope</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def slope(self):
+    return self.fn_gradient(dirn = &#34;Slope&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="quagmire.function.function_classes.LazyEvaluation" href="../function/function_classes.html#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></b></code>:
+<ul class="hlist">
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.convert" href="../function/function_classes.html#quagmire.function.function_classes.LazyEvaluation.convert">convert</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable"><code class="flex name class">
+<span>class <span class="ident">MeshVariable</span></span>
+<span>(</span><span>name=None, mesh=None, lname=None, locked=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The MeshVariable class generates a variable supported on the mesh.</p>
+<p>To set/read nodal values, use the numpy interface via the 'self.data' property.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>Assign the MeshVariable a unique identifier</dd>
+<dt><strong><code>mesh</code></strong> :&ensp;<code><a title="quagmire" href="../index.html">quagmire</a> mesh object</code></dt>
+<dd>The supporting mesh for the variable</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MeshVariable(MeshFunction):
+    &#34;&#34;&#34;
+    The MeshVariable class generates a variable supported on the mesh.
+
+    To set/read nodal values, use the numpy interface via the &#39;self.data&#39; property.
+
+    Parameters
+    ----------
+    name : str
+        Assign the MeshVariable a unique identifier
+    mesh : quagmire mesh object
+        The supporting mesh for the variable
+    &#34;&#34;&#34;
+    def __init__(self, name=None, mesh=None, lname=None, locked=False):
+        super(MeshVariable, self).__init__(name=name, mesh=mesh, lname=lname)
+
+        self._locked = locked
+        self.mesh_data = True
+
+        # mesh variable vector
+        self._ldata = self._dm.createLocalVector()
+        self._ldata.setName(name)
+        return
+
+    def __repr__(self):
+        return &#34;quagmire.MeshFunction: {}&#34;.format(self.description)
+    
+
+    def copy(self, name=None, locked=None):
+        &#34;&#34;&#34;
+        Create a copy of this MeshVariable
+
+        Parameters
+        ----------
+        name : str
+            set a name to this MeshVariable, otherwise &#34;copy&#34;
+            is appended to the original name
+        locked : bool (default: False)
+            lock the mesh variable from accidental modification
+
+        Returns
+        -------
+        MeshVariable : object
+            Instantiate a MeshVariable copy.
+        &#34;&#34;&#34;
+
+        if name is None:
+            name = self._name+&#34;_copy&#34;
+
+        if locked is None:
+            locked = self._locked
+
+        new_mesh_variable = MeshVariable(name=name, mesh=self._mesh, locked=False)
+        new_mesh_variable.data = self.data
+
+        if locked:
+            new_mesh_variable.lock()
+
+        return new_mesh_variable
+
+    def lock(self):
+        self._locked = True
+
+    def unlock(self):
+        self._locked = False
+
+## This is a redundancy - @property definition is nuked by the @ .getter
+## LM: See this: https://stackoverflow.com/questions/51244348/use-of-propertys-getter-in-python
+
+## Don&#39;t sync on get / set as this prevents doing a series of computations on the array and
+## doing the sync when finished. I can also imagine this going wrong if sync nukes values
+## in the shadow zone unexpectedly. Also get is called for any indexing operation ...  ugh !
+
+    @property
+    def data(self):
+        &#34;&#34;&#34; View of MeshVariable data of shape (n,) &#34;&#34;&#34;
+        pass
+
+    @data.getter
+    def data(self):
+        # This step is necessary because the numpy array is writeable
+        # through to the petsc vector and this cannot be blocked.
+        # Access to the numpy array will not automatically be sync&#39;d and this
+        # would also be a way to circumvent access to locked arrays - where such
+        # locking is intended to ensure we update dependent data when the variable is
+        # updated
+
+# if self._locked:
+        view = self._ldata.array[:]
+        view.setflags(write=False)
+        return view
+
+#        else:
+#            return self._ldata.array
+
+    @data.setter
+    def data(self, val):
+        if self._locked:
+            import quagmire
+            if quagmire.mpi_rank == 0:
+                print(&#34;quagmire.MeshVariable: {} - is locked&#34;.format(self.description))
+            return
+
+        if type(val) is float:
+                self._ldata.set(val)
+        else:
+            self._ldata.setArray(val)
+
+
+
+    ## For printing and other introspection we actually want to look through to the
+    ## meshVariable&#39;s own description
+
+    def __repr__(self):
+        if self._locked:
+            return &#34;quagmire.MeshVariable: {} - RO&#34;.format(self.description)
+        else:
+            return &#34;quagmire.MeshVariable: {} - RW&#34;.format(self.description)
+
+
+    def getGlobalVector(self, gdata):
+        &#34;&#34;&#34;
+        Obtain a PETSc global vector of the MeshVariable
+        &#34;&#34;&#34;
+        from petsc4py import PETSc
+        self._dm.localToGlobal(self._ldata, gdata, addv=PETSc.InsertMode.INSERT_VALUES)
+        return
+
+
+    def sync(self, mergeShadow=False):
+        &#34;&#34;&#34;
+        Explicit global sync of data
+        &#34;&#34;&#34;
+
+        from petsc4py import PETSc
+
+        if mergeShadow:
+            addv = PETSc.InsertMode.ADD_VALUES
+        else:
+            addv = PETSc.InsertMode.INSERT_VALUES
+
+        # need a global vector
+        gdata = self._dm.getGlobalVec()
+
+        # self._dm.localToLocal(self._ldata, self._gdata)
+        self._dm.localToGlobal(self._ldata, gdata, addv=addv)
+        self._dm.globalToLocal(gdata, self._ldata)
+
+        self._dm.restoreGlobalVec(gdata)
+
+        return
+
+
+    def xdmf(self, hdf5_filename, hdf5_mesh_filename=None, xdmf_filename=None):
+        &#34;&#34;&#34;
+        Creates an xdmf file associating the saved HDF5 file with the mesh
+
+        &#34;&#34;&#34;
+        from quagmire.tools.generate_xdmf import generateXdmf
+        from quagmire import mpi_rank
+
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
+
+        if mpi_rank == 0:
+            generateXdmf(hdf5_filename, hdf5_mesh_filename, xdmf_filename)
+        return
+
+
+    def save(self, hdf5_filename, append=False):
+        &#34;&#34;&#34;
+        Save the MeshVariable to disk.
+
+        Parameters
+        ----------
+        hdf5_filename : str (optional)
+            The name of the output file. Relative or absolute paths may be
+            used, but all directories must exist.
+        append : bool (default is True)
+            Append to existing file if it exists
+
+        Notes
+        -----
+        This method must be called collectively by all processes.
+        &#34;&#34;&#34;
+        from petsc4py import PETSc
+        import os
+
+        hdf5_filename = str(hdf5_filename)
+        if not hdf5_filename.endswith(&#39;.h5&#39;):
+            hdf5_filename += &#39;.h5&#39;
+
+        if self._mesh.id.startswith(&#34;pixmesh&#34;):
+            # save mesh info to the hdf5 if DMDA object
+            # this is so tiny that I/O hit is negligible
+            self._mesh.save_mesh_to_hdf5(hdf5_filename)
+
+        mode = &#34;w&#34;
+        if append and os.path.exists(hdf5_filename):
+            mode = &#34;a&#34;
+
+        # need a global vector
+        vname = self._ldata.getName()
+        gdata = self._dm.getGlobalVec()
+        gdata.setName(vname)
+        self._dm.localToGlobal(self._ldata, gdata)
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(hdf5_filename, mode=mode)
+        ViewHDF5(gdata)
+        ViewHDF5.destroy()
+        ViewHDF5 = None
+
+        self._dm.restoreGlobalVec(gdata)
+
+        return
+
+    def load(self, hdf5_filename, name=None):
+        &#34;&#34;&#34;
+        Load the MeshVariable from disk.
+
+        Parameters
+        ----------
+        hdf5_filename: str
+            The filename for the saved file. Relative or absolute paths may be
+            used, but all directories must exist.
+
+        Notes
+        -----
+        Provided files must be in hdf5 format, and contain a vector the same
+        size and with the same name as the current MeshVariable
+        &#34;&#34;&#34;
+        if self._locked:
+            raise ValueError(&#34;quagmire.MeshVariable: {} - is locked&#34;.format(self.description))
+
+        from petsc4py import PETSc
+        # need a global vector
+        gdata = self._dm.getGlobalVec()
+
+        if name is None:
+            gdata.setName(self._ldata.getName())
+        else:
+            gdata.setName(str(name))
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(str(hdf5_filename), mode=&#39;r&#39;)
+        gdata.load(ViewHDF5)
+        ViewHDF5.destroy()
+        ViewHDF5 = None
+
+        self._dm.globalToLocal(gdata, self._ldata)
+        self._dm.restoreGlobalVec(gdata)
+
+
+    def load_from_cloud_fs(self, cloud_hdf5_filename, cloud_location_handle=None, name=None):
+        &#34;&#34;&#34;
+        Load the MeshVariable from a cloud_location pointed to by
+        a pyfilesystem object. 
+
+        Parameters
+        ----------
+
+        cloud_location: 
+
+        cloud_hdf5_filename: str
+            The filename for the hdf5 file in the cloud. It should be possible to do 
+            a cloud_location_handle.listdir(&#34;.&#34;) to check the file names
+
+        Notes
+        -----
+        Cloud files must be in hdf5 format, and contain a vector the same
+        size and with the same name as the current MeshVariable 
+        &#34;&#34;&#34;
+
+        from quagmire.tools import cloud_fs
+
+        if not cloud_fs:
+            print(&#34;Cloud services are not available - they require fs and fs.webdav packages&#34;)
+            return
+
+        from petsc4py import PETSc
+        import os
+
+        from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, cloud_download
+
+        if self._locked:
+            raise ValueError(&#34;quagmire.MeshVariable: {} - is locked&#34;.format(self.description))
+
+        if cloud_location_handle is None:
+           cloud_location_handle = quagmire_cloud_fs
+
+        local_filename = os.path.basename(cloud_hdf5_filename)
+        tempfile = os.path.join(quagmire_cloud_cache_dir_name, str(local_filename))
+            
+        cloud_download(cloud_hdf5_filename, tempfile, cloud_location_handle)
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(tempfile, mode=&#39;r&#39;)
+
+        gdata = self._dm.getGlobalVec()
+        if name is None:
+            gdata.setName(self._ldata.getName())
+        else:
+            gdata.setName(str(name))
+
+        gdata.load(ViewHDF5)
+
+        ViewHDF5.destroy()
+        ViewHDF5 = None
+
+        self._dm.globalToLocal(gdata, self._ldata)
+        self._dm.restoreGlobalVec(gdata)
+
+        return
+
+
+    def load_from_url(self, url, name=None):
+        &#34;&#34;&#34; Load an hdf5 file pointed to by a publicly accessible url &#34;&#34;&#34;
+
+        from quagmire.tools import cloud_fs
+
+        from petsc4py import PETSc
+        import os
+
+        from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, url_download
+
+        if self._locked:
+            raise ValueError(&#34;quagmire.MeshVariable: {} - is locked&#34;.format(self.description))
+
+        tempfile = os.path.join(quagmire_cloud_cache_dir_name, self._name+&#34;.h5&#34;) 
+        # print(&#34;creating file {}&#34;.format(tempfile))
+
+
+        url_download(url, tempfile)
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(tempfile, mode=&#39;r&#39;)
+
+        gdata = self._dm.getGlobalVec()
+        if name is None:
+            gdata.setName(self._ldata.getName())
+        else:
+            gdata.setName(str(name))
+        gdata.load(ViewHDF5)
+
+        ViewHDF5.destroy()
+        ViewHDF5 = None
+
+        self._dm.globalToLocal(gdata, self._ldata)
+        self._dm.restoreGlobalVec(gdata)
+
+        return
+
+    def derivative(self, dirn):
+        &#34;&#34;&#34; (Lazy) Derivative in direction given by dirn &#34;&#34;&#34;
+
+        if str(dirn) in &#34;1&#34;:
+            lazyFn = self.fn_gradient(1)
+        else:
+            lazyFn = self.fn_gradient(0)
+
+        return lazyFn
+
+
+    def _gradient(self, nit=10, tol=1e-8):
+        &#34;&#34;&#34;
+        Compute values of the derivatives of PHI in the x, y directions at the nodal points.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Parameters
+        ----------
+        PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+        nit : int optional (default: 10)
+            number of iterations to reach convergence
+        tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+
+        Returns
+        -------
+        PHIx : ndarray of floats, shape (n,)
+            first partial derivative of PHI in x direction
+        PHIy : ndarray of floats, shape (n,)
+            first partial derivative of PHI in y direction
+        &#34;&#34;&#34;
+        return self._mesh.derivative_grad(self._ldata.array, nit, tol)
+
+
+    def interpolate(self, xi, yi, err=False, **kwargs):
+        &#34;&#34;&#34;
+        Interpolate mesh data to a set of coordinates
+
+        This method just passes the coordinates to the interpolation
+        methods on the mesh object.
+
+        Parameters
+        ----------
+        xi : array of floats, shape (l,)
+            interpolation coordinates in the x direction
+        yi : array of floats, shape (l,)
+            interpolation coordinates in the y direction
+        err : bool (default: False)
+            toggle whether to return error information
+        **kwargs : keyword arguments
+            optional arguments to pass through to the interpolation method
+
+        Returns
+        -------
+        interp : array of floats, shape (l,)
+            interpolated values of MeshVariable at xi,yi coordinates
+        err : array of ints, shape (l,)
+            error information to diagnose interpolation / extrapolation
+        &#34;&#34;&#34;
+        ## pass through for the mesh&#39;s interpolate method
+        import numpy as np
+
+        mesh = self._mesh
+        PHI = self._ldata.array
+        xi_array = np.array(xi).reshape(-1,1)
+        yi_array = np.array(yi).reshape(-1,1)
+
+        i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
+
+        if err:
+            return i, e
+        else:
+            return i
+
+
+    def evaluate(self, *args, **kwargs):
+        &#34;&#34;&#34;
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+        &#34;&#34;&#34;
+
+        import quagmire
+
+        if len(args) == 0:
+            return self._ldata.array
+
+        if (len(args) == 1 and args[0] is self._mesh):
+            return self._ldata.array
+        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, 
+                                                     quagmire.mesh.pixmesh.PixMesh,
+                                                     quagmire.mesh.strimesh.sTriMesh) ):
+            mesh = args[0]
+            return self._interpolate(mesh.coords[:,0], mesh.coords[:,1], **kwargs).reshape(-1)
+        else:
+            coords = np.array(args).reshape(-1,2)
+            return self._interpolate(coords[:,0], coords[:,1], **kwargs).reshape(-1)
+
+
+    ## Basic global operations provided by petsc4py
+
+    def max(self):
+        &#34;&#34;&#34; Retrieve the maximum value &#34;&#34;&#34;
+        gdata = self._dm.getGlobalVec()
+        self._dm.localToGlobal(self._ldata, gdata)
+        idx, val = gdata.max()
+        return val
+
+    def min(self):
+        &#34;&#34;&#34; Retrieve the minimum value &#34;&#34;&#34;
+        gdata = self._dm.getGlobalVec()
+        self._dm.localToGlobal(self._ldata, gdata)
+        idx, val = gdata.min()
+        return val
+
+    def sum(self):
+        &#34;&#34;&#34; Calculate the sum of all entries &#34;&#34;&#34;
+        gdata = self._dm.getGlobalVec()
+        self._dm.localToGlobal(self._ldata, gdata)
+        return gdata.sum()
+
+    def mean(self):
+        &#34;&#34;&#34; Calculate the mean value &#34;&#34;&#34;
+        gdata = self._dm.getGlobalVec()
+        size = gdata.getSize()
+        self._dm.localToGlobal(self._ldata, gdata)
+        return gdata.sum()/size
+
+    def std(self):
+        &#34;&#34;&#34; Calculate the standard deviation &#34;&#34;&#34;
+        from math import sqrt
+        gdata = self._dm.getGlobalVec()
+        size = gdata.getSize()
+        self._dm.localToGlobal(self._ldata, gdata)
+        mu = gdata.sum()/size
+        gdata -= mu
+        return sqrt((gdata.sum())**2) / size</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="quagmire.mesh.basemesh.MeshFunction" href="#quagmire.mesh.basemesh.MeshFunction">MeshFunction</a></li>
+<li><a title="quagmire.function.function_classes.LazyEvaluation" href="../function/function_classes.html#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="quagmire.mesh.basemesh.VectorMeshVariable" href="#quagmire.mesh.basemesh.VectorMeshVariable">VectorMeshVariable</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="quagmire.mesh.basemesh.MeshVariable.data"><code class="name">var <span class="ident">data</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">    @data.getter
+    def data(self):
+        # This step is necessary because the numpy array is writeable
+        # through to the petsc vector and this cannot be blocked.
+        # Access to the numpy array will not automatically be sync&#39;d and this
+        # would also be a way to circumvent access to locked arrays - where such
+        # locking is intended to ensure we update dependent data when the variable is
+        # updated
+
+# if self._locked:
+        view = self._ldata.array[:]
+        view.setflags(write=False)
+        return view</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="quagmire.mesh.basemesh.MeshVariable.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self, name=None, locked=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a copy of this MeshVariable</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>set a name to this MeshVariable, otherwise "copy"
+is appended to the original name</dd>
+<dt><strong><code>locked</code></strong> :&ensp;<code>bool (default: False)</code></dt>
+<dd>lock the mesh variable from accidental modification</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>MeshVariable</code></strong> :&ensp;<code>object</code></dt>
+<dd>Instantiate a MeshVariable copy.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self, name=None, locked=None):
+    &#34;&#34;&#34;
+    Create a copy of this MeshVariable
+
+    Parameters
+    ----------
+    name : str
+        set a name to this MeshVariable, otherwise &#34;copy&#34;
+        is appended to the original name
+    locked : bool (default: False)
+        lock the mesh variable from accidental modification
+
+    Returns
+    -------
+    MeshVariable : object
+        Instantiate a MeshVariable copy.
+    &#34;&#34;&#34;
+
+    if name is None:
+        name = self._name+&#34;_copy&#34;
+
+    if locked is None:
+        locked = self._locked
+
+    new_mesh_variable = MeshVariable(name=name, mesh=self._mesh, locked=False)
+    new_mesh_variable.data = self.data
+
+    if locked:
+        new_mesh_variable.lock()
+
+    return new_mesh_variable</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.derivative"><code class="name flex">
+<span>def <span class="ident">derivative</span></span>(<span>self, dirn)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>(Lazy) Derivative in direction given by dirn</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivative(self, dirn):
+    &#34;&#34;&#34; (Lazy) Derivative in direction given by dirn &#34;&#34;&#34;
+
+    if str(dirn) in &#34;1&#34;:
+        lazyFn = self.fn_gradient(1)
+    else:
+        lazyFn = self.fn_gradient(0)
+
+    return lazyFn</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>If the argument is a mesh, return the values at the nodes.
+In all other cases call the <code>interpolate</code> method.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, *args, **kwargs):
+    &#34;&#34;&#34;
+    If the argument is a mesh, return the values at the nodes.
+    In all other cases call the `interpolate` method.
+    &#34;&#34;&#34;
+
+    import quagmire
+
+    if len(args) == 0:
+        return self._ldata.array
+
+    if (len(args) == 1 and args[0] is self._mesh):
+        return self._ldata.array
+    elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, 
+                                                 quagmire.mesh.pixmesh.PixMesh,
+                                                 quagmire.mesh.strimesh.sTriMesh) ):
+        mesh = args[0]
+        return self._interpolate(mesh.coords[:,0], mesh.coords[:,1], **kwargs).reshape(-1)
+    else:
+        coords = np.array(args).reshape(-1,2)
+        return self._interpolate(coords[:,0], coords[:,1], **kwargs).reshape(-1)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.getGlobalVector"><code class="name flex">
+<span>def <span class="ident">getGlobalVector</span></span>(<span>self, gdata)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Obtain a PETSc global vector of the MeshVariable</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getGlobalVector(self, gdata):
+    &#34;&#34;&#34;
+    Obtain a PETSc global vector of the MeshVariable
+    &#34;&#34;&#34;
+    from petsc4py import PETSc
+    self._dm.localToGlobal(self._ldata, gdata, addv=PETSc.InsertMode.INSERT_VALUES)
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.interpolate"><code class="name flex">
+<span>def <span class="ident">interpolate</span></span>(<span>self, xi, yi, err=False, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interpolate mesh data to a set of coordinates</p>
+<p>This method just passes the coordinates to the interpolation
+methods on the mesh object.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>xi</code></strong> :&ensp;<code>array</code> of <code>floats, shape (l,)</code></dt>
+<dd>interpolation coordinates in the x direction</dd>
+<dt><strong><code>yi</code></strong> :&ensp;<code>array</code> of <code>floats, shape (l,)</code></dt>
+<dd>interpolation coordinates in the y direction</dd>
+<dt><strong><code>err</code></strong> :&ensp;<code>bool (default: False)</code></dt>
+<dd>toggle whether to return error information</dd>
+<dt><strong><code>**kwargs</code></strong> :&ensp;<code>keyword arguments</code></dt>
+<dd>optional arguments to pass through to the interpolation method</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>interp</code></strong> :&ensp;<code>array</code> of <code>floats, shape (l,)</code></dt>
+<dd>interpolated values of MeshVariable at xi,yi coordinates</dd>
+<dt><strong><code>err</code></strong> :&ensp;<code>array</code> of <code>ints, shape (l,)</code></dt>
+<dd>error information to diagnose interpolation / extrapolation</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpolate(self, xi, yi, err=False, **kwargs):
+    &#34;&#34;&#34;
+    Interpolate mesh data to a set of coordinates
+
+    This method just passes the coordinates to the interpolation
+    methods on the mesh object.
+
+    Parameters
+    ----------
+    xi : array of floats, shape (l,)
+        interpolation coordinates in the x direction
+    yi : array of floats, shape (l,)
+        interpolation coordinates in the y direction
+    err : bool (default: False)
+        toggle whether to return error information
+    **kwargs : keyword arguments
+        optional arguments to pass through to the interpolation method
+
+    Returns
+    -------
+    interp : array of floats, shape (l,)
+        interpolated values of MeshVariable at xi,yi coordinates
+    err : array of ints, shape (l,)
+        error information to diagnose interpolation / extrapolation
+    &#34;&#34;&#34;
+    ## pass through for the mesh&#39;s interpolate method
+    import numpy as np
+
+    mesh = self._mesh
+    PHI = self._ldata.array
+    xi_array = np.array(xi).reshape(-1,1)
+    yi_array = np.array(yi).reshape(-1,1)
+
+    i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
+
+    if err:
+        return i, e
+    else:
+        return i</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.load"><code class="name flex">
+<span>def <span class="ident">load</span></span>(<span>self, hdf5_filename, name=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load the MeshVariable from disk.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>hdf5_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>The filename for the saved file. Relative or absolute paths may be
+used, but all directories must exist.</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>Provided files must be in hdf5 format, and contain a vector the same
+size and with the same name as the current MeshVariable</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load(self, hdf5_filename, name=None):
+    &#34;&#34;&#34;
+    Load the MeshVariable from disk.
+
+    Parameters
+    ----------
+    hdf5_filename: str
+        The filename for the saved file. Relative or absolute paths may be
+        used, but all directories must exist.
+
+    Notes
+    -----
+    Provided files must be in hdf5 format, and contain a vector the same
+    size and with the same name as the current MeshVariable
+    &#34;&#34;&#34;
+    if self._locked:
+        raise ValueError(&#34;quagmire.MeshVariable: {} - is locked&#34;.format(self.description))
+
+    from petsc4py import PETSc
+    # need a global vector
+    gdata = self._dm.getGlobalVec()
+
+    if name is None:
+        gdata.setName(self._ldata.getName())
+    else:
+        gdata.setName(str(name))
+
+    ViewHDF5 = PETSc.Viewer()
+    ViewHDF5.createHDF5(str(hdf5_filename), mode=&#39;r&#39;)
+    gdata.load(ViewHDF5)
+    ViewHDF5.destroy()
+    ViewHDF5 = None
+
+    self._dm.globalToLocal(gdata, self._ldata)
+    self._dm.restoreGlobalVec(gdata)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.load_from_cloud_fs"><code class="name flex">
+<span>def <span class="ident">load_from_cloud_fs</span></span>(<span>self, cloud_hdf5_filename, cloud_location_handle=None, name=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load the MeshVariable from a cloud_location pointed to by
+a pyfilesystem object. </p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>cloud_location</code></strong></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>cloud_hdf5_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>The filename for the hdf5 file in the cloud. It should be possible to do
+a cloud_location_handle.listdir(".") to check the file names</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>Cloud files must be in hdf5 format, and contain a vector the same
+size and with the same name as the current MeshVariable</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_from_cloud_fs(self, cloud_hdf5_filename, cloud_location_handle=None, name=None):
+    &#34;&#34;&#34;
+    Load the MeshVariable from a cloud_location pointed to by
+    a pyfilesystem object. 
+
+    Parameters
+    ----------
+
+    cloud_location: 
+
+    cloud_hdf5_filename: str
+        The filename for the hdf5 file in the cloud. It should be possible to do 
+        a cloud_location_handle.listdir(&#34;.&#34;) to check the file names
+
+    Notes
+    -----
+    Cloud files must be in hdf5 format, and contain a vector the same
+    size and with the same name as the current MeshVariable 
+    &#34;&#34;&#34;
+
+    from quagmire.tools import cloud_fs
+
+    if not cloud_fs:
+        print(&#34;Cloud services are not available - they require fs and fs.webdav packages&#34;)
+        return
+
+    from petsc4py import PETSc
+    import os
+
+    from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, cloud_download
+
+    if self._locked:
+        raise ValueError(&#34;quagmire.MeshVariable: {} - is locked&#34;.format(self.description))
+
+    if cloud_location_handle is None:
+       cloud_location_handle = quagmire_cloud_fs
+
+    local_filename = os.path.basename(cloud_hdf5_filename)
+    tempfile = os.path.join(quagmire_cloud_cache_dir_name, str(local_filename))
+        
+    cloud_download(cloud_hdf5_filename, tempfile, cloud_location_handle)
+
+    ViewHDF5 = PETSc.Viewer()
+    ViewHDF5.createHDF5(tempfile, mode=&#39;r&#39;)
+
+    gdata = self._dm.getGlobalVec()
+    if name is None:
+        gdata.setName(self._ldata.getName())
+    else:
+        gdata.setName(str(name))
+
+    gdata.load(ViewHDF5)
+
+    ViewHDF5.destroy()
+    ViewHDF5 = None
+
+    self._dm.globalToLocal(gdata, self._ldata)
+    self._dm.restoreGlobalVec(gdata)
+
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.load_from_url"><code class="name flex">
+<span>def <span class="ident">load_from_url</span></span>(<span>self, url, name=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load an hdf5 file pointed to by a publicly accessible url</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_from_url(self, url, name=None):
+    &#34;&#34;&#34; Load an hdf5 file pointed to by a publicly accessible url &#34;&#34;&#34;
+
+    from quagmire.tools import cloud_fs
+
+    from petsc4py import PETSc
+    import os
+
+    from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, url_download
+
+    if self._locked:
+        raise ValueError(&#34;quagmire.MeshVariable: {} - is locked&#34;.format(self.description))
+
+    tempfile = os.path.join(quagmire_cloud_cache_dir_name, self._name+&#34;.h5&#34;) 
+    # print(&#34;creating file {}&#34;.format(tempfile))
+
+
+    url_download(url, tempfile)
+
+    ViewHDF5 = PETSc.Viewer()
+    ViewHDF5.createHDF5(tempfile, mode=&#39;r&#39;)
+
+    gdata = self._dm.getGlobalVec()
+    if name is None:
+        gdata.setName(self._ldata.getName())
+    else:
+        gdata.setName(str(name))
+    gdata.load(ViewHDF5)
+
+    ViewHDF5.destroy()
+    ViewHDF5 = None
+
+    self._dm.globalToLocal(gdata, self._ldata)
+    self._dm.restoreGlobalVec(gdata)
+
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.lock"><code class="name flex">
+<span>def <span class="ident">lock</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lock(self):
+    self._locked = True</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.max"><code class="name flex">
+<span>def <span class="ident">max</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieve the maximum value</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def max(self):
+    &#34;&#34;&#34; Retrieve the maximum value &#34;&#34;&#34;
+    gdata = self._dm.getGlobalVec()
+    self._dm.localToGlobal(self._ldata, gdata)
+    idx, val = gdata.max()
+    return val</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.mean"><code class="name flex">
+<span>def <span class="ident">mean</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate the mean value</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mean(self):
+    &#34;&#34;&#34; Calculate the mean value &#34;&#34;&#34;
+    gdata = self._dm.getGlobalVec()
+    size = gdata.getSize()
+    self._dm.localToGlobal(self._ldata, gdata)
+    return gdata.sum()/size</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.min"><code class="name flex">
+<span>def <span class="ident">min</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieve the minimum value</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def min(self):
+    &#34;&#34;&#34; Retrieve the minimum value &#34;&#34;&#34;
+    gdata = self._dm.getGlobalVec()
+    self._dm.localToGlobal(self._ldata, gdata)
+    idx, val = gdata.min()
+    return val</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.save"><code class="name flex">
+<span>def <span class="ident">save</span></span>(<span>self, hdf5_filename, append=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Save the MeshVariable to disk.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>hdf5_filename</code></strong> :&ensp;<code>str (optional)</code></dt>
+<dd>The name of the output file. Relative or absolute paths may be
+used, but all directories must exist.</dd>
+<dt><strong><code>append</code></strong> :&ensp;<code>bool (default is True)</code></dt>
+<dd>Append to existing file if it exists</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>This method must be called collectively by all processes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save(self, hdf5_filename, append=False):
+    &#34;&#34;&#34;
+    Save the MeshVariable to disk.
+
+    Parameters
+    ----------
+    hdf5_filename : str (optional)
+        The name of the output file. Relative or absolute paths may be
+        used, but all directories must exist.
+    append : bool (default is True)
+        Append to existing file if it exists
+
+    Notes
+    -----
+    This method must be called collectively by all processes.
+    &#34;&#34;&#34;
+    from petsc4py import PETSc
+    import os
+
+    hdf5_filename = str(hdf5_filename)
+    if not hdf5_filename.endswith(&#39;.h5&#39;):
+        hdf5_filename += &#39;.h5&#39;
+
+    if self._mesh.id.startswith(&#34;pixmesh&#34;):
+        # save mesh info to the hdf5 if DMDA object
+        # this is so tiny that I/O hit is negligible
+        self._mesh.save_mesh_to_hdf5(hdf5_filename)
+
+    mode = &#34;w&#34;
+    if append and os.path.exists(hdf5_filename):
+        mode = &#34;a&#34;
+
+    # need a global vector
+    vname = self._ldata.getName()
+    gdata = self._dm.getGlobalVec()
+    gdata.setName(vname)
+    self._dm.localToGlobal(self._ldata, gdata)
+
+    ViewHDF5 = PETSc.Viewer()
+    ViewHDF5.createHDF5(hdf5_filename, mode=mode)
+    ViewHDF5(gdata)
+    ViewHDF5.destroy()
+    ViewHDF5 = None
+
+    self._dm.restoreGlobalVec(gdata)
+
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.std"><code class="name flex">
+<span>def <span class="ident">std</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate the standard deviation</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def std(self):
+    &#34;&#34;&#34; Calculate the standard deviation &#34;&#34;&#34;
+    from math import sqrt
+    gdata = self._dm.getGlobalVec()
+    size = gdata.getSize()
+    self._dm.localToGlobal(self._ldata, gdata)
+    mu = gdata.sum()/size
+    gdata -= mu
+    return sqrt((gdata.sum())**2) / size</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.sum"><code class="name flex">
+<span>def <span class="ident">sum</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate the sum of all entries</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sum(self):
+    &#34;&#34;&#34; Calculate the sum of all entries &#34;&#34;&#34;
+    gdata = self._dm.getGlobalVec()
+    self._dm.localToGlobal(self._ldata, gdata)
+    return gdata.sum()</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.sync"><code class="name flex">
+<span>def <span class="ident">sync</span></span>(<span>self, mergeShadow=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Explicit global sync of data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sync(self, mergeShadow=False):
+    &#34;&#34;&#34;
+    Explicit global sync of data
+    &#34;&#34;&#34;
+
+    from petsc4py import PETSc
+
+    if mergeShadow:
+        addv = PETSc.InsertMode.ADD_VALUES
+    else:
+        addv = PETSc.InsertMode.INSERT_VALUES
+
+    # need a global vector
+    gdata = self._dm.getGlobalVec()
+
+    # self._dm.localToLocal(self._ldata, self._gdata)
+    self._dm.localToGlobal(self._ldata, gdata, addv=addv)
+    self._dm.globalToLocal(gdata, self._ldata)
+
+    self._dm.restoreGlobalVec(gdata)
+
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.unlock"><code class="name flex">
+<span>def <span class="ident">unlock</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unlock(self):
+    self._locked = False</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.MeshVariable.xdmf"><code class="name flex">
+<span>def <span class="ident">xdmf</span></span>(<span>self, hdf5_filename, hdf5_mesh_filename=None, xdmf_filename=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates an xdmf file associating the saved HDF5 file with the mesh</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def xdmf(self, hdf5_filename, hdf5_mesh_filename=None, xdmf_filename=None):
+    &#34;&#34;&#34;
+    Creates an xdmf file associating the saved HDF5 file with the mesh
+
+    &#34;&#34;&#34;
+    from quagmire.tools.generate_xdmf import generateXdmf
+    from quagmire import mpi_rank
+
+    hdf5_filename = str(hdf5_filename)
+    if not hdf5_filename.endswith(&#39;.h5&#39;):
+        hdf5_filename += &#39;.h5&#39;
+
+    if mpi_rank == 0:
+        generateXdmf(hdf5_filename, hdf5_mesh_filename, xdmf_filename)
+    return</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="quagmire.mesh.basemesh.MeshFunction" href="#quagmire.mesh.basemesh.MeshFunction">MeshFunction</a></b></code>:
+<ul class="hlist">
+<li><code><a title="quagmire.mesh.basemesh.MeshFunction.convert" href="../function/function_classes.html#quagmire.function.function_classes.LazyEvaluation.convert">convert</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshFunction.fn_gradient" href="#quagmire.mesh.basemesh.MeshFunction.fn_gradient">fn_gradient</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshFunction.rename" href="#quagmire.mesh.basemesh.MeshFunction.rename">rename</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="quagmire.mesh.basemesh.VectorMeshVariable"><code class="flex name class">
+<span>class <span class="ident">VectorMeshVariable</span></span>
+<span>(</span><span>name, mesh)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The VectorMeshVariable class generates a vector variable supported on the mesh.</p>
+<p>To set/read nodal values, use the numpy interface via the 'self.data' property.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>Assign the MeshVariable a unique identifier</dd>
+<dt><strong><code>mesh</code></strong> :&ensp;<code><a title="quagmire" href="../index.html">quagmire</a> mesh object</code></dt>
+<dd>The supporting mesh for the variable</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>This class inherits several methods from the <code><a title="quagmire.mesh.basemesh.MeshVariable" href="#quagmire.mesh.basemesh.MeshVariable">MeshVariable</a></code> class.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VectorMeshVariable(MeshVariable):
+    &#34;&#34;&#34;
+    The VectorMeshVariable class generates a vector variable supported on the mesh.
+
+    To set/read nodal values, use the numpy interface via the &#39;self.data&#39; property.
+
+    Parameters
+    ----------
+    name : str
+        Assign the MeshVariable a unique identifier
+    mesh : quagmire mesh object
+        The supporting mesh for the variable
+
+    Notes
+    -----
+    This class inherits several methods from the `MeshVariable` class.
+    &#34;&#34;&#34;
+    def __init__(self, name, mesh):
+        self._mesh = mesh
+        self._dm = mesh.dm.getCoordinateDM()
+
+        name = str(name)
+
+        # mesh variable vector
+        self._ldata = self._dm.createLocalVector()
+        self._ldata.setName(name)
+        return
+
+    @property
+    def data(self):
+        &#34;&#34;&#34; View of MeshVariable data of shape (n,) &#34;&#34;&#34;
+        pass
+
+    @data.getter
+    def data(self):
+        return self._ldata.array.reshape(-1,2)
+
+    @data.setter
+    def data(self, val):
+        import numpy as np
+        if type(val) is float:
+            self._ldata.set(val)
+        elif np.shape(val) == (self._mesh.npoints,2):
+            self._ldata.setArray(np.ravel(val))
+        else:
+            raise ValueError(&#34;NumPy array must be of shape ({},{})&#34;.format(self._mesh.npoints,2))
+
+    def gradient(self):
+        raise TypeError(&#34;VectorMeshVariable does not currently support gradient operations&#34;)
+
+    def interpolate(self, xi, yi, err=False, **kwargs):
+        raise TypeError(&#34;VectorMeshVariable does not currently support interpolate operations&#34;)
+
+    def evaluate(self, xi, yi, err=False, **kwargs):
+        &#34;&#34;&#34;
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+        &#34;&#34;&#34;
+        return self._interpolate(*args, **kwargs)
+
+
+    def norm(self, axis=1):
+        &#34;&#34;&#34; evaluate the normal vector of the data along the specified axis &#34;&#34;&#34;
+        import numpy as np
+        return np.linalg.norm(self.data, axis=axis)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="quagmire.mesh.basemesh.MeshVariable" href="#quagmire.mesh.basemesh.MeshVariable">MeshVariable</a></li>
+<li><a title="quagmire.mesh.basemesh.MeshFunction" href="#quagmire.mesh.basemesh.MeshFunction">MeshFunction</a></li>
+<li><a title="quagmire.function.function_classes.LazyEvaluation" href="../function/function_classes.html#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="quagmire.mesh.basemesh.VectorMeshVariable.data"><code class="name">var <span class="ident">data</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@data.getter
+def data(self):
+    return self._ldata.array.reshape(-1,2)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="quagmire.mesh.basemesh.VectorMeshVariable.gradient"><code class="name flex">
+<span>def <span class="ident">gradient</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gradient(self):
+    raise TypeError(&#34;VectorMeshVariable does not currently support gradient operations&#34;)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.basemesh.VectorMeshVariable.norm"><code class="name flex">
+<span>def <span class="ident">norm</span></span>(<span>self, axis=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>evaluate the normal vector of the data along the specified axis</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def norm(self, axis=1):
+    &#34;&#34;&#34; evaluate the normal vector of the data along the specified axis &#34;&#34;&#34;
+    import numpy as np
+    return np.linalg.norm(self.data, axis=axis)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="quagmire.mesh.basemesh.MeshVariable" href="#quagmire.mesh.basemesh.MeshVariable">MeshVariable</a></b></code>:
+<ul class="hlist">
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.convert" href="../function/function_classes.html#quagmire.function.function_classes.LazyEvaluation.convert">convert</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.copy" href="#quagmire.mesh.basemesh.MeshVariable.copy">copy</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.derivative" href="#quagmire.mesh.basemesh.MeshVariable.derivative">derivative</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.evaluate" href="#quagmire.mesh.basemesh.MeshVariable.evaluate">evaluate</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.fn_gradient" href="#quagmire.mesh.basemesh.MeshFunction.fn_gradient">fn_gradient</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.getGlobalVector" href="#quagmire.mesh.basemesh.MeshVariable.getGlobalVector">getGlobalVector</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.interpolate" href="#quagmire.mesh.basemesh.MeshVariable.interpolate">interpolate</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.load" href="#quagmire.mesh.basemesh.MeshVariable.load">load</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.load_from_cloud_fs" href="#quagmire.mesh.basemesh.MeshVariable.load_from_cloud_fs">load_from_cloud_fs</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.load_from_url" href="#quagmire.mesh.basemesh.MeshVariable.load_from_url">load_from_url</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.max" href="#quagmire.mesh.basemesh.MeshVariable.max">max</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.mean" href="#quagmire.mesh.basemesh.MeshVariable.mean">mean</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.min" href="#quagmire.mesh.basemesh.MeshVariable.min">min</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.rename" href="#quagmire.mesh.basemesh.MeshFunction.rename">rename</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.save" href="#quagmire.mesh.basemesh.MeshVariable.save">save</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.std" href="#quagmire.mesh.basemesh.MeshVariable.std">std</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.sum" href="#quagmire.mesh.basemesh.MeshVariable.sum">sum</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.sync" href="#quagmire.mesh.basemesh.MeshVariable.sync">sync</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.xdmf" href="#quagmire.mesh.basemesh.MeshVariable.xdmf">xdmf</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="quagmire.mesh" href="index.html">quagmire.mesh</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="quagmire.mesh.basemesh.MeshFunction" href="#quagmire.mesh.basemesh.MeshFunction">MeshFunction</a></code></h4>
+<ul class="two-column">
+<li><code><a title="quagmire.mesh.basemesh.MeshFunction.derivative" href="#quagmire.mesh.basemesh.MeshFunction.derivative">derivative</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshFunction.evaluate" href="#quagmire.mesh.basemesh.MeshFunction.evaluate">evaluate</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshFunction.fn_gradient" href="#quagmire.mesh.basemesh.MeshFunction.fn_gradient">fn_gradient</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshFunction.grad" href="#quagmire.mesh.basemesh.MeshFunction.grad">grad</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshFunction.rename" href="#quagmire.mesh.basemesh.MeshFunction.rename">rename</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshFunction.slope" href="#quagmire.mesh.basemesh.MeshFunction.slope">slope</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="quagmire.mesh.basemesh.MeshVariable" href="#quagmire.mesh.basemesh.MeshVariable">MeshVariable</a></code></h4>
+<ul class="two-column">
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.copy" href="#quagmire.mesh.basemesh.MeshVariable.copy">copy</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.data" href="#quagmire.mesh.basemesh.MeshVariable.data">data</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.derivative" href="#quagmire.mesh.basemesh.MeshVariable.derivative">derivative</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.evaluate" href="#quagmire.mesh.basemesh.MeshVariable.evaluate">evaluate</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.getGlobalVector" href="#quagmire.mesh.basemesh.MeshVariable.getGlobalVector">getGlobalVector</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.interpolate" href="#quagmire.mesh.basemesh.MeshVariable.interpolate">interpolate</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.load" href="#quagmire.mesh.basemesh.MeshVariable.load">load</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.load_from_cloud_fs" href="#quagmire.mesh.basemesh.MeshVariable.load_from_cloud_fs">load_from_cloud_fs</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.load_from_url" href="#quagmire.mesh.basemesh.MeshVariable.load_from_url">load_from_url</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.lock" href="#quagmire.mesh.basemesh.MeshVariable.lock">lock</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.max" href="#quagmire.mesh.basemesh.MeshVariable.max">max</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.mean" href="#quagmire.mesh.basemesh.MeshVariable.mean">mean</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.min" href="#quagmire.mesh.basemesh.MeshVariable.min">min</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.save" href="#quagmire.mesh.basemesh.MeshVariable.save">save</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.std" href="#quagmire.mesh.basemesh.MeshVariable.std">std</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.sum" href="#quagmire.mesh.basemesh.MeshVariable.sum">sum</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.sync" href="#quagmire.mesh.basemesh.MeshVariable.sync">sync</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.unlock" href="#quagmire.mesh.basemesh.MeshVariable.unlock">unlock</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.MeshVariable.xdmf" href="#quagmire.mesh.basemesh.MeshVariable.xdmf">xdmf</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="quagmire.mesh.basemesh.VectorMeshVariable" href="#quagmire.mesh.basemesh.VectorMeshVariable">VectorMeshVariable</a></code></h4>
+<ul class="">
+<li><code><a title="quagmire.mesh.basemesh.VectorMeshVariable.data" href="#quagmire.mesh.basemesh.VectorMeshVariable.data">data</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.VectorMeshVariable.gradient" href="#quagmire.mesh.basemesh.VectorMeshVariable.gradient">gradient</a></code></li>
+<li><code><a title="quagmire.mesh.basemesh.VectorMeshVariable.norm" href="#quagmire.mesh.basemesh.VectorMeshVariable.norm">norm</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

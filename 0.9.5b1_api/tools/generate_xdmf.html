@@ -1,0 +1,1514 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>quagmire.tools.generate_xdmf API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>quagmire.tools.generate_xdmf</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python
+import h5py
+import numpy as np
+import os, sys
+
+class Xdmf:
+  def __init__(self, filename):
+    self.filename = filename
+    self.cellMap  = {1 : {1 : &#39;Polyvertex&#39;, 2 : &#39;Polyline&#39;}, 2 : {3 : &#39;Triangle&#39;, 4 : &#39;Quadrilateral&#39;}, 3 : {4 : &#39;Tetrahedron&#39;, 6: &#39;Wedge&#39;, 8 : &#39;Hexahedron&#39;}}
+    self.typeMap  = {&#39;scalar&#39; : &#39;Scalar&#39;, &#39;vector&#39; : &#39;Vector&#39;, &#39;tensor&#39; : &#39;Tensor6&#39;, &#39;matrix&#39; : &#39;Matrix&#39;, \
+                    b&#39;scalar&#39; : &#39;Scalar&#39;,b&#39;vector&#39; : &#39;Vector&#39;,b&#39;tensor&#39; : &#39;Tensor6&#39;,b&#39;matrix&#39; : &#39;Matrix&#39;}
+    self.typeExt  = {2 : {&#39;vector&#39; : [&#39;x&#39;, &#39;y&#39;], &#39;tensor&#39; : [&#39;xx&#39;, &#39;yy&#39;, &#39;xy&#39;]}, 3 : {&#39;vector&#39; : [&#39;x&#39;, &#39;y&#39;, &#39;z&#39;], &#39;tensor&#39; : [&#39;xx&#39;, &#39;yy&#39;, &#39;zz&#39;, &#39;xy&#39;, &#39;yz&#39;, &#39;xz&#39;]}}
+    return
+
+  def writeHeader(self, fp, hdfFilename):
+    fp.write(&#39;&#39;&#39;\
+&lt;?xml version=&#34;1.0&#34; ?&gt;
+&lt;!DOCTYPE Xdmf SYSTEM &#34;Xdmf.dtd&#34; [
+&lt;!ENTITY HeavyData &#34;%s&#34;&gt;
+]&gt;
+&#39;&#39;&#39; % os.path.basename(hdfFilename))
+    fp.write(&#39;\n&lt;Xdmf&gt;\n  &lt;Domain Name=&#34;domain&#34;&gt;\n&#39;)
+    return
+
+  def writeCells(self, fp, topologyPath, numCells, numCorners):
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;cells&#34;
+              ItemType=&#34;Uniform&#34;
+              Format=&#34;HDF&#34;
+              NumberType=&#34;Float&#34; Precision=&#34;8&#34;
+              Dimensions=&#34;%d %d&#34;&gt;
+      &amp;HeavyData;:/%s/cells
+    &lt;/DataItem&gt;
+&#39;&#39;&#39; % (numCells, numCorners, topologyPath))
+    return
+
+  def writeVertices(self, fp, geometryPath, numVertices, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;vertices&#34;
+              Format=&#34;HDF&#34;
+              Dimensions=&#34;%d %d&#34;&gt;
+      &amp;HeavyData;:/%s/vertices
+    &lt;/DataItem&gt;
+    &lt;!-- ============================================================ --&gt;
+&#39;&#39;&#39; % (numVertices, spaceDim, geometryPath))
+    return
+
+  def writeLocations(self, fp, numParticles, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;xcoord&#34;
+              Format=&#34;HDF&#34;
+              Dimensions=&#34;%d&#34;&gt;
+      &amp;HeavyData;:/particles/xcoord
+    &lt;/DataItem&gt;
+&#39;&#39;&#39; % (numParticles))
+    if spaceDim == 1: return
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;ycoord&#34;
+              Format=&#34;HDF&#34;
+              Dimensions=&#34;%d&#34;&gt;
+      &amp;HeavyData;:/particles/ycoord
+    &lt;/DataItem&gt;
+&#39;&#39;&#39; % (numParticles))
+    if spaceDim == 2: return
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;zcoord&#34;
+              Format=&#34;HDF&#34;
+              Dimensions=&#34;%d&#34;&gt;
+      &amp;HeavyData;:/particles/zcoord
+    &lt;/DataItem&gt;
+&#39;&#39;&#39; % (numParticles))
+    return
+
+  def writeTimeGridHeader(self, fp, time):
+    fp.write(&#39;&#39;&#39;\
+    &lt;Grid Name=&#34;TimeSeries&#34; GridType=&#34;Collection&#34; CollectionType=&#34;Temporal&#34;&gt;
+      &lt;Time TimeType=&#34;List&#34;&gt;
+        &lt;DataItem Format=&#34;XML&#34; NumberType=&#34;Float&#34; Dimensions=&#34;%d&#34;&gt;
+          &#39;&#39;&#39; % (len(time)))
+    fp.write(&#39; &#39;.join(map(str, list(map(float, time)))))
+    fp.write(&#39;&#39;&#39;
+        &lt;/DataItem&gt;
+      &lt;/Time&gt;
+&#39;&#39;&#39;)
+    return
+
+  def writeSpaceGridHeader(self, fp, numCells, numCorners, cellDim, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+      &lt;Grid Name=&#34;domain&#34; GridType=&#34;Uniform&#34;&gt;
+        &lt;Topology
+           TopologyType=&#34;%s&#34;
+           NumberOfElements=&#34;%d&#34;&gt;
+          &lt;DataItem Reference=&#34;XML&#34;&gt;
+            /Xdmf/Domain/DataItem[@Name=&#34;cells&#34;]
+          &lt;/DataItem&gt;
+        &lt;/Topology&gt;
+        &lt;Geometry GeometryType=&#34;%s&#34;&gt;
+          &lt;DataItem Reference=&#34;XML&#34;&gt;
+            /Xdmf/Domain/DataItem[@Name=&#34;vertices&#34;]
+          &lt;/DataItem&gt;
+        &lt;/Geometry&gt;
+&#39;&#39;&#39; % (self.cellMap[cellDim][numCorners], numCells, &#34;XYZ&#34; if spaceDim &gt; 2 else &#34;XY&#34;))
+    return
+
+  def writeFieldSingle(self, fp, numSteps, timestep, spaceDim, name, f, domain):
+    if len(f[1].shape) &gt; 2:
+      dof = f[1].shape[1]
+      bs  = f[1].shape[2]
+    elif len(f[1].shape) &gt; 1:
+      if numSteps &gt; 1:
+        dof = f[1].shape[1]
+        bs  = 1
+      else:
+        dof = f[1].shape[0]
+        bs  = f[1].shape[1]
+    else:
+      dof = f[1].shape[0]
+      bs  = 1
+    fp.write(&#39;&#39;&#39;\
+        &lt;Attribute
+           Name=&#34;%s&#34;
+           Type=&#34;%s&#34;
+           Center=&#34;%s&#34;&gt;
+          &lt;DataItem ItemType=&#34;HyperSlab&#34;
+                    Dimensions=&#34;1 %d %d&#34;
+                    Type=&#34;HyperSlab&#34;&gt;
+            &lt;DataItem
+               Dimensions=&#34;3 3&#34;
+               Format=&#34;XML&#34;&gt;
+              %d 0 0
+              1 1 1
+              1 %d %d
+            &lt;/DataItem&gt;
+            &lt;DataItem
+               DataType=&#34;Float&#34; Precision=&#34;8&#34;
+               Dimensions=&#34;%d %d %d&#34;
+               Format=&#34;HDF&#34;&gt;
+              %s
+            &lt;/DataItem&gt;
+          &lt;/DataItem&gt;
+        &lt;/Attribute&gt;
+&#39;&#39;&#39; % (f[0], self.typeMap[f[1].attrs[&#39;vector_field_type&#39;]], domain, dof, bs, timestep, dof, bs, numSteps, dof, bs, name))
+    return
+
+  def writeFieldComponents(self, fp, numSteps, timestep, spaceDim, name, f, domain):
+    vtype = f[1].attrs[&#39;vector_field_type&#39;]
+    if len(f[1].shape) &gt; 2:
+      dof    = f[1].shape[1]
+      bs     = f[1].shape[2]
+      cdims  = &#39;1 %d 1&#39; % dof
+      dims   = &#39;%d %d %d&#39; % (numSteps, dof, bs)
+      stride = &#39;1 1 1&#39;
+      size   = &#39;1 %d 1&#39; % dof
+    else:
+      dof    = f[1].shape[0]
+      bs     = f[1].shape[1]
+      cdims  = &#39;%d 1&#39; % dof
+      dims   = &#39;%d %d&#39; % (dof, bs)
+      stride = &#39;1 1&#39;
+      size   = &#39;%d 1&#39; % dof
+    for c in range(bs):
+      ext = self.typeExt[spaceDim][vtype][c]
+      if len(f[1].shape) &gt; 2: start  = &#39;%d 0 %d&#39; % (timestep, c)
+      else:                   start  = &#39;0 %d&#39; % c
+      fp.write(&#39;&#39;&#39;\
+        &lt;Attribute
+           Name=&#34;%s&#34;
+           Type=&#34;Scalar&#34;
+           Center=&#34;%s&#34;&gt;
+          &lt;DataItem ItemType=&#34;HyperSlab&#34;
+                    Dimensions=&#34;%s&#34;
+                    Type=&#34;HyperSlab&#34;&gt;
+            &lt;DataItem
+               Dimensions=&#34;3 %d&#34;
+               Format=&#34;XML&#34;&gt;
+              %s
+              %s
+              %s
+            &lt;/DataItem&gt;
+            &lt;DataItem
+               DataType=&#34;Float&#34; Precision=&#34;8&#34;
+               Dimensions=&#34;%s&#34;
+               Format=&#34;HDF&#34;&gt;
+              %s
+            &lt;/DataItem&gt;
+          &lt;/DataItem&gt;
+        &lt;/Attribute&gt;
+&#39;&#39;&#39; % (f[0]+&#39;_&#39;+ext, domain, cdims, len(f[1].shape), start, stride, size, dims, name))
+    return
+
+  def writeField(self, fp, numSteps, timestep, cellDim, spaceDim, name, f, domain):
+    ctypes = [&#39;tensor&#39;, &#39;matrix&#39;]
+    if spaceDim == 2 or cellDim != spaceDim: ctypes.append(&#39;vector&#39;)
+    if f[1].attrs[&#39;vector_field_type&#39;] in ctypes:
+      self.writeFieldComponents(fp, numSteps, timestep, spaceDim, name, f, domain)
+    else:
+      self.writeFieldSingle(fp, numSteps, timestep, spaceDim, name, f, domain)
+    return
+
+  def writeSpaceGridFooter(self, fp):
+    fp.write(&#39;      &lt;/Grid&gt;\n&#39;)
+    return
+
+  def writeParticleGridHeader(self, fp, numParticles, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+      &lt;Grid Name=&#34;particle_domain&#34; GridType=&#34;Uniform&#34;&gt;
+        &lt;Topology TopologyType=&#34;Polyvertex&#34; NodesPerElement=&#34;%d&#34; /&gt;
+        &lt;Geometry GeometryType=&#34;%s&#34;&gt;
+          &lt;DataItem Reference=&#34;XML&#34;&gt;/Xdmf/Domain/DataItem[@Name=&#34;xcoord&#34;]&lt;/DataItem&gt;
+          &lt;DataItem Reference=&#34;XML&#34;&gt;/Xdmf/Domain/DataItem[@Name=&#34;ycoord&#34;]&lt;/DataItem&gt;
+          %s
+        &lt;/Geometry&gt;
+&#39;&#39;&#39; % (numParticles, &#34;X_Y_Z&#34; if spaceDim &gt; 2 else &#34;X_Y&#34;, &#34;&lt;DataItem Reference=\&#34;XML\&#34;&gt;/Xdmf/Domain/DataItem[@Name=\&#34;zcoord\&#34;]&lt;/DataItem&gt;&#34; if spaceDim &gt; 2 else &#34;&#34;))
+    return
+
+  def writeParticleField(self, fp, numParticles, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+    &lt;Attribute Name=&#34;particles/icoord&#34;&gt;
+      &lt;DataItem Name=&#34;icoord&#34;
+                Format=&#34;HDF&#34;
+                Dimensions=&#34;%d&#34;&gt;
+                &amp;HeavyData;:/particles/icoord
+      &lt;/DataItem&gt;
+    &lt;/Attribute&gt;&#39;&#39;&#39; % (numParticles))
+    return
+
+  def writeTimeGridFooter(self, fp):
+    fp.write(&#39;    &lt;/Grid&gt;\n&#39;)
+    return
+
+  def writeFooter(self, fp):
+    fp.write(&#39;  &lt;/Domain&gt;\n&lt;/Xdmf&gt;\n&#39;)
+    return
+
+  def write(self, hdfFilename, hdfmeshFilename, topologyPath, numCells, numCorners, cellDim, geometryPath, numVertices, spaceDim, time, vfields, cfields, numParticles):
+    useTime = not (len(time) &lt; 2 and time[0] == -1)
+    with open(self.filename, &#39;w&#39;) as fp:
+      self.writeHeader(fp, hdfmeshFilename)
+      # Field information
+      self.writeCells(fp, topologyPath, numCells, numCorners)
+      self.writeVertices(fp, geometryPath, numVertices, spaceDim)
+      if useTime: self.writeTimeGridHeader(fp, time)
+      for t in range(len(time)):
+        self.writeSpaceGridHeader(fp, numCells, numCorners, cellDim, spaceDim)
+        for vf in vfields: self.writeField(fp, len(time), t, cellDim, spaceDim, hdfFilename+&#39;:/vertex_fields/&#39;+vf[0], vf, &#39;Node&#39;)
+        for cf in cfields: self.writeField(fp, len(time), t, cellDim, spaceDim, hdfFilename+&#39;:/cell_fields/&#39;+cf[0], cf, &#39;Cell&#39;)
+        self.writeSpaceGridFooter(fp)
+      if useTime: self.writeTimeGridFooter(fp)
+      if numParticles:
+        self.writeLocations(fp, numParticles, spaceDim)
+        if useTime: self.writeTimeGridHeader(fp, time)
+        for t in range(len(time)):
+          self.writeParticleGridHeader(fp, numParticles, spaceDim)
+          self.writeSpaceGridFooter(fp)
+        if useTime: self.writeTimeGridFooter(fp)
+      self.writeFooter(fp)
+    return
+
+def generate_dmplex_xdmf(hdfFilename, xdmfFilename=None):
+  if xdmfFilename is None:
+    xdmfFilename = os.path.splitext(hdfFilename)[0] + &#39;.xdmf&#39;
+  # Read mesh
+  h5          = h5py.File(hdfFilename, &#39;r&#39;)
+  if &#39;viz&#39; in h5 and &#39;geometry&#39; in h5[&#39;viz&#39;]:
+    geomPath  = &#39;viz/geometry&#39;
+    geom      = h5[&#39;viz&#39;][&#39;geometry&#39;]
+  else:
+    geomPath  = &#39;geometry&#39;
+    geom      = h5[&#39;geometry&#39;]
+  if &#39;viz&#39; in h5 and &#39;topology&#39; in h5[&#39;viz&#39;]:
+    topoPath  = &#39;viz/topology&#39;
+    topo      = h5[&#39;viz&#39;][&#39;topology&#39;]
+  else:
+    topoPath  = &#39;topology&#39;
+    topo      = h5[&#39;topology&#39;]
+  vertices    = geom[&#39;vertices&#39;]
+  numVertices = vertices.shape[0]
+  spaceDim    = vertices.shape[1]
+  cells       = topo[&#39;cells&#39;]
+  numCells    = cells.shape[0]
+  numCorners  = cells.shape[1]
+  cellDim     = topo[&#39;cells&#39;].attrs[&#39;cell_dim&#39;]
+  if &#39;time&#39; in h5:
+    time      = np.array(h5[&#39;time&#39;]).flatten()
+  else:
+    time      = [-1]
+  vfields     = []
+  cfields     = []
+  if &#39;vertex_fields&#39; in h5: vfields = list(h5[&#39;vertex_fields&#39;].items())
+  if &#39;cell_fields&#39; in h5: cfields = list(h5[&#39;cell_fields&#39;].items())
+  numParticles = 0
+  if &#39;particles&#39; in h5: numParticles = h5[&#39;particles&#39;][&#39;xcoord&#39;].shape[0]
+
+  # Write Xdmf
+  Xdmf(xdmfFilename).write(hdfFilename, hdfFilename, topoPath, numCells, numCorners, cellDim, geomPath, numVertices, spaceDim, time, vfields, cfields, numParticles)
+  h5.close()
+  return
+
+
+def generate_dmplex_field_xdmf(hdfFilename, hdfmeshFilename, xdmfFilename=None):
+  if xdmfFilename is None:
+    xdmfFilename = os.path.splitext(hdfFilename)[0] + &#39;.xdmf&#39;
+
+  # Read mesh
+  h5          = h5py.File(hdfFilename, &#39;r&#39;)
+  h5m         = h5py.File(hdfmeshFilename, &#39;r&#39;)
+  if &#39;viz&#39; in h5m and &#39;geometry&#39; in h5m[&#39;viz&#39;]:
+    geomPath  = &#39;viz/geometry&#39;
+    geom      = h5m[&#39;viz&#39;][&#39;geometry&#39;]
+  else:
+    geomPath  = &#39;geometry&#39;
+    geom      = h5m[&#39;geometry&#39;]
+  if &#39;viz&#39; in h5m and &#39;topology&#39; in h5m[&#39;viz&#39;]:
+    topoPath  = &#39;viz/topology&#39;
+    topo      = h5m[&#39;viz&#39;][&#39;topology&#39;]
+  else:
+    topoPath  = &#39;topology&#39;
+    topo      = h5m[&#39;topology&#39;]
+  vertices    = geom[&#39;vertices&#39;]
+  numVertices = vertices.shape[0]
+  spaceDim    = vertices.shape[1]
+  cells       = topo[&#39;cells&#39;]
+  numCells    = cells.shape[0]
+  numCorners  = cells.shape[1]
+  cellDim     = topo[&#39;cells&#39;].attrs[&#39;cell_dim&#39;]
+
+  # Read fields
+  if &#39;time&#39; in h5:
+    time      = np.array(h5[&#39;time&#39;]).flatten()
+  else:
+    time      = [-1]
+  vfields     = []
+  cfields     = []
+  if &#39;vertex_fields&#39; in h5: vfields = list(h5[&#39;vertex_fields&#39;].items())
+  if &#39;cell_fields&#39; in h5: cfields = list(h5[&#39;cell_fields&#39;].items())
+  numParticles = 0
+  if &#39;particles&#39; in h5: numParticles = h5[&#39;particles&#39;][&#39;xcoord&#39;].shape[0]
+
+  # Write Xdmf
+  Xdmf(xdmfFilename).write(hdfFilename, hdfmeshFilename, topoPath, numCells, numCorners, cellDim, geomPath, numVertices, spaceDim, time, vfields, cfields, numParticles)
+  h5.close()
+  h5m.close()
+  return
+
+
+def generate_dmda_xdmf(hdfFilename, xdmfFilename=None):
+  &#34;&#34;&#34;
+  Generate a XDMF file to visualise HDF5 fields and vectors in Paraview.
+
+  Writes a XDMF file to the working directory.
+  &#34;&#34;&#34;
+
+  if xdmfFilename is None:
+    xdmfFilename = os.path.splitext(hdfFilename)[0] + &#39;.xdmf&#39;
+
+  f = open(xdmfFilename, &#39;w&#39;)
+
+  def write_header(f):
+    f.write(&#39;&#39;&#39;&lt;?xml version=&#34;1.0&#34; ?&gt;\n\
+&lt;!DOCTYPE Xdmf SYSTEM &#34;Xdmf.dtd&#34; []&gt;\n\
+&lt;Xdmf xmlns:xi=&#34;http://www.w3.org/2003/XInclude&#34; Version=&#34;2.2&#34;&gt;\n\
+  &lt;Information Name=&#34;SampleLocation&#34; Value=&#34;4&#34;/&gt;\n\
+  &lt;Domain&gt;\n\
+    &lt;Grid Name=&#34;Structured Grid&#34; GridType=&#34;Uniform&#34;&gt;\n&#39;&#39;&#39;)
+
+  def write_footer(f):
+    f.write(&#39;&#39;&#39;    &lt;/Grid&gt;\n  &lt;/Domain&gt;\n&lt;/Xdmf&gt;&#39;&#39;&#39;)
+
+  def write_geometry(f, dim, shape, origin, stride):
+    f.write(&#39;&#39;&#39;      &lt;Topology TopologyType=&#34;2DCORECTMesh&#34; NumberOfElements=&#34;{1}&#34;/&gt;\n\
+  &lt;Geometry GeometryType=&#34;ORIGIN_DXDY&#34;&gt;\n\
+    &lt;DataItem Dimensions=&#34;{0}&#34; NumberType=&#34;Float&#34; Precision=&#34;4&#34; Format=&#34;XML&#34;&gt;\n\
+      {2}\n\
+    &lt;/DataItem&gt;\n\
+    &lt;DataItem Dimensions=&#34;{0}&#34; NumberType=&#34;Float&#34; Precision=&#34;4&#34; Format=&#34;XML&#34;&gt;\n\
+      {3}\n\
+    &lt;/DataItem&gt;\n\
+  &lt;/Geometry&gt;\n&#39;&#39;&#39;.format(dim, shape, origin, stride))
+
+  def write_attribute(f, attributeName, arrtype, dshape, dpath):
+    f.write(&#39;&#39;&#39;      &lt;Attribute Name=&#34;{0}&#34; AttributeType=&#34;{1}&#34; Center=&#34;Node&#34;&gt;&#39;\n\
+    &lt;DataItem Dimensions=&#34;{2}&#34; NumberType=&#34;Float&#34; Precision=&#34;4&#34; Format=&#34;HDF&#34;&gt;{3}&lt;/DataItem&gt;\n\
+  &lt;/Attribute&gt;\n&#39;&#39;&#39;.format(attributeName, arrtype, dshape, dpath))
+
+  def array_to_string(array):
+    s = &#34;&#34;
+    for i in array:
+        s += &#34;{} &#34;.format(i)
+    return s
+
+
+  h5file = h5py.File(hdfFilename, &#39;r&#39;)
+  basename = os.path.basename(hdfFilename)
+
+  # get topology attributes
+  geom = h5file[&#39;geometry&#39;]
+  minX = geom.attrs[&#39;minX&#39;]
+  maxX = geom.attrs[&#39;maxX&#39;]
+  minY = geom.attrs[&#39;minY&#39;]
+  maxY = geom.attrs[&#39;maxY&#39;]
+  resX = geom.attrs[&#39;resX&#39;]
+  resY = geom.attrs[&#39;resY&#39;]
+  
+  minCoords = minX, minY
+  maxCoords = maxX, maxY
+  
+  shape = resY, resX
+  nodes = resX*resY
+
+  stride = [(maxY - minY)/(resY-1), (maxX - minX)/(resX-1)]
+
+  tshape = array_to_string(shape)
+  torigin = array_to_string(minCoords)
+  tstride = array_to_string(stride)
+
+  write_header(f)
+  write_geometry(f, len(shape), tshape, torigin, tstride)
+
+  for key in h5file:
+    dset = h5file[key]
+
+    # We only want datasets, topology group is not required
+    if type(dset) is h5py.Dataset:
+      # if all(dset.shape != shape):
+      #     raise ValueError(&#39;Dataset should be of shape {}&#39;.format(shape))
+
+      dpath = basename + &#34;:&#34; + dset.name
+      dname = dset.name[1:]
+      dshape = array_to_string(dset.shape)
+
+      dnodes = 1
+      for n in dset.shape:
+        dnodes *= n
+
+      if dnodes%nodes != 0:
+        raise ValueError(&#34;Dataset {} is not a valid shape&#34;.format(dname))
+      elif dnodes/nodes &gt; 1:
+        arrtype = &#34;Vector&#34;
+      elif dnodes/nodes == 1:
+        arrtype = &#34;Scalar&#34;
+
+      write_attribute(f, dname, arrtype, dshape, dpath)
+
+  write_footer(f)
+  f.close()
+  h5file.close()
+  return
+
+
+def generateXdmf(hdfFilename, hdfmeshFilename=None, xdmfFilename=None):
+
+  from mpi4py import MPI
+
+  comm = MPI.COMM_WORLD
+  rank = comm.Get_rank()
+
+  if rank == 0:
+
+    if xdmfFilename is None:
+      xdmfFilename = os.path.splitext(hdfFilename)[0] + &#39;.xdmf&#39;
+
+    
+
+
+    DMPLEX = False
+    with h5py.File(hdfFilename, &#39;r&#39;) as h5:
+      if &#39;vertex_fields&#39; in h5:
+        DMPLEX = True
+        if &#39;geometry&#39; not in h5 and hdfmeshFilename is None:
+          err_msg = &#34;mesh info not found in HDF5, save mesh info to this HDF5 file&#34;
+          err_msg += &#34; or point to an externl HDF5 file containing the mesh info.&#34;
+          raise TypeError(err_msg)
+
+
+    if DMPLEX:
+      if hdfmeshFilename is None:
+        generate_dmplex_xdmf(hdfFilename, xdmfFilename)
+      else:
+        generate_dmplex_field_xdmf(hdfFilename, hdfmeshFilename, xdmfFilename)
+
+    else:
+      generate_dmda_xdmf(hdfFilename, xdmfFilename)
+
+  # Wait for the file-writing to finish on process 0
+  comm.barrier()
+
+
+if __name__ == &#39;__main__&#39;:
+  for f in sys.argv[1:]:
+    generateXdmf(f)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="quagmire.tools.generate_xdmf.generateXdmf"><code class="name flex">
+<span>def <span class="ident">generateXdmf</span></span>(<span>hdfFilename, hdfmeshFilename=None, xdmfFilename=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generateXdmf(hdfFilename, hdfmeshFilename=None, xdmfFilename=None):
+
+  from mpi4py import MPI
+
+  comm = MPI.COMM_WORLD
+  rank = comm.Get_rank()
+
+  if rank == 0:
+
+    if xdmfFilename is None:
+      xdmfFilename = os.path.splitext(hdfFilename)[0] + &#39;.xdmf&#39;
+
+    
+
+
+    DMPLEX = False
+    with h5py.File(hdfFilename, &#39;r&#39;) as h5:
+      if &#39;vertex_fields&#39; in h5:
+        DMPLEX = True
+        if &#39;geometry&#39; not in h5 and hdfmeshFilename is None:
+          err_msg = &#34;mesh info not found in HDF5, save mesh info to this HDF5 file&#34;
+          err_msg += &#34; or point to an externl HDF5 file containing the mesh info.&#34;
+          raise TypeError(err_msg)
+
+
+    if DMPLEX:
+      if hdfmeshFilename is None:
+        generate_dmplex_xdmf(hdfFilename, xdmfFilename)
+      else:
+        generate_dmplex_field_xdmf(hdfFilename, hdfmeshFilename, xdmfFilename)
+
+    else:
+      generate_dmda_xdmf(hdfFilename, xdmfFilename)
+
+  # Wait for the file-writing to finish on process 0
+  comm.barrier()</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.generate_dmda_xdmf"><code class="name flex">
+<span>def <span class="ident">generate_dmda_xdmf</span></span>(<span>hdfFilename, xdmfFilename=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generate a XDMF file to visualise HDF5 fields and vectors in Paraview.</p>
+<p>Writes a XDMF file to the working directory.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_dmda_xdmf(hdfFilename, xdmfFilename=None):
+  &#34;&#34;&#34;
+  Generate a XDMF file to visualise HDF5 fields and vectors in Paraview.
+
+  Writes a XDMF file to the working directory.
+  &#34;&#34;&#34;
+
+  if xdmfFilename is None:
+    xdmfFilename = os.path.splitext(hdfFilename)[0] + &#39;.xdmf&#39;
+
+  f = open(xdmfFilename, &#39;w&#39;)
+
+  def write_header(f):
+    f.write(&#39;&#39;&#39;&lt;?xml version=&#34;1.0&#34; ?&gt;\n\
+&lt;!DOCTYPE Xdmf SYSTEM &#34;Xdmf.dtd&#34; []&gt;\n\
+&lt;Xdmf xmlns:xi=&#34;http://www.w3.org/2003/XInclude&#34; Version=&#34;2.2&#34;&gt;\n\
+  &lt;Information Name=&#34;SampleLocation&#34; Value=&#34;4&#34;/&gt;\n\
+  &lt;Domain&gt;\n\
+    &lt;Grid Name=&#34;Structured Grid&#34; GridType=&#34;Uniform&#34;&gt;\n&#39;&#39;&#39;)
+
+  def write_footer(f):
+    f.write(&#39;&#39;&#39;    &lt;/Grid&gt;\n  &lt;/Domain&gt;\n&lt;/Xdmf&gt;&#39;&#39;&#39;)
+
+  def write_geometry(f, dim, shape, origin, stride):
+    f.write(&#39;&#39;&#39;      &lt;Topology TopologyType=&#34;2DCORECTMesh&#34; NumberOfElements=&#34;{1}&#34;/&gt;\n\
+  &lt;Geometry GeometryType=&#34;ORIGIN_DXDY&#34;&gt;\n\
+    &lt;DataItem Dimensions=&#34;{0}&#34; NumberType=&#34;Float&#34; Precision=&#34;4&#34; Format=&#34;XML&#34;&gt;\n\
+      {2}\n\
+    &lt;/DataItem&gt;\n\
+    &lt;DataItem Dimensions=&#34;{0}&#34; NumberType=&#34;Float&#34; Precision=&#34;4&#34; Format=&#34;XML&#34;&gt;\n\
+      {3}\n\
+    &lt;/DataItem&gt;\n\
+  &lt;/Geometry&gt;\n&#39;&#39;&#39;.format(dim, shape, origin, stride))
+
+  def write_attribute(f, attributeName, arrtype, dshape, dpath):
+    f.write(&#39;&#39;&#39;      &lt;Attribute Name=&#34;{0}&#34; AttributeType=&#34;{1}&#34; Center=&#34;Node&#34;&gt;&#39;\n\
+    &lt;DataItem Dimensions=&#34;{2}&#34; NumberType=&#34;Float&#34; Precision=&#34;4&#34; Format=&#34;HDF&#34;&gt;{3}&lt;/DataItem&gt;\n\
+  &lt;/Attribute&gt;\n&#39;&#39;&#39;.format(attributeName, arrtype, dshape, dpath))
+
+  def array_to_string(array):
+    s = &#34;&#34;
+    for i in array:
+        s += &#34;{} &#34;.format(i)
+    return s
+
+
+  h5file = h5py.File(hdfFilename, &#39;r&#39;)
+  basename = os.path.basename(hdfFilename)
+
+  # get topology attributes
+  geom = h5file[&#39;geometry&#39;]
+  minX = geom.attrs[&#39;minX&#39;]
+  maxX = geom.attrs[&#39;maxX&#39;]
+  minY = geom.attrs[&#39;minY&#39;]
+  maxY = geom.attrs[&#39;maxY&#39;]
+  resX = geom.attrs[&#39;resX&#39;]
+  resY = geom.attrs[&#39;resY&#39;]
+  
+  minCoords = minX, minY
+  maxCoords = maxX, maxY
+  
+  shape = resY, resX
+  nodes = resX*resY
+
+  stride = [(maxY - minY)/(resY-1), (maxX - minX)/(resX-1)]
+
+  tshape = array_to_string(shape)
+  torigin = array_to_string(minCoords)
+  tstride = array_to_string(stride)
+
+  write_header(f)
+  write_geometry(f, len(shape), tshape, torigin, tstride)
+
+  for key in h5file:
+    dset = h5file[key]
+
+    # We only want datasets, topology group is not required
+    if type(dset) is h5py.Dataset:
+      # if all(dset.shape != shape):
+      #     raise ValueError(&#39;Dataset should be of shape {}&#39;.format(shape))
+
+      dpath = basename + &#34;:&#34; + dset.name
+      dname = dset.name[1:]
+      dshape = array_to_string(dset.shape)
+
+      dnodes = 1
+      for n in dset.shape:
+        dnodes *= n
+
+      if dnodes%nodes != 0:
+        raise ValueError(&#34;Dataset {} is not a valid shape&#34;.format(dname))
+      elif dnodes/nodes &gt; 1:
+        arrtype = &#34;Vector&#34;
+      elif dnodes/nodes == 1:
+        arrtype = &#34;Scalar&#34;
+
+      write_attribute(f, dname, arrtype, dshape, dpath)
+
+  write_footer(f)
+  f.close()
+  h5file.close()
+  return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.generate_dmplex_field_xdmf"><code class="name flex">
+<span>def <span class="ident">generate_dmplex_field_xdmf</span></span>(<span>hdfFilename, hdfmeshFilename, xdmfFilename=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_dmplex_field_xdmf(hdfFilename, hdfmeshFilename, xdmfFilename=None):
+  if xdmfFilename is None:
+    xdmfFilename = os.path.splitext(hdfFilename)[0] + &#39;.xdmf&#39;
+
+  # Read mesh
+  h5          = h5py.File(hdfFilename, &#39;r&#39;)
+  h5m         = h5py.File(hdfmeshFilename, &#39;r&#39;)
+  if &#39;viz&#39; in h5m and &#39;geometry&#39; in h5m[&#39;viz&#39;]:
+    geomPath  = &#39;viz/geometry&#39;
+    geom      = h5m[&#39;viz&#39;][&#39;geometry&#39;]
+  else:
+    geomPath  = &#39;geometry&#39;
+    geom      = h5m[&#39;geometry&#39;]
+  if &#39;viz&#39; in h5m and &#39;topology&#39; in h5m[&#39;viz&#39;]:
+    topoPath  = &#39;viz/topology&#39;
+    topo      = h5m[&#39;viz&#39;][&#39;topology&#39;]
+  else:
+    topoPath  = &#39;topology&#39;
+    topo      = h5m[&#39;topology&#39;]
+  vertices    = geom[&#39;vertices&#39;]
+  numVertices = vertices.shape[0]
+  spaceDim    = vertices.shape[1]
+  cells       = topo[&#39;cells&#39;]
+  numCells    = cells.shape[0]
+  numCorners  = cells.shape[1]
+  cellDim     = topo[&#39;cells&#39;].attrs[&#39;cell_dim&#39;]
+
+  # Read fields
+  if &#39;time&#39; in h5:
+    time      = np.array(h5[&#39;time&#39;]).flatten()
+  else:
+    time      = [-1]
+  vfields     = []
+  cfields     = []
+  if &#39;vertex_fields&#39; in h5: vfields = list(h5[&#39;vertex_fields&#39;].items())
+  if &#39;cell_fields&#39; in h5: cfields = list(h5[&#39;cell_fields&#39;].items())
+  numParticles = 0
+  if &#39;particles&#39; in h5: numParticles = h5[&#39;particles&#39;][&#39;xcoord&#39;].shape[0]
+
+  # Write Xdmf
+  Xdmf(xdmfFilename).write(hdfFilename, hdfmeshFilename, topoPath, numCells, numCorners, cellDim, geomPath, numVertices, spaceDim, time, vfields, cfields, numParticles)
+  h5.close()
+  h5m.close()
+  return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.generate_dmplex_xdmf"><code class="name flex">
+<span>def <span class="ident">generate_dmplex_xdmf</span></span>(<span>hdfFilename, xdmfFilename=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_dmplex_xdmf(hdfFilename, xdmfFilename=None):
+  if xdmfFilename is None:
+    xdmfFilename = os.path.splitext(hdfFilename)[0] + &#39;.xdmf&#39;
+  # Read mesh
+  h5          = h5py.File(hdfFilename, &#39;r&#39;)
+  if &#39;viz&#39; in h5 and &#39;geometry&#39; in h5[&#39;viz&#39;]:
+    geomPath  = &#39;viz/geometry&#39;
+    geom      = h5[&#39;viz&#39;][&#39;geometry&#39;]
+  else:
+    geomPath  = &#39;geometry&#39;
+    geom      = h5[&#39;geometry&#39;]
+  if &#39;viz&#39; in h5 and &#39;topology&#39; in h5[&#39;viz&#39;]:
+    topoPath  = &#39;viz/topology&#39;
+    topo      = h5[&#39;viz&#39;][&#39;topology&#39;]
+  else:
+    topoPath  = &#39;topology&#39;
+    topo      = h5[&#39;topology&#39;]
+  vertices    = geom[&#39;vertices&#39;]
+  numVertices = vertices.shape[0]
+  spaceDim    = vertices.shape[1]
+  cells       = topo[&#39;cells&#39;]
+  numCells    = cells.shape[0]
+  numCorners  = cells.shape[1]
+  cellDim     = topo[&#39;cells&#39;].attrs[&#39;cell_dim&#39;]
+  if &#39;time&#39; in h5:
+    time      = np.array(h5[&#39;time&#39;]).flatten()
+  else:
+    time      = [-1]
+  vfields     = []
+  cfields     = []
+  if &#39;vertex_fields&#39; in h5: vfields = list(h5[&#39;vertex_fields&#39;].items())
+  if &#39;cell_fields&#39; in h5: cfields = list(h5[&#39;cell_fields&#39;].items())
+  numParticles = 0
+  if &#39;particles&#39; in h5: numParticles = h5[&#39;particles&#39;][&#39;xcoord&#39;].shape[0]
+
+  # Write Xdmf
+  Xdmf(xdmfFilename).write(hdfFilename, hdfFilename, topoPath, numCells, numCorners, cellDim, geomPath, numVertices, spaceDim, time, vfields, cfields, numParticles)
+  h5.close()
+  return</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="quagmire.tools.generate_xdmf.Xdmf"><code class="flex name class">
+<span>class <span class="ident">Xdmf</span></span>
+<span>(</span><span>filename)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Xdmf:
+  def __init__(self, filename):
+    self.filename = filename
+    self.cellMap  = {1 : {1 : &#39;Polyvertex&#39;, 2 : &#39;Polyline&#39;}, 2 : {3 : &#39;Triangle&#39;, 4 : &#39;Quadrilateral&#39;}, 3 : {4 : &#39;Tetrahedron&#39;, 6: &#39;Wedge&#39;, 8 : &#39;Hexahedron&#39;}}
+    self.typeMap  = {&#39;scalar&#39; : &#39;Scalar&#39;, &#39;vector&#39; : &#39;Vector&#39;, &#39;tensor&#39; : &#39;Tensor6&#39;, &#39;matrix&#39; : &#39;Matrix&#39;, \
+                    b&#39;scalar&#39; : &#39;Scalar&#39;,b&#39;vector&#39; : &#39;Vector&#39;,b&#39;tensor&#39; : &#39;Tensor6&#39;,b&#39;matrix&#39; : &#39;Matrix&#39;}
+    self.typeExt  = {2 : {&#39;vector&#39; : [&#39;x&#39;, &#39;y&#39;], &#39;tensor&#39; : [&#39;xx&#39;, &#39;yy&#39;, &#39;xy&#39;]}, 3 : {&#39;vector&#39; : [&#39;x&#39;, &#39;y&#39;, &#39;z&#39;], &#39;tensor&#39; : [&#39;xx&#39;, &#39;yy&#39;, &#39;zz&#39;, &#39;xy&#39;, &#39;yz&#39;, &#39;xz&#39;]}}
+    return
+
+  def writeHeader(self, fp, hdfFilename):
+    fp.write(&#39;&#39;&#39;\
+&lt;?xml version=&#34;1.0&#34; ?&gt;
+&lt;!DOCTYPE Xdmf SYSTEM &#34;Xdmf.dtd&#34; [
+&lt;!ENTITY HeavyData &#34;%s&#34;&gt;
+]&gt;
+&#39;&#39;&#39; % os.path.basename(hdfFilename))
+    fp.write(&#39;\n&lt;Xdmf&gt;\n  &lt;Domain Name=&#34;domain&#34;&gt;\n&#39;)
+    return
+
+  def writeCells(self, fp, topologyPath, numCells, numCorners):
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;cells&#34;
+              ItemType=&#34;Uniform&#34;
+              Format=&#34;HDF&#34;
+              NumberType=&#34;Float&#34; Precision=&#34;8&#34;
+              Dimensions=&#34;%d %d&#34;&gt;
+      &amp;HeavyData;:/%s/cells
+    &lt;/DataItem&gt;
+&#39;&#39;&#39; % (numCells, numCorners, topologyPath))
+    return
+
+  def writeVertices(self, fp, geometryPath, numVertices, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;vertices&#34;
+              Format=&#34;HDF&#34;
+              Dimensions=&#34;%d %d&#34;&gt;
+      &amp;HeavyData;:/%s/vertices
+    &lt;/DataItem&gt;
+    &lt;!-- ============================================================ --&gt;
+&#39;&#39;&#39; % (numVertices, spaceDim, geometryPath))
+    return
+
+  def writeLocations(self, fp, numParticles, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;xcoord&#34;
+              Format=&#34;HDF&#34;
+              Dimensions=&#34;%d&#34;&gt;
+      &amp;HeavyData;:/particles/xcoord
+    &lt;/DataItem&gt;
+&#39;&#39;&#39; % (numParticles))
+    if spaceDim == 1: return
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;ycoord&#34;
+              Format=&#34;HDF&#34;
+              Dimensions=&#34;%d&#34;&gt;
+      &amp;HeavyData;:/particles/ycoord
+    &lt;/DataItem&gt;
+&#39;&#39;&#39; % (numParticles))
+    if spaceDim == 2: return
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;zcoord&#34;
+              Format=&#34;HDF&#34;
+              Dimensions=&#34;%d&#34;&gt;
+      &amp;HeavyData;:/particles/zcoord
+    &lt;/DataItem&gt;
+&#39;&#39;&#39; % (numParticles))
+    return
+
+  def writeTimeGridHeader(self, fp, time):
+    fp.write(&#39;&#39;&#39;\
+    &lt;Grid Name=&#34;TimeSeries&#34; GridType=&#34;Collection&#34; CollectionType=&#34;Temporal&#34;&gt;
+      &lt;Time TimeType=&#34;List&#34;&gt;
+        &lt;DataItem Format=&#34;XML&#34; NumberType=&#34;Float&#34; Dimensions=&#34;%d&#34;&gt;
+          &#39;&#39;&#39; % (len(time)))
+    fp.write(&#39; &#39;.join(map(str, list(map(float, time)))))
+    fp.write(&#39;&#39;&#39;
+        &lt;/DataItem&gt;
+      &lt;/Time&gt;
+&#39;&#39;&#39;)
+    return
+
+  def writeSpaceGridHeader(self, fp, numCells, numCorners, cellDim, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+      &lt;Grid Name=&#34;domain&#34; GridType=&#34;Uniform&#34;&gt;
+        &lt;Topology
+           TopologyType=&#34;%s&#34;
+           NumberOfElements=&#34;%d&#34;&gt;
+          &lt;DataItem Reference=&#34;XML&#34;&gt;
+            /Xdmf/Domain/DataItem[@Name=&#34;cells&#34;]
+          &lt;/DataItem&gt;
+        &lt;/Topology&gt;
+        &lt;Geometry GeometryType=&#34;%s&#34;&gt;
+          &lt;DataItem Reference=&#34;XML&#34;&gt;
+            /Xdmf/Domain/DataItem[@Name=&#34;vertices&#34;]
+          &lt;/DataItem&gt;
+        &lt;/Geometry&gt;
+&#39;&#39;&#39; % (self.cellMap[cellDim][numCorners], numCells, &#34;XYZ&#34; if spaceDim &gt; 2 else &#34;XY&#34;))
+    return
+
+  def writeFieldSingle(self, fp, numSteps, timestep, spaceDim, name, f, domain):
+    if len(f[1].shape) &gt; 2:
+      dof = f[1].shape[1]
+      bs  = f[1].shape[2]
+    elif len(f[1].shape) &gt; 1:
+      if numSteps &gt; 1:
+        dof = f[1].shape[1]
+        bs  = 1
+      else:
+        dof = f[1].shape[0]
+        bs  = f[1].shape[1]
+    else:
+      dof = f[1].shape[0]
+      bs  = 1
+    fp.write(&#39;&#39;&#39;\
+        &lt;Attribute
+           Name=&#34;%s&#34;
+           Type=&#34;%s&#34;
+           Center=&#34;%s&#34;&gt;
+          &lt;DataItem ItemType=&#34;HyperSlab&#34;
+                    Dimensions=&#34;1 %d %d&#34;
+                    Type=&#34;HyperSlab&#34;&gt;
+            &lt;DataItem
+               Dimensions=&#34;3 3&#34;
+               Format=&#34;XML&#34;&gt;
+              %d 0 0
+              1 1 1
+              1 %d %d
+            &lt;/DataItem&gt;
+            &lt;DataItem
+               DataType=&#34;Float&#34; Precision=&#34;8&#34;
+               Dimensions=&#34;%d %d %d&#34;
+               Format=&#34;HDF&#34;&gt;
+              %s
+            &lt;/DataItem&gt;
+          &lt;/DataItem&gt;
+        &lt;/Attribute&gt;
+&#39;&#39;&#39; % (f[0], self.typeMap[f[1].attrs[&#39;vector_field_type&#39;]], domain, dof, bs, timestep, dof, bs, numSteps, dof, bs, name))
+    return
+
+  def writeFieldComponents(self, fp, numSteps, timestep, spaceDim, name, f, domain):
+    vtype = f[1].attrs[&#39;vector_field_type&#39;]
+    if len(f[1].shape) &gt; 2:
+      dof    = f[1].shape[1]
+      bs     = f[1].shape[2]
+      cdims  = &#39;1 %d 1&#39; % dof
+      dims   = &#39;%d %d %d&#39; % (numSteps, dof, bs)
+      stride = &#39;1 1 1&#39;
+      size   = &#39;1 %d 1&#39; % dof
+    else:
+      dof    = f[1].shape[0]
+      bs     = f[1].shape[1]
+      cdims  = &#39;%d 1&#39; % dof
+      dims   = &#39;%d %d&#39; % (dof, bs)
+      stride = &#39;1 1&#39;
+      size   = &#39;%d 1&#39; % dof
+    for c in range(bs):
+      ext = self.typeExt[spaceDim][vtype][c]
+      if len(f[1].shape) &gt; 2: start  = &#39;%d 0 %d&#39; % (timestep, c)
+      else:                   start  = &#39;0 %d&#39; % c
+      fp.write(&#39;&#39;&#39;\
+        &lt;Attribute
+           Name=&#34;%s&#34;
+           Type=&#34;Scalar&#34;
+           Center=&#34;%s&#34;&gt;
+          &lt;DataItem ItemType=&#34;HyperSlab&#34;
+                    Dimensions=&#34;%s&#34;
+                    Type=&#34;HyperSlab&#34;&gt;
+            &lt;DataItem
+               Dimensions=&#34;3 %d&#34;
+               Format=&#34;XML&#34;&gt;
+              %s
+              %s
+              %s
+            &lt;/DataItem&gt;
+            &lt;DataItem
+               DataType=&#34;Float&#34; Precision=&#34;8&#34;
+               Dimensions=&#34;%s&#34;
+               Format=&#34;HDF&#34;&gt;
+              %s
+            &lt;/DataItem&gt;
+          &lt;/DataItem&gt;
+        &lt;/Attribute&gt;
+&#39;&#39;&#39; % (f[0]+&#39;_&#39;+ext, domain, cdims, len(f[1].shape), start, stride, size, dims, name))
+    return
+
+  def writeField(self, fp, numSteps, timestep, cellDim, spaceDim, name, f, domain):
+    ctypes = [&#39;tensor&#39;, &#39;matrix&#39;]
+    if spaceDim == 2 or cellDim != spaceDim: ctypes.append(&#39;vector&#39;)
+    if f[1].attrs[&#39;vector_field_type&#39;] in ctypes:
+      self.writeFieldComponents(fp, numSteps, timestep, spaceDim, name, f, domain)
+    else:
+      self.writeFieldSingle(fp, numSteps, timestep, spaceDim, name, f, domain)
+    return
+
+  def writeSpaceGridFooter(self, fp):
+    fp.write(&#39;      &lt;/Grid&gt;\n&#39;)
+    return
+
+  def writeParticleGridHeader(self, fp, numParticles, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+      &lt;Grid Name=&#34;particle_domain&#34; GridType=&#34;Uniform&#34;&gt;
+        &lt;Topology TopologyType=&#34;Polyvertex&#34; NodesPerElement=&#34;%d&#34; /&gt;
+        &lt;Geometry GeometryType=&#34;%s&#34;&gt;
+          &lt;DataItem Reference=&#34;XML&#34;&gt;/Xdmf/Domain/DataItem[@Name=&#34;xcoord&#34;]&lt;/DataItem&gt;
+          &lt;DataItem Reference=&#34;XML&#34;&gt;/Xdmf/Domain/DataItem[@Name=&#34;ycoord&#34;]&lt;/DataItem&gt;
+          %s
+        &lt;/Geometry&gt;
+&#39;&#39;&#39; % (numParticles, &#34;X_Y_Z&#34; if spaceDim &gt; 2 else &#34;X_Y&#34;, &#34;&lt;DataItem Reference=\&#34;XML\&#34;&gt;/Xdmf/Domain/DataItem[@Name=\&#34;zcoord\&#34;]&lt;/DataItem&gt;&#34; if spaceDim &gt; 2 else &#34;&#34;))
+    return
+
+  def writeParticleField(self, fp, numParticles, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+    &lt;Attribute Name=&#34;particles/icoord&#34;&gt;
+      &lt;DataItem Name=&#34;icoord&#34;
+                Format=&#34;HDF&#34;
+                Dimensions=&#34;%d&#34;&gt;
+                &amp;HeavyData;:/particles/icoord
+      &lt;/DataItem&gt;
+    &lt;/Attribute&gt;&#39;&#39;&#39; % (numParticles))
+    return
+
+  def writeTimeGridFooter(self, fp):
+    fp.write(&#39;    &lt;/Grid&gt;\n&#39;)
+    return
+
+  def writeFooter(self, fp):
+    fp.write(&#39;  &lt;/Domain&gt;\n&lt;/Xdmf&gt;\n&#39;)
+    return
+
+  def write(self, hdfFilename, hdfmeshFilename, topologyPath, numCells, numCorners, cellDim, geometryPath, numVertices, spaceDim, time, vfields, cfields, numParticles):
+    useTime = not (len(time) &lt; 2 and time[0] == -1)
+    with open(self.filename, &#39;w&#39;) as fp:
+      self.writeHeader(fp, hdfmeshFilename)
+      # Field information
+      self.writeCells(fp, topologyPath, numCells, numCorners)
+      self.writeVertices(fp, geometryPath, numVertices, spaceDim)
+      if useTime: self.writeTimeGridHeader(fp, time)
+      for t in range(len(time)):
+        self.writeSpaceGridHeader(fp, numCells, numCorners, cellDim, spaceDim)
+        for vf in vfields: self.writeField(fp, len(time), t, cellDim, spaceDim, hdfFilename+&#39;:/vertex_fields/&#39;+vf[0], vf, &#39;Node&#39;)
+        for cf in cfields: self.writeField(fp, len(time), t, cellDim, spaceDim, hdfFilename+&#39;:/cell_fields/&#39;+cf[0], cf, &#39;Cell&#39;)
+        self.writeSpaceGridFooter(fp)
+      if useTime: self.writeTimeGridFooter(fp)
+      if numParticles:
+        self.writeLocations(fp, numParticles, spaceDim)
+        if useTime: self.writeTimeGridHeader(fp, time)
+        for t in range(len(time)):
+          self.writeParticleGridHeader(fp, numParticles, spaceDim)
+          self.writeSpaceGridFooter(fp)
+        if useTime: self.writeTimeGridFooter(fp)
+      self.writeFooter(fp)
+    return</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.write"><code class="name flex">
+<span>def <span class="ident">write</span></span>(<span>self, hdfFilename, hdfmeshFilename, topologyPath, numCells, numCorners, cellDim, geometryPath, numVertices, spaceDim, time, vfields, cfields, numParticles)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write(self, hdfFilename, hdfmeshFilename, topologyPath, numCells, numCorners, cellDim, geometryPath, numVertices, spaceDim, time, vfields, cfields, numParticles):
+  useTime = not (len(time) &lt; 2 and time[0] == -1)
+  with open(self.filename, &#39;w&#39;) as fp:
+    self.writeHeader(fp, hdfmeshFilename)
+    # Field information
+    self.writeCells(fp, topologyPath, numCells, numCorners)
+    self.writeVertices(fp, geometryPath, numVertices, spaceDim)
+    if useTime: self.writeTimeGridHeader(fp, time)
+    for t in range(len(time)):
+      self.writeSpaceGridHeader(fp, numCells, numCorners, cellDim, spaceDim)
+      for vf in vfields: self.writeField(fp, len(time), t, cellDim, spaceDim, hdfFilename+&#39;:/vertex_fields/&#39;+vf[0], vf, &#39;Node&#39;)
+      for cf in cfields: self.writeField(fp, len(time), t, cellDim, spaceDim, hdfFilename+&#39;:/cell_fields/&#39;+cf[0], cf, &#39;Cell&#39;)
+      self.writeSpaceGridFooter(fp)
+    if useTime: self.writeTimeGridFooter(fp)
+    if numParticles:
+      self.writeLocations(fp, numParticles, spaceDim)
+      if useTime: self.writeTimeGridHeader(fp, time)
+      for t in range(len(time)):
+        self.writeParticleGridHeader(fp, numParticles, spaceDim)
+        self.writeSpaceGridFooter(fp)
+      if useTime: self.writeTimeGridFooter(fp)
+    self.writeFooter(fp)
+  return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeCells"><code class="name flex">
+<span>def <span class="ident">writeCells</span></span>(<span>self, fp, topologyPath, numCells, numCorners)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">  def writeCells(self, fp, topologyPath, numCells, numCorners):
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;cells&#34;
+              ItemType=&#34;Uniform&#34;
+              Format=&#34;HDF&#34;
+              NumberType=&#34;Float&#34; Precision=&#34;8&#34;
+              Dimensions=&#34;%d %d&#34;&gt;
+      &amp;HeavyData;:/%s/cells
+    &lt;/DataItem&gt;
+&#39;&#39;&#39; % (numCells, numCorners, topologyPath))
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeField"><code class="name flex">
+<span>def <span class="ident">writeField</span></span>(<span>self, fp, numSteps, timestep, cellDim, spaceDim, name, f, domain)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def writeField(self, fp, numSteps, timestep, cellDim, spaceDim, name, f, domain):
+  ctypes = [&#39;tensor&#39;, &#39;matrix&#39;]
+  if spaceDim == 2 or cellDim != spaceDim: ctypes.append(&#39;vector&#39;)
+  if f[1].attrs[&#39;vector_field_type&#39;] in ctypes:
+    self.writeFieldComponents(fp, numSteps, timestep, spaceDim, name, f, domain)
+  else:
+    self.writeFieldSingle(fp, numSteps, timestep, spaceDim, name, f, domain)
+  return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeFieldComponents"><code class="name flex">
+<span>def <span class="ident">writeFieldComponents</span></span>(<span>self, fp, numSteps, timestep, spaceDim, name, f, domain)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">  def writeFieldComponents(self, fp, numSteps, timestep, spaceDim, name, f, domain):
+    vtype = f[1].attrs[&#39;vector_field_type&#39;]
+    if len(f[1].shape) &gt; 2:
+      dof    = f[1].shape[1]
+      bs     = f[1].shape[2]
+      cdims  = &#39;1 %d 1&#39; % dof
+      dims   = &#39;%d %d %d&#39; % (numSteps, dof, bs)
+      stride = &#39;1 1 1&#39;
+      size   = &#39;1 %d 1&#39; % dof
+    else:
+      dof    = f[1].shape[0]
+      bs     = f[1].shape[1]
+      cdims  = &#39;%d 1&#39; % dof
+      dims   = &#39;%d %d&#39; % (dof, bs)
+      stride = &#39;1 1&#39;
+      size   = &#39;%d 1&#39; % dof
+    for c in range(bs):
+      ext = self.typeExt[spaceDim][vtype][c]
+      if len(f[1].shape) &gt; 2: start  = &#39;%d 0 %d&#39; % (timestep, c)
+      else:                   start  = &#39;0 %d&#39; % c
+      fp.write(&#39;&#39;&#39;\
+        &lt;Attribute
+           Name=&#34;%s&#34;
+           Type=&#34;Scalar&#34;
+           Center=&#34;%s&#34;&gt;
+          &lt;DataItem ItemType=&#34;HyperSlab&#34;
+                    Dimensions=&#34;%s&#34;
+                    Type=&#34;HyperSlab&#34;&gt;
+            &lt;DataItem
+               Dimensions=&#34;3 %d&#34;
+               Format=&#34;XML&#34;&gt;
+              %s
+              %s
+              %s
+            &lt;/DataItem&gt;
+            &lt;DataItem
+               DataType=&#34;Float&#34; Precision=&#34;8&#34;
+               Dimensions=&#34;%s&#34;
+               Format=&#34;HDF&#34;&gt;
+              %s
+            &lt;/DataItem&gt;
+          &lt;/DataItem&gt;
+        &lt;/Attribute&gt;
+&#39;&#39;&#39; % (f[0]+&#39;_&#39;+ext, domain, cdims, len(f[1].shape), start, stride, size, dims, name))
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeFieldSingle"><code class="name flex">
+<span>def <span class="ident">writeFieldSingle</span></span>(<span>self, fp, numSteps, timestep, spaceDim, name, f, domain)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">  def writeFieldSingle(self, fp, numSteps, timestep, spaceDim, name, f, domain):
+    if len(f[1].shape) &gt; 2:
+      dof = f[1].shape[1]
+      bs  = f[1].shape[2]
+    elif len(f[1].shape) &gt; 1:
+      if numSteps &gt; 1:
+        dof = f[1].shape[1]
+        bs  = 1
+      else:
+        dof = f[1].shape[0]
+        bs  = f[1].shape[1]
+    else:
+      dof = f[1].shape[0]
+      bs  = 1
+    fp.write(&#39;&#39;&#39;\
+        &lt;Attribute
+           Name=&#34;%s&#34;
+           Type=&#34;%s&#34;
+           Center=&#34;%s&#34;&gt;
+          &lt;DataItem ItemType=&#34;HyperSlab&#34;
+                    Dimensions=&#34;1 %d %d&#34;
+                    Type=&#34;HyperSlab&#34;&gt;
+            &lt;DataItem
+               Dimensions=&#34;3 3&#34;
+               Format=&#34;XML&#34;&gt;
+              %d 0 0
+              1 1 1
+              1 %d %d
+            &lt;/DataItem&gt;
+            &lt;DataItem
+               DataType=&#34;Float&#34; Precision=&#34;8&#34;
+               Dimensions=&#34;%d %d %d&#34;
+               Format=&#34;HDF&#34;&gt;
+              %s
+            &lt;/DataItem&gt;
+          &lt;/DataItem&gt;
+        &lt;/Attribute&gt;
+&#39;&#39;&#39; % (f[0], self.typeMap[f[1].attrs[&#39;vector_field_type&#39;]], domain, dof, bs, timestep, dof, bs, numSteps, dof, bs, name))
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeFooter"><code class="name flex">
+<span>def <span class="ident">writeFooter</span></span>(<span>self, fp)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def writeFooter(self, fp):
+  fp.write(&#39;  &lt;/Domain&gt;\n&lt;/Xdmf&gt;\n&#39;)
+  return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeHeader"><code class="name flex">
+<span>def <span class="ident">writeHeader</span></span>(<span>self, fp, hdfFilename)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">  def writeHeader(self, fp, hdfFilename):
+    fp.write(&#39;&#39;&#39;\
+&lt;?xml version=&#34;1.0&#34; ?&gt;
+&lt;!DOCTYPE Xdmf SYSTEM &#34;Xdmf.dtd&#34; [
+&lt;!ENTITY HeavyData &#34;%s&#34;&gt;
+]&gt;
+&#39;&#39;&#39; % os.path.basename(hdfFilename))
+    fp.write(&#39;\n&lt;Xdmf&gt;\n  &lt;Domain Name=&#34;domain&#34;&gt;\n&#39;)
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeLocations"><code class="name flex">
+<span>def <span class="ident">writeLocations</span></span>(<span>self, fp, numParticles, spaceDim)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">  def writeLocations(self, fp, numParticles, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;xcoord&#34;
+              Format=&#34;HDF&#34;
+              Dimensions=&#34;%d&#34;&gt;
+      &amp;HeavyData;:/particles/xcoord
+    &lt;/DataItem&gt;
+&#39;&#39;&#39; % (numParticles))
+    if spaceDim == 1: return
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;ycoord&#34;
+              Format=&#34;HDF&#34;
+              Dimensions=&#34;%d&#34;&gt;
+      &amp;HeavyData;:/particles/ycoord
+    &lt;/DataItem&gt;
+&#39;&#39;&#39; % (numParticles))
+    if spaceDim == 2: return
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;zcoord&#34;
+              Format=&#34;HDF&#34;
+              Dimensions=&#34;%d&#34;&gt;
+      &amp;HeavyData;:/particles/zcoord
+    &lt;/DataItem&gt;
+&#39;&#39;&#39; % (numParticles))
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeParticleField"><code class="name flex">
+<span>def <span class="ident">writeParticleField</span></span>(<span>self, fp, numParticles, spaceDim)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def writeParticleField(self, fp, numParticles, spaceDim):
+  fp.write(&#39;&#39;&#39;\
+  &lt;Attribute Name=&#34;particles/icoord&#34;&gt;
+    &lt;DataItem Name=&#34;icoord&#34;
+              Format=&#34;HDF&#34;
+              Dimensions=&#34;%d&#34;&gt;
+              &amp;HeavyData;:/particles/icoord
+    &lt;/DataItem&gt;
+  &lt;/Attribute&gt;&#39;&#39;&#39; % (numParticles))
+  return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeParticleGridHeader"><code class="name flex">
+<span>def <span class="ident">writeParticleGridHeader</span></span>(<span>self, fp, numParticles, spaceDim)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">  def writeParticleGridHeader(self, fp, numParticles, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+      &lt;Grid Name=&#34;particle_domain&#34; GridType=&#34;Uniform&#34;&gt;
+        &lt;Topology TopologyType=&#34;Polyvertex&#34; NodesPerElement=&#34;%d&#34; /&gt;
+        &lt;Geometry GeometryType=&#34;%s&#34;&gt;
+          &lt;DataItem Reference=&#34;XML&#34;&gt;/Xdmf/Domain/DataItem[@Name=&#34;xcoord&#34;]&lt;/DataItem&gt;
+          &lt;DataItem Reference=&#34;XML&#34;&gt;/Xdmf/Domain/DataItem[@Name=&#34;ycoord&#34;]&lt;/DataItem&gt;
+          %s
+        &lt;/Geometry&gt;
+&#39;&#39;&#39; % (numParticles, &#34;X_Y_Z&#34; if spaceDim &gt; 2 else &#34;X_Y&#34;, &#34;&lt;DataItem Reference=\&#34;XML\&#34;&gt;/Xdmf/Domain/DataItem[@Name=\&#34;zcoord\&#34;]&lt;/DataItem&gt;&#34; if spaceDim &gt; 2 else &#34;&#34;))
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeSpaceGridFooter"><code class="name flex">
+<span>def <span class="ident">writeSpaceGridFooter</span></span>(<span>self, fp)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def writeSpaceGridFooter(self, fp):
+  fp.write(&#39;      &lt;/Grid&gt;\n&#39;)
+  return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeSpaceGridHeader"><code class="name flex">
+<span>def <span class="ident">writeSpaceGridHeader</span></span>(<span>self, fp, numCells, numCorners, cellDim, spaceDim)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">  def writeSpaceGridHeader(self, fp, numCells, numCorners, cellDim, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+      &lt;Grid Name=&#34;domain&#34; GridType=&#34;Uniform&#34;&gt;
+        &lt;Topology
+           TopologyType=&#34;%s&#34;
+           NumberOfElements=&#34;%d&#34;&gt;
+          &lt;DataItem Reference=&#34;XML&#34;&gt;
+            /Xdmf/Domain/DataItem[@Name=&#34;cells&#34;]
+          &lt;/DataItem&gt;
+        &lt;/Topology&gt;
+        &lt;Geometry GeometryType=&#34;%s&#34;&gt;
+          &lt;DataItem Reference=&#34;XML&#34;&gt;
+            /Xdmf/Domain/DataItem[@Name=&#34;vertices&#34;]
+          &lt;/DataItem&gt;
+        &lt;/Geometry&gt;
+&#39;&#39;&#39; % (self.cellMap[cellDim][numCorners], numCells, &#34;XYZ&#34; if spaceDim &gt; 2 else &#34;XY&#34;))
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeTimeGridFooter"><code class="name flex">
+<span>def <span class="ident">writeTimeGridFooter</span></span>(<span>self, fp)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def writeTimeGridFooter(self, fp):
+  fp.write(&#39;    &lt;/Grid&gt;\n&#39;)
+  return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeTimeGridHeader"><code class="name flex">
+<span>def <span class="ident">writeTimeGridHeader</span></span>(<span>self, fp, time)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">  def writeTimeGridHeader(self, fp, time):
+    fp.write(&#39;&#39;&#39;\
+    &lt;Grid Name=&#34;TimeSeries&#34; GridType=&#34;Collection&#34; CollectionType=&#34;Temporal&#34;&gt;
+      &lt;Time TimeType=&#34;List&#34;&gt;
+        &lt;DataItem Format=&#34;XML&#34; NumberType=&#34;Float&#34; Dimensions=&#34;%d&#34;&gt;
+          &#39;&#39;&#39; % (len(time)))
+    fp.write(&#39; &#39;.join(map(str, list(map(float, time)))))
+    fp.write(&#39;&#39;&#39;
+        &lt;/DataItem&gt;
+      &lt;/Time&gt;
+&#39;&#39;&#39;)
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.generate_xdmf.Xdmf.writeVertices"><code class="name flex">
+<span>def <span class="ident">writeVertices</span></span>(<span>self, fp, geometryPath, numVertices, spaceDim)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">  def writeVertices(self, fp, geometryPath, numVertices, spaceDim):
+    fp.write(&#39;&#39;&#39;\
+    &lt;DataItem Name=&#34;vertices&#34;
+              Format=&#34;HDF&#34;
+              Dimensions=&#34;%d %d&#34;&gt;
+      &amp;HeavyData;:/%s/vertices
+    &lt;/DataItem&gt;
+    &lt;!-- ============================================================ --&gt;
+&#39;&#39;&#39; % (numVertices, spaceDim, geometryPath))
+    return</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="quagmire.tools" href="index.html">quagmire.tools</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="quagmire.tools.generate_xdmf.generateXdmf" href="#quagmire.tools.generate_xdmf.generateXdmf">generateXdmf</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.generate_dmda_xdmf" href="#quagmire.tools.generate_xdmf.generate_dmda_xdmf">generate_dmda_xdmf</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.generate_dmplex_field_xdmf" href="#quagmire.tools.generate_xdmf.generate_dmplex_field_xdmf">generate_dmplex_field_xdmf</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.generate_dmplex_xdmf" href="#quagmire.tools.generate_xdmf.generate_dmplex_xdmf">generate_dmplex_xdmf</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="quagmire.tools.generate_xdmf.Xdmf" href="#quagmire.tools.generate_xdmf.Xdmf">Xdmf</a></code></h4>
+<ul class="">
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.write" href="#quagmire.tools.generate_xdmf.Xdmf.write">write</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeCells" href="#quagmire.tools.generate_xdmf.Xdmf.writeCells">writeCells</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeField" href="#quagmire.tools.generate_xdmf.Xdmf.writeField">writeField</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeFieldComponents" href="#quagmire.tools.generate_xdmf.Xdmf.writeFieldComponents">writeFieldComponents</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeFieldSingle" href="#quagmire.tools.generate_xdmf.Xdmf.writeFieldSingle">writeFieldSingle</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeFooter" href="#quagmire.tools.generate_xdmf.Xdmf.writeFooter">writeFooter</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeHeader" href="#quagmire.tools.generate_xdmf.Xdmf.writeHeader">writeHeader</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeLocations" href="#quagmire.tools.generate_xdmf.Xdmf.writeLocations">writeLocations</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeParticleField" href="#quagmire.tools.generate_xdmf.Xdmf.writeParticleField">writeParticleField</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeParticleGridHeader" href="#quagmire.tools.generate_xdmf.Xdmf.writeParticleGridHeader">writeParticleGridHeader</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeSpaceGridFooter" href="#quagmire.tools.generate_xdmf.Xdmf.writeSpaceGridFooter">writeSpaceGridFooter</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeSpaceGridHeader" href="#quagmire.tools.generate_xdmf.Xdmf.writeSpaceGridHeader">writeSpaceGridHeader</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeTimeGridFooter" href="#quagmire.tools.generate_xdmf.Xdmf.writeTimeGridFooter">writeTimeGridFooter</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeTimeGridHeader" href="#quagmire.tools.generate_xdmf.Xdmf.writeTimeGridHeader">writeTimeGridHeader</a></code></li>
+<li><code><a title="quagmire.tools.generate_xdmf.Xdmf.writeVertices" href="#quagmire.tools.generate_xdmf.Xdmf.writeVertices">writeVertices</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
