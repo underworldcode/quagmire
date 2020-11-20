@@ -619,14 +619,14 @@
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-0 - Delaunay triangulation 0.142912664999983s
-0 - Calculate node weights and area 0.0045715879999761455s
-0 - Find boundaries 0.0022674930000334825s
-0 - cKDTree 0.010405326000011428s
+0 - Delaunay triangulation 0.12481144299999869s
+0 - Calculate node weights and area 0.004061324000019795s
+0 - Find boundaries 0.0013252079999688249s
+0 - cKDTree 0.008838551999986066s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.3238963869999907s, (0.17705336300002728s + 0.1468038219999812s)
-0 - Construct rbf weights 0.03188280799997756s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.2901807270000063s, (0.16060905599999842s + 0.1295356709999851s)
+0 - Construct rbf weights 0.029634476000012455s
 </pre></div>
 </div>
 </div>
@@ -725,7 +725,7 @@ changing the topography variable rebuilds the flow pathways in a surface process
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>quagmire.MeshVariable: PHI(X,Y) - RW | quagmire.MeshVariable: PSI(X,Y) - RW
-[0.11291292 0.07353578 0.05408453 ... 0.01094639 0.00487537 0.00122039]
+[0.01123114 0.00077713 0.00011602 ... 0.01094639 0.00487537 0.00122039]
 </pre></div>
 </div>
 </div>
@@ -809,12 +809,12 @@ quagmire.MeshVariable: PHI(X,Y) - RW
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.22582585 0.14707156 0.10816907 ... 0.02189278 0.00975074 0.00244078]
-[0.22582585 0.14707156 0.10816907 ... 0.02189278 0.00975074 0.00244078]
-[0.22582585 0.14707156 0.10816907 ... 0.02189278 0.00975074 0.00244078]
-[0.22582585 0.14707156 0.10816907 ... 0.02189278 0.00975074 0.00244078]
-[[0.00069998]]
-[0.00069998]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.02246228 0.00155427 0.00023204 ... 0.02189278 0.00975074 0.00244078]
+[0.02246228 0.00155427 0.00023204 ... 0.02189278 0.00975074 0.00244078]
+[0.02246228 0.00155427 0.00023204 ... 0.02189278 0.00975074 0.00244078]
+[0.02246228 0.00155427 0.00023204 ... 0.02189278 0.00975074 0.00244078]
+[[0.00052075]]
+[0.00052075]
 </pre></div>
 </div>
 </div>
@@ -839,15 +839,17 @@ quagmire.MeshVariable: PHI(X,Y) - RW
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dPSIdx - N:  [0.5906775  0.48357925 0.4179818  ... 0.19098577 0.12953022 0.06275579]
-dPSIdy - N:  [ 0.45417324  0.47499201  0.49516445 ... -0.53209347 -0.51496851
- -0.51701307]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dPSIdx - N:  [ 0.19787264  0.05095093 -0.02232754 ...  0.19529946  0.1266354
+  0.06707459]
+dPSIdy - N:  [ 0.51050293  0.51733136  0.51089007 ... -0.52802962 -0.51543885
+ -0.52758485]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dPSIdx - F:  [0.5906775  0.48357925 0.4179818  ... 0.19098577 0.12953022 0.06275579]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dPSIdx - F:  [ 0.19787264  0.05095093 -0.02232754 ...  0.19529946  0.1266354
+  0.06707459]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dPSIdx - point evaluation  [-0.0128184]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dPSIdx - point evaluation  [-0.01479577]
 </pre></div>
 </div>
 </div>
@@ -883,16 +885,16 @@ defining and handling intermediary mesh variables.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.36211264 -1.54887867 -1.74159992 ... -1.6604104  -1.88097489
- -1.80812037]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.7571677  -1.86234736 -1.82559478 ... -1.81517839 -1.81976473
+ -1.85921478]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.36211264 -1.54887867 -1.74159992 ... -1.6604104  -1.88097489
- -1.80812037]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.7571677  -1.86234736 -1.82559478 ... -1.81517839 -1.81976473
+ -1.85921478]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.36211264 -1.54887867 -1.74159992 ... -1.6604104  -1.88097489
- -1.80812037]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.7571677  -1.86234736 -1.82559478 ... -1.81517839 -1.81976473
+ -1.85921478]
 </pre></div>
 </div>
 </div>
@@ -914,16 +916,16 @@ until it is needed and so can be defined in an abstract manner independent of th
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.36211264 -1.54887867 -1.74159992 ... -1.6604104  -1.88097489
- -1.80812037]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.7571677  -1.86234736 -1.82559478 ... -1.81517839 -1.81976473
+ -1.85921478]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.36211264 -1.54887867 -1.74159992 ... -1.6604104  -1.88097489
- -1.80812037]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.7571677  -1.86234736 -1.82559478 ... -1.81517839 -1.81976473
+ -1.85921478]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.36211264 -1.54887867 -1.74159992 ... -1.6604104  -1.88097489
- -1.80812037]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-1.7571677  -1.86234736 -1.82559478 ... -1.81517839 -1.81976473
+ -1.85921478]
 </pre></div>
 </div>
 </div>
@@ -946,7 +948,7 @@ with very little overhead because the interface is very lightweight.</p>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>quagmire.fn: d(grad(PHI(X,Y))|x0)/d0 + d(grad(PHI(X,Y))|x1)/dY
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[2.52936727 3.30937393 2.35133541 ... 2.88377786 3.29965901 3.61502749]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[3.50975803 3.60255304 3.46218181 ... 3.02909839 3.20219928 1.38821459]
 </pre></div>
 </div>
 </div>
@@ -3360,43 +3362,43 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140473823787056, 8080);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140520667077520, 8080);
 _wi[viewerid].actions = {
-  "0tQGYsIaGG" : "select; specular=---VAL---; ",
-  "2vtOsq8sj6" : "select; axis=---VAL---; ",
-  "puXJRkhdcv" : "<triangles>colour=---VAL---; ",
-  "jZLCYHl7Ka" : "<triangles>visible=---VAL---; ",
-  "u7zMaPUFt3" : "<triangles_colourbar>colour=---VAL---; ",
-  "pu6DtqKClj" : "<triangles_colourbar>visible=---VAL---; ",
-  "62K0YsoRUq" : "<triangles>wireframe=---VAL---; ",
-  "PzJCT6wcww" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
+  "0mG5zG16jd" : "select; specular=---VAL---; ",
+  "IiJ0KwXPUd" : "select; axis=---VAL---; ",
+  "9filTuGtif" : "<triangles>colour=---VAL---; ",
+  "WTl4mgpiqE" : "<triangles>visible=---VAL---; ",
+  "nZREJ2EV9f" : "<triangles_colourbar>colour=---VAL---; ",
+  "e0Iz6MhJxE" : "<triangles_colourbar>visible=---VAL---; ",
+  "MkDKKl3Lop" : "<triangles>wireframe=---VAL---; ",
+  "Dt51sGHQPb" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: right;">
-<img id="imgtarget_J40i6BAJhp" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_5vPaoVUnST" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['J40i6BAJhp'].box.mode = this.value;">
+             <select onchange="_wi['5vPaoVUnST'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['J40i6BAJhp'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['5vPaoVUnST'].execute('reset');">
            </div></div>
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Specular:</p>
-<input id="lvctrl_0tQGYsIaGG_number" class="lvctrl_0tQGYsIaGG" type="number"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.nextElementSibling.value=this.value; _wi['J40i6BAJhp'].do_action('0tQGYsIaGG', this.value, this);" >
-<input id="lvctrl_0tQGYsIaGG_range" class="lvctrl_0tQGYsIaGG" type="range"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.previousElementSibling.value=this.value; _wi['J40i6BAJhp'].do_action('0tQGYsIaGG', this.value, this);" >
+<input id="lvctrl_0mG5zG16jd_number" class="lvctrl_0mG5zG16jd" type="number"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.nextElementSibling.value=this.value; _wi['5vPaoVUnST'].do_action('0mG5zG16jd', this.value, this);" >
+<input id="lvctrl_0mG5zG16jd_range" class="lvctrl_0mG5zG16jd" type="range"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.previousElementSibling.value=this.value; _wi['5vPaoVUnST'].do_action('0mG5zG16jd', this.value, this);" >
 <br>
 <label>
-<input id="lvctrl_2vtOsq8sj6_checkbox" class="lvctrl_2vtOsq8sj6" type="checkbox"checked="checked" step="any" data-property="axis" value="True" onchange="; _wi['J40i6BAJhp'].do_action('2vtOsq8sj6', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_IiJ0KwXPUd_checkbox" class="lvctrl_IiJ0KwXPUd" type="checkbox"checked="checked" step="any" data-property="axis" value="True" onchange="; _wi['5vPaoVUnST'].do_action('IiJ0KwXPUd', this.checked ? 1 : 0, this);" >
  Axis</label><br>
 <p>Objects:</p>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_puXJRkhdcv" data-target="triangles" data-property="colour"  class="colour lvctrl_puXJRkhdcv" onclick="
+          <div id="lvctrl_9filTuGtif" data-target="triangles" data-property="colour"  class="colour lvctrl_9filTuGtif" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -3404,24 +3406,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['J40i6BAJhp'].do_action('puXJRkhdcv', c.html(), el);
+              _wi['5vPaoVUnST'].do_action('9filTuGtif', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_puXJRkhdcv");
+        var el = document.getElementById("lvctrl_9filTuGtif");
         //Set the initial colour
         var col = new Colour('#77ff88');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_jZLCYHl7Ka_checkbox" class="lvctrl_jZLCYHl7Ka" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['J40i6BAJhp'].do_action('jZLCYHl7Ka', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_WTl4mgpiqE_checkbox" class="lvctrl_WTl4mgpiqE" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['5vPaoVUnST'].do_action('WTl4mgpiqE', this.checked ? 1 : 0, this);" >
  triangles</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_u7zMaPUFt3" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_u7zMaPUFt3" onclick="
+          <div id="lvctrl_nZREJ2EV9f" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_nZREJ2EV9f" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -3429,32 +3431,32 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['J40i6BAJhp'].do_action('u7zMaPUFt3', c.html(), el);
+              _wi['5vPaoVUnST'].do_action('nZREJ2EV9f', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_u7zMaPUFt3");
+        var el = document.getElementById("lvctrl_nZREJ2EV9f");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_pu6DtqKClj_checkbox" class="lvctrl_pu6DtqKClj" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['J40i6BAJhp'].do_action('pu6DtqKClj', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_e0Iz6MhJxE_checkbox" class="lvctrl_e0Iz6MhJxE" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['5vPaoVUnST'].do_action('e0Iz6MhJxE', this.checked ? 1 : 0, this);" >
  triangles_colourbar</label><br>
 <label>
-<input id="lvctrl_62K0YsoRUq_checkbox" class="lvctrl_62K0YsoRUq" type="checkbox"step="any" data-target="triangles" data-property="wireframe" value="False" onchange="; _wi['J40i6BAJhp'].do_action('62K0YsoRUq', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_MkDKKl3Lop_checkbox" class="lvctrl_MkDKKl3Lop" type="checkbox"step="any" data-target="triangles" data-property="wireframe" value="False" onchange="; _wi['5vPaoVUnST'].do_action('MkDKKl3Lop', this.checked ? 1 : 0, this);" >
  Wireframe</label><br>
 <p>Display::</p>
-<select class="lvctrl_PzJCT6wcww" id="lvctrl_PzJCT6wcww" value="" data-target="triangles" data-property="colourby" onchange="_wi['J40i6BAJhp'].do_action('PzJCT6wcww', this.value, this);">
+<select class="lvctrl_Dt51sGHQPb" id="lvctrl_Dt51sGHQPb" value="" data-target="triangles" data-property="colourby" onchange="_wi['5vPaoVUnST'].do_action('Dt51sGHQPb', this.value, this);">
 <option>phi</option>
 <option>psi</option>
 <option>dpsidx_nodes</option>
 </select><br>
 </div>
-</form><!-- CREATION TIMESTAMP 20201120020803 --><script>init('J40i6BAJhp');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201120024119 --><script>init('5vPaoVUnST');</script></div></div>
 </div>
 </div>
 </div>
@@ -3493,15 +3495,17 @@ _wi[viewerid].actions = {
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-0 - Delaunay triangulation 0.14415752600001497s
-0 - Calculate node weights and area 0.0034477399999559566s
-0 - Find boundaries 0.0013120529999923747s
-0 - cKDTree 0.00911636900002577s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.30816885400003s, (0.1676510750000375s + 0.1404814770000371s)
-0 - Construct rbf weights 0.02805813399999124s
-47380 47380
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.13443388600001072s
+0 - Calculate node weights and area 0.0032149179999692024s
+0 - Find boundaries 0.0013622079999890957s
+0 - cKDTree 0.008772351000004619s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.29140890299999s, (0.1607554390000132s + 0.13061246399996662s)
+0 - Construct rbf weights 0.023017935000041234s
+47375 47375
 </pre></div>
 </div>
 </div>
@@ -3526,7 +3530,7 @@ _wi[viewerid].actions = {
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.65201036, 1.72474396, 1.75776954, ..., 1.81471569, 1.82518599,
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.84029092, 1.85897815, 1.86401095, ..., 1.81471569, 1.82518599,
        1.83148632])
 </pre></div>
 </div>
@@ -3539,7 +3543,7 @@ _wi[viewerid].actions = {
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.22582584732790967 1.6520103558833676
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.02246227974764333 1.8402909159026197
 </pre></div>
 </div>
 </div>

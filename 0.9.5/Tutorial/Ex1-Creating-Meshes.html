@@ -659,10 +659,10 @@ useful methods and attached data which can be listed with</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: PixMesh
-0 - cKDTree 0.002099289999989651s
-0 - Find boundaries 0.0003654160000223783s
-0 - Construct neighbour cloud arrays 0.04519603400001415s, (0.020100560000003043s + 0.025078173999986575s)
-0 - Construct rbf weights 0.004509793000011086s
+0 - cKDTree 0.001850611999998364s
+0 - Find boundaries 0.0003509020000365126s
+0 - Construct neighbour cloud arrays 0.04335337300000219s, (0.018377815999997438s + 0.02496065700000827s)
+0 - Construct rbf weights 0.00426932699997451s
 </pre></div>
 </div>
 </div>
@@ -3095,32 +3095,32 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140672465259312, 8080);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140665097931280, 8080);
 _wi[viewerid].actions = {
-  "L4pmG9skQk" : "<quads1>colour=---VAL---; ",
-  "0Sygl4QkTy" : "<quads1>visible=---VAL---; ",
-  "yrd0NTGLMQ" : "<quads2>colour=---VAL---; ",
-  "gcquEjFje4" : "<quads2>visible=---VAL---; "};
+  "zuRUUDIdl4" : "<quads1>colour=---VAL---; ",
+  "SRcWH5xAIv" : "<quads1>visible=---VAL---; ",
+  "I2z7mlSYSN" : "<quads2>colour=---VAL---; ",
+  "wJFAA0p4Yp" : "<quads2>visible=---VAL---; "};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: right;">
-<img id="imgtarget_G2VKhoUtg0" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_UypgY737pI" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['G2VKhoUtg0'].box.mode = this.value;">
+             <select onchange="_wi['UypgY737pI'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['G2VKhoUtg0'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['UypgY737pI'].execute('reset');">
            </div></div>
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Objects:</p>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_L4pmG9skQk" data-target="quads1" data-property="colour"  class="colour lvctrl_L4pmG9skQk" onclick="
+          <div id="lvctrl_zuRUUDIdl4" data-target="quads1" data-property="colour"  class="colour lvctrl_zuRUUDIdl4" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -3128,24 +3128,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['G2VKhoUtg0'].do_action('L4pmG9skQk', c.html(), el);
+              _wi['UypgY737pI'].do_action('zuRUUDIdl4', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_L4pmG9skQk");
+        var el = document.getElementById("lvctrl_zuRUUDIdl4");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_0Sygl4QkTy_checkbox" class="lvctrl_0Sygl4QkTy" type="checkbox"checked="checked" step="any" data-target="quads1" data-property="visible" value="True" onchange="; _wi['G2VKhoUtg0'].do_action('0Sygl4QkTy', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_SRcWH5xAIv_checkbox" class="lvctrl_SRcWH5xAIv" type="checkbox"checked="checked" step="any" data-target="quads1" data-property="visible" value="True" onchange="; _wi['UypgY737pI'].do_action('SRcWH5xAIv', this.checked ? 1 : 0, this);" >
  quads1</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_yrd0NTGLMQ" data-target="quads2" data-property="colour"  class="colour lvctrl_yrd0NTGLMQ" onclick="
+          <div id="lvctrl_I2z7mlSYSN" data-target="quads2" data-property="colour"  class="colour lvctrl_I2z7mlSYSN" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -3153,23 +3153,23 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['G2VKhoUtg0'].do_action('yrd0NTGLMQ', c.html(), el);
+              _wi['UypgY737pI'].do_action('I2z7mlSYSN', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_yrd0NTGLMQ");
+        var el = document.getElementById("lvctrl_I2z7mlSYSN");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_gcquEjFje4_checkbox" class="lvctrl_gcquEjFje4" type="checkbox"checked="checked" step="any" data-target="quads2" data-property="visible" value="True" onchange="; _wi['G2VKhoUtg0'].do_action('gcquEjFje4', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_wJFAA0p4Yp_checkbox" class="lvctrl_wJFAA0p4Yp" type="checkbox"checked="checked" step="any" data-target="quads2" data-property="visible" value="True" onchange="; _wi['UypgY737pI'].do_action('wJFAA0p4Yp', this.checked ? 1 : 0, this);" >
  quads2</label><br>
 </div>
-</form><!-- CREATION TIMESTAMP 20201120020752 --><script>init('G2VKhoUtg0');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201120024107 --><script>init('UypgY737pI');</script></div></div>
 </div>
 </div>
 <div class="section" id="unstructured-meshes">
@@ -3219,12 +3219,14 @@ _wi[viewerid].actions = {
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-0 - Delaunay triangulation 0.0047612040000331035s
-0 - Calculate node weights and area 0.0007461320000174965s
-0 - Find boundaries 0.00016800700001340374s
-0 - cKDTree 0.0006796289999897454s
-0 - Construct neighbour cloud arrays 0.015325655999959054s, (0.008295854999971652s + 0.0070154999999658685s)
-0 - Construct rbf weights 0.0014868639999576772s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.004903330999979971s
+0 - Calculate node weights and area 0.000689905000001545s
+0 - Find boundaries 0.0001648009999826172s
+0 - cKDTree 0.0006133040000122492s
+0 - Construct neighbour cloud arrays 0.015049594999993587s, (0.00838815299999851s + 0.006648442000027899s)
+0 - Construct rbf weights 0.0014449089999857279s
 </pre></div>
 </div>
 </div>
@@ -5643,38 +5645,38 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140671413526352, 8081);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140664004054960, 8081);
 _wi[viewerid].actions = {
-  "YNFhdxH8fV" : "<Boundary Points>colour=---VAL---; ",
-  "hhu4Jt4FaI" : "<Boundary Points>visible=---VAL---; ",
-  "RdsMWY4lA8" : "<All Points>colour=---VAL---; ",
-  "m9siZHu8nv" : "<All Points>visible=---VAL---; ",
-  "kwOWW35oX5" : "<Triangle Edges>colour=---VAL---; ",
-  "5BENjCs6jn" : "<Triangle Edges>visible=---VAL---; ",
-  "RHl8vyPvHS" : "<Triangle Areas>colour=---VAL---; ",
-  "LBnzuT4nhn" : "<Triangle Areas>visible=---VAL---; ",
-  "AS05Sp35NU" : "<Triangle_Areas_colourbar>colour=---VAL---; ",
-  "bQFP73Yv5J" : "<Triangle_Areas_colourbar>visible=---VAL---; "};
+  "U4n08RmWIJ" : "<Boundary Points>colour=---VAL---; ",
+  "tTxxIUknYp" : "<Boundary Points>visible=---VAL---; ",
+  "YUs3igNx2y" : "<All Points>colour=---VAL---; ",
+  "KO9weONkuK" : "<All Points>visible=---VAL---; ",
+  "zMP2KrzUya" : "<Triangle Edges>colour=---VAL---; ",
+  "btkabYAM22" : "<Triangle Edges>visible=---VAL---; ",
+  "okTSmy4isp" : "<Triangle Areas>colour=---VAL---; ",
+  "Eirs5fChs1" : "<Triangle Areas>visible=---VAL---; ",
+  "YgbmqpotHi" : "<Triangle_Areas_colourbar>colour=---VAL---; ",
+  "oKQbS1ANPm" : "<Triangle_Areas_colourbar>visible=---VAL---; "};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: right;">
-<img id="imgtarget_iIBGqVbaov" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_OSvRU8CYkN" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['iIBGqVbaov'].box.mode = this.value;">
+             <select onchange="_wi['OSvRU8CYkN'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['iIBGqVbaov'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['OSvRU8CYkN'].execute('reset');">
            </div></div>
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Objects:</p>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_YNFhdxH8fV" data-target="Boundary Points" data-property="colour"  class="colour lvctrl_YNFhdxH8fV" onclick="
+          <div id="lvctrl_U4n08RmWIJ" data-target="Boundary Points" data-property="colour"  class="colour lvctrl_U4n08RmWIJ" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -5682,24 +5684,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['iIBGqVbaov'].do_action('YNFhdxH8fV', c.html(), el);
+              _wi['OSvRU8CYkN'].do_action('U4n08RmWIJ', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_YNFhdxH8fV");
+        var el = document.getElementById("lvctrl_U4n08RmWIJ");
         //Set the initial colour
         var col = new Colour('red');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_hhu4Jt4FaI_checkbox" class="lvctrl_hhu4Jt4FaI" type="checkbox"checked="checked" step="any" data-target="Boundary Points" data-property="visible" value="True" onchange="; _wi['iIBGqVbaov'].do_action('hhu4Jt4FaI', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_tTxxIUknYp_checkbox" class="lvctrl_tTxxIUknYp" type="checkbox"checked="checked" step="any" data-target="Boundary Points" data-property="visible" value="True" onchange="; _wi['OSvRU8CYkN'].do_action('tTxxIUknYp', this.checked ? 1 : 0, this);" >
  Boundary Points</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_RdsMWY4lA8" data-target="All Points" data-property="colour"  class="colour lvctrl_RdsMWY4lA8" onclick="
+          <div id="lvctrl_YUs3igNx2y" data-target="All Points" data-property="colour"  class="colour lvctrl_YUs3igNx2y" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -5707,24 +5709,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['iIBGqVbaov'].do_action('RdsMWY4lA8', c.html(), el);
+              _wi['OSvRU8CYkN'].do_action('YUs3igNx2y', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_RdsMWY4lA8");
+        var el = document.getElementById("lvctrl_YUs3igNx2y");
         //Set the initial colour
         var col = new Colour('blue');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_m9siZHu8nv_checkbox" class="lvctrl_m9siZHu8nv" type="checkbox"checked="checked" step="any" data-target="All Points" data-property="visible" value="True" onchange="; _wi['iIBGqVbaov'].do_action('m9siZHu8nv', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_KO9weONkuK_checkbox" class="lvctrl_KO9weONkuK" type="checkbox"checked="checked" step="any" data-target="All Points" data-property="visible" value="True" onchange="; _wi['OSvRU8CYkN'].do_action('KO9weONkuK', this.checked ? 1 : 0, this);" >
  All Points</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_kwOWW35oX5" data-target="Triangle Edges" data-property="colour"  class="colour lvctrl_kwOWW35oX5" onclick="
+          <div id="lvctrl_zMP2KrzUya" data-target="Triangle Edges" data-property="colour"  class="colour lvctrl_zMP2KrzUya" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -5732,24 +5734,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['iIBGqVbaov'].do_action('kwOWW35oX5', c.html(), el);
+              _wi['OSvRU8CYkN'].do_action('zMP2KrzUya', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_kwOWW35oX5");
+        var el = document.getElementById("lvctrl_zMP2KrzUya");
         //Set the initial colour
         var col = new Colour('#442222');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_5BENjCs6jn_checkbox" class="lvctrl_5BENjCs6jn" type="checkbox"checked="checked" step="any" data-target="Triangle Edges" data-property="visible" value="True" onchange="; _wi['iIBGqVbaov'].do_action('5BENjCs6jn', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_btkabYAM22_checkbox" class="lvctrl_btkabYAM22" type="checkbox"checked="checked" step="any" data-target="Triangle Edges" data-property="visible" value="True" onchange="; _wi['OSvRU8CYkN'].do_action('btkabYAM22', this.checked ? 1 : 0, this);" >
  Triangle Edges</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_RHl8vyPvHS" data-target="Triangle Areas" data-property="colour"  class="colour lvctrl_RHl8vyPvHS" onclick="
+          <div id="lvctrl_okTSmy4isp" data-target="Triangle Areas" data-property="colour"  class="colour lvctrl_okTSmy4isp" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -5757,24 +5759,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['iIBGqVbaov'].do_action('RHl8vyPvHS', c.html(), el);
+              _wi['OSvRU8CYkN'].do_action('okTSmy4isp', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_RHl8vyPvHS");
+        var el = document.getElementById("lvctrl_okTSmy4isp");
         //Set the initial colour
         var col = new Colour('#77ff88');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_LBnzuT4nhn_checkbox" class="lvctrl_LBnzuT4nhn" type="checkbox"checked="checked" step="any" data-target="Triangle Areas" data-property="visible" value="True" onchange="; _wi['iIBGqVbaov'].do_action('LBnzuT4nhn', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_Eirs5fChs1_checkbox" class="lvctrl_Eirs5fChs1" type="checkbox"checked="checked" step="any" data-target="Triangle Areas" data-property="visible" value="True" onchange="; _wi['OSvRU8CYkN'].do_action('Eirs5fChs1', this.checked ? 1 : 0, this);" >
  Triangle Areas</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_AS05Sp35NU" data-target="Triangle_Areas_colourbar" data-property="colour"  class="colour lvctrl_AS05Sp35NU" onclick="
+          <div id="lvctrl_YgbmqpotHi" data-target="Triangle_Areas_colourbar" data-property="colour"  class="colour lvctrl_YgbmqpotHi" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -5782,23 +5784,23 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['iIBGqVbaov'].do_action('AS05Sp35NU', c.html(), el);
+              _wi['OSvRU8CYkN'].do_action('YgbmqpotHi', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_AS05Sp35NU");
+        var el = document.getElementById("lvctrl_YgbmqpotHi");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_bQFP73Yv5J_checkbox" class="lvctrl_bQFP73Yv5J" type="checkbox"checked="checked" step="any" data-target="Triangle_Areas_colourbar" data-property="visible" value="True" onchange="; _wi['iIBGqVbaov'].do_action('bQFP73Yv5J', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_oKQbS1ANPm_checkbox" class="lvctrl_oKQbS1ANPm" type="checkbox"checked="checked" step="any" data-target="Triangle_Areas_colourbar" data-property="visible" value="True" onchange="; _wi['OSvRU8CYkN'].do_action('oKQbS1ANPm', this.checked ? 1 : 0, this);" >
  Triangle_Areas_colourbar</label><br>
 </div>
-</form><!-- CREATION TIMESTAMP 20201120020752 --><script>init('iIBGqVbaov');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201120024107 --><script>init('OSvRU8CYkN');</script></div></div>
 </div>
 </div>
 <div class="section" id="mesh-improvement">
@@ -5817,14 +5819,14 @@ _wi[viewerid].actions = {
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-0 - Delaunay triangulation 0.004779104999954598s
-0 - Calculate node weights and area 0.0005604240000138816s
-0 - Find boundaries 0.00016990699998586933s
-0 - cKDTree 0.0007613330000140195s
+0 - Delaunay triangulation 0.004484628999989582s
+0 - Calculate node weights and area 0.0003995019999933902s
+0 - Find boundaries 0.000180900999964706s
+0 - cKDTree 0.0006537040000011984s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.014678828000000976s, (0.00813144800002874s + 0.006532978999985062s)
-0 - Construct rbf weights 0.001475062999986676s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.01492189500004315s, (0.0081269519999978s + 0.0067771429999652355s)
+0 - Construct rbf weights 0.0016541100000040387s
 </pre></div>
 </div>
 </div>
@@ -8247,36 +8249,36 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140671412374416, 8082);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140664003095440, 8082);
 _wi[viewerid].actions = {
-  "kKtq5GO6s2" : "<Boundary Points>colour=---VAL---; ",
-  "aonhoXOipT" : "<Boundary Points>visible=---VAL---; ",
-  "q472ZwU2E9" : "<Triangle Edges>colour=---VAL---; ",
-  "FKg93WwZ4m" : "<Triangle Edges>visible=---VAL---; ",
-  "xeUZMtfPr3" : "<Triangle Areas>colour=---VAL---; ",
-  "rsiYd2Ofz4" : "<Triangle Areas>visible=---VAL---; ",
-  "zYNqyDk4rk" : "<Triangle_Areas_colourbar>colour=---VAL---; ",
-  "L9BJi5fChp" : "<Triangle_Areas_colourbar>visible=---VAL---; "};
+  "X9SwMKlgXn" : "<Boundary Points>colour=---VAL---; ",
+  "6kCygN0AFZ" : "<Boundary Points>visible=---VAL---; ",
+  "rdrqbMXJuP" : "<Triangle Edges>colour=---VAL---; ",
+  "4JYq5p8VTE" : "<Triangle Edges>visible=---VAL---; ",
+  "E94Rz8buKG" : "<Triangle Areas>colour=---VAL---; ",
+  "OOYODLs4Zw" : "<Triangle Areas>visible=---VAL---; ",
+  "fIUagtpc6j" : "<Triangle_Areas_colourbar>colour=---VAL---; ",
+  "RNeqn9aSVS" : "<Triangle_Areas_colourbar>visible=---VAL---; "};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: right;">
-<img id="imgtarget_yJEt5vlDAN" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_j5BivQD2BM" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['yJEt5vlDAN'].box.mode = this.value;">
+             <select onchange="_wi['j5BivQD2BM'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['yJEt5vlDAN'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['j5BivQD2BM'].execute('reset');">
            </div></div>
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Objects:</p>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_kKtq5GO6s2" data-target="Boundary Points" data-property="colour"  class="colour lvctrl_kKtq5GO6s2" onclick="
+          <div id="lvctrl_X9SwMKlgXn" data-target="Boundary Points" data-property="colour"  class="colour lvctrl_X9SwMKlgXn" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -8284,24 +8286,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['yJEt5vlDAN'].do_action('kKtq5GO6s2', c.html(), el);
+              _wi['j5BivQD2BM'].do_action('X9SwMKlgXn', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_kKtq5GO6s2");
+        var el = document.getElementById("lvctrl_X9SwMKlgXn");
         //Set the initial colour
         var col = new Colour('red');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_aonhoXOipT_checkbox" class="lvctrl_aonhoXOipT" type="checkbox"checked="checked" step="any" data-target="Boundary Points" data-property="visible" value="True" onchange="; _wi['yJEt5vlDAN'].do_action('aonhoXOipT', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_6kCygN0AFZ_checkbox" class="lvctrl_6kCygN0AFZ" type="checkbox"checked="checked" step="any" data-target="Boundary Points" data-property="visible" value="True" onchange="; _wi['j5BivQD2BM'].do_action('6kCygN0AFZ', this.checked ? 1 : 0, this);" >
  Boundary Points</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_q472ZwU2E9" data-target="Triangle Edges" data-property="colour"  class="colour lvctrl_q472ZwU2E9" onclick="
+          <div id="lvctrl_rdrqbMXJuP" data-target="Triangle Edges" data-property="colour"  class="colour lvctrl_rdrqbMXJuP" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -8309,24 +8311,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['yJEt5vlDAN'].do_action('q472ZwU2E9', c.html(), el);
+              _wi['j5BivQD2BM'].do_action('rdrqbMXJuP', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_q472ZwU2E9");
+        var el = document.getElementById("lvctrl_rdrqbMXJuP");
         //Set the initial colour
         var col = new Colour('#442222');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_FKg93WwZ4m_checkbox" class="lvctrl_FKg93WwZ4m" type="checkbox"checked="checked" step="any" data-target="Triangle Edges" data-property="visible" value="True" onchange="; _wi['yJEt5vlDAN'].do_action('FKg93WwZ4m', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_4JYq5p8VTE_checkbox" class="lvctrl_4JYq5p8VTE" type="checkbox"checked="checked" step="any" data-target="Triangle Edges" data-property="visible" value="True" onchange="; _wi['j5BivQD2BM'].do_action('4JYq5p8VTE', this.checked ? 1 : 0, this);" >
  Triangle Edges</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_xeUZMtfPr3" data-target="Triangle Areas" data-property="colour"  class="colour lvctrl_xeUZMtfPr3" onclick="
+          <div id="lvctrl_E94Rz8buKG" data-target="Triangle Areas" data-property="colour"  class="colour lvctrl_E94Rz8buKG" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -8334,24 +8336,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['yJEt5vlDAN'].do_action('xeUZMtfPr3', c.html(), el);
+              _wi['j5BivQD2BM'].do_action('E94Rz8buKG', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_xeUZMtfPr3");
+        var el = document.getElementById("lvctrl_E94Rz8buKG");
         //Set the initial colour
         var col = new Colour('#77ff88');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_rsiYd2Ofz4_checkbox" class="lvctrl_rsiYd2Ofz4" type="checkbox"checked="checked" step="any" data-target="Triangle Areas" data-property="visible" value="True" onchange="; _wi['yJEt5vlDAN'].do_action('rsiYd2Ofz4', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_OOYODLs4Zw_checkbox" class="lvctrl_OOYODLs4Zw" type="checkbox"checked="checked" step="any" data-target="Triangle Areas" data-property="visible" value="True" onchange="; _wi['j5BivQD2BM'].do_action('OOYODLs4Zw', this.checked ? 1 : 0, this);" >
  Triangle Areas</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_zYNqyDk4rk" data-target="Triangle_Areas_colourbar" data-property="colour"  class="colour lvctrl_zYNqyDk4rk" onclick="
+          <div id="lvctrl_fIUagtpc6j" data-target="Triangle_Areas_colourbar" data-property="colour"  class="colour lvctrl_fIUagtpc6j" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -8359,23 +8361,23 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['yJEt5vlDAN'].do_action('zYNqyDk4rk', c.html(), el);
+              _wi['j5BivQD2BM'].do_action('fIUagtpc6j', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_zYNqyDk4rk");
+        var el = document.getElementById("lvctrl_fIUagtpc6j");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_L9BJi5fChp_checkbox" class="lvctrl_L9BJi5fChp" type="checkbox"checked="checked" step="any" data-target="Triangle_Areas_colourbar" data-property="visible" value="True" onchange="; _wi['yJEt5vlDAN'].do_action('L9BJi5fChp', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_RNeqn9aSVS_checkbox" class="lvctrl_RNeqn9aSVS" type="checkbox"checked="checked" step="any" data-target="Triangle_Areas_colourbar" data-property="visible" value="True" onchange="; _wi['j5BivQD2BM'].do_action('RNeqn9aSVS', this.checked ? 1 : 0, this);" >
  Triangle_Areas_colourbar</label><br>
 </div>
-</form><!-- CREATION TIMESTAMP 20201120020752 --><script>init('yJEt5vlDAN');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201120024108 --><script>init('j5BivQD2BM');</script></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -10847,40 +10849,40 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140671408195440, 8083);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140663975327408, 8083);
 _wi[viewerid].actions = {
-  "2AsEXuokIH" : "<boundary_points_r0>colour=---VAL---; ",
-  "ZCCo9yBfqF" : "<boundary_points_r0>visible=---VAL---; ",
-  "HFztOsTCkn" : "<boundary_points_r1>colour=---VAL---; ",
-  "Hqw4E7F9lj" : "<boundary_points_r1>visible=---VAL---; ",
-  "Q8Qe3weMD4" : "<boundary_points_r2>colour=---VAL---; ",
-  "19GQG2Povi" : "<boundary_points_r2>visible=---VAL---; ",
-  "cDhksKlvgY" : "<mesh_r0>colour=---VAL---; ",
-  "xZMwj0qebP" : "<mesh_r0>visible=---VAL---; ",
-  "ERqo6O1ogf" : "<mesh_r1>colour=---VAL---; ",
-  "PkUAVXqwgm" : "<mesh_r1>visible=---VAL---; ",
-  "b1qO4HRoTX" : "<mesh_r2>colour=---VAL---; ",
-  "yzd6QAHlqH" : "<mesh_r2>visible=---VAL---; "};
+  "mIkkVOUcr9" : "<boundary_points_r0>colour=---VAL---; ",
+  "76qHbmiywl" : "<boundary_points_r0>visible=---VAL---; ",
+  "GmoMnACRgc" : "<boundary_points_r1>colour=---VAL---; ",
+  "VZPPHGVTHk" : "<boundary_points_r1>visible=---VAL---; ",
+  "02X9Ei7L77" : "<boundary_points_r2>colour=---VAL---; ",
+  "4vS6ZCR9bK" : "<boundary_points_r2>visible=---VAL---; ",
+  "Kkqnaa68Ts" : "<mesh_r0>colour=---VAL---; ",
+  "APQ99dVTfy" : "<mesh_r0>visible=---VAL---; ",
+  "jUEh7Nedk9" : "<mesh_r1>colour=---VAL---; ",
+  "BLNICUn1Wz" : "<mesh_r1>visible=---VAL---; ",
+  "lM2vEOZO2T" : "<mesh_r2>colour=---VAL---; ",
+  "INybcGCq4P" : "<mesh_r2>visible=---VAL---; "};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: right;">
-<img id="imgtarget_c9WSugc9od" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_ZCqsI11YDX" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['c9WSugc9od'].box.mode = this.value;">
+             <select onchange="_wi['ZCqsI11YDX'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['c9WSugc9od'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['ZCqsI11YDX'].execute('reset');">
            </div></div>
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Objects:</p>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_2AsEXuokIH" data-target="boundary_points_r0" data-property="colour"  class="colour lvctrl_2AsEXuokIH" onclick="
+          <div id="lvctrl_mIkkVOUcr9" data-target="boundary_points_r0" data-property="colour"  class="colour lvctrl_mIkkVOUcr9" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -10888,24 +10890,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['c9WSugc9od'].do_action('2AsEXuokIH', c.html(), el);
+              _wi['ZCqsI11YDX'].do_action('mIkkVOUcr9', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_2AsEXuokIH");
+        var el = document.getElementById("lvctrl_mIkkVOUcr9");
         //Set the initial colour
         var col = new Colour('red');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_ZCCo9yBfqF_checkbox" class="lvctrl_ZCCo9yBfqF" type="checkbox"checked="checked" step="any" data-target="boundary_points_r0" data-property="visible" value="True" onchange="; _wi['c9WSugc9od'].do_action('ZCCo9yBfqF', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_76qHbmiywl_checkbox" class="lvctrl_76qHbmiywl" type="checkbox"checked="checked" step="any" data-target="boundary_points_r0" data-property="visible" value="True" onchange="; _wi['ZCqsI11YDX'].do_action('76qHbmiywl', this.checked ? 1 : 0, this);" >
  boundary_points_r0</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_HFztOsTCkn" data-target="boundary_points_r1" data-property="colour"  class="colour lvctrl_HFztOsTCkn" onclick="
+          <div id="lvctrl_GmoMnACRgc" data-target="boundary_points_r1" data-property="colour"  class="colour lvctrl_GmoMnACRgc" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -10913,24 +10915,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['c9WSugc9od'].do_action('HFztOsTCkn', c.html(), el);
+              _wi['ZCqsI11YDX'].do_action('GmoMnACRgc', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_HFztOsTCkn");
+        var el = document.getElementById("lvctrl_GmoMnACRgc");
         //Set the initial colour
         var col = new Colour('blue');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_Hqw4E7F9lj_checkbox" class="lvctrl_Hqw4E7F9lj" type="checkbox"checked="checked" step="any" data-target="boundary_points_r1" data-property="visible" value="True" onchange="; _wi['c9WSugc9od'].do_action('Hqw4E7F9lj', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_VZPPHGVTHk_checkbox" class="lvctrl_VZPPHGVTHk" type="checkbox"checked="checked" step="any" data-target="boundary_points_r1" data-property="visible" value="True" onchange="; _wi['ZCqsI11YDX'].do_action('VZPPHGVTHk', this.checked ? 1 : 0, this);" >
  boundary_points_r1</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_Q8Qe3weMD4" data-target="boundary_points_r2" data-property="colour"  class="colour lvctrl_Q8Qe3weMD4" onclick="
+          <div id="lvctrl_02X9Ei7L77" data-target="boundary_points_r2" data-property="colour"  class="colour lvctrl_02X9Ei7L77" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -10938,24 +10940,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['c9WSugc9od'].do_action('Q8Qe3weMD4', c.html(), el);
+              _wi['ZCqsI11YDX'].do_action('02X9Ei7L77', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_Q8Qe3weMD4");
+        var el = document.getElementById("lvctrl_02X9Ei7L77");
         //Set the initial colour
         var col = new Colour('#336611');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_19GQG2Povi_checkbox" class="lvctrl_19GQG2Povi" type="checkbox"checked="checked" step="any" data-target="boundary_points_r2" data-property="visible" value="True" onchange="; _wi['c9WSugc9od'].do_action('19GQG2Povi', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_4vS6ZCR9bK_checkbox" class="lvctrl_4vS6ZCR9bK" type="checkbox"checked="checked" step="any" data-target="boundary_points_r2" data-property="visible" value="True" onchange="; _wi['ZCqsI11YDX'].do_action('4vS6ZCR9bK', this.checked ? 1 : 0, this);" >
  boundary_points_r2</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_cDhksKlvgY" data-target="mesh_r0" data-property="colour"  class="colour lvctrl_cDhksKlvgY" onclick="
+          <div id="lvctrl_Kkqnaa68Ts" data-target="mesh_r0" data-property="colour"  class="colour lvctrl_Kkqnaa68Ts" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -10963,24 +10965,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['c9WSugc9od'].do_action('cDhksKlvgY', c.html(), el);
+              _wi['ZCqsI11YDX'].do_action('Kkqnaa68Ts', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_cDhksKlvgY");
+        var el = document.getElementById("lvctrl_Kkqnaa68Ts");
         //Set the initial colour
         var col = new Colour('red');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_xZMwj0qebP_checkbox" class="lvctrl_xZMwj0qebP" type="checkbox"checked="checked" step="any" data-target="mesh_r0" data-property="visible" value="True" onchange="; _wi['c9WSugc9od'].do_action('xZMwj0qebP', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_APQ99dVTfy_checkbox" class="lvctrl_APQ99dVTfy" type="checkbox"checked="checked" step="any" data-target="mesh_r0" data-property="visible" value="True" onchange="; _wi['ZCqsI11YDX'].do_action('APQ99dVTfy', this.checked ? 1 : 0, this);" >
  mesh_r0</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_ERqo6O1ogf" data-target="mesh_r1" data-property="colour"  class="colour lvctrl_ERqo6O1ogf" onclick="
+          <div id="lvctrl_jUEh7Nedk9" data-target="mesh_r1" data-property="colour"  class="colour lvctrl_jUEh7Nedk9" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -10988,24 +10990,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['c9WSugc9od'].do_action('ERqo6O1ogf', c.html(), el);
+              _wi['ZCqsI11YDX'].do_action('jUEh7Nedk9', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_ERqo6O1ogf");
+        var el = document.getElementById("lvctrl_jUEh7Nedk9");
         //Set the initial colour
         var col = new Colour('blue');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_PkUAVXqwgm_checkbox" class="lvctrl_PkUAVXqwgm" type="checkbox"checked="checked" step="any" data-target="mesh_r1" data-property="visible" value="True" onchange="; _wi['c9WSugc9od'].do_action('PkUAVXqwgm', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_BLNICUn1Wz_checkbox" class="lvctrl_BLNICUn1Wz" type="checkbox"checked="checked" step="any" data-target="mesh_r1" data-property="visible" value="True" onchange="; _wi['ZCqsI11YDX'].do_action('BLNICUn1Wz', this.checked ? 1 : 0, this);" >
  mesh_r1</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_b1qO4HRoTX" data-target="mesh_r2" data-property="colour"  class="colour lvctrl_b1qO4HRoTX" onclick="
+          <div id="lvctrl_lM2vEOZO2T" data-target="mesh_r2" data-property="colour"  class="colour lvctrl_lM2vEOZO2T" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -11013,23 +11015,23 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['c9WSugc9od'].do_action('b1qO4HRoTX', c.html(), el);
+              _wi['ZCqsI11YDX'].do_action('lM2vEOZO2T', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_b1qO4HRoTX");
+        var el = document.getElementById("lvctrl_lM2vEOZO2T");
         //Set the initial colour
         var col = new Colour('#336611');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_yzd6QAHlqH_checkbox" class="lvctrl_yzd6QAHlqH" type="checkbox"checked="checked" step="any" data-target="mesh_r2" data-property="visible" value="True" onchange="; _wi['c9WSugc9od'].do_action('yzd6QAHlqH', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_INybcGCq4P_checkbox" class="lvctrl_INybcGCq4P" type="checkbox"checked="checked" step="any" data-target="mesh_r2" data-property="visible" value="True" onchange="; _wi['ZCqsI11YDX'].do_action('INybcGCq4P', this.checked ? 1 : 0, this);" >
  mesh_r2</label><br>
 </div>
-</form><!-- CREATION TIMESTAMP 20201120020755 --><script>init('c9WSugc9od');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201120024112 --><script>init('ZCqsI11YDX');</script></div></div>
 </div>
 <p>The DM contains two labels – “coarse” and “boundary” – which contain the vertices of boundary nodes and the unrefined mesh, respectively. They can be retrieved using:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="s2">&quot;boundary&quot;</span><span class="p">)</span>
@@ -11097,28 +11099,30 @@ _wi[viewerid].actions = {
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: sTriMesh
-0 - Delaunay triangulation 0.0027075140000079045s
-0 - Calculate node weights and area 0.0006606270000020231s
-0 - Find boundaries 0.0005262219999622175s
-0 - cKDTree 0.0003740159999665593s
-0 - Construct neighbour cloud arrays 0.013990288999991662s, (0.009326093000026958s + 0.00464509599999019s)
-0 - Construct rbf weights 0.001150848000008864s
-Underlying Mesh type: sTriMesh
-0 - Delaunay triangulation 0.012437023000018144s
-0 - Calculate node weights and area 0.00278251800000362s
-0 - Find boundaries 0.00045881999994890066s
-0 - cKDTree 0.0011575490000268474s
-0 - Construct neighbour cloud arrays 0.055487137000000075s, (0.03704406000002791s + 0.018419776000030197s)
-0 - Construct rbf weights 0.003949866000027669s
-Underlying Mesh type: sTriMesh
-0 - Delaunay triangulation 0.06645559200001117s
-0 - Calculate node weights and area 0.009997219000013047s
-0 - Find boundaries 0.0008766359999867746s
-0 - cKDTree 0.006041653000011138s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.2496569560000239s, (0.1701566259999936s + 0.07946342800005368s)
-0 - Construct rbf weights 0.01748253199997407s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.0034865220000028785s
+0 - Calculate node weights and area 0.0006883039999934226s
+0 - Find boundaries 0.00043960300001799624s
+0 - cKDTree 0.0003556030000027022s
+0 - Construct neighbour cloud arrays 0.014488687999971717s, (0.01034466299995529s + 0.004124524999951973s)
+0 - Construct rbf weights 0.0009741060000010293s
+Underlying Mesh type: sTriMesh
+0 - Delaunay triangulation 0.013235979999990377s
+0 - Calculate node weights and area 0.00277451699997755s
+0 - Find boundaries 0.0004256020000070748s
+0 - cKDTree 0.0012113070000054904s
+0 - Construct neighbour cloud arrays 0.056381245000011404s, (0.03756293000003552s + 0.01879661399999577s)
+0 - Construct rbf weights 0.0031729190000078233s
+Underlying Mesh type: sTriMesh
+0 - Delaunay triangulation 0.06413849200004051s
+0 - Calculate node weights and area 0.010860066000020652s
+0 - Find boundaries 0.0008755050000104347s
+0 - cKDTree 0.005334632999961286s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.23304831699999795s, (0.15660405299996683s + 0.07641146399998888s)
+0 - Construct rbf weights 0.015917896000019027s
 </pre></div>
 </div>
 </div>
@@ -13519,40 +13523,40 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140671317434096, 8084);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140663998912368, 8084);
 _wi[viewerid].actions = {
-  "VOys4WLRNt" : "<boundary_points_r0>colour=---VAL---; ",
-  "xVjnPALBR2" : "<boundary_points_r0>visible=---VAL---; ",
-  "o9OblFzGiL" : "<boundary_points_r1>colour=---VAL---; ",
-  "Uxv8zzluht" : "<boundary_points_r1>visible=---VAL---; ",
-  "FalWZE20d9" : "<boundary_points_r2>colour=---VAL---; ",
-  "7KmKIDcZ0J" : "<boundary_points_r2>visible=---VAL---; ",
-  "IGyHY4NXXc" : "<mesh_r0>colour=---VAL---; ",
-  "8BIrTH08IV" : "<mesh_r0>visible=---VAL---; ",
-  "p7w2C119uY" : "<mesh_r1>colour=---VAL---; ",
-  "Wv8D8mSAjm" : "<mesh_r1>visible=---VAL---; ",
-  "iNGRN9ts2x" : "<mesh_r2>colour=---VAL---; ",
-  "fKZs5IUhsP" : "<mesh_r2>visible=---VAL---; "};
+  "eK8UwbApp1" : "<boundary_points_r0>colour=---VAL---; ",
+  "nzRGz7s1Zz" : "<boundary_points_r0>visible=---VAL---; ",
+  "6nZOQ3iOaz" : "<boundary_points_r1>colour=---VAL---; ",
+  "WhCGrG4lZi" : "<boundary_points_r1>visible=---VAL---; ",
+  "CVdbl2ee1w" : "<boundary_points_r2>colour=---VAL---; ",
+  "k1IXzD1zFY" : "<boundary_points_r2>visible=---VAL---; ",
+  "EzOML9eAJS" : "<mesh_r0>colour=---VAL---; ",
+  "uxLbbiLGr3" : "<mesh_r0>visible=---VAL---; ",
+  "jpnljcTGDz" : "<mesh_r1>colour=---VAL---; ",
+  "1xJTegNXbS" : "<mesh_r1>visible=---VAL---; ",
+  "FAn0cBTIf4" : "<mesh_r2>colour=---VAL---; ",
+  "ltlpdEN8wj" : "<mesh_r2>visible=---VAL---; "};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: right;">
-<img id="imgtarget_g02aw2RECB" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_K8BSBy6D24" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['g02aw2RECB'].box.mode = this.value;">
+             <select onchange="_wi['K8BSBy6D24'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['g02aw2RECB'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['K8BSBy6D24'].execute('reset');">
            </div></div>
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Objects:</p>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_VOys4WLRNt" data-target="boundary_points_r0" data-property="colour"  class="colour lvctrl_VOys4WLRNt" onclick="
+          <div id="lvctrl_eK8UwbApp1" data-target="boundary_points_r0" data-property="colour"  class="colour lvctrl_eK8UwbApp1" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -13560,24 +13564,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['g02aw2RECB'].do_action('VOys4WLRNt', c.html(), el);
+              _wi['K8BSBy6D24'].do_action('eK8UwbApp1', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_VOys4WLRNt");
+        var el = document.getElementById("lvctrl_eK8UwbApp1");
         //Set the initial colour
         var col = new Colour('red');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_xVjnPALBR2_checkbox" class="lvctrl_xVjnPALBR2" type="checkbox"checked="checked" step="any" data-target="boundary_points_r0" data-property="visible" value="True" onchange="; _wi['g02aw2RECB'].do_action('xVjnPALBR2', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_nzRGz7s1Zz_checkbox" class="lvctrl_nzRGz7s1Zz" type="checkbox"checked="checked" step="any" data-target="boundary_points_r0" data-property="visible" value="True" onchange="; _wi['K8BSBy6D24'].do_action('nzRGz7s1Zz', this.checked ? 1 : 0, this);" >
  boundary_points_r0</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_o9OblFzGiL" data-target="boundary_points_r1" data-property="colour"  class="colour lvctrl_o9OblFzGiL" onclick="
+          <div id="lvctrl_6nZOQ3iOaz" data-target="boundary_points_r1" data-property="colour"  class="colour lvctrl_6nZOQ3iOaz" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -13585,24 +13589,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['g02aw2RECB'].do_action('o9OblFzGiL', c.html(), el);
+              _wi['K8BSBy6D24'].do_action('6nZOQ3iOaz', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_o9OblFzGiL");
+        var el = document.getElementById("lvctrl_6nZOQ3iOaz");
         //Set the initial colour
         var col = new Colour('blue');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_Uxv8zzluht_checkbox" class="lvctrl_Uxv8zzluht" type="checkbox"checked="checked" step="any" data-target="boundary_points_r1" data-property="visible" value="True" onchange="; _wi['g02aw2RECB'].do_action('Uxv8zzluht', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_WhCGrG4lZi_checkbox" class="lvctrl_WhCGrG4lZi" type="checkbox"checked="checked" step="any" data-target="boundary_points_r1" data-property="visible" value="True" onchange="; _wi['K8BSBy6D24'].do_action('WhCGrG4lZi', this.checked ? 1 : 0, this);" >
  boundary_points_r1</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_FalWZE20d9" data-target="boundary_points_r2" data-property="colour"  class="colour lvctrl_FalWZE20d9" onclick="
+          <div id="lvctrl_CVdbl2ee1w" data-target="boundary_points_r2" data-property="colour"  class="colour lvctrl_CVdbl2ee1w" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -13610,24 +13614,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['g02aw2RECB'].do_action('FalWZE20d9', c.html(), el);
+              _wi['K8BSBy6D24'].do_action('CVdbl2ee1w', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_FalWZE20d9");
+        var el = document.getElementById("lvctrl_CVdbl2ee1w");
         //Set the initial colour
         var col = new Colour('#336611');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_7KmKIDcZ0J_checkbox" class="lvctrl_7KmKIDcZ0J" type="checkbox"checked="checked" step="any" data-target="boundary_points_r2" data-property="visible" value="True" onchange="; _wi['g02aw2RECB'].do_action('7KmKIDcZ0J', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_k1IXzD1zFY_checkbox" class="lvctrl_k1IXzD1zFY" type="checkbox"checked="checked" step="any" data-target="boundary_points_r2" data-property="visible" value="True" onchange="; _wi['K8BSBy6D24'].do_action('k1IXzD1zFY', this.checked ? 1 : 0, this);" >
  boundary_points_r2</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_IGyHY4NXXc" data-target="mesh_r0" data-property="colour"  class="colour lvctrl_IGyHY4NXXc" onclick="
+          <div id="lvctrl_EzOML9eAJS" data-target="mesh_r0" data-property="colour"  class="colour lvctrl_EzOML9eAJS" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -13635,24 +13639,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['g02aw2RECB'].do_action('IGyHY4NXXc', c.html(), el);
+              _wi['K8BSBy6D24'].do_action('EzOML9eAJS', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_IGyHY4NXXc");
+        var el = document.getElementById("lvctrl_EzOML9eAJS");
         //Set the initial colour
         var col = new Colour('red');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_8BIrTH08IV_checkbox" class="lvctrl_8BIrTH08IV" type="checkbox"checked="checked" step="any" data-target="mesh_r0" data-property="visible" value="True" onchange="; _wi['g02aw2RECB'].do_action('8BIrTH08IV', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_uxLbbiLGr3_checkbox" class="lvctrl_uxLbbiLGr3" type="checkbox"checked="checked" step="any" data-target="mesh_r0" data-property="visible" value="True" onchange="; _wi['K8BSBy6D24'].do_action('uxLbbiLGr3', this.checked ? 1 : 0, this);" >
  mesh_r0</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_p7w2C119uY" data-target="mesh_r1" data-property="colour"  class="colour lvctrl_p7w2C119uY" onclick="
+          <div id="lvctrl_jpnljcTGDz" data-target="mesh_r1" data-property="colour"  class="colour lvctrl_jpnljcTGDz" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -13660,24 +13664,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['g02aw2RECB'].do_action('p7w2C119uY', c.html(), el);
+              _wi['K8BSBy6D24'].do_action('jpnljcTGDz', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_p7w2C119uY");
+        var el = document.getElementById("lvctrl_jpnljcTGDz");
         //Set the initial colour
         var col = new Colour('blue');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_Wv8D8mSAjm_checkbox" class="lvctrl_Wv8D8mSAjm" type="checkbox"checked="checked" step="any" data-target="mesh_r1" data-property="visible" value="True" onchange="; _wi['g02aw2RECB'].do_action('Wv8D8mSAjm', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_1xJTegNXbS_checkbox" class="lvctrl_1xJTegNXbS" type="checkbox"checked="checked" step="any" data-target="mesh_r1" data-property="visible" value="True" onchange="; _wi['K8BSBy6D24'].do_action('1xJTegNXbS', this.checked ? 1 : 0, this);" >
  mesh_r1</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_iNGRN9ts2x" data-target="mesh_r2" data-property="colour"  class="colour lvctrl_iNGRN9ts2x" onclick="
+          <div id="lvctrl_FAn0cBTIf4" data-target="mesh_r2" data-property="colour"  class="colour lvctrl_FAn0cBTIf4" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -13685,23 +13689,23 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['g02aw2RECB'].do_action('iNGRN9ts2x', c.html(), el);
+              _wi['K8BSBy6D24'].do_action('FAn0cBTIf4', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_iNGRN9ts2x");
+        var el = document.getElementById("lvctrl_FAn0cBTIf4");
         //Set the initial colour
         var col = new Colour('#336611');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_fKZs5IUhsP_checkbox" class="lvctrl_fKZs5IUhsP" type="checkbox"checked="checked" step="any" data-target="mesh_r2" data-property="visible" value="True" onchange="; _wi['g02aw2RECB'].do_action('fKZs5IUhsP', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_ltlpdEN8wj_checkbox" class="lvctrl_ltlpdEN8wj" type="checkbox"checked="checked" step="any" data-target="mesh_r2" data-property="visible" value="True" onchange="; _wi['K8BSBy6D24'].do_action('ltlpdEN8wj', this.checked ? 1 : 0, this);" >
  mesh_r2</label><br>
 </div>
-</form><!-- CREATION TIMESTAMP 20201120020756 --><script>init('g02aw2RECB');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201120024113 --><script>init('K8BSBy6D24');</script></div></div>
 </div>
 </div>
 <div class="section" id="save-mesh-to-file">
@@ -13729,16 +13733,14 @@ _wi[viewerid].actions = {
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: sTriMesh
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.07393529600000193s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.06707140700001446s
+0 - Calculate node weights and area 0.01063036400000783s
+0 - Find boundaries 0.001531509999949776s
+0 - cKDTree 0.005074931000024208s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Calculate node weights and area 0.010179426000036074s
-0 - Find boundaries 0.0014717610000047898s
-0 - cKDTree 0.004567691000033847s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.25293669300003785s, (0.15860194200001843s + 0.09429874900001778s)
-0 - Construct rbf weights 0.013203953000015645s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.2356933300000037s, (0.15743285499996773s + 0.07822737499998311s)
+0 - Construct rbf weights 0.01166696999996475s
 </pre></div>
 </div>
 </div>
@@ -13751,9 +13753,9 @@ _wi[viewerid].actions = {
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>25985
-[1.93725676e+08 2.00425807e+08 1.96615354e+09 ... 4.41431004e+09
- 1.66508930e+07 3.69324676e+07]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>25889
+[1.55195040e+09 9.41699079e+08 4.69914537e+08 ... 3.09197994e+09
+ 6.48948757e+09 6.47678303e+09]
 </pre></div>
 </div>
 </div>
