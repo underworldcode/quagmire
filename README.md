@@ -6,6 +6,7 @@ Quagmire is a Python surface process framework for building erosion and depositi
 
 ![Quagmire Surface Process Framework](https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/AusFlow.png)
 
+
 ## Documentation
 
 The documentation is in the form of jupyter notebooks that are online in the form of a jupyter-book
@@ -20,6 +21,8 @@ The documentation is in the form of jupyter notebooks that are online in the for
 
   - Documentation / Notebooks [https://underworldcode.github.io/quagmire/0.9.6b1](https://underworldcode.github.io/quagmire/0.9.6b1)
   - API documentation [https://underworldcode.github.io/stripy/quagmire/0.9.6b1_api](https://underworldcode.github.io/stripy/quagmire/0.9.6b1_api)
+
+
 
 
 ## Demonstration
