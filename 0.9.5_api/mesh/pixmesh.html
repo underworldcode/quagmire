@@ -1,0 +1,2031 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>quagmire.mesh.pixmesh API documentation</title>
+<meta name="description" content="For structured data on a regular grid …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>quagmire.mesh.pixmesh</code></h1>
+</header>
+<section id="section-intro">
+<p>For structured data on a regular grid.</p>
+<p><img src="https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart-pixmesh.png" style="width: 321px; float:right"></p>
+<p><code><a title="quagmire.mesh.pixmesh.PixMesh" href="#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code> implements the following functionality:</p>
+<ul>
+<li>calculating spatial derivatives</li>
+<li>identifying node neighbour relationships</li>
+<li>interpolation / extrapolation</li>
+<li>smoothing operators</li>
+<li>importing and saving mesh information</li>
+</ul>
+<p>Supply a <code>PETSc DM</code> object (created from <code><a title="quagmire.tools.meshtools" href="../tools/meshtools.html">quagmire.tools.meshtools</a></code>) to initialise the object.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># Copyright 2016-2020 Louis Moresi, Ben Mather, Romain Beucher
+# 
+# This file is part of Quagmire.
+# 
+# Quagmire is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or any later version.
+# 
+# Quagmire is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+
+&#34;&#34;&#34;
+For structured data on a regular grid.
+
+&lt;img src=&#34;https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/quagmire-flowchart-pixmesh.png&#34; style=&#34;width: 321px; float:right&#34;&gt;
+
+`PixMesh` implements the following functionality:
+
+- calculating spatial derivatives
+- identifying node neighbour relationships
+- interpolation / extrapolation
+- smoothing operators
+- importing and saving mesh information
+
+Supply a `PETSc DM` object (created from `quagmire.tools.meshtools`) to initialise the object.
+&#34;&#34;&#34;
+
+import numpy as np
+from mpi4py import MPI
+import sys,petsc4py
+petsc4py.init(sys.argv)
+from petsc4py import PETSc
+# comm = MPI.COMM_WORLD
+from time import perf_counter
+from .commonmesh import CommonMesh as _CommonMesh
+from scipy.ndimage import map_coordinates as _map_coordinates
+from quagmire.function import LazyEvaluation as _LazyEvaluation
+
+try: range = xrange
+except: pass
+
+
+class PixMesh(_CommonMesh):
+    &#34;&#34;&#34;
+    Build spatial data structures on an __structured Cartesian grid__.
+
+    Use `PixMesh` for:
+
+    - calculating spatial derivatives
+    - identifying node neighbour relationships
+    - interpolation / extrapolation
+    - smoothing operators
+    - importing and saving mesh information
+
+    Each of these data structures are built on top of a `PETSc DM` object
+    (created from `quagmire.tools.meshtools`).
+
+    Parameters
+    ----------
+    DM : PETSc DMDA object
+        Build this unstructured Cartesian mesh object using one of:
+
+        - `quagmire.tools.meshtools.create_DMDA`
+    verbose : bool
+        Flag toggles verbose output
+    *args : optional arguments
+    **kwargs : optional keyword arguments
+
+    Attributes
+    ----------
+    dx : float
+        spacing in the x direction
+    dy : float
+        spacing in the y direction
+    npoints : int
+        Number of points (n) in the mesh
+    pointwise_area : Quagmire MeshVariable
+        `quagmire.mesh.basemesh.MeshVariable` of point-wise area
+    mask : Quagmire MeshVariable
+        `quagmire.mesh.basemesh.MeshVariable` to denote points on the boundary
+    data : array of floats, shape (n,2)
+        Cartesian mesh coordinates in x,y directions
+    coords : array of floats, shape (n,2)
+        Same as `data`
+    neighbour_array : array of ints, shape(n,25)
+        array of node neighbours
+    timings : dict
+        Timing information for each Quagmire routine
+    &#34;&#34;&#34;
+
+    ## This is a count of all the instances of the class that are launched
+    ## so that we have a way to name / identify them
+
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        PixMesh.__count += 1
+        return PixMesh.__count
+
+    @property
+    def id(self):
+        return self.__id
+
+
+    def __init__(self, dm, verbose=True, *args, **kwargs):
+        from scipy.spatial import cKDTree as _cKDTree
+        from scipy.interpolate import RegularGridInterpolator
+
+        # initialise base mesh class
+        super(PixMesh, self).__init__(dm, verbose)
+
+        self.__id = &#34;pixmesh_{}&#34;.format(self._count())
+
+        (minX, maxX), (minY, maxY) = dm.getBoundingBox()
+        Nx, Ny = dm.getSizes()
+
+        dx = (maxX - minX)/(Nx - 1)
+        dy = (maxY - minY)/(Ny - 1)
+        # assert dx == dy, &#34;Uh oh! Each cell should be square, not rectangular.&#34;
+
+        self.area = np.array(dx*dy)
+        self.adjacency_weight = 0.5
+        self.pointwise_area = self.add_variable(name=&#34;area&#34;)
+        self.pointwise_area.data = self.area
+        self.pointwise_area.lock()
+
+        self.bc = dict()
+        self.bc[&#34;top&#34;]    = (1,maxY)
+        self.bc[&#34;bottom&#34;] = (1,minY)
+        self.bc[&#34;left&#34;]   = (0,minX)
+        self.bc[&#34;right&#34;]  = (0,maxX)
+
+        (minI, maxI), (minJ, maxJ) = dm.getGhostRanges()
+
+        nx = maxI - minI
+        ny = maxJ - minJ
+
+        self.dx, self.dy = dx, dy
+        self.nx, self.ny = nx, ny
+
+
+        # Get local coordinates
+        self._coords = dm.getCoordinatesLocal().array.reshape(-1,2)
+        self._data = self._coords
+
+        (minX, maxX), (minY, maxY) = dm.getLocalBoundingBox()
+
+        self.minX, self.maxX = minX, maxX
+        self.minY, self.maxY = minY, maxY
+
+        self.npoints = nx*ny
+
+
+        # cKDTree
+        t = perf_counter()
+        self.cKDTree = _cKDTree(self._coords)
+        self.timings[&#39;cKDTree&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank == 0 and self.verbose:
+            print(&#34;{} - cKDTree {}s&#34;.format(self.dm.comm.rank, perf_counter()-t))
+
+
+        # Find boundary points
+        t = perf_counter()
+        self.bmask = self.get_boundary()
+        self.mask = self.add_variable(name=&#34;Mask&#34;)
+        self.mask.data = self.bmask.astype(PETSc.ScalarType)
+        self.mask.lock()
+        self.timings[&#39;find boundaries&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank == 0 and self.verbose:
+            print(&#34;{} - Find boundaries {}s&#34;.format(self.dm.comm.rank, perf_counter()-t))
+
+
+        # Find neighbours
+        t = perf_counter()
+        self.construct_neighbour_cloud()
+        self.timings[&#39;construct neighbour cloud&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+
+        t1 = perf_counter()
+        self.construct_natural_neighbour_cloud()
+        self.timings[&#39;construct natural neighbour cloud&#39;] = [perf_counter()-t1, self.log.getCPUTime(), self.log.getFlops()]
+ 
+        if self.rank==0 and self.verbose:
+            print(&#34;{} - Construct neighbour cloud arrays {}s, ({}s + {}s)&#34;.format(self.dm.comm.rank,  perf_counter()-t,
+                                                                                self.timings[&#39;construct neighbour cloud&#39;][0],
+                                                                                self.timings[&#39;construct natural neighbour cloud&#39;][0]  ))
+
+
+        # RBF smoothing operator
+        t = perf_counter()
+        self._construct_rbf_weights()
+        self.timings[&#39;construct rbf weights&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank == 0 and self.verbose:
+            print(&#34;{} - Construct rbf weights {}s&#34;.format(self.dm.comm.rank, perf_counter()-t))
+
+
+        self.root = False
+
+        # functions / parameters that are required for compatibility among FlatMesh types
+        self._derivative_grad_cartesian = self.derivative_grad
+        self._radius = 1.0
+
+
+    @property
+    def data(self):
+        &#34;&#34;&#34;
+        Cartesian coordinates of local mesh points.
+
+        `data` is of shape (npoints, 2)
+
+        Being a `TriMesh` object, `self.data` are identical to `self.coords`
+        &#34;&#34;&#34;
+        return self._data
+    
+    @property
+    def coords(self):
+        &#34;&#34;&#34;
+        Cartesian coordinates of local mesh points
+
+        `coords` is of shape (npoints, 2)
+
+        Being a `TriMesh` object, `self.coords` are identical to `self.data`
+        &#34;&#34;&#34;
+        return self._coords
+
+
+    def interpolate(self, xi, yi, zdata, order=1):
+        &#34;&#34;&#34;
+        Maps the value at unstructured coordinates from a regular 2D grid.
+        Uses the `scipy.ndimage.map_coordinates` function with linear interpolation
+        
+        Parameters
+        ----------
+        xi : array shape (l,)
+            interpolation coordinates in the x direction
+        yi : array shape (l,)
+            interpolation coordinates in the y direction
+        zdata : array shape (n,)
+            field on the mesh to interpolate xi, yi coordinates
+        order : int
+            order of interpolation (default: 1)
+            - 0: nearest interpolation
+            - 1: linear interpolation
+            - 3: cubic interpolation
+         
+        Returns
+        -------
+        ival : array shape (l,)
+            interpolated values at xi,yi coordinates
+        ierr : array shape (l,)
+            flags values that are inside or outside local bounds
+            - 0 inside the local mesh bounds (interpolation)
+            - 1 outside the local mesh bounds (extrapolation)
+        &#34;&#34;&#34;
+        grid = np.array(zdata).reshape(self.ny, self.nx)
+        
+        icoords = np.array(np.c_[xi,yi], dtype=np.float)
+
+        # check if inside bounds
+        inside_bounds = np.zeros(icoords.shape[0], dtype=np.bool)
+        inside_bounds += icoords[:,0] &lt; self.minX
+        inside_bounds += icoords[:,0] &gt; self.maxX
+        inside_bounds += icoords[:,1] &lt; self.minY
+        inside_bounds += icoords[:,1] &gt; self.maxY
+
+        # normalise coordinates within extent
+        icoords[:,0] -= self.minX
+        icoords[:,1] -= self.minY
+        icoords[:,0] /= (self.maxX - self.minX)
+        icoords[:,1] /= (self.maxY - self.minY)
+        
+        # icoords now somewhere within range [0, 1]
+        # project coordinates to the number of grid indices
+        icoords[:,0] *= self.nx - 1
+        icoords[:,1] *= self.ny - 1
+
+        # now interpolate
+        ival = _map_coordinates(grid.T, icoords.T, order=order, mode=&#39;nearest&#39;)
+        
+        return ival, inside_bounds.astype(np.int)
+
+    def derivatives(self, PHI, **kwargs):
+        return self.derivative_grad(PHI, **kwargs)
+
+
+    def derivative_grad(self, PHI, **kwargs):
+        &#34;&#34;&#34;
+        Compute derivatives of PHI in the x, y directions.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Arguments
+        ---------
+        PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+        nit : int optional (default: 10)
+            number of iterations to reach convergence
+        tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+
+        Returns
+        -------
+        PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+        PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
+        &#34;&#34;&#34;
+        u = PHI.reshape(self.ny, self.nx)
+        u_y, u_x = np.gradient(u, self.dy, self.dx)
+        grads = np.ndarray((self.nx * self.ny, 2))
+        grads[:, 0] = u_x.ravel()
+        grads[:, 1] = u_y.ravel()
+
+        return grads
+
+
+    def derivative_div(self, PHIx, PHIy):
+        &#34;&#34;&#34;
+        Compute second order derivative from flux fields PHIx, PHIy
+        We evaluate the gradient on these fields using the derivative-grad method.
+
+        Arguments
+        ---------
+        PHIx : ndarray of floats, shape (n,)
+            array of first partial derivatives in x direction
+        PHIy : ndarray of floats, shape (n,)
+            array of first partial derivatives in y direction
+        kwargs : optional keyword-argument specifiers
+            keyword arguments to be passed onto derivative_grad
+            e.g. nit=5, tol=1e-3
+
+        Returns
+        -------
+        del2PHI : ndarray of floats, shape (n,)
+            second derivative of PHI
+        &#34;&#34;&#34;
+        u_xx = self.derivative_grad(PHIx)[:, 0]
+        u_yy = self.derivative_grad(PHIy)[:, 1]
+
+        return u_xx + u_yy
+
+
+    def sort_nodes_by_field2(self, field):
+        &#34;&#34;&#34;
+        Generate an array of the two lowest nodes and a highest node
+
+        Sorting on masked arrays always returns with masked points last.
+        Each node has at least 3 closed neighbour nodes, so we can vectorise
+        this to some extent.
+        &#34;&#34;&#34;
+
+        mask = self.neighbour_block.mask
+        n_offgrid = mask.sum(axis=1)
+
+        nfield = np.ma.array(field[self.neighbour_block], mask=mask)
+        order = nfield.argsort(axis=1)
+
+
+        # We know there is going to be at least 3 entries
+        # [lowest, 2nd lowest, highest]
+        neighbour_array_l2h = np.empty((self.npoints,3), dtype=PETSc.IntType)
+
+        for i in range(0,3):
+            node_mask = n_offgrid == i
+
+            n0 = order[node_mask,0]    # lowest
+            n1 = order[node_mask,1]    # second lowest
+            n2 = order[node_mask,-1-i] # highest
+
+            neighbour_array_l2h[node_mask,0] = self.neighbour_block[node_mask,n0]
+            neighbour_array_l2h[node_mask,1] = self.neighbour_block[node_mask,n1]
+            neighbour_array_l2h[node_mask,2] = self.neighbour_block[node_mask,n2]
+
+        self.neighbour_array_l2h = neighbour_array_l2h
+
+
+    def construct_natural_neighbour_cloud(self):
+        &#34;&#34;&#34;
+        Find the natural neighbours for each node in the triangulation and store in a
+        numpy array for efficient lookup.
+        &#34;&#34;&#34;
+
+        natural_neighbours = np.empty((self.npoints, 9), dtype=np.int)
+        nodes = np.arange(0, self.npoints, dtype=np.int).reshape(self.ny,self.nx)
+        index = np.pad(nodes, (1,1), mode=&#39;constant&#39;, constant_values=-1)
+
+
+        natural_neighbours[:,0] = index[1:-1,1:-1].flat  # self
+        natural_neighbours[:,1] = index[2:,  1:-1].flat  # right
+        natural_neighbours[:,2] = index[1:-1, :-2].flat  # bottom
+        natural_neighbours[:,3] = index[0:-2,1:-1].flat  # left
+        natural_neighbours[:,4] = index[1:-1,2:  ].flat  # top
+        natural_neighbours[:,5] = index[2:  ,2:  ].flat  # top right
+        natural_neighbours[:,6] = index[2:  , :-2].flat  # bottom right
+        natural_neighbours[:,7] = index[ :-2, :-2].flat  # bottom left
+        natural_neighbours[:,8] = index[ :-2,2:  ].flat  # top left
+
+        # shuffle -1 entries to the end
+        natural_neighbour_mask = natural_neighbours != -1
+        natural_neighbours_count = np.count_nonzero(natural_neighbour_mask, axis=1)
+
+        for i in range(0, self.npoints):
+            nnc = natural_neighbours_count[i]
+            nnm = natural_neighbour_mask[i]
+
+            natural_neighbours[i,:nnc], natural_neighbours[i,nnc:] = natural_neighbours[i,nnm], natural_neighbours[i,~nnm]
+
+
+        self.natural_neighbours       = natural_neighbours
+        self.natural_neighbours_count = natural_neighbours_count
+        self.natural_neighbours_mask  = natural_neighbours != -1
+
+
+    def construct_neighbour_cloud(self, size=25):
+        &#34;&#34;&#34;
+        Find neighbours from distance cKDTree.
+
+        Parameters
+        ----------
+        size : int
+            Number of neighbours to search for
+
+        Notes
+        -----
+        Use this method to search for neighbours that are not
+        necessarily immediate node neighbours (i.e. neighbours
+        connected by a line segment). Extended node neighbours
+        should be captured by the search depending on how large
+        `size` is set to.
+        &#34;&#34;&#34;
+        nndist, nncloud = self.cKDTree.query(self.coords, k=size)
+
+        self.neighbour_cloud = nncloud
+        self.neighbour_cloud_distances = nndist
+
+        # identify corner nodes
+        corners = [0, self.nx-1, -self.nx, -1]
+
+        # interior nodes have 3*3 neighbours (including self)
+        neighbours = np.full(self.npoints, 9, dtype=np.int)
+        neighbours[~self.bmask] = 6 # walls have 3*2 neighbours
+        neighbours[corners] = 4 # corners have 4 neighbours
+
+        self.near_neighbours = neighbours + 2
+        self.extended_neighbours = np.full_like(neighbours, size)
+
+        # self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+        # for node in range(0,self.npoints):
+        #     self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+
+        return
+
+
+    def local_area_smoothing(self, data, its=1, centre_weight=0.75):
+        &#34;&#34;&#34;
+        Local area smoothing using radial-basis function smoothing kernel
+
+        Parameters
+        ----------
+        data : array of floats, shape (n,)
+            field variable to be smoothed
+        its : int
+            number of iterations (default: 1)
+        centre_weight : float
+            weight to apply to centre nodes (default: 0.75)
+            other nodes are weighted by (1 - `centre_weight`)
+
+        Returns
+        -------
+        sm : array of floats, shape (n,)
+            smoothed field variable
+        &#34;&#34;&#34;
+
+        smooth_data = data.copy()
+        smooth_data_old = data.copy()
+
+        for i in range(0, its):
+            smooth_data_old[:] = smooth_data
+            smooth_data = centre_weight*smooth_data_old + \
+                          (1.0 - centre_weight)*self.rbf_smoother(smooth_data)
+
+        return smooth_data
+
+
+    def get_boundary(self):
+        &#34;&#34;&#34;
+        Get boundary information on the mesh
+
+        Returns
+        -------
+        bmask : array of bools, shape (n,)
+            mask out the boundary nodes. Interior nodes are True;
+            Boundary nodes are False.
+        &#34;&#34;&#34;
+        bmask = np.ones(self.npoints, dtype=bool)
+
+        for key in self.bc:
+            i, wall = self.bc[key]
+            mask = self.coords[:,i] == wall
+            bmask[mask] = False
+
+        return bmask
+
+
+    def _construct_rbf_weights(self, delta=None):
+
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
+
+        self.delta  = delta
+        self.gaussian_dist_w = self._rbf_weights(delta)
+
+        return
+
+    def _rbf_weights(self, delta=None):
+
+        neighbour_cloud_distances = self.neighbour_cloud_distances
+
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
+
+        # Initialise the interpolants
+
+        gaussian_dist_w       = np.zeros_like(neighbour_cloud_distances)
+        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/delta, 2.0))
+        gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
+
+        return gaussian_dist_w
+
+    def rbf_smoother(self, vector, iterations=1, delta=None):
+        &#34;&#34;&#34;
+        Smoothing using a radial-basis function smoothing kernel
+
+        Arguments
+        ---------
+        vector : array of floats, shape (n,)
+            field variable to be smoothed
+        iterations : int
+            number of iterations to smooth vector
+        delta : float / array of floats shape (n,)
+            distance weights to apply the Gaussian interpolants
+
+        Returns
+        -------
+        smooth_vec : array of floats, shape (n,)
+            smoothed version of input vector
+        &#34;&#34;&#34;
+
+
+        if type(delta) != type(None):
+            self._construct_rbf_weights(delta)
+
+        vector = self.sync(vector)
+
+        for i in range(0, iterations):
+            # print self.dm.comm.rank, &#34;: RBF &#34;,vector.max(), vector.min()
+
+            vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+            vector = self.sync(vector_smoothed)
+
+        return vector
+
+
+    def build_rbf_smoother(self, delta, iterations=1):
+
+        pixmesh_self = self
+
+        class _rbf_smoother_object(object):
+
+            def __init__(inner_self, delta, iterations=1):
+
+                if delta == None:
+                    pixmesh_self.lvec.setArray(pixmesh_self.neighbour_cloud_distances[:, 1])
+                    pixmesh_self.dm.localToGlobal(pixmesh_self.lvec, pixmesh_self.gvec)
+                    delta = pixmesh_self.gvec.sum() / pixmesh_self.gvec.getSize()
+
+                inner_self._mesh = pixmesh_self
+                inner_self.delta = delta
+                inner_self.iterations = iterations
+                inner_self.gaussian_dist_w = inner_self._mesh._rbf_weights(delta)
+
+                return
+
+
+            def _apply_rbf_on_my_mesh(inner_self, lazyFn, iterations=1):
+                import quagmire
+
+                smooth_node_values = lazyFn.evaluate(inner_self._mesh)
+
+                for i in range(0, iterations):
+                    smooth_node_values = (smooth_node_values[inner_self._mesh.neighbour_cloud[:,:]] * inner_self.gaussian_dist_w[:,:]).sum(axis=1)
+                    smooth_node_values = inner_self._mesh.sync(smooth_node_values)
+
+                return smooth_node_values
+
+
+            def smooth_fn(inner_self, meshVar, iterations=None):
+
+                if iterations is None:
+                        iterations = inner_self.iterations
+
+                def smoother_fn(*args, **kwargs):
+                    import quagmire
+
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(meshVar, iterations=iterations)
+
+                    if len(args) == 1 and args[0] == meshVar._mesh:
+                        return smooth_node_values
+                    elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
+                        mesh = args[0]
+                        return inner_self._mesh.interpolate(meshVar._mesh.coords[:,0], meshVar._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                    else:
+                        xi = np.atleast_1d(args[0])
+                        yi = np.atleast_1d(args[1])
+                        i, e = inner_self._mesh.interpolate(xi, yi, zdata=smooth_node_values, **kwargs)
+                        return i
+
+
+                newLazyFn = _LazyEvaluation()
+                newLazyFn.evaluate = smoother_fn
+                newLazyFn.description = &#34;RBFsmooth({}, d={}, i={})&#34;.format(meshVar.description, inner_self.delta, iterations)
+
+                return newLazyFn
+
+        return _rbf_smoother_object(delta, iterations)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="quagmire.mesh.pixmesh.PixMesh"><code class="flex name class">
+<span>class <span class="ident">PixMesh</span></span>
+<span>(</span><span>dm, verbose=True, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Build spatial data structures on an <strong>structured Cartesian grid</strong>.</p>
+<p>Use <code><a title="quagmire.mesh.pixmesh.PixMesh" href="#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code> for:</p>
+<ul>
+<li>calculating spatial derivatives</li>
+<li>identifying node neighbour relationships</li>
+<li>interpolation / extrapolation</li>
+<li>smoothing operators</li>
+<li>importing and saving mesh information</li>
+</ul>
+<p>Each of these data structures are built on top of a <code>PETSc DM</code> object
+(created from <code><a title="quagmire.tools.meshtools" href="../tools/meshtools.html">quagmire.tools.meshtools</a></code>).</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>DM</code></strong> :&ensp;<code>PETSc DMDA object</code></dt>
+<dd>
+<p>Build this unstructured Cartesian mesh object using one of:</p>
+<ul>
+<li><code><a title="quagmire.tools.meshtools.create_DMDA" href="../tools/meshtools.html#quagmire.tools.meshtools.create_DMDA">create_DMDA()</a></code></li>
+</ul>
+</dd>
+<dt><strong><code>verbose</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Flag toggles verbose output</dd>
+<dt><strong><code>*args</code></strong> :&ensp;<code>optional arguments</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>**kwargs</code></strong> :&ensp;<code>optional keyword arguments</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>dx</code></strong> :&ensp;<code>float</code></dt>
+<dd>spacing in the x direction</dd>
+<dt><strong><code>dy</code></strong> :&ensp;<code>float</code></dt>
+<dd>spacing in the y direction</dd>
+<dt><strong><code>npoints</code></strong> :&ensp;<code>int</code></dt>
+<dd>Number of points (n) in the mesh</dd>
+<dt><strong><code>pointwise_area</code></strong> :&ensp;<code>Quagmire MeshVariable</code></dt>
+<dd><code><a title="quagmire.mesh.basemesh.MeshVariable" href="basemesh.html#quagmire.mesh.basemesh.MeshVariable">MeshVariable</a></code> of point-wise area</dd>
+<dt><strong><code>mask</code></strong> :&ensp;<code>Quagmire MeshVariable</code></dt>
+<dd><code><a title="quagmire.mesh.basemesh.MeshVariable" href="basemesh.html#quagmire.mesh.basemesh.MeshVariable">MeshVariable</a></code> to denote points on the boundary</dd>
+<dt><strong><code>data</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,2)</code></dt>
+<dd>Cartesian mesh coordinates in x,y directions</dd>
+<dt><strong><code>coords</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,2)</code></dt>
+<dd>Same as <code>data</code></dd>
+<dt><strong><code>neighbour_array</code></strong> :&ensp;<code>array</code> of <code>ints, shape(n,25)</code></dt>
+<dd>array of node neighbours</dd>
+<dt><strong><code>timings</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Timing information for each Quagmire routine</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PixMesh(_CommonMesh):
+    &#34;&#34;&#34;
+    Build spatial data structures on an __structured Cartesian grid__.
+
+    Use `PixMesh` for:
+
+    - calculating spatial derivatives
+    - identifying node neighbour relationships
+    - interpolation / extrapolation
+    - smoothing operators
+    - importing and saving mesh information
+
+    Each of these data structures are built on top of a `PETSc DM` object
+    (created from `quagmire.tools.meshtools`).
+
+    Parameters
+    ----------
+    DM : PETSc DMDA object
+        Build this unstructured Cartesian mesh object using one of:
+
+        - `quagmire.tools.meshtools.create_DMDA`
+    verbose : bool
+        Flag toggles verbose output
+    *args : optional arguments
+    **kwargs : optional keyword arguments
+
+    Attributes
+    ----------
+    dx : float
+        spacing in the x direction
+    dy : float
+        spacing in the y direction
+    npoints : int
+        Number of points (n) in the mesh
+    pointwise_area : Quagmire MeshVariable
+        `quagmire.mesh.basemesh.MeshVariable` of point-wise area
+    mask : Quagmire MeshVariable
+        `quagmire.mesh.basemesh.MeshVariable` to denote points on the boundary
+    data : array of floats, shape (n,2)
+        Cartesian mesh coordinates in x,y directions
+    coords : array of floats, shape (n,2)
+        Same as `data`
+    neighbour_array : array of ints, shape(n,25)
+        array of node neighbours
+    timings : dict
+        Timing information for each Quagmire routine
+    &#34;&#34;&#34;
+
+    ## This is a count of all the instances of the class that are launched
+    ## so that we have a way to name / identify them
+
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        PixMesh.__count += 1
+        return PixMesh.__count
+
+    @property
+    def id(self):
+        return self.__id
+
+
+    def __init__(self, dm, verbose=True, *args, **kwargs):
+        from scipy.spatial import cKDTree as _cKDTree
+        from scipy.interpolate import RegularGridInterpolator
+
+        # initialise base mesh class
+        super(PixMesh, self).__init__(dm, verbose)
+
+        self.__id = &#34;pixmesh_{}&#34;.format(self._count())
+
+        (minX, maxX), (minY, maxY) = dm.getBoundingBox()
+        Nx, Ny = dm.getSizes()
+
+        dx = (maxX - minX)/(Nx - 1)
+        dy = (maxY - minY)/(Ny - 1)
+        # assert dx == dy, &#34;Uh oh! Each cell should be square, not rectangular.&#34;
+
+        self.area = np.array(dx*dy)
+        self.adjacency_weight = 0.5
+        self.pointwise_area = self.add_variable(name=&#34;area&#34;)
+        self.pointwise_area.data = self.area
+        self.pointwise_area.lock()
+
+        self.bc = dict()
+        self.bc[&#34;top&#34;]    = (1,maxY)
+        self.bc[&#34;bottom&#34;] = (1,minY)
+        self.bc[&#34;left&#34;]   = (0,minX)
+        self.bc[&#34;right&#34;]  = (0,maxX)
+
+        (minI, maxI), (minJ, maxJ) = dm.getGhostRanges()
+
+        nx = maxI - minI
+        ny = maxJ - minJ
+
+        self.dx, self.dy = dx, dy
+        self.nx, self.ny = nx, ny
+
+
+        # Get local coordinates
+        self._coords = dm.getCoordinatesLocal().array.reshape(-1,2)
+        self._data = self._coords
+
+        (minX, maxX), (minY, maxY) = dm.getLocalBoundingBox()
+
+        self.minX, self.maxX = minX, maxX
+        self.minY, self.maxY = minY, maxY
+
+        self.npoints = nx*ny
+
+
+        # cKDTree
+        t = perf_counter()
+        self.cKDTree = _cKDTree(self._coords)
+        self.timings[&#39;cKDTree&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank == 0 and self.verbose:
+            print(&#34;{} - cKDTree {}s&#34;.format(self.dm.comm.rank, perf_counter()-t))
+
+
+        # Find boundary points
+        t = perf_counter()
+        self.bmask = self.get_boundary()
+        self.mask = self.add_variable(name=&#34;Mask&#34;)
+        self.mask.data = self.bmask.astype(PETSc.ScalarType)
+        self.mask.lock()
+        self.timings[&#39;find boundaries&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank == 0 and self.verbose:
+            print(&#34;{} - Find boundaries {}s&#34;.format(self.dm.comm.rank, perf_counter()-t))
+
+
+        # Find neighbours
+        t = perf_counter()
+        self.construct_neighbour_cloud()
+        self.timings[&#39;construct neighbour cloud&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+
+        t1 = perf_counter()
+        self.construct_natural_neighbour_cloud()
+        self.timings[&#39;construct natural neighbour cloud&#39;] = [perf_counter()-t1, self.log.getCPUTime(), self.log.getFlops()]
+ 
+        if self.rank==0 and self.verbose:
+            print(&#34;{} - Construct neighbour cloud arrays {}s, ({}s + {}s)&#34;.format(self.dm.comm.rank,  perf_counter()-t,
+                                                                                self.timings[&#39;construct neighbour cloud&#39;][0],
+                                                                                self.timings[&#39;construct natural neighbour cloud&#39;][0]  ))
+
+
+        # RBF smoothing operator
+        t = perf_counter()
+        self._construct_rbf_weights()
+        self.timings[&#39;construct rbf weights&#39;] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
+        if self.rank == 0 and self.verbose:
+            print(&#34;{} - Construct rbf weights {}s&#34;.format(self.dm.comm.rank, perf_counter()-t))
+
+
+        self.root = False
+
+        # functions / parameters that are required for compatibility among FlatMesh types
+        self._derivative_grad_cartesian = self.derivative_grad
+        self._radius = 1.0
+
+
+    @property
+    def data(self):
+        &#34;&#34;&#34;
+        Cartesian coordinates of local mesh points.
+
+        `data` is of shape (npoints, 2)
+
+        Being a `TriMesh` object, `self.data` are identical to `self.coords`
+        &#34;&#34;&#34;
+        return self._data
+    
+    @property
+    def coords(self):
+        &#34;&#34;&#34;
+        Cartesian coordinates of local mesh points
+
+        `coords` is of shape (npoints, 2)
+
+        Being a `TriMesh` object, `self.coords` are identical to `self.data`
+        &#34;&#34;&#34;
+        return self._coords
+
+
+    def interpolate(self, xi, yi, zdata, order=1):
+        &#34;&#34;&#34;
+        Maps the value at unstructured coordinates from a regular 2D grid.
+        Uses the `scipy.ndimage.map_coordinates` function with linear interpolation
+        
+        Parameters
+        ----------
+        xi : array shape (l,)
+            interpolation coordinates in the x direction
+        yi : array shape (l,)
+            interpolation coordinates in the y direction
+        zdata : array shape (n,)
+            field on the mesh to interpolate xi, yi coordinates
+        order : int
+            order of interpolation (default: 1)
+            - 0: nearest interpolation
+            - 1: linear interpolation
+            - 3: cubic interpolation
+         
+        Returns
+        -------
+        ival : array shape (l,)
+            interpolated values at xi,yi coordinates
+        ierr : array shape (l,)
+            flags values that are inside or outside local bounds
+            - 0 inside the local mesh bounds (interpolation)
+            - 1 outside the local mesh bounds (extrapolation)
+        &#34;&#34;&#34;
+        grid = np.array(zdata).reshape(self.ny, self.nx)
+        
+        icoords = np.array(np.c_[xi,yi], dtype=np.float)
+
+        # check if inside bounds
+        inside_bounds = np.zeros(icoords.shape[0], dtype=np.bool)
+        inside_bounds += icoords[:,0] &lt; self.minX
+        inside_bounds += icoords[:,0] &gt; self.maxX
+        inside_bounds += icoords[:,1] &lt; self.minY
+        inside_bounds += icoords[:,1] &gt; self.maxY
+
+        # normalise coordinates within extent
+        icoords[:,0] -= self.minX
+        icoords[:,1] -= self.minY
+        icoords[:,0] /= (self.maxX - self.minX)
+        icoords[:,1] /= (self.maxY - self.minY)
+        
+        # icoords now somewhere within range [0, 1]
+        # project coordinates to the number of grid indices
+        icoords[:,0] *= self.nx - 1
+        icoords[:,1] *= self.ny - 1
+
+        # now interpolate
+        ival = _map_coordinates(grid.T, icoords.T, order=order, mode=&#39;nearest&#39;)
+        
+        return ival, inside_bounds.astype(np.int)
+
+    def derivatives(self, PHI, **kwargs):
+        return self.derivative_grad(PHI, **kwargs)
+
+
+    def derivative_grad(self, PHI, **kwargs):
+        &#34;&#34;&#34;
+        Compute derivatives of PHI in the x, y directions.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Arguments
+        ---------
+        PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+        nit : int optional (default: 10)
+            number of iterations to reach convergence
+        tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+
+        Returns
+        -------
+        PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+        PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
+        &#34;&#34;&#34;
+        u = PHI.reshape(self.ny, self.nx)
+        u_y, u_x = np.gradient(u, self.dy, self.dx)
+        grads = np.ndarray((self.nx * self.ny, 2))
+        grads[:, 0] = u_x.ravel()
+        grads[:, 1] = u_y.ravel()
+
+        return grads
+
+
+    def derivative_div(self, PHIx, PHIy):
+        &#34;&#34;&#34;
+        Compute second order derivative from flux fields PHIx, PHIy
+        We evaluate the gradient on these fields using the derivative-grad method.
+
+        Arguments
+        ---------
+        PHIx : ndarray of floats, shape (n,)
+            array of first partial derivatives in x direction
+        PHIy : ndarray of floats, shape (n,)
+            array of first partial derivatives in y direction
+        kwargs : optional keyword-argument specifiers
+            keyword arguments to be passed onto derivative_grad
+            e.g. nit=5, tol=1e-3
+
+        Returns
+        -------
+        del2PHI : ndarray of floats, shape (n,)
+            second derivative of PHI
+        &#34;&#34;&#34;
+        u_xx = self.derivative_grad(PHIx)[:, 0]
+        u_yy = self.derivative_grad(PHIy)[:, 1]
+
+        return u_xx + u_yy
+
+
+    def sort_nodes_by_field2(self, field):
+        &#34;&#34;&#34;
+        Generate an array of the two lowest nodes and a highest node
+
+        Sorting on masked arrays always returns with masked points last.
+        Each node has at least 3 closed neighbour nodes, so we can vectorise
+        this to some extent.
+        &#34;&#34;&#34;
+
+        mask = self.neighbour_block.mask
+        n_offgrid = mask.sum(axis=1)
+
+        nfield = np.ma.array(field[self.neighbour_block], mask=mask)
+        order = nfield.argsort(axis=1)
+
+
+        # We know there is going to be at least 3 entries
+        # [lowest, 2nd lowest, highest]
+        neighbour_array_l2h = np.empty((self.npoints,3), dtype=PETSc.IntType)
+
+        for i in range(0,3):
+            node_mask = n_offgrid == i
+
+            n0 = order[node_mask,0]    # lowest
+            n1 = order[node_mask,1]    # second lowest
+            n2 = order[node_mask,-1-i] # highest
+
+            neighbour_array_l2h[node_mask,0] = self.neighbour_block[node_mask,n0]
+            neighbour_array_l2h[node_mask,1] = self.neighbour_block[node_mask,n1]
+            neighbour_array_l2h[node_mask,2] = self.neighbour_block[node_mask,n2]
+
+        self.neighbour_array_l2h = neighbour_array_l2h
+
+
+    def construct_natural_neighbour_cloud(self):
+        &#34;&#34;&#34;
+        Find the natural neighbours for each node in the triangulation and store in a
+        numpy array for efficient lookup.
+        &#34;&#34;&#34;
+
+        natural_neighbours = np.empty((self.npoints, 9), dtype=np.int)
+        nodes = np.arange(0, self.npoints, dtype=np.int).reshape(self.ny,self.nx)
+        index = np.pad(nodes, (1,1), mode=&#39;constant&#39;, constant_values=-1)
+
+
+        natural_neighbours[:,0] = index[1:-1,1:-1].flat  # self
+        natural_neighbours[:,1] = index[2:,  1:-1].flat  # right
+        natural_neighbours[:,2] = index[1:-1, :-2].flat  # bottom
+        natural_neighbours[:,3] = index[0:-2,1:-1].flat  # left
+        natural_neighbours[:,4] = index[1:-1,2:  ].flat  # top
+        natural_neighbours[:,5] = index[2:  ,2:  ].flat  # top right
+        natural_neighbours[:,6] = index[2:  , :-2].flat  # bottom right
+        natural_neighbours[:,7] = index[ :-2, :-2].flat  # bottom left
+        natural_neighbours[:,8] = index[ :-2,2:  ].flat  # top left
+
+        # shuffle -1 entries to the end
+        natural_neighbour_mask = natural_neighbours != -1
+        natural_neighbours_count = np.count_nonzero(natural_neighbour_mask, axis=1)
+
+        for i in range(0, self.npoints):
+            nnc = natural_neighbours_count[i]
+            nnm = natural_neighbour_mask[i]
+
+            natural_neighbours[i,:nnc], natural_neighbours[i,nnc:] = natural_neighbours[i,nnm], natural_neighbours[i,~nnm]
+
+
+        self.natural_neighbours       = natural_neighbours
+        self.natural_neighbours_count = natural_neighbours_count
+        self.natural_neighbours_mask  = natural_neighbours != -1
+
+
+    def construct_neighbour_cloud(self, size=25):
+        &#34;&#34;&#34;
+        Find neighbours from distance cKDTree.
+
+        Parameters
+        ----------
+        size : int
+            Number of neighbours to search for
+
+        Notes
+        -----
+        Use this method to search for neighbours that are not
+        necessarily immediate node neighbours (i.e. neighbours
+        connected by a line segment). Extended node neighbours
+        should be captured by the search depending on how large
+        `size` is set to.
+        &#34;&#34;&#34;
+        nndist, nncloud = self.cKDTree.query(self.coords, k=size)
+
+        self.neighbour_cloud = nncloud
+        self.neighbour_cloud_distances = nndist
+
+        # identify corner nodes
+        corners = [0, self.nx-1, -self.nx, -1]
+
+        # interior nodes have 3*3 neighbours (including self)
+        neighbours = np.full(self.npoints, 9, dtype=np.int)
+        neighbours[~self.bmask] = 6 # walls have 3*2 neighbours
+        neighbours[corners] = 4 # corners have 4 neighbours
+
+        self.near_neighbours = neighbours + 2
+        self.extended_neighbours = np.full_like(neighbours, size)
+
+        # self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+        # for node in range(0,self.npoints):
+        #     self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+
+        return
+
+
+    def local_area_smoothing(self, data, its=1, centre_weight=0.75):
+        &#34;&#34;&#34;
+        Local area smoothing using radial-basis function smoothing kernel
+
+        Parameters
+        ----------
+        data : array of floats, shape (n,)
+            field variable to be smoothed
+        its : int
+            number of iterations (default: 1)
+        centre_weight : float
+            weight to apply to centre nodes (default: 0.75)
+            other nodes are weighted by (1 - `centre_weight`)
+
+        Returns
+        -------
+        sm : array of floats, shape (n,)
+            smoothed field variable
+        &#34;&#34;&#34;
+
+        smooth_data = data.copy()
+        smooth_data_old = data.copy()
+
+        for i in range(0, its):
+            smooth_data_old[:] = smooth_data
+            smooth_data = centre_weight*smooth_data_old + \
+                          (1.0 - centre_weight)*self.rbf_smoother(smooth_data)
+
+        return smooth_data
+
+
+    def get_boundary(self):
+        &#34;&#34;&#34;
+        Get boundary information on the mesh
+
+        Returns
+        -------
+        bmask : array of bools, shape (n,)
+            mask out the boundary nodes. Interior nodes are True;
+            Boundary nodes are False.
+        &#34;&#34;&#34;
+        bmask = np.ones(self.npoints, dtype=bool)
+
+        for key in self.bc:
+            i, wall = self.bc[key]
+            mask = self.coords[:,i] == wall
+            bmask[mask] = False
+
+        return bmask
+
+
+    def _construct_rbf_weights(self, delta=None):
+
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
+
+        self.delta  = delta
+        self.gaussian_dist_w = self._rbf_weights(delta)
+
+        return
+
+    def _rbf_weights(self, delta=None):
+
+        neighbour_cloud_distances = self.neighbour_cloud_distances
+
+        if delta == None:
+            delta = self.neighbour_cloud_distances[:, 1].mean()
+
+        # Initialise the interpolants
+
+        gaussian_dist_w       = np.zeros_like(neighbour_cloud_distances)
+        gaussian_dist_w[:,:]  = np.exp(-np.power(neighbour_cloud_distances[:,:]/delta, 2.0))
+        gaussian_dist_w[:,:] /= gaussian_dist_w.sum(axis=1).reshape(-1,1)
+
+        return gaussian_dist_w
+
+    def rbf_smoother(self, vector, iterations=1, delta=None):
+        &#34;&#34;&#34;
+        Smoothing using a radial-basis function smoothing kernel
+
+        Arguments
+        ---------
+        vector : array of floats, shape (n,)
+            field variable to be smoothed
+        iterations : int
+            number of iterations to smooth vector
+        delta : float / array of floats shape (n,)
+            distance weights to apply the Gaussian interpolants
+
+        Returns
+        -------
+        smooth_vec : array of floats, shape (n,)
+            smoothed version of input vector
+        &#34;&#34;&#34;
+
+
+        if type(delta) != type(None):
+            self._construct_rbf_weights(delta)
+
+        vector = self.sync(vector)
+
+        for i in range(0, iterations):
+            # print self.dm.comm.rank, &#34;: RBF &#34;,vector.max(), vector.min()
+
+            vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+            vector = self.sync(vector_smoothed)
+
+        return vector
+
+
+    def build_rbf_smoother(self, delta, iterations=1):
+
+        pixmesh_self = self
+
+        class _rbf_smoother_object(object):
+
+            def __init__(inner_self, delta, iterations=1):
+
+                if delta == None:
+                    pixmesh_self.lvec.setArray(pixmesh_self.neighbour_cloud_distances[:, 1])
+                    pixmesh_self.dm.localToGlobal(pixmesh_self.lvec, pixmesh_self.gvec)
+                    delta = pixmesh_self.gvec.sum() / pixmesh_self.gvec.getSize()
+
+                inner_self._mesh = pixmesh_self
+                inner_self.delta = delta
+                inner_self.iterations = iterations
+                inner_self.gaussian_dist_w = inner_self._mesh._rbf_weights(delta)
+
+                return
+
+
+            def _apply_rbf_on_my_mesh(inner_self, lazyFn, iterations=1):
+                import quagmire
+
+                smooth_node_values = lazyFn.evaluate(inner_self._mesh)
+
+                for i in range(0, iterations):
+                    smooth_node_values = (smooth_node_values[inner_self._mesh.neighbour_cloud[:,:]] * inner_self.gaussian_dist_w[:,:]).sum(axis=1)
+                    smooth_node_values = inner_self._mesh.sync(smooth_node_values)
+
+                return smooth_node_values
+
+
+            def smooth_fn(inner_self, meshVar, iterations=None):
+
+                if iterations is None:
+                        iterations = inner_self.iterations
+
+                def smoother_fn(*args, **kwargs):
+                    import quagmire
+
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(meshVar, iterations=iterations)
+
+                    if len(args) == 1 and args[0] == meshVar._mesh:
+                        return smooth_node_values
+                    elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
+                        mesh = args[0]
+                        return inner_self._mesh.interpolate(meshVar._mesh.coords[:,0], meshVar._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                    else:
+                        xi = np.atleast_1d(args[0])
+                        yi = np.atleast_1d(args[1])
+                        i, e = inner_self._mesh.interpolate(xi, yi, zdata=smooth_node_values, **kwargs)
+                        return i
+
+
+                newLazyFn = _LazyEvaluation()
+                newLazyFn.evaluate = smoother_fn
+                newLazyFn.description = &#34;RBFsmooth({}, d={}, i={})&#34;.format(meshVar.description, inner_self.delta, iterations)
+
+                return newLazyFn
+
+        return _rbf_smoother_object(delta, iterations)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="quagmire.mesh.commonmesh.CommonMesh" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh">CommonMesh</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="quagmire.mesh.pixmesh.PixMesh.coords"><code class="name">var <span class="ident">coords</span></code></dt>
+<dd>
+<div class="desc"><p>Cartesian coordinates of local mesh points</p>
+<p><code>coords</code> is of shape (npoints, 2)</p>
+<p>Being a <code>TriMesh</code> object, <code>self.coords</code> are identical to <code>self.data</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def coords(self):
+    &#34;&#34;&#34;
+    Cartesian coordinates of local mesh points
+
+    `coords` is of shape (npoints, 2)
+
+    Being a `TriMesh` object, `self.coords` are identical to `self.data`
+    &#34;&#34;&#34;
+    return self._coords</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.pixmesh.PixMesh.data"><code class="name">var <span class="ident">data</span></code></dt>
+<dd>
+<div class="desc"><p>Cartesian coordinates of local mesh points.</p>
+<p><code>data</code> is of shape (npoints, 2)</p>
+<p>Being a <code>TriMesh</code> object, <code>self.data</code> are identical to <code>self.coords</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def data(self):
+    &#34;&#34;&#34;
+    Cartesian coordinates of local mesh points.
+
+    `data` is of shape (npoints, 2)
+
+    Being a `TriMesh` object, `self.data` are identical to `self.coords`
+    &#34;&#34;&#34;
+    return self._data</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.pixmesh.PixMesh.id"><code class="name">var <span class="ident">id</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def id(self):
+    return self.__id</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="quagmire.mesh.pixmesh.PixMesh.build_rbf_smoother"><code class="name flex">
+<span>def <span class="ident">build_rbf_smoother</span></span>(<span>self, delta, iterations=1)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_rbf_smoother(self, delta, iterations=1):
+
+    pixmesh_self = self
+
+    class _rbf_smoother_object(object):
+
+        def __init__(inner_self, delta, iterations=1):
+
+            if delta == None:
+                pixmesh_self.lvec.setArray(pixmesh_self.neighbour_cloud_distances[:, 1])
+                pixmesh_self.dm.localToGlobal(pixmesh_self.lvec, pixmesh_self.gvec)
+                delta = pixmesh_self.gvec.sum() / pixmesh_self.gvec.getSize()
+
+            inner_self._mesh = pixmesh_self
+            inner_self.delta = delta
+            inner_self.iterations = iterations
+            inner_self.gaussian_dist_w = inner_self._mesh._rbf_weights(delta)
+
+            return
+
+
+        def _apply_rbf_on_my_mesh(inner_self, lazyFn, iterations=1):
+            import quagmire
+
+            smooth_node_values = lazyFn.evaluate(inner_self._mesh)
+
+            for i in range(0, iterations):
+                smooth_node_values = (smooth_node_values[inner_self._mesh.neighbour_cloud[:,:]] * inner_self.gaussian_dist_w[:,:]).sum(axis=1)
+                smooth_node_values = inner_self._mesh.sync(smooth_node_values)
+
+            return smooth_node_values
+
+
+        def smooth_fn(inner_self, meshVar, iterations=None):
+
+            if iterations is None:
+                    iterations = inner_self.iterations
+
+            def smoother_fn(*args, **kwargs):
+                import quagmire
+
+                smooth_node_values = inner_self._apply_rbf_on_my_mesh(meshVar, iterations=iterations)
+
+                if len(args) == 1 and args[0] == meshVar._mesh:
+                    return smooth_node_values
+                elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
+                    mesh = args[0]
+                    return inner_self._mesh.interpolate(meshVar._mesh.coords[:,0], meshVar._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                else:
+                    xi = np.atleast_1d(args[0])
+                    yi = np.atleast_1d(args[1])
+                    i, e = inner_self._mesh.interpolate(xi, yi, zdata=smooth_node_values, **kwargs)
+                    return i
+
+
+            newLazyFn = _LazyEvaluation()
+            newLazyFn.evaluate = smoother_fn
+            newLazyFn.description = &#34;RBFsmooth({}, d={}, i={})&#34;.format(meshVar.description, inner_self.delta, iterations)
+
+            return newLazyFn
+
+    return _rbf_smoother_object(delta, iterations)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.pixmesh.PixMesh.construct_natural_neighbour_cloud"><code class="name flex">
+<span>def <span class="ident">construct_natural_neighbour_cloud</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find the natural neighbours for each node in the triangulation and store in a
+numpy array for efficient lookup.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def construct_natural_neighbour_cloud(self):
+    &#34;&#34;&#34;
+    Find the natural neighbours for each node in the triangulation and store in a
+    numpy array for efficient lookup.
+    &#34;&#34;&#34;
+
+    natural_neighbours = np.empty((self.npoints, 9), dtype=np.int)
+    nodes = np.arange(0, self.npoints, dtype=np.int).reshape(self.ny,self.nx)
+    index = np.pad(nodes, (1,1), mode=&#39;constant&#39;, constant_values=-1)
+
+
+    natural_neighbours[:,0] = index[1:-1,1:-1].flat  # self
+    natural_neighbours[:,1] = index[2:,  1:-1].flat  # right
+    natural_neighbours[:,2] = index[1:-1, :-2].flat  # bottom
+    natural_neighbours[:,3] = index[0:-2,1:-1].flat  # left
+    natural_neighbours[:,4] = index[1:-1,2:  ].flat  # top
+    natural_neighbours[:,5] = index[2:  ,2:  ].flat  # top right
+    natural_neighbours[:,6] = index[2:  , :-2].flat  # bottom right
+    natural_neighbours[:,7] = index[ :-2, :-2].flat  # bottom left
+    natural_neighbours[:,8] = index[ :-2,2:  ].flat  # top left
+
+    # shuffle -1 entries to the end
+    natural_neighbour_mask = natural_neighbours != -1
+    natural_neighbours_count = np.count_nonzero(natural_neighbour_mask, axis=1)
+
+    for i in range(0, self.npoints):
+        nnc = natural_neighbours_count[i]
+        nnm = natural_neighbour_mask[i]
+
+        natural_neighbours[i,:nnc], natural_neighbours[i,nnc:] = natural_neighbours[i,nnm], natural_neighbours[i,~nnm]
+
+
+    self.natural_neighbours       = natural_neighbours
+    self.natural_neighbours_count = natural_neighbours_count
+    self.natural_neighbours_mask  = natural_neighbours != -1</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.pixmesh.PixMesh.construct_neighbour_cloud"><code class="name flex">
+<span>def <span class="ident">construct_neighbour_cloud</span></span>(<span>self, size=25)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Find neighbours from distance cKDTree.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>size</code></strong> :&ensp;<code>int</code></dt>
+<dd>Number of neighbours to search for</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>Use this method to search for neighbours that are not
+necessarily immediate node neighbours (i.e. neighbours
+connected by a line segment). Extended node neighbours
+should be captured by the search depending on how large
+<code>size</code> is set to.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def construct_neighbour_cloud(self, size=25):
+    &#34;&#34;&#34;
+    Find neighbours from distance cKDTree.
+
+    Parameters
+    ----------
+    size : int
+        Number of neighbours to search for
+
+    Notes
+    -----
+    Use this method to search for neighbours that are not
+    necessarily immediate node neighbours (i.e. neighbours
+    connected by a line segment). Extended node neighbours
+    should be captured by the search depending on how large
+    `size` is set to.
+    &#34;&#34;&#34;
+    nndist, nncloud = self.cKDTree.query(self.coords, k=size)
+
+    self.neighbour_cloud = nncloud
+    self.neighbour_cloud_distances = nndist
+
+    # identify corner nodes
+    corners = [0, self.nx-1, -self.nx, -1]
+
+    # interior nodes have 3*3 neighbours (including self)
+    neighbours = np.full(self.npoints, 9, dtype=np.int)
+    neighbours[~self.bmask] = 6 # walls have 3*2 neighbours
+    neighbours[corners] = 4 # corners have 4 neighbours
+
+    self.near_neighbours = neighbours + 2
+    self.extended_neighbours = np.full_like(neighbours, size)
+
+    # self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+
+    # for node in range(0,self.npoints):
+    #     self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True
+
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.pixmesh.PixMesh.derivative_div"><code class="name flex">
+<span>def <span class="ident">derivative_div</span></span>(<span>self, PHIx, PHIy)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compute second order derivative from flux fields PHIx, PHIy
+We evaluate the gradient on these fields using the derivative-grad method.</p>
+<h2 id="arguments">Arguments</h2>
+<dl>
+<dt><strong><code>PHIx</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape (n,)</code></dt>
+<dd>array of first partial derivatives in x direction</dd>
+<dt><strong><code>PHIy</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape (n,)</code></dt>
+<dd>array of first partial derivatives in y direction</dd>
+<dt><strong><code>kwargs</code></strong> :&ensp;<code>optional keyword-argument specifiers</code></dt>
+<dd>keyword arguments to be passed onto derivative_grad
+e.g. nit=5, tol=1e-3</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>del2PHI</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape (n,)</code></dt>
+<dd>second derivative of PHI</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivative_div(self, PHIx, PHIy):
+    &#34;&#34;&#34;
+    Compute second order derivative from flux fields PHIx, PHIy
+    We evaluate the gradient on these fields using the derivative-grad method.
+
+    Arguments
+    ---------
+    PHIx : ndarray of floats, shape (n,)
+        array of first partial derivatives in x direction
+    PHIy : ndarray of floats, shape (n,)
+        array of first partial derivatives in y direction
+    kwargs : optional keyword-argument specifiers
+        keyword arguments to be passed onto derivative_grad
+        e.g. nit=5, tol=1e-3
+
+    Returns
+    -------
+    del2PHI : ndarray of floats, shape (n,)
+        second derivative of PHI
+    &#34;&#34;&#34;
+    u_xx = self.derivative_grad(PHIx)[:, 0]
+    u_yy = self.derivative_grad(PHIy)[:, 1]
+
+    return u_xx + u_yy</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.pixmesh.PixMesh.derivative_grad"><code class="name flex">
+<span>def <span class="ident">derivative_grad</span></span>(<span>self, PHI, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compute derivatives of PHI in the x, y directions.
+This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.</p>
+<h2 id="arguments">Arguments</h2>
+<dl>
+<dt><strong><code>PHI</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape (n,)</code></dt>
+<dd>compute the derivative of this array</dd>
+<dt><strong><code>nit</code></strong> :&ensp;<code>int optional (default: 10)</code></dt>
+<dd>number of iterations to reach convergence</dd>
+<dt><strong><code>tol</code></strong> :&ensp;<code>float optional (default: 1e-8)</code></dt>
+<dd>convergence is reached when this tolerance is met</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>PHIx</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape(n,)</code></dt>
+<dd>first partial derivative of PHI in x direction</dd>
+<dt><strong><code>PHIy</code></strong> :&ensp;<code>ndarray</code> of <code>floats, shape(n,)</code></dt>
+<dd>first partial derivative of PHI in y direction</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivative_grad(self, PHI, **kwargs):
+    &#34;&#34;&#34;
+    Compute derivatives of PHI in the x, y directions.
+    This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+    Arguments
+    ---------
+    PHI : ndarray of floats, shape (n,)
+        compute the derivative of this array
+    nit : int optional (default: 10)
+        number of iterations to reach convergence
+    tol : float optional (default: 1e-8)
+        convergence is reached when this tolerance is met
+
+    Returns
+    -------
+    PHIx : ndarray of floats, shape(n,)
+        first partial derivative of PHI in x direction
+    PHIy : ndarray of floats, shape(n,)
+        first partial derivative of PHI in y direction
+    &#34;&#34;&#34;
+    u = PHI.reshape(self.ny, self.nx)
+    u_y, u_x = np.gradient(u, self.dy, self.dx)
+    grads = np.ndarray((self.nx * self.ny, 2))
+    grads[:, 0] = u_x.ravel()
+    grads[:, 1] = u_y.ravel()
+
+    return grads</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.pixmesh.PixMesh.derivatives"><code class="name flex">
+<span>def <span class="ident">derivatives</span></span>(<span>self, PHI, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivatives(self, PHI, **kwargs):
+    return self.derivative_grad(PHI, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.pixmesh.PixMesh.get_boundary"><code class="name flex">
+<span>def <span class="ident">get_boundary</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get boundary information on the mesh</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>bmask</code></strong> :&ensp;<code>array</code> of <code>bools, shape (n,)</code></dt>
+<dd>mask out the boundary nodes. Interior nodes are True;
+Boundary nodes are False.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_boundary(self):
+    &#34;&#34;&#34;
+    Get boundary information on the mesh
+
+    Returns
+    -------
+    bmask : array of bools, shape (n,)
+        mask out the boundary nodes. Interior nodes are True;
+        Boundary nodes are False.
+    &#34;&#34;&#34;
+    bmask = np.ones(self.npoints, dtype=bool)
+
+    for key in self.bc:
+        i, wall = self.bc[key]
+        mask = self.coords[:,i] == wall
+        bmask[mask] = False
+
+    return bmask</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.pixmesh.PixMesh.interpolate"><code class="name flex">
+<span>def <span class="ident">interpolate</span></span>(<span>self, xi, yi, zdata, order=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Maps the value at unstructured coordinates from a regular 2D grid.
+Uses the <code>scipy.ndimage.map_coordinates</code> function with linear interpolation</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>xi</code></strong> :&ensp;<code>array shape (l,)</code></dt>
+<dd>interpolation coordinates in the x direction</dd>
+<dt><strong><code>yi</code></strong> :&ensp;<code>array shape (l,)</code></dt>
+<dd>interpolation coordinates in the y direction</dd>
+<dt><strong><code>zdata</code></strong> :&ensp;<code>array shape (n,)</code></dt>
+<dd>field on the mesh to interpolate xi, yi coordinates</dd>
+<dt><strong><code>order</code></strong> :&ensp;<code>int</code></dt>
+<dd>order of interpolation (default: 1)
+- 0: nearest interpolation
+- 1: linear interpolation
+- 3: cubic interpolation</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>ival</code></strong> :&ensp;<code>array shape (l,)</code></dt>
+<dd>interpolated values at xi,yi coordinates</dd>
+<dt><strong><code>ierr</code></strong> :&ensp;<code>array shape (l,)</code></dt>
+<dd>flags values that are inside or outside local bounds
+- 0 inside the local mesh bounds (interpolation)
+- 1 outside the local mesh bounds (extrapolation)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpolate(self, xi, yi, zdata, order=1):
+    &#34;&#34;&#34;
+    Maps the value at unstructured coordinates from a regular 2D grid.
+    Uses the `scipy.ndimage.map_coordinates` function with linear interpolation
+    
+    Parameters
+    ----------
+    xi : array shape (l,)
+        interpolation coordinates in the x direction
+    yi : array shape (l,)
+        interpolation coordinates in the y direction
+    zdata : array shape (n,)
+        field on the mesh to interpolate xi, yi coordinates
+    order : int
+        order of interpolation (default: 1)
+        - 0: nearest interpolation
+        - 1: linear interpolation
+        - 3: cubic interpolation
+     
+    Returns
+    -------
+    ival : array shape (l,)
+        interpolated values at xi,yi coordinates
+    ierr : array shape (l,)
+        flags values that are inside or outside local bounds
+        - 0 inside the local mesh bounds (interpolation)
+        - 1 outside the local mesh bounds (extrapolation)
+    &#34;&#34;&#34;
+    grid = np.array(zdata).reshape(self.ny, self.nx)
+    
+    icoords = np.array(np.c_[xi,yi], dtype=np.float)
+
+    # check if inside bounds
+    inside_bounds = np.zeros(icoords.shape[0], dtype=np.bool)
+    inside_bounds += icoords[:,0] &lt; self.minX
+    inside_bounds += icoords[:,0] &gt; self.maxX
+    inside_bounds += icoords[:,1] &lt; self.minY
+    inside_bounds += icoords[:,1] &gt; self.maxY
+
+    # normalise coordinates within extent
+    icoords[:,0] -= self.minX
+    icoords[:,1] -= self.minY
+    icoords[:,0] /= (self.maxX - self.minX)
+    icoords[:,1] /= (self.maxY - self.minY)
+    
+    # icoords now somewhere within range [0, 1]
+    # project coordinates to the number of grid indices
+    icoords[:,0] *= self.nx - 1
+    icoords[:,1] *= self.ny - 1
+
+    # now interpolate
+    ival = _map_coordinates(grid.T, icoords.T, order=order, mode=&#39;nearest&#39;)
+    
+    return ival, inside_bounds.astype(np.int)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.pixmesh.PixMesh.local_area_smoothing"><code class="name flex">
+<span>def <span class="ident">local_area_smoothing</span></span>(<span>self, data, its=1, centre_weight=0.75)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Local area smoothing using radial-basis function smoothing kernel</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>data</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,)</code></dt>
+<dd>field variable to be smoothed</dd>
+<dt><strong><code>its</code></strong> :&ensp;<code>int</code></dt>
+<dd>number of iterations (default: 1)</dd>
+<dt><strong><code>centre_weight</code></strong> :&ensp;<code>float</code></dt>
+<dd>weight to apply to centre nodes (default: 0.75)
+other nodes are weighted by (1 - <code>centre_weight</code>)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>sm</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,)</code></dt>
+<dd>smoothed field variable</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def local_area_smoothing(self, data, its=1, centre_weight=0.75):
+    &#34;&#34;&#34;
+    Local area smoothing using radial-basis function smoothing kernel
+
+    Parameters
+    ----------
+    data : array of floats, shape (n,)
+        field variable to be smoothed
+    its : int
+        number of iterations (default: 1)
+    centre_weight : float
+        weight to apply to centre nodes (default: 0.75)
+        other nodes are weighted by (1 - `centre_weight`)
+
+    Returns
+    -------
+    sm : array of floats, shape (n,)
+        smoothed field variable
+    &#34;&#34;&#34;
+
+    smooth_data = data.copy()
+    smooth_data_old = data.copy()
+
+    for i in range(0, its):
+        smooth_data_old[:] = smooth_data
+        smooth_data = centre_weight*smooth_data_old + \
+                      (1.0 - centre_weight)*self.rbf_smoother(smooth_data)
+
+    return smooth_data</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.pixmesh.PixMesh.rbf_smoother"><code class="name flex">
+<span>def <span class="ident">rbf_smoother</span></span>(<span>self, vector, iterations=1, delta=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Smoothing using a radial-basis function smoothing kernel</p>
+<h2 id="arguments">Arguments</h2>
+<dl>
+<dt><strong><code>vector</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,)</code></dt>
+<dd>field variable to be smoothed</dd>
+<dt><strong><code>iterations</code></strong> :&ensp;<code>int</code></dt>
+<dd>number of iterations to smooth vector</dd>
+<dt><strong><code>delta</code></strong> :&ensp;<code>float / array</code> of <code>floats shape (n,)</code></dt>
+<dd>distance weights to apply the Gaussian interpolants</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>smooth_vec</code></strong> :&ensp;<code>array</code> of <code>floats, shape (n,)</code></dt>
+<dd>smoothed version of input vector</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rbf_smoother(self, vector, iterations=1, delta=None):
+    &#34;&#34;&#34;
+    Smoothing using a radial-basis function smoothing kernel
+
+    Arguments
+    ---------
+    vector : array of floats, shape (n,)
+        field variable to be smoothed
+    iterations : int
+        number of iterations to smooth vector
+    delta : float / array of floats shape (n,)
+        distance weights to apply the Gaussian interpolants
+
+    Returns
+    -------
+    smooth_vec : array of floats, shape (n,)
+        smoothed version of input vector
+    &#34;&#34;&#34;
+
+
+    if type(delta) != type(None):
+        self._construct_rbf_weights(delta)
+
+    vector = self.sync(vector)
+
+    for i in range(0, iterations):
+        # print self.dm.comm.rank, &#34;: RBF &#34;,vector.max(), vector.min()
+
+        vector_smoothed = (vector[self.neighbour_cloud[:,:]] * self.gaussian_dist_w[:,:]).sum(axis=1)
+        vector = self.sync(vector_smoothed)
+
+    return vector</code></pre>
+</details>
+</dd>
+<dt id="quagmire.mesh.pixmesh.PixMesh.sort_nodes_by_field2"><code class="name flex">
+<span>def <span class="ident">sort_nodes_by_field2</span></span>(<span>self, field)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generate an array of the two lowest nodes and a highest node</p>
+<p>Sorting on masked arrays always returns with masked points last.
+Each node has at least 3 closed neighbour nodes, so we can vectorise
+this to some extent.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sort_nodes_by_field2(self, field):
+    &#34;&#34;&#34;
+    Generate an array of the two lowest nodes and a highest node
+
+    Sorting on masked arrays always returns with masked points last.
+    Each node has at least 3 closed neighbour nodes, so we can vectorise
+    this to some extent.
+    &#34;&#34;&#34;
+
+    mask = self.neighbour_block.mask
+    n_offgrid = mask.sum(axis=1)
+
+    nfield = np.ma.array(field[self.neighbour_block], mask=mask)
+    order = nfield.argsort(axis=1)
+
+
+    # We know there is going to be at least 3 entries
+    # [lowest, 2nd lowest, highest]
+    neighbour_array_l2h = np.empty((self.npoints,3), dtype=PETSc.IntType)
+
+    for i in range(0,3):
+        node_mask = n_offgrid == i
+
+        n0 = order[node_mask,0]    # lowest
+        n1 = order[node_mask,1]    # second lowest
+        n2 = order[node_mask,-1-i] # highest
+
+        neighbour_array_l2h[node_mask,0] = self.neighbour_block[node_mask,n0]
+        neighbour_array_l2h[node_mask,1] = self.neighbour_block[node_mask,n1]
+        neighbour_array_l2h[node_mask,2] = self.neighbour_block[node_mask,n2]
+
+    self.neighbour_array_l2h = neighbour_array_l2h</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="quagmire.mesh.commonmesh.CommonMesh" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh">CommonMesh</a></b></code>:
+<ul class="hlist">
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.add_variable" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.add_variable">add_variable</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.gather_data" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.gather_data">gather_data</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.get_label" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.get_label">get_label</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.save_field_to_hdf5" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.save_field_to_hdf5">save_field_to_hdf5</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.save_mesh_to_hdf5" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.save_mesh_to_hdf5">save_mesh_to_hdf5</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.scatter_data" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.scatter_data">scatter_data</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.set_label" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.set_label">set_label</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.sync" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.sync">sync</a></code></li>
+<li><code><a title="quagmire.mesh.commonmesh.CommonMesh.xdmf" href="commonmesh.html#quagmire.mesh.commonmesh.CommonMesh.xdmf">xdmf</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="quagmire.mesh" href="index.html">quagmire.mesh</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="quagmire.mesh.pixmesh.PixMesh" href="#quagmire.mesh.pixmesh.PixMesh">PixMesh</a></code></h4>
+<ul class="">
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.build_rbf_smoother" href="#quagmire.mesh.pixmesh.PixMesh.build_rbf_smoother">build_rbf_smoother</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.construct_natural_neighbour_cloud" href="#quagmire.mesh.pixmesh.PixMesh.construct_natural_neighbour_cloud">construct_natural_neighbour_cloud</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.construct_neighbour_cloud" href="#quagmire.mesh.pixmesh.PixMesh.construct_neighbour_cloud">construct_neighbour_cloud</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.coords" href="#quagmire.mesh.pixmesh.PixMesh.coords">coords</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.data" href="#quagmire.mesh.pixmesh.PixMesh.data">data</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.derivative_div" href="#quagmire.mesh.pixmesh.PixMesh.derivative_div">derivative_div</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.derivative_grad" href="#quagmire.mesh.pixmesh.PixMesh.derivative_grad">derivative_grad</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.derivatives" href="#quagmire.mesh.pixmesh.PixMesh.derivatives">derivatives</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.get_boundary" href="#quagmire.mesh.pixmesh.PixMesh.get_boundary">get_boundary</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.id" href="#quagmire.mesh.pixmesh.PixMesh.id">id</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.interpolate" href="#quagmire.mesh.pixmesh.PixMesh.interpolate">interpolate</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.local_area_smoothing" href="#quagmire.mesh.pixmesh.PixMesh.local_area_smoothing">local_area_smoothing</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.rbf_smoother" href="#quagmire.mesh.pixmesh.PixMesh.rbf_smoother">rbf_smoother</a></code></li>
+<li><code><a title="quagmire.mesh.pixmesh.PixMesh.sort_nodes_by_field2" href="#quagmire.mesh.pixmesh.PixMesh.sort_nodes_by_field2">sort_nodes_by_field2</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

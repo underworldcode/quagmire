@@ -1,0 +1,2045 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>quagmire.function.function_classes API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>quagmire.function.function_classes</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># Copyright 2016-2020 Louis Moresi, Ben Mather, Romain Beucher
+# 
+# This file is part of Quagmire.
+# 
+# Quagmire is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or any later version.
+# 
+# Quagmire is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+
+import numpy as np
+import quagmire
+
+
+class LazyEvaluation(object):
+
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        LazyEvaluation.__count += 1
+        return LazyEvaluation.__count
+
+    @property
+    def id(self):
+        return self.__id
+
+    def __init__(self):
+        self.__id = &#34;q_fn_{}&#34;.format(self._count())
+        self.description = &#34;&#34;
+        self.latex = &#34;&#34;
+        self.dependency_list = set([self.id])
+        self._exposed_operator = &#34;S&#34;  # Singleton unless over-ridden with operator
+        self.math = lambda : self.latex
+        self.coordinate_system = None
+
+        return
+
+    def __repr__(self):
+        return(&#34;quagmire.fn: {}&#34;.format(self.description))
+
+    def _ipython_display_(self):
+        from IPython.display import display, Math
+        display(Math(self.math()))
+
+    def display(self):
+        try:
+            self._ipython_display_()
+        except:
+            print(self.__repr__)
+
+    def validate_coordinate_system(self, obj):
+
+        if self.coordinate_system is not None:
+            if obj.coordinate_system is not None:
+                assert self.coordinate_system == obj.coordinate_system
+
+    def compatible_coordinate_system(self, obj):
+
+        self.validate_coordinate_system(obj)
+        if obj.coordinate_system is not None:
+            return obj.coordinate_system
+        else:
+            return self.coordinate_system
+
+
+    @staticmethod
+    def convert(obj):
+        &#34;&#34;&#34;
+        This method will attempt to convert the provided input into an
+        equivalent quagmire function. If the provided input is already
+        of LazyEvaluation type, it is immediately returned. Likewise if
+        the input is of None type, it is also returned.
+
+        Parameters
+        ----------
+
+        obj: The object to be converted
+
+        Returns
+        -------
+
+        LazyEvaluation function or None.
+        &#34;&#34;&#34;
+
+        return convert(obj)
+
+    def evaluate(self, *args, **kwargs):
+        raise(NotImplementedError)
+
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, value):
+        self._description = &#34;{}&#34;.format(value)
+
+    def fn_gradient(self, dirn):
+        try:
+            return self.coordinate_system.grad(self)[dirn]
+        except:
+            return None
+
+    @property
+    def exposed_operator(self):
+        return self._exposed_operator
+
+    @exposed_operator.setter
+    def exposed_operator(self, value):
+        self._exposed_operator = value
+        
+    def derivative(self, dirn):
+        &#34;&#34;&#34;
+        Compute values of the derivatives of PHI in the x, y directions at the nodal points.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Parameters
+        ----------
+        dirn : &#39;0&#39; or &#39;1&#39;, 0 or 1
+
+        &#34;&#34;&#34;
+
+        raise NotImplementedError
+     
+
+## Arithmetic operations
+
+    def __mul__(self, other):
+
+        other = self.convert(other)
+
+        # Some special cases: 
+
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return other
+            if other.value == 1.0:
+                return self
+
+            if isinstance(self, parameter):
+                return parameter(self.value * other.value)
+                
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return self
+            if self.value == 1.0:
+                return other
+
+
+        ## The exposed operator will also need to be lazy
+
+        fstring  = &#34;({})*&#34; if self.exposed_operator in &#34;+-&#34; else &#34;{}*&#34;
+        fstring += &#34;({})&#34; if other.exposed_operator in &#34;+-&#34; else &#34;{}&#34;
+
+        lstring  = &#34;({}) \;&#34; if self.exposed_operator in &#34;+-&#34; else &#34;{} \;&#34;
+        lstring += &#34;({})&#34; if other.exposed_operator in &#34;+-&#34; else &#34;{}&#34;
+
+        # Will handle things like float / int combined with lazy operation (or define rmul, rsub etc )
+ 
+        newLazyFn = LazyEvaluation()
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
+        newLazyFn.description = fstring.format(self.description, other.description)
+        newLazyFn.latex       = lstring.format(self.latex, other.latex)
+        newLazyFn.math        = lambda : lstring.format(self.math(), other.math() )
+        
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        newLazyFn.exposed_operator = &#34;*&#34;
+
+        newLazyFn.derivative = lambda dirn : self.derivative (dirn) * other +  \
+                                              self * other.derivative(dirn) 
+                     
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+
+        return newLazyFn
+
+    def __rmul__(self, other):
+
+        other = self.convert(other)
+
+        # Some special cases: 
+
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return parameter(0.0)
+            if other.value == 1.0:
+                return self
+            if isinstance(self, parameter):
+                return parameter(self.value * other.value)
+
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return parameter(0.0)
+            if self.value == 1.0:
+                return other
+
+        newLazyFn = other.__mul__(self)
+
+        return newLazyFn
+
+    def __add__(self, other):
+
+        other = self.convert(other)
+
+        # Some special cases:
+
+        if isinstance(self, parameter) and isinstance(other, parameter):
+            return parameter(self.value + other.value)
+
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return self
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return other 
+
+        # Otherwise    
+
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;{} + {}&#34;.format(self.description, other.description)
+        newLazyFn.latex       = &#34;{} + {}&#34;.format(self.latex, other.latex)
+        newLazyFn.math        = lambda : r&#34;{} \, + \, {}&#34;.format(self.math(), other.math() )
+
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        newLazyFn.exposed_operator = &#34;+&#34;
+
+        newLazyFn.derivative = lambda dirn : self.derivative(dirn) + other.derivative(dirn)
+
+
+        return newLazyFn
+
+    def __radd__(self, other):
+
+        other = self.convert(other)
+
+        # Some special cases:
+
+        if isinstance(self, parameter) and isinstance(other, parameter):
+            return parameter(self.value + other.value)
+ 
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return self
+                
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return other 
+
+        # Otherwise    
+
+        newLazyFn = other.__add__(self)
+        return newLazyFn
+
+    def __truediv__(self, other):
+
+        other = self.convert(other)
+
+        # Special case:
+        if isinstance(self, parameter) and self.value == 0.0:
+            return self
+
+        if isinstance(other, parameter) and other.value == 1.0:
+            return self 
+
+        fstring  = &#34;({})/&#34; if not self.exposed_operator in &#34;S^&#34; else &#34;{}/&#34;
+        fstring += &#34;({})&#34; if not other.exposed_operator in &#34;S^&#34; else &#34;{}&#34;
+
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) / other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})/({})&#34;.format(self.description, other.description)
+        newLazyFn.latex = r&#34;\frac{{ {} }}{{ {}  }}&#34;.format(self.latex, other.latex)
+        newLazyFn.math  = lambda : r&#34;\frac{{ {} }}{{ {}  }}&#34;.format(self.math(), other.math())
+
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        newLazyFn.exposed_operator = &#34;/&#34;
+
+        newLazyFn.derivative = lambda dirn : -1.0 *  self * other.derivative(dirn) / (other * other) + self.derivative(dirn) / other
+
+        return newLazyFn
+
+
+    def __rtruediv__(self, other):
+
+        other = self.convert(other)
+
+        # Special case:
+        if isinstance(other, parameter) and other.value == 0.0:
+            return other
+
+        newLazyFn = other.__truediv__(self)
+        return newLazyFn
+
+
+    def __sub__(self, other):
+
+        other = self.convert(other)
+
+        # Some special cases:
+
+        if isinstance(self, parameter) and isinstance(other, parameter):
+            return parameter(self.value - other.value)
+ 
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return self
+                
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return -other   
+
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;{} - {}&#34;.format(self.description, other.description)
+        newLazyFn.latex       = &#34;{} - {}&#34;.format(self.latex, other.latex)
+        newLazyFn.math  = lambda : &#34;{} - {}&#34;.format(self.math(), other.math())
+
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        newLazyFn.exposed_operator = &#34;-&#34;
+
+        newLazyFn.derivative = lambda dirn : self.derivative(dirn) - other.derivative(dirn)
+
+        return newLazyFn
+
+
+    def __rsub__(self, other):
+
+        other = self.convert(other)
+
+
+        # Some special cases:
+
+        if isinstance(self, parameter) and isinstance(other, parameter):
+           return parameter(other.value - self.value)
+ 
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return -self
+
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return other   
+
+        newLazyFn = other.__sub__(self)
+        return newLazyFn
+    
+    def __neg__(self):
+
+        if isinstance(self, parameter):
+            return parameter(-self.value)
+
+        fstring  = &#34;-{}&#34; if self.exposed_operator in &#34;S^*/&#34; else &#34;-({})&#34;
+
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.coordinate_system
+
+        newLazyFn.evaluate = lambda *args, **kwargs : -1.0 * self.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;-{}&#34;.format(self.description)
+        newLazyFn.latex       = &#34;-{}&#34;.format(self.latex)
+        newLazyFn.math = lambda : &#34;-{}&#34;.format(self.math())
+
+        newLazyFn.dependency_list |= self.dependency_list
+        newLazyFn.exposed_operator = &#34;S&#34;
+
+        newLazyFn.derivative = lambda dirn : -1.0 * self.derivative(dirn)
+
+        return newLazyFn
+
+    def __pow__(self, exponent):
+
+        if isinstance(exponent, (float, int)):
+            exponent = parameter(exponent)
+
+        # special cases:
+
+        if exponent.value == 0.0:
+            return parameter(1.0)
+        if exponent.value == 1.0:
+            return self 
+
+        fstring  = &#34;({})^{}&#34; if not self.exposed_operator in &#34;S&#34; else &#34;{}^{}&#34;
+        lstring  = r&#34;\left({}\right)^{{{}}}&#34; if not self.exposed_operator in &#34;S&#34; else r&#34;{}^{{{}}}&#34;
+
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.coordinate_system
+
+        newLazyFn.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
+        newLazyFn.description = fstring.format(self.description, exponent.description)
+        newLazyFn.latex       = lstring.format(self.latex, exponent.latex)
+        newLazyFn.math = lambda : lstring.format(self.math(), exponent.math())
+        newLazyFn.dependency_list |= self.dependency_list | exponent.dependency_list
+        newLazyFn.exposed_operator = &#34;^&#34;
+
+        newLazyFn.derivative = lambda dirn : exponent * self.derivative(dirn) * (self) ** (exponent-parameter(1.0))
+        
+        return newLazyFn
+
+
+## Logical operations - return Boolean arrays. What happens when interpolated ... pass to level set ?
+
+## I am not sure how to differentiate these yet - perhaps leave as NotImplemented
+## Also not sure about LaTeX version of these operations
+
+    def __lt__(self, other):
+        other = self.convert(other)
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) &lt; other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})&lt;({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+
+    def __le__(self, other):
+        other = self.convert(other)
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) &lt;= other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})&lt;=({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+
+    def __eq__(self, other):
+        other = self.convert(other)
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) == other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})==({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+    
+    def __ne__(self, other):
+        other = self.convert(other)
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) != other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})!=({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+
+    def __ge__(self, other):
+        other = self.convert(other)
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) &gt;= other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})&gt;=({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+    
+    def __gt__(self, other):
+        other = self.convert(other)
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) &gt; other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})&gt;({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+        
+
+class symbol(LazyEvaluation):
+    &#34;&#34;&#34;A placeholder symbol&#34;&#34;&#34;
+
+    def __init__(self, name=None, lname=None, *args, **kwargs):
+        super(symbol, self).__init__(*args, **kwargs)
+        self._lname = lname
+
+        if name is not None:
+            self._name = name
+        else:
+            self._name = &#34;s_{}&#34;.format(self.id)
+        
+        self.description = self._name
+        
+        if self._lname is not None:
+            self.latex = self._lname
+        else:
+            self.latex = self.description
+
+        self.math = lambda : self.latex  # function returning a string
+
+        return
+
+    def evaluate(self, *args, **kwargs):
+        raise RuntimeWarning(&#39;Cannot evaluate a symbol - consider substitution&#39;) from None
+ 
+
+    def derivative(self, dirn, *args, **kwargs):
+
+        def cant_evaluate(*args, **kwargs):
+            print(&#34;Symbols cannot be evaluated&#34;, flush=True)
+            raise NotImplementedError   
+
+        newLazyFn_dx = symbol()
+        newLazyFn_dx.evaluate = cant_evaluate
+        newLazyFn_dx.description = &#34;d({})/dX&#34;.format(self.description)
+        newLazyFn_dx.latex = r&#34;\frac{{ \partial }}{{\partial x}}{}&#34;.format(self.latex)
+        newLazyFn_dx.math = lambda : newLazyFn_dx.latex
+        newLazyFn_dx.exposed_operator = &#34;d&#34;
+
+        newLazyFn_dy = symbol()
+        newLazyFn_dy.evaluate = cant_evaluate
+        newLazyFn_dy.description = &#34;d({})/dY&#34;.format(self.description)
+        newLazyFn_dy.latex = r&#34;\frac{{\partial}}{{\partial y}}{}&#34;.format(self.latex)
+        newLazyFn_dy.math = lambda : newLazyFn_dy.latex
+        newLazyFn_dy.exposed_operator = &#34;d&#34;
+
+        if dirn == 0:
+            return newLazyFn_dx
+        else:
+            return newLazyFn_dy
+
+    def substitute(self, lazyFn):
+
+        self.evaluate    = lazyFn.evaluate
+        self.derivative  = lazyFn.derivative 
+        self.description = lazyFn.description
+        self.exposed_operator = &#34;S&#34;
+        self.latex = r&#34;\left\{{  {} \leftarrow {}\right\}}&#34;.format(self._lname, lazyFn.math())
+
+        self.math = lambda : self.latex
+
+class parameter(LazyEvaluation):
+    &#34;&#34;&#34;Floating point parameter / coefficient for lazy evaluation of functions&#34;&#34;&#34;
+
+    def __init__(self, value, *args, **kwargs):
+        super(parameter, self).__init__(*args, **kwargs)
+        self.value = value
+        self.math = lambda : self.latex
+
+        return
+
+    def __call__(self, value=None):
+        &#34;&#34;&#34;Set value (X) of this parameter (equivalent to Parameter.value=X)&#34;&#34;&#34;
+        if value is not None:
+            self.value = value
+        return
+
+    def __repr__(self):
+        return(&#34;quagmire lazy evaluation parameter: {}&#34;.format( self._value))
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = float(value)
+        self.description = &#34;{:.3g}&#34;.format(  int(self._value) if self._value.is_integer() else self._value)
+        self.latex = self.description
+
+    def evaluate(self, *args, **kwargs):
+
+        if len(args) == 1:
+            if quagmire.mesh.check_object_is_a_q_mesh(args[0]):
+                mesh = args[0]
+                return self.value * np.ones(mesh.npoints)
+            else: # could be a tuple or a single np.array object
+                coords = np.array(args[0]).reshape(-1, 2)
+                return np.ones_like(coords[:,0]) * self.value
+        else:  # see if args can be interpreted in the form of coordinate pairs
+                coords = np.array(args).reshape(-1, 2)
+                return np.ones_like(coords[:,0]) * self.value
+ 
+
+    def derivative(self, *args, **kwargs):
+        return parameter(0.0)
+
+class vector_field(tuple, LazyEvaluation):
+
+    def __new__ (cls, a, b, name=None, lname=None):
+
+        a1 = convert(a)
+        b1 = convert(b)
+
+        return super(vector_field, cls).__new__(cls, (a1,b1))
+
+    def __init__(self, a, b, name=None, lname=None):
+
+        LazyEvaluation.__init__(self)
+
+        self.coordinate_system = a.compatible_coordinate_system(b)
+
+        if name is not None:
+            self._name = name
+        else:
+            self._name = &#34;v_{}&#34;.format(self.id)
+
+        if name is not None:
+            self.description = name 
+        else:
+            self.description = &#34;({} , {})&#34;.format(self[0].description, self[1].description)
+
+        if lname is not None:
+            self.latex = lname
+            self._lname = lname
+        else:
+            self.latex = r&#34;\left( {} , {} \right)&#34;.format(self[0].latex, self[1].latex)
+            self._lname = None
+
+        self.math = lambda : self.latex 
+
+    def __repr__(self):
+        return self.description
+
+    
+    def evaluate(self, *args, **kwargs):
+
+        return ( self[0].evaluate(*args, **kwargs), self[1].evaluate(*args, **kwargs))
+
+    def derivative(self, dirn, expand=False):
+
+        new_vector_field = vector_field( self[0].derivative(dirn), self[1].derivative(dirn))
+
+        if self._lname is None or expand == True:
+            new_vector_field.latex = r&#34;\left( {}, {} \right)&#34;.format(self[0].derivative(dirn).latex, self[1].derivative(dirn).latex  )
+        else:
+            new_vector_field.latex = r&#34;\frac{{ \partial }} {{ \partial {} }} {}&#34;.format(self.coordinate_system.xi[dirn].latex, self.latex, )
+
+        return new_vector_field
+
+    def div(self, expand=False):
+
+        try:
+            return self.coordinate_system.div(self, expand)
+        except:
+            raise NotImplementedError(&#34;No coordinate system - use CoordinateSystem.div( vector_object ) directly&#34;)
+
+
+    def __mul__(self, other):
+
+        if isinstance(other, vector_field):
+            newLazyFn = self[0] * other[0] + self[1] * other[1]
+            return newLazyFn
+
+        else:
+            other = convert(other)
+
+            if isinstance(other, LazyEvaluation):
+                newVectorField = vector_field( self[0] * other,  self[1] * other )
+                return newVectorField
+
+            else:
+                raise NotImplementedError
+
+    def __rmul__(self, other):
+
+        other = convert(other)
+        if isinstance(other, LazyEvaluation):
+            newVectorField = vector_field( other * self[0] , other *  self[1] )
+            return newVectorField
+        else:
+            raise NotImplementedError
+
+
+    def __add__(self, other):
+
+        if isinstance(other, vector_field):
+            newVectorField = vector_field( self[0] + other[0],  self[1] + other[1] )
+            return newVectorField
+
+        else:
+            other = convert(other)
+
+            if isinstance(other, LazyEvaluation):
+                newVectorField = vector_field( self[0] + other,  self[1] + other )
+                return newVectorField
+
+            else:
+                raise NotImplementedError
+
+    def __radd__(self, other):
+
+        other = convert(other)
+        if isinstance(other, LazyEvaluation):
+            return other.__add__(self)
+        else:
+            raise NotImplementedError
+
+    def __neg__(self):
+
+        newVectorField = vector_field( -self[0] ,  -self[1] )
+        return newVectorField
+
+    def __sub__(self, other):
+
+        if isinstance(other, vector_field):
+            newVectorField = vector_field( self[0] - other[0],  self[1] - other[1] )
+            return newVectorField
+
+        else:
+            other = convert(other)
+
+            if isinstance(other, LazyEvaluation):
+                newVectorField = vector_field( self[0] - other,  self[1] - other )
+                return newVectorField
+
+            else:
+                raise NotImplementedError
+
+    def __rsub__(self, other):
+
+        other = convert(other)
+
+        if isinstance(other, LazyEvaluation):
+            newVectorField = vector_field( other - self[0], other - self[1] )
+            return newVectorField
+
+        else:
+            raise NotImplementedError
+
+    def __truediv__(self, other): 
+
+        if isinstance(other, vector_field):
+            
+            raise ValueError(&#34;Cannot divide by vector field&#34;)
+        else:
+            newVectorField = vector_field( self[0] / other, self[1] / other )
+            return newVectorField
+
+
+    def __rtruediv__(self, other):
+
+        raise ValueError(&#34;Cannot divide by vector field&#34;)
+
+    def __pow__(self, exponent):
+
+        raise NotImplementedError(&#34;Use repeated multiplication to achieve vector power&#34;)
+
+
+    
+    
+
+
+def convert(lazyFnCandidate):
+        &#34;&#34;&#34;
+        This method will attempt to convert the provided input into an
+        equivalent quagmire function. If the provided input is already
+        of LazyEvaluation type, it is immediately returned. Likewise if
+        the input is of None type, it is also returned.
+
+        Parameters
+        ----------
+
+        lazyFn: The object to be converted
+
+        Returns
+        -------
+
+        LazyEvaluation function or None.
+        &#34;&#34;&#34;
+
+        from . import LazyEvaluation, parameter
+
+        if isinstance(lazyFnCandidate, (LazyEvaluation, type(None))):
+            return lazyFnCandidate
+        else:
+            try:
+                return parameter(lazyFnCandidate)
+            except Exception as e:
+                raise e</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="quagmire.function.function_classes.convert"><code class="name flex">
+<span>def <span class="ident">convert</span></span>(<span>lazyFnCandidate)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method will attempt to convert the provided input into an
+equivalent quagmire function. If the provided input is already
+of LazyEvaluation type, it is immediately returned. Likewise if
+the input is of None type, it is also returned.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>lazyFn</code></strong> :&ensp;<code>The object to be converted</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>LazyEvaluation function or None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def convert(lazyFnCandidate):
+        &#34;&#34;&#34;
+        This method will attempt to convert the provided input into an
+        equivalent quagmire function. If the provided input is already
+        of LazyEvaluation type, it is immediately returned. Likewise if
+        the input is of None type, it is also returned.
+
+        Parameters
+        ----------
+
+        lazyFn: The object to be converted
+
+        Returns
+        -------
+
+        LazyEvaluation function or None.
+        &#34;&#34;&#34;
+
+        from . import LazyEvaluation, parameter
+
+        if isinstance(lazyFnCandidate, (LazyEvaluation, type(None))):
+            return lazyFnCandidate
+        else:
+            try:
+                return parameter(lazyFnCandidate)
+            except Exception as e:
+                raise e</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="quagmire.function.function_classes.LazyEvaluation"><code class="flex name class">
+<span>class <span class="ident">LazyEvaluation</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LazyEvaluation(object):
+
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        LazyEvaluation.__count += 1
+        return LazyEvaluation.__count
+
+    @property
+    def id(self):
+        return self.__id
+
+    def __init__(self):
+        self.__id = &#34;q_fn_{}&#34;.format(self._count())
+        self.description = &#34;&#34;
+        self.latex = &#34;&#34;
+        self.dependency_list = set([self.id])
+        self._exposed_operator = &#34;S&#34;  # Singleton unless over-ridden with operator
+        self.math = lambda : self.latex
+        self.coordinate_system = None
+
+        return
+
+    def __repr__(self):
+        return(&#34;quagmire.fn: {}&#34;.format(self.description))
+
+    def _ipython_display_(self):
+        from IPython.display import display, Math
+        display(Math(self.math()))
+
+    def display(self):
+        try:
+            self._ipython_display_()
+        except:
+            print(self.__repr__)
+
+    def validate_coordinate_system(self, obj):
+
+        if self.coordinate_system is not None:
+            if obj.coordinate_system is not None:
+                assert self.coordinate_system == obj.coordinate_system
+
+    def compatible_coordinate_system(self, obj):
+
+        self.validate_coordinate_system(obj)
+        if obj.coordinate_system is not None:
+            return obj.coordinate_system
+        else:
+            return self.coordinate_system
+
+
+    @staticmethod
+    def convert(obj):
+        &#34;&#34;&#34;
+        This method will attempt to convert the provided input into an
+        equivalent quagmire function. If the provided input is already
+        of LazyEvaluation type, it is immediately returned. Likewise if
+        the input is of None type, it is also returned.
+
+        Parameters
+        ----------
+
+        obj: The object to be converted
+
+        Returns
+        -------
+
+        LazyEvaluation function or None.
+        &#34;&#34;&#34;
+
+        return convert(obj)
+
+    def evaluate(self, *args, **kwargs):
+        raise(NotImplementedError)
+
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, value):
+        self._description = &#34;{}&#34;.format(value)
+
+    def fn_gradient(self, dirn):
+        try:
+            return self.coordinate_system.grad(self)[dirn]
+        except:
+            return None
+
+    @property
+    def exposed_operator(self):
+        return self._exposed_operator
+
+    @exposed_operator.setter
+    def exposed_operator(self, value):
+        self._exposed_operator = value
+        
+    def derivative(self, dirn):
+        &#34;&#34;&#34;
+        Compute values of the derivatives of PHI in the x, y directions at the nodal points.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Parameters
+        ----------
+        dirn : &#39;0&#39; or &#39;1&#39;, 0 or 1
+
+        &#34;&#34;&#34;
+
+        raise NotImplementedError
+     
+
+## Arithmetic operations
+
+    def __mul__(self, other):
+
+        other = self.convert(other)
+
+        # Some special cases: 
+
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return other
+            if other.value == 1.0:
+                return self
+
+            if isinstance(self, parameter):
+                return parameter(self.value * other.value)
+                
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return self
+            if self.value == 1.0:
+                return other
+
+
+        ## The exposed operator will also need to be lazy
+
+        fstring  = &#34;({})*&#34; if self.exposed_operator in &#34;+-&#34; else &#34;{}*&#34;
+        fstring += &#34;({})&#34; if other.exposed_operator in &#34;+-&#34; else &#34;{}&#34;
+
+        lstring  = &#34;({}) \;&#34; if self.exposed_operator in &#34;+-&#34; else &#34;{} \;&#34;
+        lstring += &#34;({})&#34; if other.exposed_operator in &#34;+-&#34; else &#34;{}&#34;
+
+        # Will handle things like float / int combined with lazy operation (or define rmul, rsub etc )
+ 
+        newLazyFn = LazyEvaluation()
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) * other.evaluate(*args, **kwargs)
+        newLazyFn.description = fstring.format(self.description, other.description)
+        newLazyFn.latex       = lstring.format(self.latex, other.latex)
+        newLazyFn.math        = lambda : lstring.format(self.math(), other.math() )
+        
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        newLazyFn.exposed_operator = &#34;*&#34;
+
+        newLazyFn.derivative = lambda dirn : self.derivative (dirn) * other +  \
+                                              self * other.derivative(dirn) 
+                     
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+
+        return newLazyFn
+
+    def __rmul__(self, other):
+
+        other = self.convert(other)
+
+        # Some special cases: 
+
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return parameter(0.0)
+            if other.value == 1.0:
+                return self
+            if isinstance(self, parameter):
+                return parameter(self.value * other.value)
+
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return parameter(0.0)
+            if self.value == 1.0:
+                return other
+
+        newLazyFn = other.__mul__(self)
+
+        return newLazyFn
+
+    def __add__(self, other):
+
+        other = self.convert(other)
+
+        # Some special cases:
+
+        if isinstance(self, parameter) and isinstance(other, parameter):
+            return parameter(self.value + other.value)
+
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return self
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return other 
+
+        # Otherwise    
+
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) + other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;{} + {}&#34;.format(self.description, other.description)
+        newLazyFn.latex       = &#34;{} + {}&#34;.format(self.latex, other.latex)
+        newLazyFn.math        = lambda : r&#34;{} \, + \, {}&#34;.format(self.math(), other.math() )
+
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        newLazyFn.exposed_operator = &#34;+&#34;
+
+        newLazyFn.derivative = lambda dirn : self.derivative(dirn) + other.derivative(dirn)
+
+
+        return newLazyFn
+
+    def __radd__(self, other):
+
+        other = self.convert(other)
+
+        # Some special cases:
+
+        if isinstance(self, parameter) and isinstance(other, parameter):
+            return parameter(self.value + other.value)
+ 
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return self
+                
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return other 
+
+        # Otherwise    
+
+        newLazyFn = other.__add__(self)
+        return newLazyFn
+
+    def __truediv__(self, other):
+
+        other = self.convert(other)
+
+        # Special case:
+        if isinstance(self, parameter) and self.value == 0.0:
+            return self
+
+        if isinstance(other, parameter) and other.value == 1.0:
+            return self 
+
+        fstring  = &#34;({})/&#34; if not self.exposed_operator in &#34;S^&#34; else &#34;{}/&#34;
+        fstring += &#34;({})&#34; if not other.exposed_operator in &#34;S^&#34; else &#34;{}&#34;
+
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) / other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})/({})&#34;.format(self.description, other.description)
+        newLazyFn.latex = r&#34;\frac{{ {} }}{{ {}  }}&#34;.format(self.latex, other.latex)
+        newLazyFn.math  = lambda : r&#34;\frac{{ {} }}{{ {}  }}&#34;.format(self.math(), other.math())
+
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        newLazyFn.exposed_operator = &#34;/&#34;
+
+        newLazyFn.derivative = lambda dirn : -1.0 *  self * other.derivative(dirn) / (other * other) + self.derivative(dirn) / other
+
+        return newLazyFn
+
+
+    def __rtruediv__(self, other):
+
+        other = self.convert(other)
+
+        # Special case:
+        if isinstance(other, parameter) and other.value == 0.0:
+            return other
+
+        newLazyFn = other.__truediv__(self)
+        return newLazyFn
+
+
+    def __sub__(self, other):
+
+        other = self.convert(other)
+
+        # Some special cases:
+
+        if isinstance(self, parameter) and isinstance(other, parameter):
+            return parameter(self.value - other.value)
+ 
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return self
+                
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return -other   
+
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) - other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;{} - {}&#34;.format(self.description, other.description)
+        newLazyFn.latex       = &#34;{} - {}&#34;.format(self.latex, other.latex)
+        newLazyFn.math  = lambda : &#34;{} - {}&#34;.format(self.math(), other.math())
+
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        newLazyFn.exposed_operator = &#34;-&#34;
+
+        newLazyFn.derivative = lambda dirn : self.derivative(dirn) - other.derivative(dirn)
+
+        return newLazyFn
+
+
+    def __rsub__(self, other):
+
+        other = self.convert(other)
+
+
+        # Some special cases:
+
+        if isinstance(self, parameter) and isinstance(other, parameter):
+           return parameter(other.value - self.value)
+ 
+        if isinstance(other, parameter):
+            if other.value == 0.0:
+                return -self
+
+        if isinstance(self, parameter):
+            if self.value == 0.0:
+                return other   
+
+        newLazyFn = other.__sub__(self)
+        return newLazyFn
+    
+    def __neg__(self):
+
+        if isinstance(self, parameter):
+            return parameter(-self.value)
+
+        fstring  = &#34;-{}&#34; if self.exposed_operator in &#34;S^*/&#34; else &#34;-({})&#34;
+
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.coordinate_system
+
+        newLazyFn.evaluate = lambda *args, **kwargs : -1.0 * self.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;-{}&#34;.format(self.description)
+        newLazyFn.latex       = &#34;-{}&#34;.format(self.latex)
+        newLazyFn.math = lambda : &#34;-{}&#34;.format(self.math())
+
+        newLazyFn.dependency_list |= self.dependency_list
+        newLazyFn.exposed_operator = &#34;S&#34;
+
+        newLazyFn.derivative = lambda dirn : -1.0 * self.derivative(dirn)
+
+        return newLazyFn
+
+    def __pow__(self, exponent):
+
+        if isinstance(exponent, (float, int)):
+            exponent = parameter(exponent)
+
+        # special cases:
+
+        if exponent.value == 0.0:
+            return parameter(1.0)
+        if exponent.value == 1.0:
+            return self 
+
+        fstring  = &#34;({})^{}&#34; if not self.exposed_operator in &#34;S&#34; else &#34;{}^{}&#34;
+        lstring  = r&#34;\left({}\right)^{{{}}}&#34; if not self.exposed_operator in &#34;S&#34; else r&#34;{}^{{{}}}&#34;
+
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.coordinate_system
+
+        newLazyFn.evaluate = lambda *args, **kwargs : np.power(self.evaluate(*args, **kwargs), exponent.evaluate(*args, **kwargs))
+        newLazyFn.description = fstring.format(self.description, exponent.description)
+        newLazyFn.latex       = lstring.format(self.latex, exponent.latex)
+        newLazyFn.math = lambda : lstring.format(self.math(), exponent.math())
+        newLazyFn.dependency_list |= self.dependency_list | exponent.dependency_list
+        newLazyFn.exposed_operator = &#34;^&#34;
+
+        newLazyFn.derivative = lambda dirn : exponent * self.derivative(dirn) * (self) ** (exponent-parameter(1.0))
+        
+        return newLazyFn
+
+
+## Logical operations - return Boolean arrays. What happens when interpolated ... pass to level set ?
+
+## I am not sure how to differentiate these yet - perhaps leave as NotImplemented
+## Also not sure about LaTeX version of these operations
+
+    def __lt__(self, other):
+        other = self.convert(other)
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) &lt; other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})&lt;({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+
+    def __le__(self, other):
+        other = self.convert(other)
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) &lt;= other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})&lt;=({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+
+    def __eq__(self, other):
+        other = self.convert(other)
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) == other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})==({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+    
+    def __ne__(self, other):
+        other = self.convert(other)
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) != other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})!=({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+
+    def __ge__(self, other):
+        other = self.convert(other)
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) &gt;= other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})&gt;=({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn
+    
+    def __gt__(self, other):
+        other = self.convert(other)
+        newLazyFn = LazyEvaluation()
+        newLazyFn.coordinate_system = self.compatible_coordinate_system(other)
+        newLazyFn.evaluate = lambda *args, **kwargs : self.evaluate(*args, **kwargs) &gt; other.evaluate(*args, **kwargs)
+        newLazyFn.description = &#34;({})&gt;({})&#34;.format(self.description, other.description)
+        newLazyFn.dependency_list |= self.dependency_list | other.dependency_list
+        return newLazyFn</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="quagmire.function.function_classes.parameter" href="#quagmire.function.function_classes.parameter">parameter</a></li>
+<li><a title="quagmire.function.function_classes.symbol" href="#quagmire.function.function_classes.symbol">symbol</a></li>
+<li><a title="quagmire.function.function_classes.vector_field" href="#quagmire.function.function_classes.vector_field">vector_field</a></li>
+<li><a title="quagmire.mesh.basemesh.MeshFunction" href="../mesh/basemesh.html#quagmire.mesh.basemesh.MeshFunction">MeshFunction</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="quagmire.function.function_classes.LazyEvaluation.convert"><code class="name flex">
+<span>def <span class="ident">convert</span></span>(<span>obj)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method will attempt to convert the provided input into an
+equivalent quagmire function. If the provided input is already
+of LazyEvaluation type, it is immediately returned. Likewise if
+the input is of None type, it is also returned.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>obj</code></strong> :&ensp;<code>The object to be converted</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>LazyEvaluation function or None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def convert(obj):
+    &#34;&#34;&#34;
+    This method will attempt to convert the provided input into an
+    equivalent quagmire function. If the provided input is already
+    of LazyEvaluation type, it is immediately returned. Likewise if
+    the input is of None type, it is also returned.
+
+    Parameters
+    ----------
+
+    obj: The object to be converted
+
+    Returns
+    -------
+
+    LazyEvaluation function or None.
+    &#34;&#34;&#34;
+
+    return convert(obj)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="quagmire.function.function_classes.LazyEvaluation.description"><code class="name">var <span class="ident">description</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def description(self):
+    return self._description</code></pre>
+</details>
+</dd>
+<dt id="quagmire.function.function_classes.LazyEvaluation.exposed_operator"><code class="name">var <span class="ident">exposed_operator</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def exposed_operator(self):
+    return self._exposed_operator</code></pre>
+</details>
+</dd>
+<dt id="quagmire.function.function_classes.LazyEvaluation.id"><code class="name">var <span class="ident">id</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def id(self):
+    return self.__id</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="quagmire.function.function_classes.LazyEvaluation.compatible_coordinate_system"><code class="name flex">
+<span>def <span class="ident">compatible_coordinate_system</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compatible_coordinate_system(self, obj):
+
+    self.validate_coordinate_system(obj)
+    if obj.coordinate_system is not None:
+        return obj.coordinate_system
+    else:
+        return self.coordinate_system</code></pre>
+</details>
+</dd>
+<dt id="quagmire.function.function_classes.LazyEvaluation.derivative"><code class="name flex">
+<span>def <span class="ident">derivative</span></span>(<span>self, dirn)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compute values of the derivatives of PHI in the x, y directions at the nodal points.
+This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>dirn</code></strong> :&ensp;<code>'0'</code> or <code>'1', 0</code> or <code>1</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivative(self, dirn):
+    &#34;&#34;&#34;
+    Compute values of the derivatives of PHI in the x, y directions at the nodal points.
+    This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+    Parameters
+    ----------
+    dirn : &#39;0&#39; or &#39;1&#39;, 0 or 1
+
+    &#34;&#34;&#34;
+
+    raise NotImplementedError</code></pre>
+</details>
+</dd>
+<dt id="quagmire.function.function_classes.LazyEvaluation.display"><code class="name flex">
+<span>def <span class="ident">display</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def display(self):
+    try:
+        self._ipython_display_()
+    except:
+        print(self.__repr__)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.function.function_classes.LazyEvaluation.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, *args, **kwargs):
+    raise(NotImplementedError)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.function.function_classes.LazyEvaluation.fn_gradient"><code class="name flex">
+<span>def <span class="ident">fn_gradient</span></span>(<span>self, dirn)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fn_gradient(self, dirn):
+    try:
+        return self.coordinate_system.grad(self)[dirn]
+    except:
+        return None</code></pre>
+</details>
+</dd>
+<dt id="quagmire.function.function_classes.LazyEvaluation.validate_coordinate_system"><code class="name flex">
+<span>def <span class="ident">validate_coordinate_system</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def validate_coordinate_system(self, obj):
+
+    if self.coordinate_system is not None:
+        if obj.coordinate_system is not None:
+            assert self.coordinate_system == obj.coordinate_system</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="quagmire.function.function_classes.parameter"><code class="flex name class">
+<span>class <span class="ident">parameter</span></span>
+<span>(</span><span>value, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Floating point parameter / coefficient for lazy evaluation of functions</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class parameter(LazyEvaluation):
+    &#34;&#34;&#34;Floating point parameter / coefficient for lazy evaluation of functions&#34;&#34;&#34;
+
+    def __init__(self, value, *args, **kwargs):
+        super(parameter, self).__init__(*args, **kwargs)
+        self.value = value
+        self.math = lambda : self.latex
+
+        return
+
+    def __call__(self, value=None):
+        &#34;&#34;&#34;Set value (X) of this parameter (equivalent to Parameter.value=X)&#34;&#34;&#34;
+        if value is not None:
+            self.value = value
+        return
+
+    def __repr__(self):
+        return(&#34;quagmire lazy evaluation parameter: {}&#34;.format( self._value))
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = float(value)
+        self.description = &#34;{:.3g}&#34;.format(  int(self._value) if self._value.is_integer() else self._value)
+        self.latex = self.description
+
+    def evaluate(self, *args, **kwargs):
+
+        if len(args) == 1:
+            if quagmire.mesh.check_object_is_a_q_mesh(args[0]):
+                mesh = args[0]
+                return self.value * np.ones(mesh.npoints)
+            else: # could be a tuple or a single np.array object
+                coords = np.array(args[0]).reshape(-1, 2)
+                return np.ones_like(coords[:,0]) * self.value
+        else:  # see if args can be interpreted in the form of coordinate pairs
+                coords = np.array(args).reshape(-1, 2)
+                return np.ones_like(coords[:,0]) * self.value
+ 
+
+    def derivative(self, *args, **kwargs):
+        return parameter(0.0)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="quagmire.function.function_classes.LazyEvaluation" href="#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="quagmire.function.function_classes.parameter.value"><code class="name">var <span class="ident">value</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def value(self):
+    return self._value</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="quagmire.function.function_classes.parameter.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, *args, **kwargs):
+
+    if len(args) == 1:
+        if quagmire.mesh.check_object_is_a_q_mesh(args[0]):
+            mesh = args[0]
+            return self.value * np.ones(mesh.npoints)
+        else: # could be a tuple or a single np.array object
+            coords = np.array(args[0]).reshape(-1, 2)
+            return np.ones_like(coords[:,0]) * self.value
+    else:  # see if args can be interpreted in the form of coordinate pairs
+            coords = np.array(args).reshape(-1, 2)
+            return np.ones_like(coords[:,0]) * self.value</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="quagmire.function.function_classes.LazyEvaluation" href="#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></b></code>:
+<ul class="hlist">
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.convert" href="#quagmire.function.function_classes.LazyEvaluation.convert">convert</a></code></li>
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.derivative" href="#quagmire.function.function_classes.LazyEvaluation.derivative">derivative</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="quagmire.function.function_classes.symbol"><code class="flex name class">
+<span>class <span class="ident">symbol</span></span>
+<span>(</span><span>name=None, lname=None, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A placeholder symbol</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class symbol(LazyEvaluation):
+    &#34;&#34;&#34;A placeholder symbol&#34;&#34;&#34;
+
+    def __init__(self, name=None, lname=None, *args, **kwargs):
+        super(symbol, self).__init__(*args, **kwargs)
+        self._lname = lname
+
+        if name is not None:
+            self._name = name
+        else:
+            self._name = &#34;s_{}&#34;.format(self.id)
+        
+        self.description = self._name
+        
+        if self._lname is not None:
+            self.latex = self._lname
+        else:
+            self.latex = self.description
+
+        self.math = lambda : self.latex  # function returning a string
+
+        return
+
+    def evaluate(self, *args, **kwargs):
+        raise RuntimeWarning(&#39;Cannot evaluate a symbol - consider substitution&#39;) from None
+ 
+
+    def derivative(self, dirn, *args, **kwargs):
+
+        def cant_evaluate(*args, **kwargs):
+            print(&#34;Symbols cannot be evaluated&#34;, flush=True)
+            raise NotImplementedError   
+
+        newLazyFn_dx = symbol()
+        newLazyFn_dx.evaluate = cant_evaluate
+        newLazyFn_dx.description = &#34;d({})/dX&#34;.format(self.description)
+        newLazyFn_dx.latex = r&#34;\frac{{ \partial }}{{\partial x}}{}&#34;.format(self.latex)
+        newLazyFn_dx.math = lambda : newLazyFn_dx.latex
+        newLazyFn_dx.exposed_operator = &#34;d&#34;
+
+        newLazyFn_dy = symbol()
+        newLazyFn_dy.evaluate = cant_evaluate
+        newLazyFn_dy.description = &#34;d({})/dY&#34;.format(self.description)
+        newLazyFn_dy.latex = r&#34;\frac{{\partial}}{{\partial y}}{}&#34;.format(self.latex)
+        newLazyFn_dy.math = lambda : newLazyFn_dy.latex
+        newLazyFn_dy.exposed_operator = &#34;d&#34;
+
+        if dirn == 0:
+            return newLazyFn_dx
+        else:
+            return newLazyFn_dy
+
+    def substitute(self, lazyFn):
+
+        self.evaluate    = lazyFn.evaluate
+        self.derivative  = lazyFn.derivative 
+        self.description = lazyFn.description
+        self.exposed_operator = &#34;S&#34;
+        self.latex = r&#34;\left\{{  {} \leftarrow {}\right\}}&#34;.format(self._lname, lazyFn.math())
+
+        self.math = lambda : self.latex</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="quagmire.function.function_classes.LazyEvaluation" href="#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="quagmire.function.function_classes.symbol.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, *args, **kwargs):
+    raise RuntimeWarning(&#39;Cannot evaluate a symbol - consider substitution&#39;) from None</code></pre>
+</details>
+</dd>
+<dt id="quagmire.function.function_classes.symbol.substitute"><code class="name flex">
+<span>def <span class="ident">substitute</span></span>(<span>self, lazyFn)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def substitute(self, lazyFn):
+
+    self.evaluate    = lazyFn.evaluate
+    self.derivative  = lazyFn.derivative 
+    self.description = lazyFn.description
+    self.exposed_operator = &#34;S&#34;
+    self.latex = r&#34;\left\{{  {} \leftarrow {}\right\}}&#34;.format(self._lname, lazyFn.math())
+
+    self.math = lambda : self.latex</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="quagmire.function.function_classes.LazyEvaluation" href="#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></b></code>:
+<ul class="hlist">
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.convert" href="#quagmire.function.function_classes.LazyEvaluation.convert">convert</a></code></li>
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.derivative" href="#quagmire.function.function_classes.LazyEvaluation.derivative">derivative</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="quagmire.function.function_classes.vector_field"><code class="flex name class">
+<span>class <span class="ident">vector_field</span></span>
+<span>(</span><span>a, b, name=None, lname=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Built-in immutable sequence.</p>
+<p>If no argument is given, the constructor returns an empty tuple.
+If iterable is specified the tuple is initialized from iterable's items.</p>
+<p>If the argument is a tuple, the return value is the same object.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class vector_field(tuple, LazyEvaluation):
+
+    def __new__ (cls, a, b, name=None, lname=None):
+
+        a1 = convert(a)
+        b1 = convert(b)
+
+        return super(vector_field, cls).__new__(cls, (a1,b1))
+
+    def __init__(self, a, b, name=None, lname=None):
+
+        LazyEvaluation.__init__(self)
+
+        self.coordinate_system = a.compatible_coordinate_system(b)
+
+        if name is not None:
+            self._name = name
+        else:
+            self._name = &#34;v_{}&#34;.format(self.id)
+
+        if name is not None:
+            self.description = name 
+        else:
+            self.description = &#34;({} , {})&#34;.format(self[0].description, self[1].description)
+
+        if lname is not None:
+            self.latex = lname
+            self._lname = lname
+        else:
+            self.latex = r&#34;\left( {} , {} \right)&#34;.format(self[0].latex, self[1].latex)
+            self._lname = None
+
+        self.math = lambda : self.latex 
+
+    def __repr__(self):
+        return self.description
+
+    
+    def evaluate(self, *args, **kwargs):
+
+        return ( self[0].evaluate(*args, **kwargs), self[1].evaluate(*args, **kwargs))
+
+    def derivative(self, dirn, expand=False):
+
+        new_vector_field = vector_field( self[0].derivative(dirn), self[1].derivative(dirn))
+
+        if self._lname is None or expand == True:
+            new_vector_field.latex = r&#34;\left( {}, {} \right)&#34;.format(self[0].derivative(dirn).latex, self[1].derivative(dirn).latex  )
+        else:
+            new_vector_field.latex = r&#34;\frac{{ \partial }} {{ \partial {} }} {}&#34;.format(self.coordinate_system.xi[dirn].latex, self.latex, )
+
+        return new_vector_field
+
+    def div(self, expand=False):
+
+        try:
+            return self.coordinate_system.div(self, expand)
+        except:
+            raise NotImplementedError(&#34;No coordinate system - use CoordinateSystem.div( vector_object ) directly&#34;)
+
+
+    def __mul__(self, other):
+
+        if isinstance(other, vector_field):
+            newLazyFn = self[0] * other[0] + self[1] * other[1]
+            return newLazyFn
+
+        else:
+            other = convert(other)
+
+            if isinstance(other, LazyEvaluation):
+                newVectorField = vector_field( self[0] * other,  self[1] * other )
+                return newVectorField
+
+            else:
+                raise NotImplementedError
+
+    def __rmul__(self, other):
+
+        other = convert(other)
+        if isinstance(other, LazyEvaluation):
+            newVectorField = vector_field( other * self[0] , other *  self[1] )
+            return newVectorField
+        else:
+            raise NotImplementedError
+
+
+    def __add__(self, other):
+
+        if isinstance(other, vector_field):
+            newVectorField = vector_field( self[0] + other[0],  self[1] + other[1] )
+            return newVectorField
+
+        else:
+            other = convert(other)
+
+            if isinstance(other, LazyEvaluation):
+                newVectorField = vector_field( self[0] + other,  self[1] + other )
+                return newVectorField
+
+            else:
+                raise NotImplementedError
+
+    def __radd__(self, other):
+
+        other = convert(other)
+        if isinstance(other, LazyEvaluation):
+            return other.__add__(self)
+        else:
+            raise NotImplementedError
+
+    def __neg__(self):
+
+        newVectorField = vector_field( -self[0] ,  -self[1] )
+        return newVectorField
+
+    def __sub__(self, other):
+
+        if isinstance(other, vector_field):
+            newVectorField = vector_field( self[0] - other[0],  self[1] - other[1] )
+            return newVectorField
+
+        else:
+            other = convert(other)
+
+            if isinstance(other, LazyEvaluation):
+                newVectorField = vector_field( self[0] - other,  self[1] - other )
+                return newVectorField
+
+            else:
+                raise NotImplementedError
+
+    def __rsub__(self, other):
+
+        other = convert(other)
+
+        if isinstance(other, LazyEvaluation):
+            newVectorField = vector_field( other - self[0], other - self[1] )
+            return newVectorField
+
+        else:
+            raise NotImplementedError
+
+    def __truediv__(self, other): 
+
+        if isinstance(other, vector_field):
+            
+            raise ValueError(&#34;Cannot divide by vector field&#34;)
+        else:
+            newVectorField = vector_field( self[0] / other, self[1] / other )
+            return newVectorField
+
+
+    def __rtruediv__(self, other):
+
+        raise ValueError(&#34;Cannot divide by vector field&#34;)
+
+    def __pow__(self, exponent):
+
+        raise NotImplementedError(&#34;Use repeated multiplication to achieve vector power&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+<li><a title="quagmire.function.function_classes.LazyEvaluation" href="#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="quagmire.function.function_classes.vector_field.div"><code class="name flex">
+<span>def <span class="ident">div</span></span>(<span>self, expand=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def div(self, expand=False):
+
+    try:
+        return self.coordinate_system.div(self, expand)
+    except:
+        raise NotImplementedError(&#34;No coordinate system - use CoordinateSystem.div( vector_object ) directly&#34;)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.function.function_classes.vector_field.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, *args, **kwargs):
+
+    return ( self[0].evaluate(*args, **kwargs), self[1].evaluate(*args, **kwargs))</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="quagmire.function.function_classes.LazyEvaluation" href="#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></b></code>:
+<ul class="hlist">
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.convert" href="#quagmire.function.function_classes.LazyEvaluation.convert">convert</a></code></li>
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.derivative" href="#quagmire.function.function_classes.LazyEvaluation.derivative">derivative</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="quagmire.function" href="index.html">quagmire.function</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="quagmire.function.function_classes.convert" href="#quagmire.function.function_classes.convert">convert</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="quagmire.function.function_classes.LazyEvaluation" href="#quagmire.function.function_classes.LazyEvaluation">LazyEvaluation</a></code></h4>
+<ul class="">
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.compatible_coordinate_system" href="#quagmire.function.function_classes.LazyEvaluation.compatible_coordinate_system">compatible_coordinate_system</a></code></li>
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.convert" href="#quagmire.function.function_classes.LazyEvaluation.convert">convert</a></code></li>
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.derivative" href="#quagmire.function.function_classes.LazyEvaluation.derivative">derivative</a></code></li>
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.description" href="#quagmire.function.function_classes.LazyEvaluation.description">description</a></code></li>
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.display" href="#quagmire.function.function_classes.LazyEvaluation.display">display</a></code></li>
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.evaluate" href="#quagmire.function.function_classes.LazyEvaluation.evaluate">evaluate</a></code></li>
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.exposed_operator" href="#quagmire.function.function_classes.LazyEvaluation.exposed_operator">exposed_operator</a></code></li>
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.fn_gradient" href="#quagmire.function.function_classes.LazyEvaluation.fn_gradient">fn_gradient</a></code></li>
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.id" href="#quagmire.function.function_classes.LazyEvaluation.id">id</a></code></li>
+<li><code><a title="quagmire.function.function_classes.LazyEvaluation.validate_coordinate_system" href="#quagmire.function.function_classes.LazyEvaluation.validate_coordinate_system">validate_coordinate_system</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="quagmire.function.function_classes.parameter" href="#quagmire.function.function_classes.parameter">parameter</a></code></h4>
+<ul class="">
+<li><code><a title="quagmire.function.function_classes.parameter.evaluate" href="#quagmire.function.function_classes.parameter.evaluate">evaluate</a></code></li>
+<li><code><a title="quagmire.function.function_classes.parameter.value" href="#quagmire.function.function_classes.parameter.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="quagmire.function.function_classes.symbol" href="#quagmire.function.function_classes.symbol">symbol</a></code></h4>
+<ul class="">
+<li><code><a title="quagmire.function.function_classes.symbol.evaluate" href="#quagmire.function.function_classes.symbol.evaluate">evaluate</a></code></li>
+<li><code><a title="quagmire.function.function_classes.symbol.substitute" href="#quagmire.function.function_classes.symbol.substitute">substitute</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="quagmire.function.function_classes.vector_field" href="#quagmire.function.function_classes.vector_field">vector_field</a></code></h4>
+<ul class="">
+<li><code><a title="quagmire.function.function_classes.vector_field.div" href="#quagmire.function.function_classes.vector_field.div">div</a></code></li>
+<li><code><a title="quagmire.function.function_classes.vector_field.evaluate" href="#quagmire.function.function_classes.vector_field.evaluate">evaluate</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
