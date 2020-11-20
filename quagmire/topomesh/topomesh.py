@@ -754,7 +754,7 @@ class TopoMesh(object):
         self.topography.unlock()
         h = self.topography.data
 
-        fill_height =  (h[self.natural_neighbours[my_low_points]] * self.natural_neighbours_mask[my_low_points]).mean(axis=1) - h[my_low_points]
+        fill_height =  h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]].min(axis=1) - h[my_low_points]
 
         new_h = self.uphill_propagation(my_low_points,  fill_height, scale=scale,  its=its, fill=0.0)
         new_h = self.sync(new_h)
@@ -774,6 +774,12 @@ class TopoMesh(object):
 
     def low_points_local_patch_fill(self, its=1, smoothing_steps=1, ref_height=0.0, fraction=0.01):
 
+        """
+        Local patch algorithm to fill low points - raises the topography at a local minimum to be
+        a small fraction higher than the lowest neighbour. If smoothing is used, then that correction
+        in topography is spread around all the local nodes. 
+        """
+        
         from petsc4py import PETSc
         t = perf_counter()
         if self.rank==0 and self.verbose:
@@ -789,8 +795,8 @@ class TopoMesh(object):
 
             for i in low_points:
                 delta_height[i] =  ( (1.0-fraction) * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).min() +
-                                      fraction * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).max() 
-                                              - h[i] )
+                                           fraction * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).max() 
+                                      - h[i] )
 
             ## Note, the smoother has a communication barrier so needs to be called even
             ## if len(low_points==0) and there is no work to do on this process
@@ -835,7 +841,6 @@ class TopoMesh(object):
 
         if self.rank==0 and self.verbose:
             print("Build low point catchments - ", perf_counter() - t, " seconds")
-
 
 # Possible problem - low point that should flow out the side of the domain boundary. 
 
@@ -929,6 +934,7 @@ class TopoMesh(object):
             ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
             ## We need a global measure of typical distance that can be used to scale this gradient (self.delta ?)
             height2[catchment_nodes] = spill['h'] + gradient * distance + fluctuation # A 'small' gradient 
+
 
         height2 = self.sync(height2)
 
