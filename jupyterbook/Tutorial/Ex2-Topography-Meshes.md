@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-## Example 2 - Meshes for Topography 
+# Example 2 - Meshes for Topography 
 
 This notebook introduces the `QuagMesh` object, which builds the following data structures:
 
@@ -25,12 +25,7 @@ In this notebook we setup a height field and calculate its derivatives on an uns
 
 > Note: The API for the structured mesh is identical
 
-#### Contents
 
-- [Height field](#Height-field)
-- [Derivatives and hill slope](#Derivatives-and-hill-slope)
-- [Upstream area and stream power](#Upstream-area-and-stream-power)
-- [Hill slopes](#Derivatives-and-slopes)
 
 ```{code-cell} ipython3
 from quagmire.tools import meshtools

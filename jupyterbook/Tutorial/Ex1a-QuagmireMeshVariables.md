@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-## quagmire.mesh MeshVariable
+# quagmire.mesh MeshVariable
 
 Like Underworld, quagmire provides the concept of a "variable" which is associated with a mesh. These are parallel data structures on distributed meshes that support various capabilities such as interpolation, gradients, save and load, as well as supporting a number of mathematical operators through the `quagmire.function` interface (examples in the next notebook).
 
@@ -22,7 +22,7 @@ from quagmire.mesh import MeshVariable
 import numpy as np  
 ```
 
-### Working mesh
+## Working mesh
 
 First we create a basic mesh so that we can define mesh variables and obtain gradients etc.
 
@@ -36,7 +36,7 @@ DM = meshtools.create_DMPlex_from_points(x, y, bmask=bound)
 mesh = QuagMesh(DM, downhill_neighbours=1)
 ```
 
-### Basic usage
+## Basic usage
 
 Mesh variables can be instantiated directly or by adding a new variable to an existing mesh. 
 `print` will display and expanded description of the variable.
@@ -127,7 +127,7 @@ phi.unlock()
 print(phi)
 ```
 
-### Parallel support
+## Parallel support
 
 The `MeshVariable` class has a `sync` method that, when called, will replace shadow information with values from adjacent sections of the decomposition (or optionally, merge values in the shadow zone - an operation that should be used with caution for global reduction type operations). 
 
@@ -161,7 +161,7 @@ if quagmire.size > 1:
 
 +++
 
-### Evaluate method and fn_gradient
+## Evaluate method and fn_gradient
 
 MeshVariables support the `evaluate` method (because they are `quagmire.functions`) which is useful as it generalises various interfaces that are available to access the data. If a mesh is supplied, then evaluate checks to see if this corresponds to the mesh associated with the mesh variable and returns the raw data if it does. Otherwise the mesh coordinates are used for interpolation. If two coordinate arrays are supplied then these are passed to the interpolator. 
 
@@ -256,7 +256,7 @@ print(laplace_phi_xy)
 print(laplace_phi_xy.evaluate(mesh))
 ```
 
-### Visualisation
+## Visualisation
 
 +++
 
@@ -318,7 +318,7 @@ psi2.load("Ex1a-circular_mesh_psi.h5")
 phi2.load("Ex1a-circular_mesh_phi.h5")
 ```
 
-### Mesh variable save / load and names
+## Mesh variable save / load and names
 
 The names that are stored in the mesh variable hdf5 file are needed to retrieve the information again. That means the mesh variable that is loaded needs to match the one that was saved *Exactly*. This will not work:
 
@@ -344,14 +344,3 @@ psi3.data
 print(phi.data[0], psi.data[0])
 ```
 
-```{code-cell} ipython3
-
-```
-
-```{code-cell} ipython3
-
-```
-
-```{code-cell} ipython3
-
-```

@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-## Quagmire.function.geometry
+# Quagmire.function.geometry
 
 Quagmire mesh variables are numerically differentiable and the various operators defined in the quagmire functions module also support limited (symbolic) differentiation
 

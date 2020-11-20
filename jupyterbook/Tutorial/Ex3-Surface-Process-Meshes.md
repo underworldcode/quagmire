@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-## Example 3 - Meshes for Surface Process Models
+# Example 3 - Meshes for Surface Process Models
 
 This notebook introduces the `QuagMesh` object, which builds upon the `QuagMesh` and introduces methods for finding the stream connectivity, catchment identification and handling local minima.
 
@@ -19,10 +19,6 @@ Here we demonstrate the stream flow components of the `QuagMesh`
 
 > Note: Again, the API for the structured mesh is identical
 
-#### Contents
-
-- [Upstream area and stream power](#Upstream-area-and-stream-power)
-- [Outflow analysis](#Outflow analysis)
 
 ```{code-cell}
 from quagmire.tools import meshtools
@@ -310,4 +306,4 @@ tri1.control.List(options=
 lv.control.show()
 ```
 
-The downhill matrices are introduced in the next example, [Ex4-Multiple-downhill-pathways](./Ex4-Multiple-downhill-pathways.ipynb)
+The downhill matrices are introduced in the next example, [Ex4-Multiple-downhill-pathways](./Ex4-Multiple-downhill-pathways.md)
