@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-## Models on the Sphere
+# Models on the Sphere
 
 
 ```{code-cell}

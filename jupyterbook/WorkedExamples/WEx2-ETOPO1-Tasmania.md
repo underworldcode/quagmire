@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-## Etopo1 Map of Tasmania
+# Etopo1 Map of Tasmania
 
 In the previous worked example, we showed how to grab a region from a global elevation dataset, postprocess it to eliminate local minima and save the result to a geotiff in the same form as the original dataset. 
 
