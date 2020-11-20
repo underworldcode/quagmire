@@ -1,6 +1,6 @@
 ---
 jupytext:
-  formats: Notebooks/Tutorial//ipynb,Examples/Tutorial//py:light
+  formats: Notebooks/Tutorial//md,Examples/Tutorial//py:light
   text_representation:
     extension: .md
     format_name: myst
@@ -12,7 +12,7 @@ kernelspec:
   name: python3
 ---
 
-## Example 1 - creating structured and unstructured meshes
+# Example 1 - creating structured and unstructured meshes
 
 `Quagmire` can model surface processess on a structured rectangular grid or unstructured triangulated points. These use-cases are bundled into two objects:
 
@@ -30,16 +30,6 @@ All meshes are generated and handed to Quagmire using a `DM` object where the se
 
 In this notebook we setup different `DM` objects using meshes found in the `quagmire.tools.meshtools` path and hand them to `QuagMesh`.
 
-
-#### Contents
-
-- [Structured grids](#Structured-grids)
-- [Unstructued meshes](#Unstructured-meshes)
-- [Elliptical mesh](#Elliptical-mesh)
-- [Mesh improvement](#Mesh-improvement)
-- [Mesh refinement](#Mesh-refinement)
-- [Spherical meshes](#Spherical-meshes)
-- [Save mesh to file](#Save-mesh-to-file)
 
 ```{code-cell}
 ---
@@ -86,7 +76,7 @@ pycharm:
 mesh = QuagMesh(DM)
 ```
 
-We attach data to a mesh solely through mesh variables (see [Example notebook](Ex1a-QuagmireMeshVariables.ipynb) for details)
+We attach data to a mesh solely through mesh variables (see [Example notebook](Ex1a-QuagmireMeshVariables.md) for details)
 
 ``` python
     mesh_variable = mesh.add_variable(name="data1")
@@ -457,4 +447,4 @@ print(mesh2.npoints)
 print(mesh2.area)
 ```
 
-The next example is [Ex2-Topography-Meshes](./Ex2-Topography-Meshes.ipynb)
+The next example is [Ex2-Topography-Meshes](./Ex2-Topography-Meshes.md)

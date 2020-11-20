@@ -215,7 +215,7 @@ ax.scatter(x2s[ bmask2],  y2s[ bmask2], s=0.01, color="Red", transform=ccrs.Geod
 fig.show()
 ```
 
-### 3. Create the DM
+## 3. Create the DM
 
 The points are now read into a DM
 

@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-## Quagmire.function
+# Quagmire.function
 
 Like Underworld, quagmire provides a function interface that can be used to compose data and operations on the fly in order to construct model equations independent of whatever approach is used for solution. 
 
@@ -48,7 +48,7 @@ import numpy as np
 
 ```
 
-### Working mesh
+## Working mesh
 
 First we create a basic mesh so that we can define mesh variables and obbtain gradients etc.
 
@@ -64,7 +64,7 @@ dm = meshtools.create_DMPlex_from_points(epointsx, epointsy, bmask=ebmask, refin
 mesh = QuagMesh(dm, downhill_neighbours=1)
 ```
 
-### Basic usage
+## Basic usage
 
 The functions can be demonstrated on the most basic example the `parameter` which is constant everywhere in the mesh. In fact, these operations work without any reference to the mesh since they are the same at all locations and their gradient is zero everywhere.
 
@@ -75,24 +75,24 @@ B = fn.parameter(100.0)
 print("Exp({}) = {}".format(A.value, fn.math.exp(A).evaluate(0.0,0.0)))
 print("Exp({}) = {}".format(B.value, fn.math.exp(B).evaluate(0.0,0.0)))
 
-## A is a proper lazy variable too so this is required to work
+# A is a proper lazy variable too so this is required to work
 
 print("Exp({}) = {}".format(A.evaluate(0.0,0.0), fn.math.exp(A).evaluate(0.0,0.0)))
 
-## And this is how to update A
+# And this is how to update A
 
 A.value = 100.0
 print("Exp({}) = {}".format(A.evaluate(0.0,0.0), fn.math.exp(A).evaluate(0.0,0.0)))
 
-## This works too ... and note the floating point conversion
+# This works too ... and note the floating point conversion
 A(101)
 print("Exp({}) = {}".format(A.evaluate(0.0,0.0), fn.math.exp(A).evaluate(0.0,0.0)))
 
-## More complicated examples
+# More complicated examples
 print((fn.math.sin(A)**2.0 + fn.math.cos(A)**2.0).evaluate(0.0,0.0))
 ```
 
-### Descriptions
+## Descriptions
 
 The lazy function carries a description string that tells you approximately what will happen when the function is evaluated.
 There is also a `.math()` method that gives a $\LaTeX$ string which displays nicely in a jupyter notebook. The `quagmire.function.display` 
@@ -105,17 +105,17 @@ print(A.description)
 print((fn.math.sin(A)+fn.math.cos(B)).description)
 print((fn.math.sin(A)**2.0 + fn.math.cos(A)**2.0).description)
 
-## the description is printed by default if you call print on the function 
+# the description is printed by default if you call print on the function 
 
 print((fn.math.sin(A)**2.0 + fn.math.cos(A)**2.0))
 
-## the latex version is accessed like this:
+# the latex version is accessed like this:
 
 fn.display(fn.math.sin(A)+fn.math.cos(B))
 fn.display(fn.math.sin(A)**2.0 + fn.math.cos(A)**2.0)
 ```
 
-### Predefined Mesh Functions
+## Predefined Mesh Functions
 
 There are some predefined mesh functions that we can use in building more complicated functions that depend 
 on the mesh geometry. The details are described in the Ex1c-QuagmireCoordinateGeometry.py notebook.
@@ -137,7 +137,7 @@ print(S.evaluate(mesh))
 X.evaluate(mesh)
 ```
 
-### Mesh Variables as functions
+## Mesh Variables as functions
 
 Mesh variables (`MeshVariables`) are also members of the `LazyEvaluation` class. They can be evaluated exactly as the parameters can, but it is also possible to obtain numerical derivatives. Of course, they also have other properties beyond those of simple functions (see the MeshVariables examples in the previous (Ex1a-QuagmireMeshVariables.py) notebook for details).
 
@@ -207,7 +207,7 @@ print("Height = ", fn.math.cos(fn.misc.coord(0)).description)
 rainfall.evaluate(mesh)
 ```
 
-### Operator overloading for +, - , *, **, /
+## Operator overloading for +, - , *, **, /
 
 We define addition / subtraction (negation), multiplication, division, and raising to arbitrary power for mesh variables and parameters and the meaning is carried over from `numpy` - i.e. generally these are element-by-element operations on the underlying data vector and require the data structures to have compatible sizes.
 
@@ -227,13 +227,13 @@ display(native_slope)
 display(k)
 display(k2)
 
-## Numerical equivalence
+# Numerical equivalence
 
 print(k.evaluate(mesh))
 print(k2.evaluate(mesh))
 ```
 
-### Gradients
+## Gradients
 
 Variables associated with a mesh also have the capacity to form spatial derivatives anywhere. This is provided by the `stripy` gradient routines in the case of triangulations. The gradient can be formed from any lazy function by evaluating it at the mesh points and then obtaining values of derivatives anywhere via stripy. In the case of the spatially invariant `parameter` objects, the derivatives are identically zero.
 
@@ -277,13 +277,13 @@ display(native_slope)
 display(k)
 display(k2)
 
-## Numerical equivalence
+# Numerical equivalence
 
 print(k.evaluate(mesh))
 print(k2.evaluate(mesh))
 ```
 
-## Vector functions
+# Vector functions
 
 The gradient operator above returns a tuple of quagmire functions that can be thought of as a vector field. 
 They are a special form of tuple object that understands some of the operations that can be applied to functions.
@@ -310,7 +310,7 @@ except TypeError:
     
 ```
 
-### Numerical accuracy
+## Numerical accuracy
 
 The following should all evaluate to zero everywhere and so act as a test on the accuracy of the gradient operator
 
@@ -345,7 +345,7 @@ tris.control.List(options=["height", "slope", "dh/dy"], property="colourby", val
 lv.control.show()
 ```
 
-### Functions for conditional behaviour
+## Functions for conditional behaviour
 
 We provide `quagmire.function.misc.where` to produce simple mask functions that can be used to create conditionals. 
 This is how to pick out a flat area in the mesh:
@@ -403,8 +403,4 @@ function:
 
 ```{code-cell} ipython3
 masked_height.derivative(1)
-```
-
-```{code-cell} ipython3
-
 ```

@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-## quagmire.tools.cloud
+# quagmire.tools.cloud
 
 The `quagmire.tools.cloud` module helps to download and upload data (particularly meshes and meshvariables) from various cloud services.
 By default, this module provides read-only access to a central repository of meshes and datasets 
