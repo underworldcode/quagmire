@@ -159,6 +159,9 @@ class TopoMesh(object):
         return
 
     def _sort_nodes_by_field(self, height):
+        """
+        Obsolete ??
+        
 
         # Sort neighbours by gradient
         indptr, indices = self.vertex_neighbour_vertices
@@ -183,7 +186,7 @@ class TopoMesh(object):
 
         self.neighbour_array_lo_hi = neighbour_array_lo_hi
         self.neighbour_array_2_low = neighbour_array_2_low
-
+        """
 
 
     def _adjacency_matrix_template(self, nnz=(1,1)):
@@ -394,7 +397,6 @@ class TopoMesh(object):
 
 
     def cumulative_flow(self, vector, *args, **kwargs):
-
 
         niter, cumulative_flow_vector = self._cumulative_flow_verbose(vector, *args, **kwargs)
         return cumulative_flow_vector
@@ -736,7 +738,7 @@ class TopoMesh(object):
         """
 
 
-### Methods copied over from obseleted SurfMesh class
+### Methods copied over from previous SurfMesh class
 
     def low_points_local_flood_fill(self, its=99999, scale=1.0, smoothing_steps=2, ref_height=0.0):
         """
@@ -1133,8 +1135,12 @@ class TopoMesh(object):
         return outflow_nodes
 
 
-# This seems to be out of date 
     def identify_flat_spots(self):
+        """ 
+        Find regions with a very low gradient ... 
+        ToDo: the criterion for 'flat' should
+        be something that the user can set.
+        """
 
         slope = self.slope.evaluate(self.topography._mesh)
         smooth_grad1 = self.local_area_smoothing(slope, its=1, centre_weight=0.5)
