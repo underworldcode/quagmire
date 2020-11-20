@@ -898,16 +898,20 @@ class TopoMesh(object):
         for l, this_low in enumerate(my_catchments):
             this_low_spills = edges[np.where(ctmt[edges] == this_low)]  ## local numbering
 
-            for spill in this_low_spills:
-                mesh_data_pt[0:ndim] = self.data[spill]
+            for spill in this_low_spills: 
+                spills[&#39;c&#39;][ii] = this_low 
+                spills[&#39;h&#39;][ii] = height[spill] 
+                spills[&#39;x&#39;][ii] = self.data[spill,0] 
+                spills[&#39;y&#39;][ii] = self.data[spill,1] 
 
-                spills[&#39;c&#39;][ii] = this_low
-                spills[&#39;h&#39;][ii] = height[spill]
-                spills[&#39;x&#39;][ii] = mesh_data_pt[0]
-                spills[&#39;y&#39;][ii] = mesh_data_pt[1]
-                spills[&#39;z&#39;][ii] = mesh_data_pt[2]
+                # 3D coordinate system in strimesh
+                import quagmire
+                if isinstance(self, quagmire.mesh.strimesh.sTriMesh): 
+                    spills[&#39;z&#39;][ii] = self.data[spill,2] 
                 ii += 1
+                
 
+                
         t = perf_counter()
 
         spills.sort(axis=0)  # Sorts by catchment then height ...
@@ -2036,16 +2040,20 @@ class TopoMesh(object):
         for l, this_low in enumerate(my_catchments):
             this_low_spills = edges[np.where(ctmt[edges] == this_low)]  ## local numbering
 
-            for spill in this_low_spills:
-                mesh_data_pt[0:ndim] = self.data[spill]
+            for spill in this_low_spills: 
+                spills[&#39;c&#39;][ii] = this_low 
+                spills[&#39;h&#39;][ii] = height[spill] 
+                spills[&#39;x&#39;][ii] = self.data[spill,0] 
+                spills[&#39;y&#39;][ii] = self.data[spill,1] 
 
-                spills[&#39;c&#39;][ii] = this_low
-                spills[&#39;h&#39;][ii] = height[spill]
-                spills[&#39;x&#39;][ii] = mesh_data_pt[0]
-                spills[&#39;y&#39;][ii] = mesh_data_pt[1]
-                spills[&#39;z&#39;][ii] = mesh_data_pt[2]
+                # 3D coordinate system in strimesh
+                import quagmire
+                if isinstance(self, quagmire.mesh.strimesh.sTriMesh): 
+                    spills[&#39;z&#39;][ii] = self.data[spill,2] 
                 ii += 1
+                
 
+                
         t = perf_counter()
 
         spills.sort(axis=0)  # Sorts by catchment then height ...
@@ -2862,16 +2870,20 @@ in topography is spread around all the local nodes.</p></div>
         for l, this_low in enumerate(my_catchments):
             this_low_spills = edges[np.where(ctmt[edges] == this_low)]  ## local numbering
 
-            for spill in this_low_spills:
-                mesh_data_pt[0:ndim] = self.data[spill]
+            for spill in this_low_spills: 
+                spills[&#39;c&#39;][ii] = this_low 
+                spills[&#39;h&#39;][ii] = height[spill] 
+                spills[&#39;x&#39;][ii] = self.data[spill,0] 
+                spills[&#39;y&#39;][ii] = self.data[spill,1] 
 
-                spills[&#39;c&#39;][ii] = this_low
-                spills[&#39;h&#39;][ii] = height[spill]
-                spills[&#39;x&#39;][ii] = mesh_data_pt[0]
-                spills[&#39;y&#39;][ii] = mesh_data_pt[1]
-                spills[&#39;z&#39;][ii] = mesh_data_pt[2]
+                # 3D coordinate system in strimesh
+                import quagmire
+                if isinstance(self, quagmire.mesh.strimesh.sTriMesh): 
+                    spills[&#39;z&#39;][ii] = self.data[spill,2] 
                 ii += 1
+                
 
+                
         t = perf_counter()
 
         spills.sort(axis=0)  # Sorts by catchment then height ...
