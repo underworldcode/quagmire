@@ -28,6 +28,7 @@ except: pass
 
 from quagmire import function as fn
 from quagmire.mesh import MeshVariable as _MeshVariable
+from quagmire.mesh.basemesh import MeshFunction as _MeshFunction
 from quagmire.function import LazyEvaluation as _LazyEvaluation
 
 class TopoMesh(object):
@@ -55,10 +56,9 @@ class TopoMesh(object):
         ## TODO: Should be able to fix upstream area as a "partial" function of upstream area
         ## with a parameter value of 1.0 in the argument (or 1.0 above a ref height)
 
-        # Slope (function)
-        self.slope = fn.math.slope(self.topography)
-
         self._heightVariable = self.topography
+
+        self.slope = self.topography.fn_gradient("Slope")
 
 
 
@@ -159,6 +159,9 @@ class TopoMesh(object):
         return
 
     def _sort_nodes_by_field(self, height):
+        """
+        Obsolete ??
+        
 
         # Sort neighbours by gradient
         indptr, indices = self.vertex_neighbour_vertices
@@ -183,7 +186,7 @@ class TopoMesh(object):
 
         self.neighbour_array_lo_hi = neighbour_array_lo_hi
         self.neighbour_array_2_low = neighbour_array_2_low
-
+        """
 
 
     def _adjacency_matrix_template(self, nnz=(1,1)):
@@ -280,8 +283,7 @@ class TopoMesh(object):
         for i in range(0, self.downhill_neighbours):
             down_N = self.down_neighbour[i+1]
             grad = np.abs(height - height[down_N]+1.0e-10) / (1.0e-10 + \
-                   np.hypot(self.coords[:,0] - self.coords[down_N,0],
-                            self.coords[:,1] - self.coords[down_N,1] ))
+                   np.linalg.norm(self.data - self.data[down_N], axis=1))
 
             weights[i,:] = np.sqrt(grad)
 
@@ -361,38 +363,42 @@ class TopoMesh(object):
         self.sweepDownToOutflowMat = downSweepMat
 
 
-    def upstream_integral_fn(self, lazyFn):
+    def upstream_integral_fn(self, meshVar):
         """Upsream integral implemented as an area-weighted upstream summation"""
 
         import quagmire
 
-        def integral_fn(*args, **kwargs):
-            node_values = lazyFn.evaluate(lazyFn._mesh) * lazyFn._mesh.area
+        def integral_fn(input=None, **kwargs):
+            node_values = meshVar.evaluate(self) * self.area
             node_integral = self.cumulative_flow(node_values)
 
-            if len(args) == 1 and args[0] == lazyFn._mesh:
-                return node_integral
-            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
-                mesh = args[0]
-                return lazyFn._mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=node_integral, **kwargs)
+            if input is not None:
+                if isinstance(input, (quagmire.mesh.trimesh.TriMesh, 
+                                      quagmire.mesh.pixmesh.PixMesh,
+                                      quagmire.mesh.strimesh.sTriMesh)):
+                    if input == self:
+                        return node_integral
+                    else:
+                        return self.interpolate(input.coords[:,0], input.coords[:,1], zdata=node_integral)
+
+                elif isinstance(input, (tuple, list, np.ndarray)):
+                    input = np.array(input)
+                    input = np.reshape(input, (-1, 2))
+                    return self.interpolate(input[:,0], input[:,1], zdata=node_integral)
             else:
-                xi = np.atleast_1d(args[0])
-                yi = np.atleast_1d(args[1])
-                i, e = lazyFn._mesh.interpolate(xi, yi, zdata=node_integral, **kwargs)
-                return i
+                return node_integral
 
-        newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+        newLazyFn = _MeshFunction(name="int", mesh=self)
         newLazyFn.evaluate = integral_fn
-        newLazyFn.description = "UpInt({})dA".format(lazyFn.description)
-        newLazyFn.dependency_list |= lazyFn.dependency_list
-
+        newLazyFn.description = "UpInt({})dA".format(meshVar.description)
+        newLazyFn.latex = r"\int {}".format(meshVar.latex) + r" \mathrm{dA}"
+        newLazyFn.exposed_operator = "I"
         return newLazyFn
 
 
     def cumulative_flow(self, vector, *args, **kwargs):
 
-
-        niter, cumulative_flow_vector = self._cumulative_flow_verbose(vector, **kwargs)
+        niter, cumulative_flow_vector = self._cumulative_flow_verbose(vector, *args, **kwargs)
         return cumulative_flow_vector
 
 
@@ -462,16 +468,16 @@ class TopoMesh(object):
             return niter, self.lvec.array.copy()
 
 
-    def downhill_smoothing_fn(self, lazyFn, its=1, centre_weight=0.75):
+    def downhill_smoothing_fn(self, meshVar, its=1, centre_weight=0.75):
 
         import quagmire
 
         def new_fn(*args, **kwargs):
-            local_array = lazyFn.evaluate(self)
+            local_array = meshVar.evaluate(self)
             smoothed = self._downhill_smoothing(local_array, its=its, centre_weight=centre_weight)
             smoothed = self.sync(smoothed)
 
-            if len(args) == 1 and args[0] == lazyFn._mesh:
+            if len(args) == 1 and args[0] == meshVar._mesh:
                 return smoothed
             elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
 
@@ -483,10 +489,10 @@ class TopoMesh(object):
                 i, e = self.interpolate(xi, yi, zdata=smoothed, **kwargs)
                 return i
 
-        newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+        newLazyFn = _LazyEvaluation()
         newLazyFn.evaluate = new_fn
-        newLazyFn.description = "DnHSmooth({}), i={}, w={}".format(lazyFn.description,  its, centre_weight)
-        newLazyFn.dependency_list |= lazyFn.dependency_list
+        newLazyFn.description = "DnHSmooth({}), i={}, w={}".format(meshVar.description,  its, centre_weight)
+        newLazyFn.dependency_list |= meshVar.dependency_list
 
 
         return newLazyFn
@@ -518,16 +524,16 @@ class TopoMesh(object):
             return self.lvec.array.copy()
 
 
-    def uphill_smoothing_fn(self, lazyFn, its=1, centre_weight=0.75):
+    def uphill_smoothing_fn(self, meshVar, its=1, centre_weight=0.75):
 
         import quagmire
 
         def new_fn(*args, **kwargs):
-            local_array = lazyFn.evaluate(self)
+            local_array = meshVar.evaluate(self)
             smoothed = self._uphill_smoothing(local_array, its=its, centre_weight=centre_weight)
             smoothed = self.sync(smoothed)
 
-            if len(args) == 1 and args[0] == lazyFn._mesh:
+            if len(args) == 1 and args[0] == meshVar._mesh:
                 return smoothed
             elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
                 mesh = args[0]
@@ -538,11 +544,10 @@ class TopoMesh(object):
                 i, e = self.interpolate(xi, yi, zdata=smoothed, **kwargs)
                 return i
 
-        newLazyFn = LazyEvaluation(mesh=lazyFn._mesh)
+        newLazyFn = _LazyEvaluation()
         newLazyFn.evaluate = new_fn
-        newLazyFn.description = "UpHSmooth({}), i={}, w={}".format(lazyFn.description, )
-        newLazyFn.dependency_list |= lazyFn.dependency_list
-
+        newLazyFn.description = "UpHSmooth({}), i={}, w={}".format(meshVar.description, )
+        newLazyFn.dependency_list |= meshVar.dependency_list
 
         return newLazyFn
 
@@ -580,34 +585,36 @@ class TopoMesh(object):
 
 
 
-    def streamwise_smoothing_fn(self, lazyFn, its=1, centre_weight=0.75):
+    def streamwise_smoothing_fn(self, meshVar, its=1, centre_weight=0.75):
 
         import quagmire
 
-        def new_fn(*args, **kwargs):
-            local_array = lazyFn.evaluate(self)
+        def new_fn(input=None, **kwargs):
+            local_array = meshVar.evaluate(self)
             smoothed = self._streamwise_smoothing(local_array, its=its, centre_weight=centre_weight)
             smoothed = self.sync(smoothed)
 
-            if len(args) == 1 and args[0] == lazyFn._mesh:
-                return smoothed
-            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
-                mesh = args[0]
-                return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=smoothed, **kwargs)
+            if input is not None:
+                if isinstance(input, (quagmire.mesh.trimesh.TriMesh, 
+                                      quagmire.mesh.pixmesh.PixMesh,
+                                      quagmire.mesh.strimesh.sTriMesh)):
+                    if input == meshVar._mesh:
+                        return smoothed
+                    else:
+                        return self.interpolate(input.coords[:,0], input.coords[:,1], zdata=smoothed, **kwargs)
+                elif isinstance(input, (tuple, list, np.ndarray)):
+                    input = np.array(input)
+                    input = np.reshape(input, (-1, 2))
+                    return self.interpolate(input[:, 0], input[:,1], zdata=smoothed, **kwargs)[0]
             else:
-                xi = np.atleast_1d(args[0])  # .resize(-1,1)
-                yi = np.atleast_1d(args[1])  # .resize(-1,1)
-                i, e = self.interpolate(xi, yi, zdata=smoothed, **kwargs)
-                return i
+                return smoothed
 
-        newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+        newLazyFn = _LazyEvaluation()
         newLazyFn.evaluate = new_fn
-        newLazyFn.description = "StmSmooth({}), i={}, w={}".format(lazyFn.description, its, centre_weight)
-        newLazyFn.dependency_list |= lazyFn.dependency_list
-
+        newLazyFn.description = "StmSmooth({}), i={}, w={}".format(meshVar.description, its, centre_weight)
+        newLazyFn.dependency_list |= meshVar.dependency_list
 
         return newLazyFn
-
 
 
 
@@ -632,13 +639,14 @@ class TopoMesh(object):
         Find the lowest node in the neighbour list of the given node
         """
 
+        """
         lowest = self.neighbour_array_lo_hi[node][0]
 
         if lowest != node:
             return lowest
         else:
             return -1
-
+        """
 
 
     def _node_highest_neighbour(self, node):
@@ -646,12 +654,14 @@ class TopoMesh(object):
         Find the highest node in the neighbour list of the given node
         """
 
+        """
         highest = self.neighbour_array_lo_hi[node][-1]
 
         if highest != node:
             return highest
         else:
             return -1
+        """
 
 
     def _node_walk_downhill(self, node):
@@ -659,6 +669,7 @@ class TopoMesh(object):
         Walks downhill terminating when the downhill node is already claimed
         """
 
+        """
         chain = -np.ones(self.npoints, dtype=np.int32)
 
         idx = 0
@@ -677,6 +688,7 @@ class TopoMesh(object):
             low_neighbour = self._node_lowest_neighbour(low_neighbour)
 
         return junction, chain[0:idx+1]
+        """
 
 
     def build_node_chains(self):
@@ -697,10 +709,9 @@ class TopoMesh(object):
         into chain number 0.
         """
 
+        """
         self.node_chain_lookup = -np.ones(self.npoints, dtype=np.int32)
         self.node_chain_list = []
-
-
         node_chain_idx = 1
 
         self.node_chain_list.append([]) # placeholder for any isolated base-level nodes
@@ -724,8 +735,10 @@ class TopoMesh(object):
                 self.node_chain_list[0].append(this_chain[0])
                 self.node_chain_lookup[this_chain[0]] = 0
 
+        """
 
-### Methods copied over from obseleted SurfMesh class
+
+### Methods copied over from previous SurfMesh class
 
     def low_points_local_flood_fill(self, its=99999, scale=1.0, smoothing_steps=2, ref_height=0.0):
         """
@@ -762,12 +775,13 @@ class TopoMesh(object):
         return
 
     def low_points_local_patch_fill(self, its=1, smoothing_steps=1, ref_height=0.0, fraction=0.01):
+
         """
         Local patch algorithm to fill low points - raises the topography at a local minimum to be
         a small fraction higher than the lowest neighbour. If smoothing is used, then that correction
         in topography is spread around all the local nodes. 
         """
-
+        
         from petsc4py import PETSc
         t = perf_counter()
         if self.rank==0 and self.verbose:
@@ -783,8 +797,8 @@ class TopoMesh(object):
 
             for i in low_points:
                 delta_height[i] =  ( (1.0-fraction) * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).min() +
-                                          fraction  * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).max() 
-                                              - h[i] )
+                                           fraction * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).max() 
+                                      - h[i] )
 
             ## Note, the smoother has a communication barrier so needs to be called even
             ## if len(low_points==0) and there is no work to do on this process
@@ -804,8 +818,7 @@ class TopoMesh(object):
 
         return
 
-
-    def low_points_swamp_fill(self, its=1000, saddles=None, ref_height=0.0, ref_gradient=0.001, fluctuation_strength=0.05):
+    def low_points_swamp_fill(self, its=1000, saddles=None, ref_height=0.0, ref_gradient=1.0e-7, fluctuation_strength=0.0):
 
         import petsc4py
         from petsc4py import PETSc
@@ -830,7 +843,6 @@ class TopoMesh(object):
 
         if self.rank==0 and self.verbose:
             print("Build low point catchments - ", perf_counter() - t, " seconds")
-  
 
 # Possible problem - low point that should flow out the side of the domain boundary. 
 
@@ -850,17 +862,23 @@ class TopoMesh(object):
         my_catchments = np.unique(ctmt)
 
         spills = np.empty((edges.shape[0]),
-                         dtype=np.dtype([('c', int), ('h', float), ('x', float), ('y', float)]))
+                         dtype=np.dtype([('c', int), ('h', float), ('x', float), ('y', float), ('z', float)]))
+
+        ndim = self.data.shape[1]
+        mesh_data_pt = np.zeros(3)
 
         ii = 0
         for l, this_low in enumerate(my_catchments):
             this_low_spills = edges[np.where(ctmt[edges] == this_low)]  ## local numbering
 
             for spill in this_low_spills:
+                mesh_data_pt[0:ndim] = self.data[spill]
+
                 spills['c'][ii] = this_low
                 spills['h'][ii] = height[spill]
-                spills['x'][ii] = self.coords[spill,0]
-                spills['y'][ii] = self.coords[spill,1]
+                spills['x'][ii] = mesh_data_pt[0]
+                spills['y'][ii] = mesh_data_pt[1]
+                spills['z'][ii] = mesh_data_pt[2]
                 ii += 1
 
         t = perf_counter()
@@ -909,20 +927,21 @@ class TopoMesh(object):
             if this_catchment < 0:
                 continue
 
+            gradient = ref_gradient / self.delta
             catchment_nodes = np.where(ctmt == this_catchment)
-            separation_x = (self.coords[catchment_nodes,0] - spill['x'])
-            separation_y = (self.coords[catchment_nodes,1] - spill['y'])
-            distance = np.hypot(separation_x, separation_y)
-            fluctuations = 1.0 + np.random.random(size=distance.shape) * distance.mean() * ref_gradient * fluctuation_strength
+            mesh_data_pt[:] = spill['x'], spill['y'], spill['z']
+            distance = np.linalg.norm(self.data[catchment_nodes] - mesh_data_pt[0:ndim], axis=1)
+            fluctuation = fluctuation_strength * gradient * distance.mean() * np.random.random(size=distance.shape)  # how does this work in the shadows ?
 
             ## Todo: this gradient needs to be relative to typical ones nearby and resolvable in a geotiff !
-            height2[catchment_nodes] = spill['h'] + ref_gradient * distance * fluctuations # A 'small' gradient but this should depend on local conditions
+            ## We need a global measure of typical distance that can be used to scale this gradient (self.delta ?)
+            height2[catchment_nodes] = spill['h'] + gradient * distance + fluctuation # A 'small' gradient 
+
 
         height2 = self.sync(height2)
 
         new_height = np.maximum(height, height2)
         new_height = self.sync(new_height)
-
 
         # We only need to update the height not all
         # surface process information that is associated with it.
@@ -931,13 +950,13 @@ class TopoMesh(object):
         self._update_height()
         self.topography.lock()
 
-
         if self.rank==0 and self.verbose:
             print("Low point swamp fill ",  perf_counter()-t0, " seconds")
 
         ## but now we need to rebuild the surface process information
         self._update_height_for_surface_flows()
         return
+
 
 
     def backfill_points(self, fill_points, heights, its):
@@ -992,25 +1011,32 @@ class TopoMesh(object):
         delta.abs()
         rtolerance = delta.max()[1] * 1.0e-10
 
+        uphill_matrix = self.uphill[1]
+        gvec  = self.gvec
+        delta = gvec.duplicate()
+
         for p in range(0, its):
 
             # self.adjacency[1].multTranspose(global_ID, self.gvec)
-            gvec = self.uphill[1] * global_ID
-            delta = global_ID - gvec
+            uphill_matrix.mult(global_ID, gvec)
+            # delta = global_ID - gvec
+            delta.setArray(gvec)
+            delta.axpy(-1.0, global_ID)
             delta.abs()
             max_delta = delta.max()[1]
 
             if max_delta < rtolerance:
                 break
 
-            self.gvec.scale(scale)
+            if scale != 1.0:
+                gvec.scale(scale)
 
             if self.dm.comm.Get_size() == 1:
-                local_ID.array[:] = gvec.array[:]
+                local_ID.setArray(gvec)
             else:
                 self.dm.globalToLocal(gvec, local_ID)
 
-            global_ID.array[:] = gvec.array[:]
+            global_ID.setArray(gvec)
 
             identifier = np.maximum(identifier, local_ID.array)
             identifier = self.sync(identifier)
@@ -1059,9 +1085,7 @@ class TopoMesh(object):
         size = comm.Get_size()
         rank = comm.Get_rank()
 
-        # from petsc4py import PETSc
-
-        nodes = np.arange(0, self.npoints, dtype=np.int)
+        nodes = np.arange(0, self.npoints, dtype=PETSc.IntType)
         gnodes = self.lgmap_row.apply(nodes.astype(PETSc.IntType))
 
         low_nodes = self.down_neighbour[1]
@@ -1069,20 +1093,12 @@ class TopoMesh(object):
         mask = np.logical_and(mask, self.topography.data > ref_height)
         mask = np.logical_and(mask, gnodes >= 0)
 
-        number_of_lows = np.count_nonzero(mask)
+        number_of_lows  = np.array(np.count_nonzero(mask), dtype=PETSc.IntType)
         low_gnodes = self.lgmap_row.apply(low_nodes.astype(PETSc.IntType))
 
-        # gather/scatter numbers
-
-        list_of_nlows  = comm.gather(number_of_lows,   root=0)
-        if self.rank == 0:
-            all_low_counts = np.hstack(list_of_nlows)
-            no_global_lows0 = all_low_counts.sum()
-
-        else:
-            no_global_lows0 = None
-
-        no_global_lows = comm.bcast(no_global_lows0, root=0)
+        # MPI sum operation
+        no_global_lows = np.array(0, dtype=PETSc.IntType)
+        comm.Allreduce([number_of_lows, MPI.INT], [no_global_lows, MPI.INT], op=MPI.SUM)
 
 
         if global_array:
@@ -1120,11 +1136,14 @@ class TopoMesh(object):
 
 
     def identify_flat_spots(self):
+        """ 
+        Find regions with a very low gradient ... 
+        ToDo: the criterion for 'flat' should
+        be something that the user can set.
+        """
 
-        slope = self.slope.evaluate(self.slope._mesh)
+        slope = self.slope.evaluate(self.topography._mesh)
         smooth_grad1 = self.local_area_smoothing(slope, its=1, centre_weight=0.5)
-
-        # flat_spot_field = np.where(smooth_grad1 < smooth_grad1.max()/100, 0.0, 1.0)
 
         flat_spots = np.where(smooth_grad1 < smooth_grad1.max()/1000.0, True, False)
 

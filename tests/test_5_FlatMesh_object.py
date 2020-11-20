@@ -6,34 +6,40 @@ from quagmire import QuagMesh
 from quagmire import function as fn
 from quagmire.tools import meshtools
 
-from conftest import load_triangulated_mesh_DM
+from conftest import load_multi_mesh_DM as DM
 
 
-def test_derivatives_and_interpolation(load_triangulated_mesh_DM):
-    mesh = QuagMesh(load_triangulated_mesh_DM)
+def test_derivatives_and_interpolation(DM):
+    mesh = QuagMesh(DM)
 
     height = mesh.add_variable(name="h(x,y)")
-    height.data = mesh.tri.x**2 + mesh.tri.y**2
+    height.data = mesh.coords[:,0]**2 + mesh.coords[:,1]**2
 
-    dhdx = height.fn_gradient[0]
-    dhdy = height.fn_gradient[1]
+    dhdx = height.derivative(0)
+    dhdy = height.derivative(1)
+
+    dhdx.evaluate(mesh)
+    dhdx.evaluate(mesh)
 
     # interpolate onto a straight line
-    # bounding box should be [-5,5,-5,5]
-    xy_pts = np.linspace(-5,5,10)
+    # bounding box should be [-5,5,-5,5]  (not on the sphere ... )
+    
+    xy_pts = np.linspace(0,1.5,10)
+    icoords = np.column_stack([xy_pts, xy_pts])
 
-    interp_x = dhdx.evaluate(xy_pts, np.zeros_like(xy_pts))
-    interp_y = dhdy.evaluate(np.zeros_like(xy_pts), xy_pts)
+    interp_x = dhdx.evaluate(icoords)
+    interp_y = dhdy.evaluate(icoords)
 
     ascending_x = ( np.diff(interp_x) > 0 ).all()
     ascending_y = ( np.diff(interp_y) > 0 ).all()
 
     assert ascending_x, "Derivative evaluation failed in the x direction"
     assert ascending_y, "Derivative evaluation failed in the y direction"
+    
 
 
-def test_smoothing(load_triangulated_mesh_DM):
-    mesh = QuagMesh(load_triangulated_mesh_DM)
+def test_smoothing(DM):
+    mesh = QuagMesh(DM)
 
     noise = np.random.rand(mesh.npoints)
     smooth_noise = mesh.local_area_smoothing(noise, its=1)
@@ -46,7 +52,7 @@ def test_smoothing(load_triangulated_mesh_DM):
 def test_spherical_area():
     import stripy
     cm = stripy.spherical_meshes.icosahedral_mesh(refinement_levels=2)
-    DM = meshtools.create_spherical_DMPlex(cm.lons, cm.lats, cm.simplices)
+    DM = meshtools.create_spherical_DMPlex(np.degrees(cm.lons), np.degrees(cm.lats), cm.simplices)
     mesh = QuagMesh(DM)
 
     # adjust radius of the sphere

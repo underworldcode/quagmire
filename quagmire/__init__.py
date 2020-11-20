@@ -257,11 +257,11 @@ def QuagMesh(DM, downhill_neighbours=2, verbose=True, *args, **kwargs):
             def __init__(self, dm, *args, **kwargs):
                 if verbose:
                     print("Underlying Mesh type: {}".format(BaseMeshType))
-                known_basemesh_classes[BaseMeshType].__init__(self, dm, verbose, *args, **kwargs)
-                _TopoMeshClass.__init__(self, downhill_neighbours, *args, **kwargs)
+                known_basemesh_classes[BaseMeshType].__init__(self, dm, *args, **kwargs)
+                _TopoMeshClass.__init__(self, *args, **kwargs)
                 # super(QuagMeshClass, self).__init__(dm, *args, **kwargs)
 
-        return QuagMeshClass(DM, *args, **kwargs)
+        return QuagMeshClass(DM, downhill_neighbours=downhill_neighbours, verbose=verbose, *args, **kwargs)
 
     else:
         raise TypeError("Mesh type {:s} unknown\n\

@@ -115,9 +115,26 @@ class CommonMesh(object):
         self.lgmap_col = lgmap_c
 
 
+        ## Attach a coordinate system to the mesh:
+
+        import quagmire
+
+        if isinstance(self, (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh)):
+            self.coordinates = quagmire.function.coordinates.CartesianCoordinates2D()
+            self.geometry    = self.coordinates
+            self.coordinate_system = self.coordinates
+        else:
+            self.coordinates = quagmire.function.coordinates.SphericalSurfaceLonLat2D()
+            self.geometry    = self.coordinates
+            self.coordinate_system = self.coordinates
+
+
         return
 
-    def add_variable(self, name=None, locked=False):
+    def __len__(self):
+        return self.npoints
+
+    def add_variable(self, name=None, lname=None, locked=False):
         """
         Create a Quagmire mesh variable.
 
@@ -134,7 +151,7 @@ class CommonMesh(object):
             Instantiate a `quagmire.mesh.basemesh.MeshVariable`.
         """
         from quagmire.mesh import MeshVariable
-        return MeshVariable(name=name, mesh=self, locked=locked)
+        return MeshVariable(name=name, mesh=self, lname=lname, locked=locked)
 
     def get_label(self, label):
         """
@@ -262,13 +279,14 @@ class CommonMesh(object):
         # data structures. For this we need to crack open the HDF5
         # file we just saved and write attributes on a 'quagmire' group
 
-        with h5py.File(file, mode='r+', driver='mpio', comm=comm) as h5:
-            quag = h5.create_group('quagmire')
-            quag.attrs['id']                  = self.id
-            quag.attrs['verbose']             = self.verbose
-            quag.attrs['radius']              = radius
-            quag.attrs['downhill_neighbours'] = self.downhill_neighbours
-            quag.attrs['topography_modified'] = self._topography_modified_count
+        if comm.rank == 0:
+            with h5py.File(file, mode='r+') as h5:
+                quag = h5.create_group('quagmire')
+                quag.attrs['id']                  = self.id
+                quag.attrs['verbose']             = self.verbose
+                quag.attrs['radius']              = radius
+                quag.attrs['downhill_neighbours'] = self.downhill_neighbours
+                quag.attrs['topography_modified'] = self._topography_modified_count
 
         return
 
@@ -324,14 +342,15 @@ class CommonMesh(object):
             (minX, maxX), (minY, maxY) = self.dm.getBoundingBox()
             resX, resY = self.dm.getSizes()
 
-            with h5py.File(hdf5_filename, mode='r+', driver='mpio', comm=comm) as h5:
-                geom = h5.create_group('geometry')
-                geom.attrs['minX'] = minX
-                geom.attrs['maxX'] = maxX
-                geom.attrs['minY'] = minY
-                geom.attrs['maxY'] = maxY
-                geom.attrs['resX'] = resX
-                geom.attrs['resY'] = resY
+            if comm.rank == 0:
+                with h5py.File(hdf5_filename, mode='r+') as h5:
+                    geom = h5.create_group('geometry')
+                    geom.attrs['minX'] = minX
+                    geom.attrs['maxX'] = maxX
+                    geom.attrs['minY'] = minY
+                    geom.attrs['maxY'] = maxY
+                    geom.attrs['resX'] = resX
+                    geom.attrs['resY'] = resY
 
 
     def save_field_to_hdf5(self, hdf5_filename, *args, **kwargs):

@@ -1,48 +1,73 @@
-name: Deploy docs to gh-pages
+name: API docs / pdoc3 
 
-on: 
+# We should trigger this from an upload event 
+
+on:
   push:
-    branches:
-      - master
+    branches: [master, dev]
+
+  workflow_run:
+    workflows: ["Conda Deployment"]
+    branches: [master]
+    types: 
+      - completed
+
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: goanpeca/setup-miniconda@v1
+  
+      - name: Cache conda
+        uses: actions/cache@v1
+        env:
+        # Increase this value to reset cache if etc/example-environment.yml has not changed
+          CACHE_NUMBER: 0
         with:
-          python-version: '3.7'
+          path: |
+            ~/conda_pkgs_dir
+            ~/.cache/pip
+            
+          key: ubu-pdoc-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('.github/workflows/resources/conda_api_docs_environment.yml') }}
 
-      - name: Install dependencies with conda
+      - name: Miniconda + Cache
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+            miniconda-version: "latest"
+            environment-file: .github/workflows/resources/conda_api_docs_environment.yml
+            activate-environment: conda-build-docs
+            python-version: 3.7
+            use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
+
+
+      - name: Install quagmire 
         shell: bash -l {0}
         run: |
-          conda install pip 
-          conda install -c conda-forge compilers numpy scipy sympy
-          conda install -c conda-forge petsc4py petsc mpi4py h5py
-          conda install -c conda-forge pint 
-          conda install -c underworldcode stripy
-
-      - name: Install pdoc3
-        shell: bash -l {0}
-        run: |
-          pip install pdoc3
-
-      - name: Install (self)
-        shell: bash -l {0}
-        run: |
-          python --version 
+          VERSION=`python setup.py --version`
+          # install latest quagmire via conda, then over-ride with this source code
           pip install -e .
-   
+
       - name: Build docs with pdoc
         shell: bash -l {0}
         run: |
+          VERSION=`python setup.py --version`
+          echo "VERSION=$(echo $VERSION)" >> $GITHUB_ENV
           mkdir -p docs
-          pdoc3 --config latex_math=True --html -o docs --force quagmire 
+          cd docs
+          pdoc --config latex_math=True --html -o api --force quagmire
+
+      # Here we can add an action to build the jupyter book to a different directory 
+      # and then they can be uploaded together. The jupyter book can contain a link to the
+      # API docs.
 
       # Note deploy key needs the ----BEGIN ... KEY---- lines too
-      - name: Deploy docs to gh-pages
+      - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
+        
         with:
           deploy_key: ${{ secrets.GH_PAGES_DEPLOY_PR_KEY }}
-          publish_dir: docs/quagmire
+          destination_dir: ${{ env.VERSION }}_api
+          publish_dir: docs/api/quagmire
+

@@ -19,6 +19,8 @@ along with Quagmire.  If not, see <http://www.gnu.org/licenses/>.
 import quagmire
 import numpy as _np
 from .function_classes import LazyEvaluation as _LazyEvaluation
+from .function_classes import parameter as _parameter
+
 from mpi4py import MPI as _MPI
 _comm = _MPI.COMM_WORLD
 
@@ -42,15 +44,19 @@ def _all_reduce(array, name):
     return garray
 
 def _make_reduce_op(name, lazyFn):
-    newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+    newLazyFn = _LazyEvaluation()
     newLazyFn.evaluate = lambda *args, **kwargs : _all_reduce(lazyFn.evaluate(*args, **kwargs), name)
-    newLazyFn.gradient = lambda *args, **kwargs : _all_reduce(lazyFn.gradient(*args, **kwargs), name)
     newLazyFn.description = "{}({})".format(name, lazyFn.description)
     newLazyFn.dependency_list = lazyFn.dependency_list
+    newLazyFn.derivative = lambda dirn : _parameter(0.0)
     return newLazyFn
 
 
 ## global-safe reduction operations
+
+## The array size seems problematic here since it is a mesh property 
+## and meshes may be different for different pieces of the function
+## Does it not only work this way if a mesh is the argument ?
 
 def min(lazyFn, axis=None):
     return _make_reduce_op("MIN", lazyFn)

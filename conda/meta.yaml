@@ -1,0 +1,58 @@
+{% set name = "quagmire" %}
+{% set data = load_setup_py_data() %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ data.get('version') }}
+
+source:
+  path: ..
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - {{ compiler('fortran') }}
+    - make
+    - pkg-config
+    - setuptools
+    - numpy >=1.16
+  host:
+    - python
+    - petsc4py
+    - h5py
+  run:
+    - python
+    - numpy
+    - scipy
+    - stripy
+    - petsc4py
+    - mpi4py
+    - h5py
+    - pint
+    - fs
+    - fs.webdavfs
+
+
+test:
+  requires:
+    - pytest 
+
+  source_files:
+      - tests
+
+  commands:
+    - pytest
+
+
+
+    
+
+about:
+  home: "https://github.com/underworldcode/quagmire"
+
+extra:
+  recipe-maintainers:
+    - lmoresi
+    - brmather
+    - rbeucher

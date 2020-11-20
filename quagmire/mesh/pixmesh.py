@@ -38,6 +38,8 @@ from petsc4py import PETSc
 # comm = MPI.COMM_WORLD
 from time import perf_counter
 from .commonmesh import CommonMesh as _CommonMesh
+from scipy.ndimage import map_coordinates as _map_coordinates
+from quagmire.function import LazyEvaluation as _LazyEvaluation
 
 try: range = xrange
 except: pass
@@ -108,6 +110,7 @@ class PixMesh(_CommonMesh):
 
     def __init__(self, dm, verbose=True, *args, **kwargs):
         from scipy.spatial import cKDTree as _cKDTree
+        from scipy.interpolate import RegularGridInterpolator
 
         # initialise base mesh class
         super(PixMesh, self).__init__(dm, verbose)
@@ -143,8 +146,8 @@ class PixMesh(_CommonMesh):
 
 
         # Get local coordinates
-        self.coords = dm.getCoordinatesLocal().array.reshape(-1,2)
-        self.data = self.coords
+        self._coords = dm.getCoordinatesLocal().array.reshape(-1,2)
+        self._data = self._coords
 
         (minX, maxX), (minY, maxY) = dm.getLocalBoundingBox()
 
@@ -156,7 +159,7 @@ class PixMesh(_CommonMesh):
 
         # cKDTree
         t = perf_counter()
-        self.cKDTree = _cKDTree(self.coords)
+        self.cKDTree = _cKDTree(self._coords)
         self.timings['cKDTree'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank == 0 and self.verbose:
             print("{} - cKDTree {}s".format(self.dm.comm.rank, perf_counter()-t))
@@ -203,7 +206,89 @@ class PixMesh(_CommonMesh):
         self._radius = 1.0
 
 
-    def derivative_grad(self, PHI):
+    @property
+    def data(self):
+        """
+        Cartesian coordinates of local mesh points.
+
+        `data` is of shape (npoints, 2)
+
+        Being a `TriMesh` object, `self.data` are identical to `self.coords`
+        """
+        return self._data
+    
+    @property
+    def coords(self):
+        """
+        Cartesian coordinates of local mesh points
+
+        `coords` is of shape (npoints, 2)
+
+        Being a `TriMesh` object, `self.coords` are identical to `self.data`
+        """
+        return self._coords
+
+
+    def interpolate(self, xi, yi, zdata, order=1):
+        """
+        Maps the value at unstructured coordinates from a regular 2D grid.
+        Uses the `scipy.ndimage.map_coordinates` function with linear interpolation
+        
+        Parameters
+        ----------
+        xi : array shape (l,)
+            interpolation coordinates in the x direction
+        yi : array shape (l,)
+            interpolation coordinates in the y direction
+        zdata : array shape (n,)
+            field on the mesh to interpolate xi, yi coordinates
+        order : int
+            order of interpolation (default: 1)
+            - 0: nearest interpolation
+            - 1: linear interpolation
+            - 3: cubic interpolation
+         
+        Returns
+        -------
+        ival : array shape (l,)
+            interpolated values at xi,yi coordinates
+        ierr : array shape (l,)
+            flags values that are inside or outside local bounds
+            - 0 inside the local mesh bounds (interpolation)
+            - 1 outside the local mesh bounds (extrapolation)
+        """
+        grid = np.array(zdata).reshape(self.ny, self.nx)
+        
+        icoords = np.array(np.c_[xi,yi], dtype=np.float)
+
+        # check if inside bounds
+        inside_bounds = np.zeros(icoords.shape[0], dtype=np.bool)
+        inside_bounds += icoords[:,0] < self.minX
+        inside_bounds += icoords[:,0] > self.maxX
+        inside_bounds += icoords[:,1] < self.minY
+        inside_bounds += icoords[:,1] > self.maxY
+
+        # normalise coordinates within extent
+        icoords[:,0] -= self.minX
+        icoords[:,1] -= self.minY
+        icoords[:,0] /= (self.maxX - self.minX)
+        icoords[:,1] /= (self.maxY - self.minY)
+        
+        # icoords now somewhere within range [0, 1]
+        # project coordinates to the number of grid indices
+        icoords[:,0] *= self.nx - 1
+        icoords[:,1] *= self.ny - 1
+
+        # now interpolate
+        ival = _map_coordinates(grid.T, icoords.T, order=order, mode='nearest')
+        
+        return ival, inside_bounds.astype(np.int)
+
+    def derivatives(self, PHI, **kwargs):
+        return self.derivative_grad(PHI, **kwargs)
+
+
+    def derivative_grad(self, PHI, **kwargs):
         """
         Compute derivatives of PHI in the x, y directions.
         This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
@@ -225,9 +310,12 @@ class PixMesh(_CommonMesh):
             first partial derivative of PHI in y direction
         """
         u = PHI.reshape(self.ny, self.nx)
-        u_x, u_y = np.gradient(u, self.dx, self.dy)
+        u_y, u_x = np.gradient(u, self.dy, self.dx)
+        grads = np.ndarray((self.nx * self.ny, 2))
+        grads[:, 0] = u_x.ravel()
+        grads[:, 1] = u_y.ravel()
 
-        return u_x.ravel(), u_y.ravel()
+        return grads
 
 
     def derivative_div(self, PHIx, PHIy):
@@ -250,8 +338,8 @@ class PixMesh(_CommonMesh):
         del2PHI : ndarray of floats, shape (n,)
             second derivative of PHI
         """
-        u_xx, u_xy = self.derivative_grad(PHIx)
-        u_yx, u_yy = self.derivative_grad(PHIy)
+        u_xx = self.derivative_grad(PHIx)[:, 0]
+        u_yy = self.derivative_grad(PHIy)[:, 1]
 
         return u_xx + u_yy
 
@@ -298,7 +386,7 @@ class PixMesh(_CommonMesh):
 
         natural_neighbours = np.empty((self.npoints, 9), dtype=np.int)
         nodes = np.arange(0, self.npoints, dtype=np.int).reshape(self.ny,self.nx)
-        index = np.pad(nodes, (1,1), constant_values=-1)
+        index = np.pad(nodes, (1,1), mode='constant', constant_values=-1)
 
 
         natural_neighbours[:,0] = index[1:-1,1:-1].flat  # self
@@ -511,7 +599,7 @@ class PixMesh(_CommonMesh):
                 return smooth_node_values
 
 
-            def smooth_fn(inner_self, lazyFn, iterations=None):
+            def smooth_fn(inner_self, meshVar, iterations=None):
 
                 if iterations is None:
                         iterations = inner_self.iterations
@@ -519,13 +607,13 @@ class PixMesh(_CommonMesh):
                 def smoother_fn(*args, **kwargs):
                     import quagmire
 
-                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(lazyFn, iterations=iterations)
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(meshVar, iterations=iterations)
 
-                    if len(args) == 1 and args[0] == lazyFn._mesh:
+                    if len(args) == 1 and args[0] == meshVar._mesh:
                         return smooth_node_values
                     elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
                         mesh = args[0]
-                        return inner_self._mesh.interpolate(lazyFn._mesh.coords[:,0], lazyFn._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                        return inner_self._mesh.interpolate(meshVar._mesh.coords[:,0], meshVar._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
                     else:
                         xi = np.atleast_1d(args[0])
                         yi = np.atleast_1d(args[1])
@@ -533,9 +621,9 @@ class PixMesh(_CommonMesh):
                         return i
 
 
-                newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+                newLazyFn = _LazyEvaluation()
                 newLazyFn.evaluate = smoother_fn
-                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(lazyFn.description, inner_self.delta, iterations)
+                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(meshVar.description, inner_self.delta, iterations)
 
                 return newLazyFn
 

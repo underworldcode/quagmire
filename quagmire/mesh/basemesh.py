@@ -28,10 +28,299 @@ except: pass
 ## These also need to be lazy evaluation objects
 
 from ..function import LazyEvaluation as _LazyEvaluation
+from ..function import vector_field as _vector
+
+
+import numpy as np
+
+class MeshFunction(_LazyEvaluation):
+    """
+    A class of Lazy Evaluation Functions that require an underlying mesh.
+
+    Parameters
+    ----------
+    name : str
+        Assign the MeshVariable a unique identifier
+    mesh : quagmire mesh object
+        The supporting mesh for the variable
+    """
+    
+    def __init__(self, name, mesh, lname=None):
+        super(MeshFunction, self).__init__()
+
+        self._mesh = mesh
+        self._dm = mesh.dm
+        self._name = str(name)
+        self.description = self._name
+        self.mesh_data = False
+
+        xi0 = self._mesh.coordinates.xi0
+        xi1 = self._mesh.coordinates.xi1
+
+        self.coordinate_system = mesh.coordinate_system
+
+        if lname is not None:
+            self.latex = lname+r"\left({},{}\right)".format(xi0.latex, xi1.latex)
+        else:
+            self.latex = self.description
+
+
+    def rename(self, name=None, lname=None):
+        """
+        Rename this MeshVariable
+        """
+
+        if name is None:
+            return
+
+        self._name = str(name)
+        self._ldata.setName(name)
+        self.description = self._name
+
+        xi0 = self._mesh.coordinates.xi0
+        xi1 = self._mesh.coordinates.xi1
+
+
+        if lname is not None:
+            self.latex = lname+r"\left({},{}\right)".format(xi0.latex, xi1.latex)
+        else:
+            self.latex = self.description
+
+
+    def evaluate(self, input=None, **kwargs):
+        """
+        If the argument is a mesh, return the values at the nodes.
+        In all other cases call the `interpolate` method.
+
+        But note the way that interpolate calls this method with the mesh to 
+        get values at the mesh nodes - this needs to be implemented correctly or 
+        the interpolate method needs to be over-ridden as well.
+        """
+
+        ## This should be NotImplemented ... evaluate is to be defined 
+        ## for any subclass
+
+        import quagmire
+
+        ## this should be replaced by an operation that returns the
+        ## np.array of the correct dimension
+
+        array = np.zeros(self._mesh.npoints)
+
+        if input is not None:
+            if isinstance(input, (quagmire.mesh.trimesh.TriMesh, 
+                                  quagmire.mesh.pixmesh.PixMesh,
+                                  quagmire.mesh.strimesh.sTriMesh)):
+                if input == self._mesh:
+                    return array
+                else:
+                    return self._interpolate(input.coords[:,0], input.coords[:,1], **kwargs)
+
+            elif isinstance(input, (tuple, list, np.ndarray)):
+                input = np.array(input)
+                input = np.reshape(input, (-1, 2))
+                return self._interpolate(input[:, 0], input[:,1], **kwargs)
+        else:
+            return array
+
+
+    def _interpolate(self, xi, yi, err=False, **kwargs):
+        """
+        Interpolate function to a set of coordinates
+
+        This method just passes the coordinates to the interpolation
+        methods on the mesh object.
+
+        Parameters
+        ----------
+        xi : array of floats, shape (l,)
+            interpolation coordinates in the x direction
+        yi : array of floats, shape (l,)
+            interpolation coordinates in the y direction
+        err : bool (default: False)
+            toggle whether to return error information
+        **kwargs : keyword arguments
+            optional arguments to pass through to the interpolation method
+
+        Returns
+        -------
+        interp : array of floats, shape (l,)
+            interpolated values of MeshVariable at xi,yi coordinates
+        err : array of ints, shape (l,)
+            error information to diagnose interpolation / extrapolation
+        """
+        ## pass through for the mesh's interpolate method
+        import numpy as np
+
+        mesh = self._mesh
+        PHI = self.evaluate(input=self._mesh)
+
+        xi_array = np.array(xi).reshape(-1,1)
+        yi_array = np.array(yi).reshape(-1,1)
+
+        i, e = mesh.interpolate(xi_array, yi_array, zdata=PHI, **kwargs)
+
+        if err:
+            return i, e
+        else:
+            return i
 
 
 
-class MeshVariable(_LazyEvaluation):
+    def derivative(self, dirn):
+        """Numerical derivative on the mesh - Note this is the derivative rather than the
+        gradient for a curvilinear mesh - hence the companion derivative_grad function"""
+
+        import quagmire
+
+        diff_mesh = self._mesh
+
+        def new_fn_x(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return dxy[:,0]
+
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,0], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,0])
+                return i
+
+        def new_fn_y(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return dxy[:,1]
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,1], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,1])
+                return i
+
+        newLazyFn_dx = MeshFunction(name="ddx0-"+self._name, mesh=self._mesh)
+        newLazyFn_dx.evaluate = new_fn_x
+        newLazyFn_dx.description = "d({})/d0".format(self.description)
+        newLazyFn_dx.latex = r"\frac{{ \partial }}{{\partial \xi_0}}{}".format(self.latex)
+        newLazyFn_dx.exposed_operator = "d"
+
+        newLazyFn_dy = MeshFunction(name="ddx1-"+self._name, mesh=self._mesh)
+        newLazyFn_dy.evaluate = new_fn_y
+        newLazyFn_dy.description = "d({})/dY".format(self.description)
+        newLazyFn_dy.latex = r"\frac{{\partial}}{{\partial \xi_1}}{}".format(self.latex)
+        newLazyFn_dy.exposed_operator = "d"
+
+
+        if dirn == 0:
+            return newLazyFn_dx
+        elif dirn == 1:
+            return newLazyFn_dy
+
+
+    ## No appreciable acceleration for grad by itself, or div 
+
+    def grad(self):
+        return self.fn_gradient(dirn =-1)
+
+    def slope(self):
+        return self.fn_gradient(dirn = "Slope")
+
+    def fn_gradient(self, dirn=None):
+        """
+        The generic mechanism for obtaining the gradient of a lazy variable is
+        to evaluate the values on the mesh at the time in question and use the mesh gradient
+        operators to compute the new values.
+        Sub classes may have more efficient approaches. MeshVariables have
+        stored data and don't need to evaluate values. Parameters have Gradients
+        that are identically zero ... etc
+        """
+
+        import quagmire
+
+        diff_mesh = self._mesh
+
+        def new_fn_x(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return dxy[:,0]
+
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,0], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,0])
+                return i
+
+        def new_fn_y(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return dxy[:,1]
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dxy[:,1], **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=dxy[:,1])
+                return i
+
+        def new_fn_slope(*args, **kwargs):
+            local_array = self.evaluate(diff_mesh)
+            dxy = diff_mesh.derivative_grad(local_array, nit=10, tol=1e-8)
+
+            if len(args) == 1 and args[0] is diff_mesh:
+                return np.hypot(dxy[:,0], dxy[:,1])
+            elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
+                mesh = args[0]
+                return diff_mesh.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=np.hypot(dxy[:,0], dxy[:,1]), **kwargs)
+            else:
+                coords = np.array(args).reshape(-1,2)
+                i, ierr = diff_mesh.interpolate(coords[:,0], coords[:,1], zdata=np.hypot(dxy[:,0], dxy[:,1]))
+                return i
+
+        newLazyFn_dx = MeshFunction(name="grad0-"+self._name, mesh=self._mesh)
+        newLazyFn_dx.coordinate_system = self._mesh.coordinate_system
+        newLazyFn_dx.evaluate = new_fn_x
+        newLazyFn_dx.description = "grad({})|x0".format(self.description)
+        newLazyFn_dx.latex = r"\left. \nabla({})\right|_0".format(self.latex)
+        newLazyFn_dx.exposed_operator = "S"
+
+        newLazyFn_dy = MeshFunction(name="grad1-"+self._name, mesh=self._mesh)
+        newLazyFn_dy.coordinate_system = self._mesh.coordinate_system
+        newLazyFn_dy.evaluate = new_fn_y
+        newLazyFn_dy.description = "grad({})|x1".format(self.description)
+        newLazyFn_dy.latex = r"\left. \nabla({})\right|_1".format(self.latex)
+        newLazyFn_dy.exposed_operator = "S"
+
+        newLazyFn_slope = MeshFunction(name="slope-"+self._name, mesh=self._mesh)
+        newLazyFn_slope.coordinate_system = self._mesh.coordinate_system
+        newLazyFn_slope.evaluate = new_fn_slope
+        newLazyFn_slope.description = "slope({})".format(self.description)
+        newLazyFn_slope.latex = r"\left| \nabla {} \right|".format(self.latex)
+        newLazyFn_slope.exposed_operator = "S"
+
+
+        if dirn == 0:
+            return newLazyFn_dx
+        elif dirn == 1:
+            return newLazyFn_dy
+        elif dirn == -1:
+            return _vector(newLazyFn_dx, newLazyFn_dy)
+        else:
+            return newLazyFn_slope
+
+
+class MeshVariable(MeshFunction):
     """
     The MeshVariable class generates a variable supported on the mesh.
 
@@ -44,13 +333,9 @@ class MeshVariable(_LazyEvaluation):
     mesh : quagmire mesh object
         The supporting mesh for the variable
     """
-    def __init__(self, name=None, mesh=None, locked=False):
-        super(MeshVariable, self).__init__()
+    def __init__(self, name=None, mesh=None, lname=None, locked=False):
+        super(MeshVariable, self).__init__(name=name, mesh=mesh, lname=lname)
 
-        self._mesh = mesh
-        self._dm = mesh.dm
-        self._name = str(name)
-        self.description = self._name
         self._locked = locked
         self.mesh_data = True
 
@@ -58,6 +343,10 @@ class MeshVariable(_LazyEvaluation):
         self._ldata = self._dm.createLocalVector()
         self._ldata.setName(name)
         return
+
+    def __repr__(self):
+        return "quagmire.MeshFunction: {}".format(self.description)
+    
 
     def copy(self, name=None, locked=None):
         """
@@ -137,7 +426,6 @@ class MeshVariable(_LazyEvaluation):
         if type(val) is float:
                 self._ldata.set(val)
         else:
-            from petsc4py import PETSc
             self._ldata.setArray(val)
 
 
@@ -202,7 +490,7 @@ class MeshVariable(_LazyEvaluation):
         return
 
 
-    def save(self, hdf5_filename, append=True):
+    def save(self, hdf5_filename, append=False):
         """
         Save the MeshVariable to disk.
 
@@ -250,7 +538,7 @@ class MeshVariable(_LazyEvaluation):
 
         return
 
-    def load(self, hdf5_filename):
+    def load(self, hdf5_filename, name=None):
         """
         Load the MeshVariable from disk.
 
@@ -265,10 +553,17 @@ class MeshVariable(_LazyEvaluation):
         Provided files must be in hdf5 format, and contain a vector the same
         size and with the same name as the current MeshVariable
         """
+        if self._locked:
+            raise ValueError("quagmire.MeshVariable: {} - is locked".format(self.description))
+
         from petsc4py import PETSc
         # need a global vector
         gdata = self._dm.getGlobalVec()
-        gdata.setName(self._ldata.getName())
+
+        if name is None:
+            gdata.setName(self._ldata.getName())
+        else:
+            gdata.setName(str(name))
 
         ViewHDF5 = PETSc.Viewer()
         ViewHDF5.createHDF5(str(hdf5_filename), mode='r')
@@ -280,7 +575,117 @@ class MeshVariable(_LazyEvaluation):
         self._dm.restoreGlobalVec(gdata)
 
 
-    def gradient(self, nit=10, tol=1e-8):
+    def load_from_cloud_fs(self, cloud_hdf5_filename, cloud_location_handle=None, name=None):
+        """
+        Load the MeshVariable from a cloud_location pointed to by
+        a pyfilesystem object. 
+
+        Parameters
+        ----------
+
+        cloud_location: 
+
+        cloud_hdf5_filename: str
+            The filename for the hdf5 file in the cloud. It should be possible to do 
+            a cloud_location_handle.listdir(".") to check the file names
+
+        Notes
+        -----
+        Cloud files must be in hdf5 format, and contain a vector the same
+        size and with the same name as the current MeshVariable 
+        """
+
+        from quagmire.tools import cloud_fs
+
+        if not cloud_fs:
+            print("Cloud services are not available - they require fs and fs.webdav packages")
+            return
+
+        from petsc4py import PETSc
+        import os
+
+        from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, cloud_download
+
+        if self._locked:
+            raise ValueError("quagmire.MeshVariable: {} - is locked".format(self.description))
+
+        if cloud_location_handle is None:
+           cloud_location_handle = quagmire_cloud_fs
+
+        local_filename = os.path.basename(cloud_hdf5_filename)
+        tempfile = os.path.join(quagmire_cloud_cache_dir_name, str(local_filename))
+            
+        cloud_download(cloud_hdf5_filename, tempfile, cloud_location_handle)
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(tempfile, mode='r')
+
+        gdata = self._dm.getGlobalVec()
+        if name is None:
+            gdata.setName(self._ldata.getName())
+        else:
+            gdata.setName(str(name))
+
+        gdata.load(ViewHDF5)
+
+        ViewHDF5.destroy()
+        ViewHDF5 = None
+
+        self._dm.globalToLocal(gdata, self._ldata)
+        self._dm.restoreGlobalVec(gdata)
+
+        return
+
+
+    def load_from_url(self, url, name=None):
+        """ Load an hdf5 file pointed to by a publicly accessible url """
+
+        from quagmire.tools import cloud_fs
+
+        from petsc4py import PETSc
+        import os
+
+        from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, url_download
+
+        if self._locked:
+            raise ValueError("quagmire.MeshVariable: {} - is locked".format(self.description))
+
+        tempfile = os.path.join(quagmire_cloud_cache_dir_name, self._name+".h5") 
+        # print("creating file {}".format(tempfile))
+
+
+        url_download(url, tempfile)
+
+        ViewHDF5 = PETSc.Viewer()
+        ViewHDF5.createHDF5(tempfile, mode='r')
+
+        gdata = self._dm.getGlobalVec()
+        if name is None:
+            gdata.setName(self._ldata.getName())
+        else:
+            gdata.setName(str(name))
+        gdata.load(ViewHDF5)
+
+        ViewHDF5.destroy()
+        ViewHDF5 = None
+
+        self._dm.globalToLocal(gdata, self._ldata)
+        self._dm.restoreGlobalVec(gdata)
+
+        return
+
+    def derivative(self, dirn):
+        """ (Lazy) Derivative in direction given by dirn """
+
+        if str(dirn) in "1":
+            lazyFn = self.fn_gradient(1)
+        else:
+            lazyFn = self.fn_gradient(0)
+
+        return lazyFn
+
+
+    def _gradient(self, nit=10, tol=1e-8):
         """
         Compute values of the derivatives of PHI in the x, y directions at the nodal points.
         This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
@@ -293,6 +698,7 @@ class MeshVariable(_LazyEvaluation):
             number of iterations to reach convergence
         tol : float optional (default: 1e-8)
             convergence is reached when this tolerance is met
+
         Returns
         -------
         PHIx : ndarray of floats, shape (n,)
@@ -300,65 +706,7 @@ class MeshVariable(_LazyEvaluation):
         PHIy : ndarray of floats, shape (n,)
             first partial derivative of PHI in y direction
         """
-
-        dx, dy = self._mesh.derivative_grad(self._ldata.array, nit, tol)
-
-        return dx, dy
-
-
-    def gradient_patch(self):
-        """
-        Compute values of the derivatives of PHI in the x, y directions at the nodal points.
-        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
-
-        Parameters
-        ----------
-        PHI : ndarray of floats, shape (n,)
-            compute the derivative of this array
-
-        Returns
-        -------
-        PHIx : ndarray of floats, shape(n,)
-            first partial derivative of PHI in x direction
-        PHIy : ndarray of floats, shape(n,)
-            first partial derivative of PHI in y direction
-        """
-
-        def bf_gradient_node(node):
-
-            xx = self.coords[node,0]
-            yy = self.coords[node,1]
-
-            from scipy.optimize import curve_fit
-
-            def linear_fit_2D(X, a, b, c):
-                # (1+x) * (1+y) etc
-                x,y = X
-                fit = a + b * x + c * y
-                return fit
-
-            location = np.array([xx,yy]).T
-
-            ## Just try near neighbours ?
-            stencil_size=mesh.near_neighbours[node]
-
-
-            d, patch_points = self.cKDTree.query(location, k=stencil_size)
-            x,y = self.coords[patch_points].T
-            data = temperature.evaluate(x, y)
-            popt, pcov = curve_fit(linear_fit_2D, (x,y), data)
-            ddx = popt[1]
-            ddy = popt[2]
-
-            return(ddx, ddy)
-
-
-        dx = np.empty(self.npoints)
-
-        dx, dy = self._mesh.derivative_grad(self._ldata.array, nit, tol)
-
-        return dx, dy
-
+        return self._mesh.derivative_grad(self._ldata.array, nit, tol)
 
 
     def interpolate(self, xi, yi, err=False, **kwargs):
@@ -410,14 +758,19 @@ class MeshVariable(_LazyEvaluation):
 
         import quagmire
 
-        if len(args) == 1 and args[0] == self._mesh:
+        if len(args) == 0:
             return self._ldata.array
-        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, quagmire.mesh.pixmesh.PixMesh) ):
-            mesh = args[0]
-            return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], **kwargs)
-        else:
-            return self.interpolate(*args, **kwargs)
 
+        if (len(args) == 1 and args[0] is self._mesh):
+            return self._ldata.array
+        elif len(args) == 1 and isinstance(args[0], (quagmire.mesh.trimesh.TriMesh, 
+                                                     quagmire.mesh.pixmesh.PixMesh,
+                                                     quagmire.mesh.strimesh.sTriMesh) ):
+            mesh = args[0]
+            return self._interpolate(mesh.coords[:,0], mesh.coords[:,1], **kwargs).reshape(-1)
+        else:
+            coords = np.array(args).reshape(-1,2)
+            return self._interpolate(coords[:,0], coords[:,1], **kwargs).reshape(-1)
 
 
     ## Basic global operations provided by petsc4py
@@ -518,7 +871,7 @@ class VectorMeshVariable(MeshVariable):
         If the argument is a mesh, return the values at the nodes.
         In all other cases call the `interpolate` method.
         """
-        return self.interpolate(*args, **kwargs)
+        return self._interpolate(*args, **kwargs)
 
 
     def norm(self, axis=1):

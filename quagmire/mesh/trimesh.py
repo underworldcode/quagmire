@@ -188,13 +188,36 @@ class TriMesh(_CommonMesh):
             print(("{} - Construct rbf weights {}s".format(self.dm.comm.rank, perf_counter()-t)))
 
         self.root = False
-        self.coords = self.tri.points
-        self.data = self.coords
+        self._coords = self.tri.points
+        self._data = self._coords
         self.interpolate = self.tri.interpolate
 
         # functions / parameters that are required for compatibility among FlatMesh types
         self._derivative_grad_cartesian = self.derivative_grad
         self._radius = 1.0
+
+
+    @property
+    def data(self):
+        """
+        Cartesian coordinates of local mesh points.
+
+        `data` is of shape (npoints, 2)
+
+        Being a `TriMesh` object, `self.data` are identical to `self.coords`
+        """
+        return self._data
+    
+    @property
+    def coords(self):
+        """
+        Cartesian coordinates of local mesh points
+
+        `coords` is of shape (npoints, 2)
+
+        Being a `TriMesh` object, `self.coords` are identical to `self.data`
+        """
+        return self._coords
 
 
     def calculate_area_weights(self):
@@ -239,6 +262,9 @@ class TriMesh(_CommonMesh):
         """
         return self.natural_neighbours[point,1:self.natural_neighbours_count[point]]
 
+    def derivatives(self, PHI, nit=10, tol=1e-8):
+        return self.derivative_grad(PHI, nit=10, tol=1e-8)
+
 
     def derivative_grad(self, PHI, nit=10, tol=1e-8):
         """
@@ -261,7 +287,11 @@ class TriMesh(_CommonMesh):
         PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         """
-        return self.tri.gradient(PHI, nit, tol)
+        u_x, u_y = self.tri.gradient(PHI, nit, tol)
+        grads = np.ndarray((u_x.size, 2))
+        grads[:, 0] = u_x
+        grads[:, 1] = u_y
+        return grads
 
 
     def derivative_div(self, PHIx, PHIy, **kwargs):
@@ -284,8 +314,8 @@ class TriMesh(_CommonMesh):
         del2PHI : ndarray of floats, shape (n,)
             second derivative of PHI
         """
-        u_xx, u_xy = self.derivative_grad(PHIx, **kwargs)
-        u_yx, u_yy = self.derivative_grad(PHIy, **kwargs)
+        u_xx = self.derivative_grad(PHIx, **kwargs)[0]
+        u_yy = self.derivative_grad(PHIy, **kwargs)[1]
 
         return u_xx + u_yy
 
@@ -536,7 +566,7 @@ class TriMesh(_CommonMesh):
                 return smooth_node_values
 
 
-            def smooth_fn(inner_self, lazyFn, iterations=None):
+            def smooth_fn(inner_self, meshVar, iterations=None):
 
                 if iterations is None:
                         iterations = inner_self.iterations
@@ -544,13 +574,13 @@ class TriMesh(_CommonMesh):
                 def smoother_fn(*args, **kwargs):
                     import quagmire
 
-                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(lazyFn, iterations=iterations)
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(meshVar, iterations=iterations)
 
-                    if len(args) == 1 and args[0] == lazyFn._mesh:
+                    if len(args) == 1 and args[0] == meshVar._mesh:
                         return smooth_node_values
                     elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
                         mesh = args[0]
-                        return inner_self._mesh.interpolate(lazyFn._mesh.coords[:,0], lazyFn._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                        return inner_self._mesh.interpolate(meshVar._mesh.coords[:,0], meshVar._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
                     else:
                         xi = np.atleast_1d(args[0])
                         yi = np.atleast_1d(args[1])
@@ -558,9 +588,9 @@ class TriMesh(_CommonMesh):
                         return i
 
 
-                newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+                newLazyFn = _LazyEvaluation()
                 newLazyFn.evaluate = smoother_fn
-                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(lazyFn.description, inner_self.delta, iterations)
+                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(meshVar.description, inner_self.delta, iterations)
 
                 return newLazyFn
 

@@ -2,7 +2,7 @@
 #  Short docker file to distribute some notebooks
 #################################################
 
-ARG FROMIMG_ARG=underworldcode/petsc4py:3.11.2-slim
+ARG FROMIMG_ARG=underworldcode/petsc4py:3.13.2-slim
 FROM ${FROMIMG_ARG}
 
 #################################################
@@ -17,7 +17,8 @@ RUN python3 -m pip install --upgrade --no-cache-dir \
 	lavavu \
 	pyvirtualdisplay \
 	pytest \
-	webdav
+	webdav \
+	sympy
 
 
 # Add examples
@@ -80,18 +81,17 @@ RUN chown -R jovyan:jovyan $NB_WORK
 ENV MODULE_DIR="quagmire-src"
 ADD --chown=jovyan:jovyan . / $MODULE_DIR/
 RUN cd $MODULE_DIR && python3 -m pip install --no-deps --no-cache-dir --upgrade . && \
-    cd .. && rm -rf $MODULE_DIR
+	cd .. && pytest $MODULE_DIR && \
+    rm -rf $MODULE_DIR
 
-RUN ipython3 -c 'import quagmire; quagmire.documentation.install_documentation(path="/home/jovyan/")'
+WORKDIR /home/jovyan/
+RUN git clone --depth 1 https://github.com/underworld-community/quagmire-examples-and-workflows.git
 
 
 # Trust all notebooks
 USER $NB_USER
 RUN find -name \*.ipynb  -print0 | xargs -0 jupyter trust
 
-WORKDIR /home/jovyan/
-
-ENV PATH=$PETSC_BIN:$PATH
 
 # launch notebook
-CMD ["jupyter", "notebook", "--ip='0.0.0.0'", "--NotebookApp.token='' ", "--no-browser"]
+CMD ["jupyter", "notebook", "--ip='0.0.0.0'", "--NotebookApp.token='' ", "--NotebookApp.default_url='/tree/quagmire-examples-and-workflows/README.ipynb'", "--no-browser"]

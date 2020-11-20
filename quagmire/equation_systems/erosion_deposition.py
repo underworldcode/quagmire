@@ -74,7 +74,7 @@ class ErosionDepositionEquation(object):
         return
 
     @property
-    def erostion_rate(self):
+    def erosion_rate(self):
         return self._erosion_rate
     # No setter for this ... it is defined via the mesh.setter
     @property
@@ -137,6 +137,7 @@ class ErosionDepositionEquation(object):
 
         qs = UpInt(rainfall)^m * (grad H(x,y))^2
         """
+        slope = self._mesh.topography.slope()
         rainfall_fn = self._rainfall
         m = self._m
         n = self._n
@@ -145,7 +146,7 @@ class ErosionDepositionEquation(object):
         upstream_precipitation_integral_fn = self._mesh.upstream_integral_fn(rainfall_fn)
 
         # create stream power function
-        stream_power_law_fn = upstream_precipitation_integral_fn**m * self._mesh.slope**n * self._mesh.mask
+        stream_power_law_fn = upstream_precipitation_integral_fn**m * slope**n * self._mesh.mask
         return stream_power_law_fn
 
 
@@ -218,7 +219,7 @@ class ErosionDepositionEquation(object):
         """
         Transport-limited
         """
-
+        slope = self._mesh.topography.slope()
         rainfall_fn = self._rainfall
         m = self._m
         n = self._n
@@ -229,7 +230,7 @@ class ErosionDepositionEquation(object):
         upstream_precipitation_rate_fn = upstream_precipitation_integral_fn / area
 
         # construct stream power function
-        stream_power_fn = upstream_precipitation_integral_fn**m * self._mesh.slope**n * self._mesh.mask
+        stream_power_fn = upstream_precipitation_integral_fn**m * slope**n * self._mesh.mask
 
         # only some is eroded
         erosion_rate_fn = stream_power_fn*efficiency
@@ -260,7 +261,7 @@ class ErosionDepositionEquation(object):
         # mesh variables
         erosion_rate = self._erosion_rate
         deposition_rate = self._deposition_rate
-        slope = self._mesh.slope
+        slope = self._mesh.topography.slope()
 
         # protect against dividing by zero
         min_slope = fn.parameter(1e-3)

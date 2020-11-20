@@ -1,0 +1,14 @@
+# This is the environment needed to build quagmire. As this will be cached, we can include any dependencies
+# so they are not downloaded again - this should save a bit of time
+
+name: conda-build
+channels: 
+  - conda-forge
+  - geo-down-under
+dependencies:
+  - numpy # (for setup.py)
+  - conda-build 
+  - conda-verify
+  - anaconda-client
+
+

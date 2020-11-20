@@ -38,6 +38,7 @@ from petsc4py import PETSc
 # comm = MPI.COMM_WORLD
 from time import perf_counter
 from .commonmesh import CommonMesh as _CommonMesh
+from scipy.spatial import cKDTree as _cKDTree
 
 try: range = xrange
 except: pass
@@ -108,7 +109,6 @@ class sTriMesh(_CommonMesh):
 
     def __init__(self, dm, r1=6384.4e3, r2=6352.8e3, verbose=True, *args, **kwargs):
         import stripy
-        from scipy.spatial import cKDTree as _cKDTree
 
         # initialise base mesh class
         super(sTriMesh, self).__init__(dm, verbose)
@@ -129,9 +129,13 @@ class sTriMesh(_CommonMesh):
         # r = 1.0
         # lons = np.arctan2(coords[:,1], coords[:,0])
         # lats = np.arcsin(coords[:,2]/r)
-        lons, lats = stripy.spherical.xyz2lonlat(coords[:,0], coords[:,1], coords[:,2])
 
-        self.tri = stripy.sTriangulation(lons, lats)
+        rlons, rlats = stripy.spherical.xyz2lonlat(coords[:,0], coords[:,1], coords[:,2])
+
+        lons = np.degrees(rlons)
+        lats = np.degrees(rlats)
+
+        self.tri = stripy.sTriangulation(rlons, rlats, permute=True)
         self.npoints = self.tri.npoints
         self.timings['triangulation'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank == 0 and self.verbose:
@@ -139,7 +143,9 @@ class sTriMesh(_CommonMesh):
 
 
         # Calculate geocentric radius
-        self._radius = geocentric_radius(self.tri.lats, r1, r2)
+        self._radius = geocentric_radius(lats, r1, r2)
+        self._coords = np.c_[lons, lats]
+        self._data = self.tri.points*self._radius.reshape(-1,1)
 
 
         # Calculate weigths and pointwise area
@@ -167,7 +173,7 @@ class sTriMesh(_CommonMesh):
 
         # cKDTree
         t = perf_counter()
-        self.cKDTree = _cKDTree(self.tri.points, balanced_tree=False)
+        self.cKDTree = _cKDTree(self.data, balanced_tree=False)
         self.timings['cKDTree'] = [perf_counter()-t, self.log.getCPUTime(), self.log.getFlops()]
         if self.rank == 0 and self.verbose:
             print("{} - cKDTree {}s".format(self.dm.comm.rank, perf_counter()-t))
@@ -196,14 +202,36 @@ class sTriMesh(_CommonMesh):
 
 
         self.root = False
-        self.coords = np.c_[self.tri.lons, self.tri.lats]
-        self.data = self.tri.points
-        self.interpolate = self.tri.interpolate
-
-        # functions / parameters that are required for compatibility among FlatMesh types
-        self._derivative_grad_cartesian = self.tri.gradient_xyz
 
 
+
+# We place these properties here to prevent users from mucking up the coordinates.
+# Radius is the only property to have a setter only because freedom in the vertical axis
+# doesn't mess up the graph, and is quite useful for visualisation in lavavu / paraview.
+
+## FUTURE: deforming the mesh should be via a context manager.
+
+    @property
+    def data(self):
+        """
+        Cartesian coordinates of local mesh points.
+
+        `data` is of shape (npoints, 3)
+
+        These points are projected to the radius of the sphere.
+        If `self.radius` is set to 1.0 then these points are on the unit sphere and are
+        identical to `self.tri.points`.
+        """
+        return self._data
+    
+    @property
+    def coords(self):
+        """
+        Spherical coordinates of local mesh points in degrees lon / lat.
+
+        `coords` is of shape (npoints, 2)
+        """
+        return self._coords
 
     @property
     def radius(self):
@@ -225,11 +253,60 @@ class sTriMesh(_CommonMesh):
     def radius(self, value):
         self._radius = value
 
+        # update mesh coordinates and rebuild k-d tree
+        self._data = self.tri.points*np.array(self._radius).reshape(-1,1)
+        self._update_DM_coordinates()
+        self.cKDTree = _cKDTree(self.data, balanced_tree=False)
+        self.construct_neighbour_cloud()
+
         # re-evalutate mesh area
         self.area, self.weight = self.calculate_area_weights()
         self.pointwise_area.unlock()
         self.pointwise_area.data = self.area
         self.pointwise_area.lock()
+
+
+    def _update_DM_coordinates(self):
+        """ Update the coordinates on the DM """
+        # get global coordinate vector from DM
+        global_coord_vec = self.dm.getCoordinates()
+        global_coord_vec.setArray(self.data.ravel())
+        self.dm.setCoordinates(global_coord_vec)
+
+
+    def interpolate(self, lons, lats, zdata, order=1, grad=None):
+        """
+        Base class to handle nearest neighbour, linear, and cubic interpolation.
+        Given a triangulation of a set of nodes on the unit sphere, along with data
+        values at the nodes, this method interpolates (or extrapolates) the value
+        at a given longitude and latitude.
+
+        Parameters
+        ----------
+        lons : float / array of floats, shape (l,)
+            longitudinal coordinate(s) on the sphere
+        lats : float / array of floats, shape (l,)
+            latitudinal coordinate(s) on the sphere
+        zdata : array of floats, shape (n,)
+            value at each point in the triangulation
+            must be the same size of the mesh
+        order : int (default=1)
+            order of the interpolatory function used
+            - 0 = nearest-neighbour
+            - 1 = linear
+            - 3 = cubic
+
+        Returns
+        -------
+        zi : float / array of floats, shape (l,)
+            interpolated value(s) at (lons, lats)
+        err : int / array of ints, shape (l,)
+            whether interpolation (0), extrapolation (1) or error (other)
+        """
+        rlons = np.radians(lons)
+        rlats = np.radians(lats)
+
+        return self.tri.interpolate(rlons, rlats, zdata, order, grad)
 
 
     def calculate_area_weights(self):
@@ -284,7 +361,7 @@ class sTriMesh(_CommonMesh):
         return self.natural_neighbours[point,1:self.natural_neighbours_count[point]]
 
 
-    def derivative_grad(self, PHI, nit=10, tol=1e-8):
+    def derivatives(self, PHI, nit=10, tol=1e-8):
         """
         Compute derivatives of PHI in the x, y directions.
         This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
@@ -305,12 +382,54 @@ class sTriMesh(_CommonMesh):
         PHIy : ndarray of floats, shape(n,)
             first partial derivative of PHI in y direction
         """
-        return self.tri.gradient_lonlat(PHI, nit, tol)
 
+        PHIx, PHIy = self.tri.derivatives_lonlat(PHI, nit, tol)
+        grads = np.ndarray((PHIx.size, 2))
+        grads[:, 0] = np.radians(PHIx)
+        grads[:, 1] = np.radians(PHIy)
+
+        return grads       
+
+    def derivative_grad(self, PHI, nit=10, tol=1e-8):
+        """
+        Compute gradients of PHI in the x, y directions.
+        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+
+        Arguments
+        ---------
+        PHI : ndarray of floats, shape (n,)
+            compute the derivative of this array
+        nit : int optional (default: 10)
+            number of iterations to reach convergence
+        tol : float optional (default: 1e-8)
+            convergence is reached when this tolerance is met
+
+        Returns
+        -------
+        PHIx : ndarray of floats, shape(n,)
+            first partial derivative of PHI in x direction
+        PHIy : ndarray of floats, shape(n,)
+            first partial derivative of PHI in y direction
+        """
+        PHIx, PHIy = self.tri.gradient_lonlat(PHI, nit, tol)
+        grads = np.ndarray((PHIx.size, 2))
+        grads[:, 0] = np.radians(PHIx)
+        grads[:, 1] = np.radians(PHIy)
+
+        return grads
+
+    # required for compatibility among FlatMesh types
+    def _derivative_grad_cartesian(self, *args, **kwargs):
+         u_x, u_y, u_z = self.tri.gradient_xyz(*args, **kwargs)
+         grads = np.ndarray((u_x.size, 3))
+         grads[:, 0] = u_x
+         grads[:, 1] = u_y
+         grads[:, 2] = u_z
+         return grads
 
     def derivative_div(self, PHIx, PHIy, PHIz, **kwargs):
         """
-        Compute second order derivative from flux fields PHIx, PHIy
+        Compute second order derivative from flux fields PHIx, PHIy, PHIz
         We evaluate the gradient on these fields using the derivative-grad method.
 
         Arguments
@@ -330,11 +449,11 @@ class sTriMesh(_CommonMesh):
         del2PHI : ndarray of floats, shape (n,)
             second derivative of PHI
         """
-        u_xx, u_xy, u_zz = self.derivative_grad(PHIx, **kwargs)
-        u_yx, u_yy, u_zz = self.derivative_grad(PHIy, **kwargs)
-        u_zx, u_zy, u_zz = self.derivative_grad(PHIz, **kwargs)
+        u_xx, u_xy, u_zz = self.tri.gradient_xyz(PHIx, **kwargs)
+        u_yx, u_yy, u_zz = self.tri.gradient_xyz(PHIy, **kwargs)
+        u_zx, u_zy, u_zz = self.tri.gradient_xyz(PHIz, **kwargs)
 
-        return u_xx + u_yy + u_zz
+        return (u_xx + u_yy + u_zz)/self._radius
 
 
     def construct_natural_neighbour_cloud(self):
@@ -424,8 +543,12 @@ class sTriMesh(_CommonMesh):
         should be captured by the search depending on how large
         `size` is set to.
         """
-        nndist, nncloud = self.cKDTree.query(self.tri.points, k=size)
+        nndist, nncloud = self.cKDTree.query(self.data, k=size)
         self.neighbour_cloud = nncloud
+
+        # find the arc distances
+        for n in range(1, size):
+            nndist[:,n] = distance_on_sphere(self.data, self.data[nncloud[:,n]], self.radius)
         self.neighbour_cloud_distances = nndist
 
         neighbours = np.bincount(self.tri.simplices.ravel(), minlength=self.npoints)
@@ -555,7 +678,7 @@ class sTriMesh(_CommonMesh):
                 return smooth_node_values
 
 
-            def smooth_fn(inner_self, lazyFn, iterations=None):
+            def smooth_fn(inner_self, meshVar, iterations=None):
 
                 if iterations is None:
                         iterations = inner_self.iterations
@@ -563,13 +686,13 @@ class sTriMesh(_CommonMesh):
                 def smoother_fn(*args, **kwargs):
                     import quagmire
 
-                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(lazyFn, iterations=iterations)
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(meshVar, iterations=iterations)
 
-                    if len(args) == 1 and args[0] == lazyFn._mesh:
+                    if len(args) == 1 and args[0] == meshVar._mesh:
                         return smooth_node_values
                     elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
                         mesh = args[0]
-                        return inner_self._mesh.interpolate(lazyFn._mesh.coords[:,0], lazyFn._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                        return inner_self._mesh.interpolate(meshVar._mesh.coords[:,0], meshVar._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
                     else:
                         xi = np.atleast_1d(args[0])
                         yi = np.atleast_1d(args[1])
@@ -577,15 +700,76 @@ class sTriMesh(_CommonMesh):
                         return i
 
 
-                newLazyFn = _LazyEvaluation(mesh=lazyFn._mesh)
+                newLazyFn = _LazyEvaluation()
                 newLazyFn.evaluate = smoother_fn
-                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(lazyFn.description, inner_self.delta, iterations)
+                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(meshVar.description, inner_self.delta, iterations)
 
                 return newLazyFn
 
         return _rbf_smoother_object(delta, iterations)
 
 
+
+    def build_rbf_smoother(self, delta, iterations=1):
+
+        strimesh_self = self
+
+        class _rbf_smoother_object(object):
+
+            def __init__(inner_self, delta, iterations=1):
+
+                if delta == None:
+                    delta = strimesh_self.neighbour_cloud_distances[:, 1].mean()  ## NOT SAFE IN PARALLEL !!!
+
+                inner_self._mesh = strimesh_self
+                inner_self.delta = delta
+                inner_self.iterations = iterations
+                inner_self.gaussian_dist_w = inner_self._mesh._rbf_weights(delta)
+
+                return
+
+
+            def _apply_rbf_on_my_mesh(inner_self, lazyFn, iterations=1):
+                import quagmire
+
+                smooth_node_values = lazyFn.evaluate(inner_self._mesh)
+
+                for i in range(0, iterations):
+                    smooth_node_values = (smooth_node_values[inner_self._mesh.neighbour_cloud[:,:]] * inner_self.gaussian_dist_w[:,:]).sum(axis=1)
+                    smooth_node_values = inner_self._mesh.sync(smooth_node_values)
+
+                return smooth_node_values
+
+
+            def smooth_fn(inner_self, meshVar, iterations=None):
+                import quagmire
+
+                if iterations is None:
+                        iterations = inner_self.iterations
+
+                def smoother_fn(*args, **kwargs):
+
+                    smooth_node_values = inner_self._apply_rbf_on_my_mesh(meshVar, iterations=iterations)
+
+                    if len(args) == 1 and args[0] == meshVar._mesh:
+                        return smooth_node_values
+                    elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh(args[0]):
+                        mesh = args[0]
+                        return inner_self._mesh.interpolate(meshVar._mesh.coords[:,0], meshVar._mesh.coords[:,1], zdata=smooth_node_values, **kwargs)
+                    else:
+                        xi = np.atleast_1d(args[0])
+                        yi = np.atleast_1d(args[1])
+                        i, e = inner_self._mesh.interpolate(xi, yi, zdata=smooth_node_values, **kwargs)
+                        return i
+
+
+                newLazyFn = _LazyEvaluation()
+                newLazyFn.evaluate = smoother_fn
+                newLazyFn.description = "RBFsmooth({}, d={}, i={})".format(meshVar.description, inner_self.delta, iterations)
+
+                return newLazyFn
+
+        return _rbf_smoother_object(delta, iterations)
 
 
 def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
@@ -595,7 +779,7 @@ def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
     Parameters
     ----------
     lat : array of floats
-        latitudinal coordinates in radians
+        latitudinal coordinates in degrees
     r1 : float
         radius at the equator (in metres)
     r2 : float
@@ -606,9 +790,42 @@ def geocentric_radius(lat, r1=6384.4e3, r2=6352.8e3):
     r : array of floats
         radius at provided latitudes `lat` in metres
     """
-    coslat = np.cos(lat)
-    sinlat = np.sin(lat)
+    rlat = np.radians(lat)
+    coslat = np.cos(rlat)
+    sinlat = np.sin(rlat)
     num = (r1**2*coslat)**2 + (r2**2*sinlat)**2
     den = (r1*coslat)**2 + (r2*sinlat)**2
     return np.sqrt(num/den)
 
+
+def distance_on_sphere(A, B, radius=None):
+    """
+    Find the distance on the sphere between two sets of points (A and B)
+    If the radius of the sphere is not provided, then the radius is
+    estimated from A.
+
+    Parameters
+    ----------
+    A : ndarray
+        array of points with axis 0 or 1 being the same as B
+    B : ndarray
+        array of points with axis 0 or 1 being the same as A
+    radius : float or ndarray
+        radius of the sphere
+
+    Returns
+    -------
+    distance : ndarray
+        array of spherical distances the same shape as A or B
+        depending on which is larger
+    """
+    A = np.atleast_2d(A)
+    B = np.atleast_2d(B)
+
+    norm_cross = np.linalg.norm(np.cross(A, B), axis=1)
+    dot = (A*B).sum(axis=1)
+
+    if radius is None:
+        radius = np.linalg.norm(A, axis=1)
+
+    return np.arctan(norm_cross/dot) * radius

@@ -161,15 +161,17 @@ class DiffusionEquation(object):
 
         from quagmire import function as fn
 
-        dx_fn, dy_fn = fn.math.grad(lazyFn)
+        gradl = self._mesh.geometry.grad(lazyFn)
         kappa_dx_fn  = fn.misc.where(self.neumann_x_mask,
-                                     self.diffusivity  * dx_fn,
+                                     self.diffusivity  * gradl[0],
                                      fn.parameter(0.0))
         kappa_dy_fn  = fn.misc.where(self.neumann_y_mask,
-                                     self.diffusivity  * dy_fn,
+                                     self.diffusivity  * gradl[1],
                                      fn.parameter(0.0))
 
-        dPhi_dt_fn   = fn.misc.where(self.dirichlet_mask, fn.math.div(kappa_dx_fn, kappa_dy_fn), fn.parameter(0.0))
+        dPhi_dt_fn = fn.misc.where(self.dirichlet_mask, \
+                                   self._mesh.geometry.div(fn.vector_field(kappa_dx_fn, kappa_dy_fn)), \
+                                   fn.parameter(0.0))
 
         return dPhi_dt_fn
 

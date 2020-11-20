@@ -449,28 +449,41 @@ def generate_dmda_xdmf(hdfFilename, xdmfFilename=None):
 
 def generateXdmf(hdfFilename, hdfmeshFilename=None, xdmfFilename=None):
 
-  if xdmfFilename is None:
-    xdmfFilename = os.path.splitext(hdfFilename)[0] + '.xdmf'
+  from mpi4py import MPI
+
+  comm = MPI.COMM_WORLD
+  rank = comm.Get_rank()
+
+  if rank == 0:
+
+    if xdmfFilename is None:
+      xdmfFilename = os.path.splitext(hdfFilename)[0] + '.xdmf'
+
+    
 
 
-  DMPLEX = False
-  with h5py.File(hdfFilename, 'r') as h5:
-    if 'vertex_fields' in h5:
-      DMPLEX = True
-      if 'geometry' not in h5 and hdfmeshFilename is None:
-        err_msg = "mesh info not found in HDF5, save mesh info to this HDF5 file"
-        err_msg += " or point to an externl HDF5 file containing the mesh info."
-        raise TypeError(err_msg)
+    DMPLEX = False
+    with h5py.File(hdfFilename, 'r') as h5:
+      if 'vertex_fields' in h5:
+        DMPLEX = True
+        if 'geometry' not in h5 and hdfmeshFilename is None:
+          err_msg = "mesh info not found in HDF5, save mesh info to this HDF5 file"
+          err_msg += " or point to an externl HDF5 file containing the mesh info."
+          raise TypeError(err_msg)
 
 
-  if DMPLEX:
-    if hdfmeshFilename is None:
-      generate_dmplex_xdmf(hdfFilename, xdmfFilename)
+    if DMPLEX:
+      if hdfmeshFilename is None:
+        generate_dmplex_xdmf(hdfFilename, xdmfFilename)
+      else:
+        generate_dmplex_field_xdmf(hdfFilename, hdfmeshFilename, xdmfFilename)
+
     else:
-      generate_dmplex_field_xdmf(hdfFilename, hdfmeshFilename, xdmfFilename)
+      generate_dmda_xdmf(hdfFilename, xdmfFilename)
 
-  else:
-    generate_dmda_xdmf(hdfFilename, xdmfFilename)
+  # Wait for the file-writing to finish on process 0
+  comm.barrier()
+
 
 if __name__ == '__main__':
   for f in sys.argv[1:]:

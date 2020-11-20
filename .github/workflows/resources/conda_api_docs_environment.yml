@@ -1,0 +1,13 @@
+# This is the environment needed to build stripy. As this will be cached, we can include any stripy dependencies
+# so they are not downloaded again - this should save a bit of time
+
+name: conda-build-docs
+channels: 
+  - conda-forge
+  - geo-down-under
+dependencies:
+  - geo-down-under::quagmire==0.9.5b1 # latest would be better if not in beta !
+  - conda-forge::fortran-compiler
+  - pdoc3
+  - fs 
+  - fs.webdavfs

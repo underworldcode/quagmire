@@ -166,9 +166,9 @@ def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_level
     Parameters
     ----------
     lons : array of floats, shape (n,)
-        longitudinal coordinates in radians
+        longitudinal coordinates in degrees
     lats : array of floats, shape (n,)
-        latitudinal coordinates in radians
+        latitudinal coordinates in degrees
     bmask : array of bools, shape (n,)
         boundary mask where points along the boundary
         equal False, and the interior equal True
@@ -190,7 +190,10 @@ def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_level
     """
     from stripy import sTriangulation
 
-    tri = sTriangulation(lons, lats, permute=True)
+    rlons = _np.radians(lons)
+    rlats = _np.radians(lats)
+
+    tri = sTriangulation(rlons, rlats, permute=True)
 
     if bmask is None:
         boundary_vertices = find_boundary_segments(tri.simplices)
@@ -325,6 +328,135 @@ def create_DMPlex_from_hdf5(file):
     return dm
 
 
+def create_DMPlex_from_cloud_fs(cloud_hdf5_filename, cloud_location_handle=None):
+    """
+    Creates a DMPlex object from an HDF5 file accessible via a pyfilesystem handle.
+    This is useful for rebuilding a mesh that is saved from a
+    previous simulation.
+
+    Parameters
+    ----------
+    cloud_hdf5_filename : string
+        point to the cloud location of hdf5 file
+
+    cloud_location_handle : 
+
+    Returns
+    -------
+    DM : PETSc DMPlex object
+
+    Notes
+    -----
+    This function requires petsc4py >= 3.8
+    """
+
+    from quagmire.tools import cloud_fs
+
+    if not cloud_fs:
+        print("Cloud services are not available - they require fs and fs.webdav packages")
+        return
+
+    from petsc4py import PETSc
+    import os
+    from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, cloud_download
+
+    if cloud_location_handle is None:
+        cloud_location_handle = quagmire_cloud_fs
+
+    cloud_hdf5_filename = str(cloud_hdf5_filename)
+    if not cloud_hdf5_filename.endswith('.h5'):
+        cloud_hdf5_filename += '.h5'
+
+    
+    local_filename = os.path.basename(cloud_hdf5_filename)
+    tempfile = os.path.join(quagmire_cloud_cache_dir_name, str(local_filename))
+
+    from mpi4py import MPI
+            
+    if MPI.COMM_WORLD.Get_rank()  == 0:
+        cloud_download(cloud_hdf5_filename, tempfile, cloud_location_handle)
+
+    dm = PETSc.DMPlex().createFromFile(tempfile)
+
+    # define one DoF on the nodes
+    dm.setNumFields(1)
+    origSect = dm.createSection(1, [1,0,0])
+    origSect.setFieldName(0, "points")
+    origSect.setUp()
+    dm.setDefaultSection(origSect)
+
+    origVec = dm.createGlobalVector()
+
+    if PETSc.COMM_WORLD.size > 1:
+        # Distribute to other processors
+        sf = dm.distribute(overlap=1)
+        newSect, newVec = dm.distributeField(sf, origSect, origVec)
+        dm.setDefaultSection(newSect)
+
+    return dm
+
+def create_DMPlex_from_url(url):
+    """
+    Creates a DMPlex object from an HDF5 file accessible anonymously via a url.
+    This is useful for rebuilding a mesh that is saved from a
+    previous simulation.
+
+    Parameters
+    ----------
+    
+    url : str
+
+    Returns
+    -------
+    DM : PETSc DMPlex object
+
+    Notes
+    -----
+    This function requires petsc4py >= 3.8
+    """
+
+    from quagmire.tools import cloud_fs
+
+    if not cloud_fs:
+        print("Cloud services are not available - they require fs and fs.webdav packages")
+        return
+
+    from petsc4py import PETSc
+    import os
+    from quagmire.tools.cloud import quagmire_cloud_fs, quagmire_cloud_cache_dir_name, url_download
+    import uuid
+
+    unique_filename = str(uuid.uuid4().hex) + ".h5"
+    tempfile = os.path.join(quagmire_cloud_cache_dir_name, unique_filename) 
+
+    from mpi4py import MPI
+
+    if MPI.COMM_WORLD.Get_rank()  == 0:
+        url_download(url, tempfile)
+
+    dm = PETSc.DMPlex().createFromFile(tempfile)
+
+    # define one DoF on the nodes
+    dm.setNumFields(1)
+    origSect = dm.createSection(1, [1,0,0])
+    origSect.setFieldName(0, "points")
+    origSect.setUp()
+    dm.setDefaultSection(origSect)
+
+    origVec = dm.createGlobalVector()
+
+    if PETSc.COMM_WORLD.size > 1:
+        # Distribute to other processors
+        sf = dm.distribute(overlap=1)
+        newSect, newVec = dm.distributeField(sf, origSect, origVec)
+        dm.setDefaultSection(newSect)
+
+    return dm
+
+
+
+
+
 def create_DMPlex_from_box(minX, maxX, minY, maxY, resX, resY, refinement=None):
     """
     Create a box and fill with triangles up to a specified refinement
@@ -412,13 +544,12 @@ def create_DMDA(minX, maxX, minY, maxY, resX, resY):
     -------
     DM : PETSc DMDA object
     """
+    assert(maxX > minX), """maxX ({0}) must be greater than minX ({1})""".format(maxX, minX)
+    assert(maxY > minY), """maxY ({0}) must be greater than minY ({1})""".format(maxY, minY)
+    assert(resX > 0), """resX must be positive"""
+    assert(resY > 0), """resY must be positive"""
+    
     from petsc4py import PETSc
-
-    dx = (maxX - minX)/resX
-    dy = (maxY - minY)/resY
-
-    if dx != dy:
-        raise ValueError("Spacing must be uniform in x and y directions [{:.4f}, {:.4f}]".format(dx,dy))
 
     dim = 2
     dm = PETSc.DMDA().create(dim, sizes=(resX, resY), stencil_width=1)
@@ -536,9 +667,9 @@ def create_spherical_DMPlex(lons, lats, simplices, boundary_vertices=None, refin
     Parameters
     ----------
     lons : array of floats shape (n,)
-        longitudinal coordinates
+        longitudinal coordinates in degrees
     lats : array of floats shape (n,)
-        latitudinal coordinates
+        latitudinal coordinates in degrees
     simplices : connectivity of the mesh
     boundary_vertices : array of ints, shape(l,2)
         (optional) boundary edges
@@ -549,8 +680,11 @@ def create_spherical_DMPlex(lons, lats, simplices, boundary_vertices=None, refin
     """
     from stripy.spherical import lonlat2xyz
 
+    rlons = _np.radians(lons)
+    rlats = _np.radians(lats)
+
     # convert to xyz to construct the DM
-    x,y,z = lonlat2xyz(lons, lats)
+    x,y,z = lonlat2xyz(rlons, rlats)
     points = _np.c_[x,y,z]
 
     # PETSc's markBoundaryFaces routine cannot detect boundary segments
@@ -692,6 +826,75 @@ def elliptical_mesh(minX, maxX, minY, maxY, spacingX, spacingY, random_scale=0.0
     return tri.x, tri.y, tri.simplices
 
 
+
+def global_CO_mesh(stripy_mesh_name, include_face_points=False, refinement_C=7, refinement_O=4, verbose=False, return_heights=False):
+    """
+    Returns a mesh for global problems with different resolution in ocean and continental regions with
+    the transition between meshes determined using the ETOPO1 contour at -100m 
+    
+    Valid stripy_mesh_name values are "icosahedral_mesh", "triangulated_soccerball_mesh", and "octahedral_mesh"
+
+    This has additonal dependencies of xarray and scipy and functools
+    """
+        
+    from functools import partial
+    import stripy
+    import xarray
+    import numpy as np
+    
+    strimesh = {"icosahedral_mesh": partial(stripy.spherical_meshes.icosahedral_mesh, include_face_points=include_face_points),
+                "triangulated_soccerball_mesh": stripy.spherical_meshes.triangulated_soccerball_mesh, 
+                "octahedral_mesh": partial(stripy.spherical_meshes.octahedral_mesh, include_face_points=include_face_points)
+               }
+    
+    try:
+        stC = strimesh[stripy_mesh_name](refinement_levels = refinement_C, tree=False)
+        stO = strimesh[stripy_mesh_name](refinement_levels = refinement_O, tree=False)
+    except:
+        print("Suitable mesh types (stripy_mesh_name):")
+        print("     - icosahedral_mesh")
+        print("     - triangulated_soccerball_mesh")
+        print("     - octahedral_mesh" )
+        raise 
+     
+
+    etopo_dataset = "http://thredds.socib.es/thredds/dodsC/ancillary_data/bathymetry/ETOPO1_Bed_g_gmt4.nc"
+    etopo_data = xarray.open_dataset(etopo_dataset)
+    etopo_coarse = etopo_data.sel(x=slice(-180.0,180.0,30), y=slice(-90.0,90.0,30))
+
+    lons = etopo_coarse.coords.get('x')
+    lats = etopo_coarse.coords.get('y')
+    vals = etopo_coarse['z']
+
+    x,y = np.meshgrid(lons.data, lats.data)
+    height = vals.data 
+    height = 6.370 + 1.0e-6 * vals.data 
+
+    meshheightsC = map_global_raster_to_strimesh(stC, height)
+    meshheightsO = map_global_raster_to_strimesh(stO, height)
+
+    clons = stC.lons[np.where(meshheightsC >= 6.3699)]  # 100m depth
+    clats = stC.lats[np.where(meshheightsC >= 6.3699)]
+
+    olons = stO.lons[np.where(meshheightsO < 6.3699)]  # 100m depth
+    olats = stO.lats[np.where(meshheightsO < 6.3699)]
+
+    nlons = np.hstack((clons, olons))
+    nlats = np.hstack((clats, olats))
+    nheights = np.hstack((meshheightsC, meshheightsO))
+
+    stN = stripy.spherical.sTriangulation(lons=nlons, lats=nlats, refinement_levels=0, tree=False)
+
+    # print("stN - {} x {}".format(stN.lons.shape, stN.lats.shape))
+    # print("stN - {} x {}".format(stN.lons_map_to_wrapped(stN.lons).shape, stN.lats.shape))
+   
+    if return_heights:
+        return np.degrees(stN.lons_map_to_wrapped(stN.lons)), np.degrees(stN.lats), stN.simplices, nheights
+    else:
+        return np.degrees(stN.lons_map_to_wrapped(stN.lons)), np.degrees(stN.lats), stN.simplices
+    
+
+
 def generate_square_points(minX, maxX, minY, maxY, spacingX, spacingY, samples, boundary_samples ):
 
     lin_samples = int(_np.sqrt(samples))
@@ -777,3 +980,36 @@ def generate_elliptical_points(minX, maxX, minY, maxY, spacingX, spacingY, sampl
     bmask = _np.append(bmask, _np.zeros_like(theta, dtype=bool))
 
     return X, Y, bmask
+
+
+def map_global_raster_to_strimesh(mesh, latlongrid, order=3, origin="lower", units="degrees"):
+    """
+    Map a lon/lat "image" (assuming origin="lower" in matplotlib parlance) to nodes on a quagmire mesh
+    """
+    from scipy import ndimage
+    import numpy as np
+
+
+    raster = latlongrid.T
+
+    try: 
+        latitudes_in_degrees  = np.degrees(mesh.tri.lats)
+        longitudes_in_degrees = np.degrees(mesh.tri.lons)
+    except:
+        latitudes_in_degrees = np.degrees(mesh.lats)
+        longitudes_in_degrees = np.degrees(mesh.lons)
+
+    dlons = np.mod(longitudes_in_degrees+180.0, 360.0)
+    dlats = np.mod(latitudes_in_degrees+90, 180.0)
+
+    if origin != "lower":
+        dlats *= -1
+
+    ilons = raster.shape[0] * dlons / 360.0
+    ilats = raster.shape[1] * dlats / 180.0
+
+    icoords = np.array((ilons, ilats))
+
+    mvals = ndimage.map_coordinates(raster, icoords , order=order, mode='nearest').astype(np.float)
+
+    return mvals

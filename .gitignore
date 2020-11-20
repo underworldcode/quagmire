@@ -54,4 +54,4 @@ __pycache__
 src/_fortranmodule.c
 src/_fortran-f2pywrappers.f
 
-dist/*.egg
+dist/*

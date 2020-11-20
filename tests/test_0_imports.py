@@ -2,6 +2,8 @@
 
 import pytest
 
+pyfilesystem = pytest.importorskip("fs")
+pywebdav = pytest.importorskip("webdavfs")
 # ==========================
 
 def test_numpy_import():
@@ -14,13 +16,19 @@ def test_scipy_import():
     return
 
 def test_sympy_import():
-    import sympy
-    print("\t\t You have sympy version {}".format(sympy.__version__))
+    try:
+        import sympy
+        print("\t\t You have sympy version {}".format(sympy.__version__))
+    except:
+        pass # sympy is not really needed with the current functions module
     return
 
 def test_pint_import():
     import pint
     return
+
+def test_h5py_import():
+    import h5py
 
 def test_stripy_import():
     import stripy
@@ -38,6 +46,10 @@ def test_quagmire_modules():
     from quagmire import scaling
     from quagmire import QuagMesh
     from quagmire import _fortran
+
+def test_quagmire_cloud_modules():
+    import quagmire.tools.cloud  # by default this is not imported by tools
+    from quagmire.tools.cloud import quagmire_cloud_fs
 
 def test_jupyter_available():
     from subprocess import check_output
