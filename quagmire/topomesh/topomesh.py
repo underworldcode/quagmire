@@ -637,13 +637,14 @@ class TopoMesh(object):
         Find the lowest node in the neighbour list of the given node
         """
 
+        """
         lowest = self.neighbour_array_lo_hi[node][0]
 
         if lowest != node:
             return lowest
         else:
             return -1
-
+        """
 
 
     def _node_highest_neighbour(self, node):
@@ -651,12 +652,14 @@ class TopoMesh(object):
         Find the highest node in the neighbour list of the given node
         """
 
+        """
         highest = self.neighbour_array_lo_hi[node][-1]
 
         if highest != node:
             return highest
         else:
             return -1
+        """
 
 
     def _node_walk_downhill(self, node):
@@ -664,6 +667,7 @@ class TopoMesh(object):
         Walks downhill terminating when the downhill node is already claimed
         """
 
+        """
         chain = -np.ones(self.npoints, dtype=np.int32)
 
         idx = 0
@@ -682,6 +686,7 @@ class TopoMesh(object):
             low_neighbour = self._node_lowest_neighbour(low_neighbour)
 
         return junction, chain[0:idx+1]
+        """
 
 
     def build_node_chains(self):
@@ -702,10 +707,9 @@ class TopoMesh(object):
         into chain number 0.
         """
 
+        """
         self.node_chain_lookup = -np.ones(self.npoints, dtype=np.int32)
         self.node_chain_list = []
-
-
         node_chain_idx = 1
 
         self.node_chain_list.append([]) # placeholder for any isolated base-level nodes
@@ -728,6 +732,8 @@ class TopoMesh(object):
             else:
                 self.node_chain_list[0].append(this_chain[0])
                 self.node_chain_lookup[this_chain[0]] = 0
+
+        """
 
 
 ### Methods copied over from obseleted SurfMesh class
