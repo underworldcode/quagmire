@@ -187,6 +187,78 @@
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
+  Idealised Examples
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/MorningBun.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/MorningBun2.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/OrogenicLandscapeDemo.html">
+   Orogenic Landscape Modelling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/OrogenicLandscapeDemo.html#create-mesh">
+   Create Mesh
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/PixMeshOctoPants.html">
+   PixMeshes and the Octopants Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html">
+   Rosenbrock landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#rosenbrock-function">
+   Rosenbrock function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#compare-one-and-two-downhill-pathways">
+   Compare one and two downhill pathways
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#probability-densities">
+   Probability densities
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#animation-of-stream-flow">
+   Animation of stream flow
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html">
+   Swamp filling of local minima
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html#semi-circular-gutter-with-incline">
+   Semi-circular gutter with incline
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/TriMeshOctoPants.html">
+   TriMeshes and the Octopants Landscape
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
   Worked Examples (Building landscapes from data)
  </span>
 </p>
@@ -444,14 +516,14 @@
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.20047655100000839s
-0 - Calculate node weights and area 0.006376060999969013s
-0 - Find boundaries 0.0017539440000291506s
-0 - cKDTree 0.014501964999965367s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.22681463600008556s
+0 - Calculate node weights and area 0.007024126000032993s
+0 - Find boundaries 0.001386404999948354s
+0 - cKDTree 0.012767747999987478s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.44795738299995946s, (0.2524670589999687s + 0.1954510219999861s)
-0 - Construct rbf weights 0.039842203000034715s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.4328262949999271s, (0.23445146399990335s + 0.19832053100003577s)
+0 - Construct rbf weights 0.07641718100001071s
 
 Number of points in the triangulation: 62234
 Downhill neighbour paths: 2
@@ -480,10 +552,8 @@ Downhill neighbour paths: 2
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.08810751900000469s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.16724631300002102s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.10576938999997765s
+0 - Build upstream areas 0.1960054220000984s
 </pre></div>
 </div>
 </div>
@@ -2900,45 +2970,45 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 139684825374064, 8080);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140070990084912, 8080);
 _wi[viewerid].actions = {
-  "MF4x8YbweN" : "select; specular=---VAL---; ",
-  "9bbCw9UA1Z" : "select; axis=---VAL---; ",
-  "otbxuVHRsx" : "<nodes>colour=---VAL---; ",
-  "5roKf3fA8Q" : "<nodes>visible=---VAL---; ",
-  "flv54ganNt" : "<triangles>colour=---VAL---; ",
-  "m4SKPkKuAc" : "<triangles>visible=---VAL---; ",
-  "GUMU43SDGy" : "<triangles_colourbar>colour=---VAL---; ",
-  "O57Fih28GG" : "<triangles_colourbar>visible=---VAL---; ",
-  "7IKY12jxHl" : "<triangles>wireframe=---VAL---; ",
-  "Ot1o4ezXNw" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
+  "qgfsPeJXA1" : "select; specular=---VAL---; ",
+  "P2TpODWI6Y" : "select; axis=---VAL---; ",
+  "8naC0vkhOu" : "<nodes>colour=---VAL---; ",
+  "ZPylAmq2ro" : "<nodes>visible=---VAL---; ",
+  "sq5up8uPFn" : "<triangles>colour=---VAL---; ",
+  "dK8KGcIgZ7" : "<triangles>visible=---VAL---; ",
+  "3gJTCLrVln" : "<triangles_colourbar>colour=---VAL---; ",
+  "8Wyr355GDc" : "<triangles_colourbar>visible=---VAL---; ",
+  "heCBH6P5oO" : "<triangles>wireframe=---VAL---; ",
+  "yetThnr5vx" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: right;">
-<img id="imgtarget_THTKta0tr8" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_hfuFhn0Q3G" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['THTKta0tr8'].box.mode = this.value;">
+             <select onchange="_wi['hfuFhn0Q3G'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['THTKta0tr8'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['hfuFhn0Q3G'].execute('reset');">
            </div></div>
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Specular:</p>
-<input id="lvctrl_MF4x8YbweN_number" class="lvctrl_MF4x8YbweN" type="number"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.nextElementSibling.value=this.value; _wi['THTKta0tr8'].do_action('MF4x8YbweN', this.value, this);" >
-<input id="lvctrl_MF4x8YbweN_range" class="lvctrl_MF4x8YbweN" type="range"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.previousElementSibling.value=this.value; _wi['THTKta0tr8'].do_action('MF4x8YbweN', this.value, this);" >
+<input id="lvctrl_qgfsPeJXA1_number" class="lvctrl_qgfsPeJXA1" type="number"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.nextElementSibling.value=this.value; _wi['hfuFhn0Q3G'].do_action('qgfsPeJXA1', this.value, this);" >
+<input id="lvctrl_qgfsPeJXA1_range" class="lvctrl_qgfsPeJXA1" type="range"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.previousElementSibling.value=this.value; _wi['hfuFhn0Q3G'].do_action('qgfsPeJXA1', this.value, this);" >
 <br>
 <label>
-<input id="lvctrl_9bbCw9UA1Z_checkbox" class="lvctrl_9bbCw9UA1Z" type="checkbox"checked="checked" step="any" data-property="axis" value="True" onchange="; _wi['THTKta0tr8'].do_action('9bbCw9UA1Z', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_P2TpODWI6Y_checkbox" class="lvctrl_P2TpODWI6Y" type="checkbox"checked="checked" step="any" data-property="axis" value="True" onchange="; _wi['hfuFhn0Q3G'].do_action('P2TpODWI6Y', this.checked ? 1 : 0, this);" >
  Axis</label><br>
 <p>Objects:</p>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_otbxuVHRsx" data-target="nodes" data-property="colour"  class="colour lvctrl_otbxuVHRsx" onclick="
+          <div id="lvctrl_8naC0vkhOu" data-target="nodes" data-property="colour"  class="colour lvctrl_8naC0vkhOu" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -2946,24 +3016,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['THTKta0tr8'].do_action('otbxuVHRsx', c.html(), el);
+              _wi['hfuFhn0Q3G'].do_action('8naC0vkhOu', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_otbxuVHRsx");
+        var el = document.getElementById("lvctrl_8naC0vkhOu");
         //Set the initial colour
         var col = new Colour('#444040');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_5roKf3fA8Q_checkbox" class="lvctrl_5roKf3fA8Q" type="checkbox"checked="checked" step="any" data-target="nodes" data-property="visible" value="True" onchange="; _wi['THTKta0tr8'].do_action('5roKf3fA8Q', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_ZPylAmq2ro_checkbox" class="lvctrl_ZPylAmq2ro" type="checkbox"checked="checked" step="any" data-target="nodes" data-property="visible" value="True" onchange="; _wi['hfuFhn0Q3G'].do_action('ZPylAmq2ro', this.checked ? 1 : 0, this);" >
  nodes</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_flv54ganNt" data-target="triangles" data-property="colour"  class="colour lvctrl_flv54ganNt" onclick="
+          <div id="lvctrl_sq5up8uPFn" data-target="triangles" data-property="colour"  class="colour lvctrl_sq5up8uPFn" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -2971,24 +3041,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['THTKta0tr8'].do_action('flv54ganNt', c.html(), el);
+              _wi['hfuFhn0Q3G'].do_action('sq5up8uPFn', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_flv54ganNt");
+        var el = document.getElementById("lvctrl_sq5up8uPFn");
         //Set the initial colour
         var col = new Colour('#77ff88');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_m4SKPkKuAc_checkbox" class="lvctrl_m4SKPkKuAc" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['THTKta0tr8'].do_action('m4SKPkKuAc', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_dK8KGcIgZ7_checkbox" class="lvctrl_dK8KGcIgZ7" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['hfuFhn0Q3G'].do_action('dK8KGcIgZ7', this.checked ? 1 : 0, this);" >
  triangles</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_GUMU43SDGy" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_GUMU43SDGy" onclick="
+          <div id="lvctrl_3gJTCLrVln" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_3gJTCLrVln" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -2996,31 +3066,31 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['THTKta0tr8'].do_action('GUMU43SDGy', c.html(), el);
+              _wi['hfuFhn0Q3G'].do_action('3gJTCLrVln', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_GUMU43SDGy");
+        var el = document.getElementById("lvctrl_3gJTCLrVln");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_O57Fih28GG_checkbox" class="lvctrl_O57Fih28GG" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['THTKta0tr8'].do_action('O57Fih28GG', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_8Wyr355GDc_checkbox" class="lvctrl_8Wyr355GDc" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['hfuFhn0Q3G'].do_action('8Wyr355GDc', this.checked ? 1 : 0, this);" >
  triangles_colourbar</label><br>
 <label>
-<input id="lvctrl_7IKY12jxHl_checkbox" class="lvctrl_7IKY12jxHl" type="checkbox"step="any" data-target="triangles" data-property="wireframe" value="False" onchange="; _wi['THTKta0tr8'].do_action('7IKY12jxHl', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_heCBH6P5oO_checkbox" class="lvctrl_heCBH6P5oO" type="checkbox"step="any" data-target="triangles" data-property="wireframe" value="False" onchange="; _wi['hfuFhn0Q3G'].do_action('heCBH6P5oO', this.checked ? 1 : 0, this);" >
  Wireframe</label><br>
 <p>Display::</p>
-<select class="lvctrl_Ot1o4ezXNw" id="lvctrl_Ot1o4ezXNw" value="" data-target="triangles" data-property="colourby" onchange="_wi['THTKta0tr8'].do_action('Ot1o4ezXNw', this.value, this);">
+<select class="lvctrl_yetThnr5vx" id="lvctrl_yetThnr5vx" value="" data-target="triangles" data-property="colourby" onchange="_wi['hfuFhn0Q3G'].do_action('yetThnr5vx', this.value, this);">
 <option>height</option>
 <option>rainfall</option>
 </select><br>
 </div>
-</form><!-- CREATION TIMESTAMP 20201120031425 --><script>init('THTKta0tr8');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201120045630 --><script>init('hfuFhn0Q3G');</script></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -3083,28 +3153,22 @@ _wi[viewerid].actions = {
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>--- 2 downhill neighbours ---
+0 - Build downhill matrices 0.09260944100003599s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.08754440099994554s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.19964103400002386s
+--- 3 downhill neighbour ---
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.16660818799999788s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.1297660769999993s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>--- 3 downhill neighbour ---
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.12268628300000728s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.1760771259999956s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.22268451900004038s
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>--- 1 downhill neighbour---
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.054048756000042886s
-0 - Build upstream areas 0.10040041799999244s
+0 - Build downhill matrices 0.047783375999983946s
+0 - Build upstream areas 0.13149718300007862s
 </pre></div>
 </div>
 </div>
@@ -5505,33 +5569,33 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 139684766208464, 8081);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140070936965776, 8081);
 _wi[viewerid].actions = {
-  "gAnhDzn3cN" : "<triangles>colour=---VAL---; ",
-  "CBdVFLsWPt" : "<triangles>visible=---VAL---; ",
-  "9nFUp2873E" : "<triangles_colourbar>colour=---VAL---; ",
-  "JWIRJz7Mal" : "<triangles_colourbar>visible=---VAL---; ",
-  "1cVx15xXyE" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
+  "E4zlpUuryS" : "<triangles>colour=---VAL---; ",
+  "GUzlZyNzfS" : "<triangles>visible=---VAL---; ",
+  "F5rPDJBng4" : "<triangles_colourbar>colour=---VAL---; ",
+  "fFQJD5tMtN" : "<triangles_colourbar>visible=---VAL---; ",
+  "d7Xw0xNTmr" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: right;">
-<img id="imgtarget_u25kZ7nbKs" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_PxK4CiI23q" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['u25kZ7nbKs'].box.mode = this.value;">
+             <select onchange="_wi['PxK4CiI23q'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['u25kZ7nbKs'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['PxK4CiI23q'].execute('reset');">
            </div></div>
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Objects:</p>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_gAnhDzn3cN" data-target="triangles" data-property="colour"  class="colour lvctrl_gAnhDzn3cN" onclick="
+          <div id="lvctrl_E4zlpUuryS" data-target="triangles" data-property="colour"  class="colour lvctrl_E4zlpUuryS" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -5539,24 +5603,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['u25kZ7nbKs'].do_action('gAnhDzn3cN', c.html(), el);
+              _wi['PxK4CiI23q'].do_action('E4zlpUuryS', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_gAnhDzn3cN");
+        var el = document.getElementById("lvctrl_E4zlpUuryS");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_CBdVFLsWPt_checkbox" class="lvctrl_CBdVFLsWPt" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['u25kZ7nbKs'].do_action('CBdVFLsWPt', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_GUzlZyNzfS_checkbox" class="lvctrl_GUzlZyNzfS" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['PxK4CiI23q'].do_action('GUzlZyNzfS', this.checked ? 1 : 0, this);" >
  triangles</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_9nFUp2873E" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_9nFUp2873E" onclick="
+          <div id="lvctrl_F5rPDJBng4" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_F5rPDJBng4" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -5564,29 +5628,29 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['u25kZ7nbKs'].do_action('9nFUp2873E', c.html(), el);
+              _wi['PxK4CiI23q'].do_action('F5rPDJBng4', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_9nFUp2873E");
+        var el = document.getElementById("lvctrl_F5rPDJBng4");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_JWIRJz7Mal_checkbox" class="lvctrl_JWIRJz7Mal" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['u25kZ7nbKs'].do_action('JWIRJz7Mal', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_fFQJD5tMtN_checkbox" class="lvctrl_fFQJD5tMtN" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['PxK4CiI23q'].do_action('fFQJD5tMtN', this.checked ? 1 : 0, this);" >
  triangles_colourbar</label><br>
 <p>Colourby:</p>
-<select class="lvctrl_1cVx15xXyE" id="lvctrl_1cVx15xXyE" value="" data-target="triangles" data-property="colourby" onchange="_wi['u25kZ7nbKs'].do_action('1cVx15xXyE', this.value, this);">
+<select class="lvctrl_d7Xw0xNTmr" id="lvctrl_d7Xw0xNTmr" value="" data-target="triangles" data-property="colourby" onchange="_wi['PxK4CiI23q'].do_action('d7Xw0xNTmr', this.value, this);">
 <option>stream power 1</option>
 <option>stream power 2</option>
 <option>stream_power 3</option>
 </select><br>
 </div>
-</form><!-- CREATION TIMESTAMP 20201120031426 --><script>init('u25kZ7nbKs');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201120045632 --><script>init('PxK4CiI23q');</script></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -5645,36 +5709,40 @@ _wi[viewerid].actions = {
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.09054407100001072s
-0 - Build upstream areas 0.16394961200001035s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.0824910029999728s
+0 - Build upstream areas 0.18507407900006s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.12704958000000488s
-0 - Build upstream areas 0.1766062209999859s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.12028314100007265s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.15941919100004043s
-0 - Build upstream areas 0.16727598599999283s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.2131601819999105s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.20342868099999123s
-0 - Build upstream areas 0.17245550799998455s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.15207945700001346s
+0 - Build upstream areas 0.20381514700000025s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.24942853100003504s
-0 - Build upstream areas 0.1576672349999626s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19777912500001094s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2767545990000144s
-0 - Build upstream areas 0.15275240799996936s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.20774236099998689s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.31642168100000845s
-0 - Build upstream areas 0.14642414299999018s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21924580199993216s
+0 - Build upstream areas 0.1892508920000182s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.34768554999999424s
-0 - Build upstream areas 0.15306690800002798s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.26599647199998344s
+0 - Build upstream areas 0.18483177500002057s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.3077840240000569s
+0 - Build upstream areas 0.1905835960000104s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.3250702860000274s
+0 - Build upstream areas 0.1850729750000255s
 </pre></div>
 </div>
 </div>

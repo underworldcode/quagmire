@@ -187,6 +187,78 @@
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
+  Idealised Examples
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/MorningBun.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/MorningBun2.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/OrogenicLandscapeDemo.html">
+   Orogenic Landscape Modelling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/OrogenicLandscapeDemo.html#create-mesh">
+   Create Mesh
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/PixMeshOctoPants.html">
+   PixMeshes and the Octopants Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html">
+   Rosenbrock landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#rosenbrock-function">
+   Rosenbrock function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#compare-one-and-two-downhill-pathways">
+   Compare one and two downhill pathways
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#probability-densities">
+   Probability densities
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#animation-of-stream-flow">
+   Animation of stream flow
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html">
+   Swamp filling of local minima
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html#semi-circular-gutter-with-incline">
+   Semi-circular gutter with incline
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/TriMeshOctoPants.html">
+   TriMeshes and the Octopants Landscape
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
   Worked Examples (Building landscapes from data)
  </span>
 </p>
@@ -378,8 +450,8 @@
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
 
-<span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
-<span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
+<span class="c1"># import cartopy.crs as ccrs</span>
+<span class="c1"># import cartopy.feature as cfeature</span>
 
 <span class="c1"># from scipy.ndimage.filters import gaussian_filter</span>
 </pre></div>
@@ -616,7 +688,7 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">function</span> <span class="k">as</span> <span class="n">fn</span>
 
-<span class="n">ones</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">ones</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
 <span class="n">cumulative_flow_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">1.0e-20</span> <span class="o">+</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">runoff_var</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">))</span>
 <span class="n">cumulative_flow_0</span><span class="p">[</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span> <span class="o">&lt;</span> <span class="mf">6.37</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 

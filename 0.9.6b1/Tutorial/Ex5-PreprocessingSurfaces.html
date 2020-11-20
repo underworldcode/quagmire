@@ -187,6 +187,78 @@
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
+  Idealised Examples
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/MorningBun.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/MorningBun2.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/OrogenicLandscapeDemo.html">
+   Orogenic Landscape Modelling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/OrogenicLandscapeDemo.html#create-mesh">
+   Create Mesh
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/PixMeshOctoPants.html">
+   PixMeshes and the Octopants Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html">
+   Rosenbrock landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#rosenbrock-function">
+   Rosenbrock function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#compare-one-and-two-downhill-pathways">
+   Compare one and two downhill pathways
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#probability-densities">
+   Probability densities
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#animation-of-stream-flow">
+   Animation of stream flow
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html">
+   Swamp filling of local minima
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html#semi-circular-gutter-with-incline">
+   Semi-circular gutter with incline
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/TriMeshOctoPants.html">
+   TriMeshes and the Octopants Landscape
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
   Worked Examples (Building landscapes from data)
  </span>
 </p>
@@ -417,14 +489,14 @@
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.6081215799999882s
-0 - Calculate node weights and area 0.01863455900002009s
-0 - Find boundaries 0.0037980930000003355s
-0 - cKDTree 0.04150282099999458s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.6242769589999853s
+0 - Calculate node weights and area 0.020725875000039196s
+0 - Find boundaries 0.004438415999970857s
+0 - cKDTree 0.03869634000000133s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 1.0925261620000128s, (0.5828074369999854s + 0.5096764240000198s)
-0 - Construct rbf weights 0.1029866289999859s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 1.0698627670000178s, (0.5478746799999499s + 0.5219496870000739s)
+0 - Construct rbf weights 0.1806847520000474s
 
 Number of points in the triangulation: 156925
 </pre></div>
@@ -482,11 +554,11 @@ Number of points in the triangulation: 156925
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23638939500000333s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.234540746000107s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.2655757090000179s
-(620,)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.25474921800002903s
+(568,)
 </pre></div>
 </div>
 </div>
@@ -2921,49 +2993,49 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 139754828474416, 8080);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140061702658096, 8080);
 _wi[viewerid].actions = {
-  "2kGNbCiZXv" : "select; specular=---VAL---; ",
-  "gcNatimVIb" : "select; axis=---VAL---; ",
-  "Us8AlhtTFN" : "<nodes>colour=---VAL---; ",
-  "hFFhKVKnNJ" : "<nodes>visible=---VAL---; ",
-  "l1pk6d6D1f" : "<triangles>colour=---VAL---; ",
-  "yxktn4kjQx" : "<triangles>visible=---VAL---; ",
-  "3HBlPkNzoh" : "<triangles_colourbar>colour=---VAL---; ",
-  "NoV7r5F0iL" : "<triangles_colourbar>visible=---VAL---; ",
-  "ula6n29FGP" : "<triangles2>colour=---VAL---; ",
-  "Mzl9v24cVU" : "<triangles2>visible=---VAL---; ",
-  "sdounfC7tH" : "<triangles2_colourbar>colour=---VAL---; ",
-  "itggSMPn6c" : "<triangles2_colourbar>visible=---VAL---; ",
-  "EjtZcmEJPY" : "<triangles>wireframe=---VAL---; ",
-  "WYjdthRVTf" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
+  "g2mdL8seXs" : "select; specular=---VAL---; ",
+  "N90abcTMKV" : "select; axis=---VAL---; ",
+  "XQh4WbdtqO" : "<nodes>colour=---VAL---; ",
+  "2GDIr7vEsp" : "<nodes>visible=---VAL---; ",
+  "s5kp0LUj0J" : "<triangles>colour=---VAL---; ",
+  "dzClT2Xtwt" : "<triangles>visible=---VAL---; ",
+  "DEdgvwlK5A" : "<triangles_colourbar>colour=---VAL---; ",
+  "wNCdHRQEyC" : "<triangles_colourbar>visible=---VAL---; ",
+  "zDWgVwXD16" : "<triangles2>colour=---VAL---; ",
+  "TC89FfrEuF" : "<triangles2>visible=---VAL---; ",
+  "tCo6fTI46C" : "<triangles2_colourbar>colour=---VAL---; ",
+  "iD9WIRC5Pj" : "<triangles2_colourbar>visible=---VAL---; ",
+  "dIr1m6Grmr" : "<triangles>wireframe=---VAL---; ",
+  "7FsyTwGCoO" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: right;">
-<img id="imgtarget_pBtYQNDGI6" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_6OfPnnU76m" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['pBtYQNDGI6'].box.mode = this.value;">
+             <select onchange="_wi['6OfPnnU76m'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['pBtYQNDGI6'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['6OfPnnU76m'].execute('reset');">
            </div></div>
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Specular:</p>
-<input id="lvctrl_2kGNbCiZXv_number" class="lvctrl_2kGNbCiZXv" type="number"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.nextElementSibling.value=this.value; _wi['pBtYQNDGI6'].do_action('2kGNbCiZXv', this.value, this);" >
-<input id="lvctrl_2kGNbCiZXv_range" class="lvctrl_2kGNbCiZXv" type="range"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.previousElementSibling.value=this.value; _wi['pBtYQNDGI6'].do_action('2kGNbCiZXv', this.value, this);" >
+<input id="lvctrl_g2mdL8seXs_number" class="lvctrl_g2mdL8seXs" type="number"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.nextElementSibling.value=this.value; _wi['6OfPnnU76m'].do_action('g2mdL8seXs', this.value, this);" >
+<input id="lvctrl_g2mdL8seXs_range" class="lvctrl_g2mdL8seXs" type="range"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.previousElementSibling.value=this.value; _wi['6OfPnnU76m'].do_action('g2mdL8seXs', this.value, this);" >
 <br>
 <label>
-<input id="lvctrl_gcNatimVIb_checkbox" class="lvctrl_gcNatimVIb" type="checkbox"checked="checked" step="any" data-property="axis" value="True" onchange="; _wi['pBtYQNDGI6'].do_action('gcNatimVIb', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_N90abcTMKV_checkbox" class="lvctrl_N90abcTMKV" type="checkbox"checked="checked" step="any" data-property="axis" value="True" onchange="; _wi['6OfPnnU76m'].do_action('N90abcTMKV', this.checked ? 1 : 0, this);" >
  Axis</label><br>
 <p>Objects:</p>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_Us8AlhtTFN" data-target="nodes" data-property="colour"  class="colour lvctrl_Us8AlhtTFN" onclick="
+          <div id="lvctrl_XQh4WbdtqO" data-target="nodes" data-property="colour"  class="colour lvctrl_XQh4WbdtqO" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -2971,24 +3043,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['pBtYQNDGI6'].do_action('Us8AlhtTFN', c.html(), el);
+              _wi['6OfPnnU76m'].do_action('XQh4WbdtqO', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_Us8AlhtTFN");
+        var el = document.getElementById("lvctrl_XQh4WbdtqO");
         //Set the initial colour
         var col = new Colour('#448080');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_hFFhKVKnNJ_checkbox" class="lvctrl_hFFhKVKnNJ" type="checkbox"checked="checked" step="any" data-target="nodes" data-property="visible" value="True" onchange="; _wi['pBtYQNDGI6'].do_action('hFFhKVKnNJ', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_2GDIr7vEsp_checkbox" class="lvctrl_2GDIr7vEsp" type="checkbox"checked="checked" step="any" data-target="nodes" data-property="visible" value="True" onchange="; _wi['6OfPnnU76m'].do_action('2GDIr7vEsp', this.checked ? 1 : 0, this);" >
  nodes</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_l1pk6d6D1f" data-target="triangles" data-property="colour"  class="colour lvctrl_l1pk6d6D1f" onclick="
+          <div id="lvctrl_s5kp0LUj0J" data-target="triangles" data-property="colour"  class="colour lvctrl_s5kp0LUj0J" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -2996,24 +3068,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['pBtYQNDGI6'].do_action('l1pk6d6D1f', c.html(), el);
+              _wi['6OfPnnU76m'].do_action('s5kp0LUj0J', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_l1pk6d6D1f");
+        var el = document.getElementById("lvctrl_s5kp0LUj0J");
         //Set the initial colour
         var col = new Colour('#77ff88');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_yxktn4kjQx_checkbox" class="lvctrl_yxktn4kjQx" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['pBtYQNDGI6'].do_action('yxktn4kjQx', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_dzClT2Xtwt_checkbox" class="lvctrl_dzClT2Xtwt" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['6OfPnnU76m'].do_action('dzClT2Xtwt', this.checked ? 1 : 0, this);" >
  triangles</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_3HBlPkNzoh" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_3HBlPkNzoh" onclick="
+          <div id="lvctrl_DEdgvwlK5A" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_DEdgvwlK5A" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -3021,24 +3093,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['pBtYQNDGI6'].do_action('3HBlPkNzoh', c.html(), el);
+              _wi['6OfPnnU76m'].do_action('DEdgvwlK5A', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_3HBlPkNzoh");
+        var el = document.getElementById("lvctrl_DEdgvwlK5A");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_NoV7r5F0iL_checkbox" class="lvctrl_NoV7r5F0iL" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['pBtYQNDGI6'].do_action('NoV7r5F0iL', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_wNCdHRQEyC_checkbox" class="lvctrl_wNCdHRQEyC" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['6OfPnnU76m'].do_action('wNCdHRQEyC', this.checked ? 1 : 0, this);" >
  triangles_colourbar</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_ula6n29FGP" data-target="triangles2" data-property="colour"  class="colour lvctrl_ula6n29FGP" onclick="
+          <div id="lvctrl_zDWgVwXD16" data-target="triangles2" data-property="colour"  class="colour lvctrl_zDWgVwXD16" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -3046,24 +3118,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['pBtYQNDGI6'].do_action('ula6n29FGP', c.html(), el);
+              _wi['6OfPnnU76m'].do_action('zDWgVwXD16', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_ula6n29FGP");
+        var el = document.getElementById("lvctrl_zDWgVwXD16");
         //Set the initial colour
         var col = new Colour('#77ff88');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_Mzl9v24cVU_checkbox" class="lvctrl_Mzl9v24cVU" type="checkbox"checked="checked" step="any" data-target="triangles2" data-property="visible" value="True" onchange="; _wi['pBtYQNDGI6'].do_action('Mzl9v24cVU', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_TC89FfrEuF_checkbox" class="lvctrl_TC89FfrEuF" type="checkbox"checked="checked" step="any" data-target="triangles2" data-property="visible" value="True" onchange="; _wi['6OfPnnU76m'].do_action('TC89FfrEuF', this.checked ? 1 : 0, this);" >
  triangles2</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_sdounfC7tH" data-target="triangles2_colourbar" data-property="colour"  class="colour lvctrl_sdounfC7tH" onclick="
+          <div id="lvctrl_tCo6fTI46C" data-target="triangles2_colourbar" data-property="colour"  class="colour lvctrl_tCo6fTI46C" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -3071,32 +3143,32 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['pBtYQNDGI6'].do_action('sdounfC7tH', c.html(), el);
+              _wi['6OfPnnU76m'].do_action('tCo6fTI46C', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_sdounfC7tH");
+        var el = document.getElementById("lvctrl_tCo6fTI46C");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_itggSMPn6c_checkbox" class="lvctrl_itggSMPn6c" type="checkbox"checked="checked" step="any" data-target="triangles2_colourbar" data-property="visible" value="True" onchange="; _wi['pBtYQNDGI6'].do_action('itggSMPn6c', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_iD9WIRC5Pj_checkbox" class="lvctrl_iD9WIRC5Pj" type="checkbox"checked="checked" step="any" data-target="triangles2_colourbar" data-property="visible" value="True" onchange="; _wi['6OfPnnU76m'].do_action('iD9WIRC5Pj', this.checked ? 1 : 0, this);" >
  triangles2_colourbar</label><br>
 <label>
-<input id="lvctrl_EjtZcmEJPY_checkbox" class="lvctrl_EjtZcmEJPY" type="checkbox"step="any" data-target="triangles" data-property="wireframe" value="False" onchange="; _wi['pBtYQNDGI6'].do_action('EjtZcmEJPY', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_dIr1m6Grmr_checkbox" class="lvctrl_dIr1m6Grmr" type="checkbox"step="any" data-target="triangles" data-property="wireframe" value="False" onchange="; _wi['6OfPnnU76m'].do_action('dIr1m6Grmr', this.checked ? 1 : 0, this);" >
  Wireframe</label><br>
 <p>Display::</p>
-<select class="lvctrl_WYjdthRVTf" id="lvctrl_WYjdthRVTf" value="" data-target="triangles" data-property="colourby" onchange="_wi['pBtYQNDGI6'].do_action('WYjdthRVTf', this.value, this);">
+<select class="lvctrl_7FsyTwGCoO" id="lvctrl_7FsyTwGCoO" value="" data-target="triangles" data-property="colourby" onchange="_wi['6OfPnnU76m'].do_action('7FsyTwGCoO', this.value, this);">
 <option>height</option>
 <option>rainfall</option>
 <option>perturbation</option>
 </select><br>
 </div>
-</form><!-- CREATION TIMESTAMP 20201120031438 --><script>init('pBtYQNDGI6');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201120045645 --><script>init('6OfPnnU76m');</script></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -3193,40 +3265,40 @@ _wi[viewerid].actions = {
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.5807567979999817s
-0 - Calculate node weights and area 0.015004567000005409s
-0 - Find boundaries 0.003789092999966215s
-0 - cKDTree 0.040409387000011066s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.5905148250000138s
+0 - Calculate node weights and area 0.01924876900000072s
+0 - Find boundaries 0.0035781130000032135s
+0 - cKDTree 0.04024834500000907s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 1.1002414569999814s, (0.598792426999978s + 0.5014067289999957s)
-0 - Construct rbf weights 0.07667376999995668s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 1.0997337510000307s, (0.5883405150000272s + 0.5113368359999413s)
+0 - Construct rbf weights 0.15588885900001515s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2083082789999935s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.22456990599994242s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.2761513330000298s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.2692919669999583s
 Low point local patch fill
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.22122558600000275s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21473407000007683s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21431081700001187s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21647987599999396s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21307908799997222s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2164708760000167s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.20521439399999508s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21098825699993995s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.1982598179999968s
-Low point local patch fill  1.262767631000031  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23120812799993473s
+Low point local patch fill  1.303281970999933  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.31093725800002403s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.29304734900006224s
 </pre></div>
 </div>
 </div>
@@ -5638,33 +5710,33 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 139754617815216, 8082);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140061492060240, 8082);
 _wi[viewerid].actions = {
-  "kfV0cpyShR" : "<triangles>colour=---VAL---; ",
-  "abH338FdcJ" : "<triangles>visible=---VAL---; ",
-  "yg2jszU3C9" : "<triangles_colourbar>colour=---VAL---; ",
-  "PSuLcNceGc" : "<triangles_colourbar>visible=---VAL---; ",
-  "JGjfcY07PI" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
+  "1mwU2xsuaS" : "<triangles>colour=---VAL---; ",
+  "rzSCLaqkBI" : "<triangles>visible=---VAL---; ",
+  "2Th2hCHkvy" : "<triangles_colourbar>colour=---VAL---; ",
+  "4iPKz6nKMu" : "<triangles_colourbar>visible=---VAL---; ",
+  "dyId0Aa8TY" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: right;">
-<img id="imgtarget_AKtHbwPb9W" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_CPxZs2WOiV" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['AKtHbwPb9W'].box.mode = this.value;">
+             <select onchange="_wi['CPxZs2WOiV'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['AKtHbwPb9W'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['CPxZs2WOiV'].execute('reset');">
            </div></div>
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Objects:</p>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_kfV0cpyShR" data-target="triangles" data-property="colour"  class="colour lvctrl_kfV0cpyShR" onclick="
+          <div id="lvctrl_1mwU2xsuaS" data-target="triangles" data-property="colour"  class="colour lvctrl_1mwU2xsuaS" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -5672,24 +5744,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['AKtHbwPb9W'].do_action('kfV0cpyShR', c.html(), el);
+              _wi['CPxZs2WOiV'].do_action('1mwU2xsuaS', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_kfV0cpyShR");
+        var el = document.getElementById("lvctrl_1mwU2xsuaS");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_abH338FdcJ_checkbox" class="lvctrl_abH338FdcJ" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['AKtHbwPb9W'].do_action('abH338FdcJ', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_rzSCLaqkBI_checkbox" class="lvctrl_rzSCLaqkBI" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['CPxZs2WOiV'].do_action('rzSCLaqkBI', this.checked ? 1 : 0, this);" >
  triangles</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_yg2jszU3C9" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_yg2jszU3C9" onclick="
+          <div id="lvctrl_2Th2hCHkvy" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_2Th2hCHkvy" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -5697,29 +5769,29 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['AKtHbwPb9W'].do_action('yg2jszU3C9', c.html(), el);
+              _wi['CPxZs2WOiV'].do_action('2Th2hCHkvy', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_yg2jszU3C9");
+        var el = document.getElementById("lvctrl_2Th2hCHkvy");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_PSuLcNceGc_checkbox" class="lvctrl_PSuLcNceGc" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['AKtHbwPb9W'].do_action('PSuLcNceGc', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_4iPKz6nKMu_checkbox" class="lvctrl_4iPKz6nKMu" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['CPxZs2WOiV'].do_action('4iPKz6nKMu', this.checked ? 1 : 0, this);" >
  triangles_colourbar</label><br>
 <p>Colourby:</p>
-<select class="lvctrl_JGjfcY07PI" id="lvctrl_JGjfcY07PI" value="" data-target="triangles" data-property="colourby" onchange="_wi['AKtHbwPb9W'].do_action('JGjfcY07PI', this.value, this);">
+<select class="lvctrl_dyId0Aa8TY" id="lvctrl_dyId0Aa8TY" value="" data-target="triangles" data-property="colourby" onchange="_wi['CPxZs2WOiV'].do_action('dyId0Aa8TY', this.value, this);">
 <option>delta h pits</option>
 <option>slope (unpitted)</option>
 <option>slope (rough)</option>
 </select><br>
 </div>
-</form><!-- CREATION TIMESTAMP 20201120031445 --><script>init('AKtHbwPb9W');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201120045652 --><script>init('CPxZs2WOiV');</script></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -5738,20 +5810,20 @@ _wi[viewerid].actions = {
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.5690379860000121s
-0 - Calculate node weights and area 0.01492456199997605s
-0 - Find boundaries 0.0034189829999604626s
-0 - cKDTree 0.04034257799997931s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.5345594089999395s
+0 - Calculate node weights and area 0.013847849999933715s
+0 - Find boundaries 0.0027396100000487422s
+0 - cKDTree 0.03114861100004873s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 1.1920179429999962s, (0.6463862459999632s + 0.5455862969999998s)
-0 - Construct rbf weights 0.10047892999995156s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.9660512460000064s, (0.5170495449999635s + 0.448966200999962s)
+0 - Construct rbf weights 0.12284653799997614s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.22063572899998007s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.1980093060000172s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.2813838949999763s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.25680021400000896s
 </pre></div>
 </div>
 </div>
@@ -5771,333 +5843,335 @@ _wi[viewerid].actions = {
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>70  iterations, time =  0.11404255400003649
-Build low point catchments -  0.11492737499997929  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>68  iterations, time =  0.11359370499997112
+Build low point catchments -  0.11488250899992636  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.019486369999981434
-0  Gather spill data -  0.0001835049999954208
-0  Sort all spills -  0.00044141099999706057
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.018149564000054852
+0  Gather spill data -  0.00021910099997057841
+0  Sort all spills -  0.0006665020000582444
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.25334230999999363s
-Low point swamp fill  0.7074693769999953  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19765970399998878s
+Low point swamp fill  0.5873243910000383  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.37574306100003696s
-0 : 63
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.3614490869999827s
+0 : 45
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>132  iterations, time =  0.20222527700002502
-Build low point catchments -  0.20311639799996328  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>128  iterations, time =  0.20120051499998226
+Build low point catchments -  0.20235852000007526  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.02635043399999404
-0  Gather spill data -  0.00017570400001432063
-0  Sort all spills -  0.0012542299999722673
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.024378587000001062
+0  Gather spill data -  0.0006816019999860146
+0  Sort all spills -  0.0010608039999624452
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2223846449999769s
-Low point swamp fill  2.402180312999974  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19046817600008126s
+Low point swamp fill  2.225278006000053  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.44673752400001376s
-1 : 314
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.4449049780000678s
+1 : 329
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>164  iterations, time =  0.24642031500002304
-Build low point catchments -  0.24744753999999602  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>153  iterations, time =  0.2375989429999663
+Build low point catchments -  0.23903984800006128  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.019521367999971062
-0  Gather spill data -  0.00016340399997716304
-0  Sort all spills -  0.0008497200000192606
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.019856170000025486
+0  Gather spill data -  0.00017880100006095745
+0  Sort all spills -  0.001267504999987068
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21468433799998365s
-Low point swamp fill  1.951969493999968  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19672019600000112s
+Low point swamp fill  1.931197740000016  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.549368448999985s
-2 : 370
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.48803642600000785s
+2 : 383
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>183  iterations, time =  0.2635004989999743
-Build low point catchments -  0.2644176210000069  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>178  iterations, time =  0.27700127900004645
+Build low point catchments -  0.2781449829999474  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.016223187000036887
-0  Gather spill data -  0.0001395030000139741
-0  Sort all spills -  0.0015024359999529224
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.014762952000069163
+0  Gather spill data -  0.00047410199999831093
+0  Sort all spills -  0.0010269030000245039
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.20691183900004262s
-Low point swamp fill  1.6990986910000174  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2070535310000423s
+Low point swamp fill  1.700105704000066  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.5576284020000344s
-3 : 360
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.5045427789999621s
+3 : 374
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>205  iterations, time =  0.28689273899999534
-Build low point catchments -  0.2879433640000002  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>179  iterations, time =  0.27928658500002257
+Build low point catchments -  0.2804131890000008  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.013178614000025846
-0  Gather spill data -  0.00014920300003495868
-0  Sort all spills -  0.0009607229999915035
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.01629675699996369
+0  Gather spill data -  0.0006976019999456184
+0  Sort all spills -  0.001119003999974666
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.20874236899999232s
-Low point swamp fill  1.4400250030000166  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2285446050000246s
+Low point swamp fill  1.5427194349999809  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.5653622499999642s
-4 : 345
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.5171004190000303s
+4 : 356
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>210  iterations, time =  0.29502331399999093
-Build low point catchments -  0.2960269370000219  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>148  iterations, time =  0.24052984599995852
+Build low point catchments -  0.2417470499999581  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.01492765400001872
-0  Gather spill data -  0.00014990299996497924
-0  Sort all spills -  0.0011825280000152816
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.01368094800000108
+0  Gather spill data -  0.00017320099993867188
+0  Sort all spills -  0.001215703999946527
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.20792313700002296s
-Low point swamp fill  1.3122864790000222  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2088924339999494s
+Low point swamp fill  1.2724171709999155  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.5699100260000023s
-5 : 314
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.5208410290000529s
+5 : 294
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>211  iterations, time =  0.29220222899999726
-Build low point catchments -  0.2932551540000077  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>178  iterations, time =  0.28212038999993183
+Build low point catchments -  0.2833018940000329  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.013277614999992693
-0  Gather spill data -  0.0001483030000031249
-0  Sort all spills -  0.0016509390000010171
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.012954144999980599
+0  Gather spill data -  0.0005768019999550233
+0  Sort all spills -  0.0011789039999712259
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21413977100002057s
-Low point swamp fill  1.1397996169999942  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2107806389999496s
+Low point swamp fill  1.1677226939999628  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6071667779999643s
-6 : 254
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6188670679999859s
+6 : 251
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>211  iterations, time =  0.30843339799997693
-Build low point catchments -  0.30950402399997756  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>223  iterations, time =  0.344758807000062
+Build low point catchments -  0.34612941199998204  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.011961482999993223
-0  Gather spill data -  0.00014610299996320464
-0  Sort all spills -  0.0005134119999752329
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.011056939000013699
+0  Gather spill data -  0.00017350100006296998
+0  Sort all spills -  0.0006282020000298871
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.22418440199999168s
-Low point swamp fill  1.0360699080000018  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23264531300003455s
+Low point swamp fill  1.1086191790000157  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6534233369999924s
-7 : 230
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6320039099999804s
+7 : 212
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>232  iterations, time =  0.3391354110000293
-Build low point catchments -  0.3401662350000265  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>225  iterations, time =  0.35343713400004617
+Build low point catchments -  0.3544246380000686  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.010572548999959963
-0  Gather spill data -  0.00015610299999480048
-0  Sort all spills -  0.0007855179999864959
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.008922730999984196
+0  Gather spill data -  0.00012589999994361278
+0  Sort all spills -  0.0009424039999430533
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23161666500004685s
-Low point swamp fill  0.96118278900002  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2028178079999634s
+Low point swamp fill  0.9703244890000633  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.679586626999992s
-8 : 207
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6671855280000045s
+8 : 205
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>254  iterations, time =  0.3659016219999671
-Build low point catchments -  0.3667581419999806  seconds
-0  Sort spills -  0.008974711999996998
-0  Gather spill data -  0.0001502029999755905
-0  Sort all spills -  0.0004857109999534259
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>225  iterations, time =  0.3501194220000343
+Build low point catchments -  0.3512424259999989  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.22775906399999712s
-Low point swamp fill  0.8976621500000306  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0  Sort spills -  0.009184531999949286
+0  Gather spill data -  0.00012090099994566117
+0  Sort all spills -  0.000548901999991358
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6969021029999567s
-9 : 164
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2027739070000507s
+Low point swamp fill  0.9041851520000819  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>259  iterations, time =  0.37876930900000616
-Build low point catchments -  0.37964683000001287  seconds
-0  Sort spills -  0.009264116999986527
-0  Gather spill data -  0.0005811130000097364
-0  Sort all spills -  0.00040890899998657915
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6639541130000453s
+9 : 187
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.22604211399999485s
-Low point swamp fill  0.8647194339999942  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>226  iterations, time =  0.35012351800003216
+Build low point catchments -  0.3513209220000135  seconds
+0  Sort spills -  0.008868831000086175
+0  Gather spill data -  0.0001746010000260867
+0  Sort all spills -  0.00044950099993457115
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7546647290000124s
-10 : 115
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21880726099993808s
+Low point swamp fill  0.8442282380000279  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>260  iterations, time =  0.3716352259999667
-Build low point catchments -  0.3726678499999707  seconds
-0  Sort spills -  0.008306895000032455
-0  Gather spill data -  0.00032960799995862544
-0  Sort all spills -  0.0004641099999957987
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6906352010000774s
+10 : 151
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2146012340000425s
-Low point swamp fill  0.7964378959999863  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>235  iterations, time =  0.37303979699993306
+Build low point catchments -  0.37421920100007355  seconds
+0  Sort spills -  0.008230627999978424
+0  Gather spill data -  0.00015810000002147717
+0  Sort all spills -  0.00018430099999022787
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7339016139999899s
-11 : 97
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21189653600004021s
+Low point swamp fill  0.8056188980000343  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>264  iterations, time =  0.3751623910000035
-Build low point catchments -  0.37646492099997886  seconds
-0  Sort spills -  0.006121243999984927
-0  Gather spill data -  0.00011090299994975794
-0  Sort all spills -  0.00015300299997988986
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7309008370000356s
+11 : 111
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.20989631800000552s
-Low point swamp fill  0.7439144299999612  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>241  iterations, time =  0.37472360000003846
+Build low point catchments -  0.3760017040000321  seconds
+0  Sort spills -  0.0071166250000942455
+0  Gather spill data -  0.0005490019999569995
+0  Sort all spills -  0.0002619009999307309
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7547045690000118s
-12 : 102
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.20875522399990132s
+Low point swamp fill  0.763742648999937  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>264  iterations, time =  0.36545785200002
-Build low point catchments -  0.36637227400001393  seconds
-0  Sort spills -  0.007596778000049653
-0  Gather spill data -  0.00032710800002178075
-0  Sort all spills -  0.00037010800002690303
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7093996580000521s
+12 : 92
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21883121600001232s
-Low point swamp fill  0.7317225200000053  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>231  iterations, time =  0.357739338999977
+Build low point catchments -  0.3589836439999772  seconds
+0  Sort spills -  0.008267529000022478
+0  Gather spill data -  0.0005573019999474127
+0  Sort all spills -  0.00014149999992696394
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7254548600000135s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.20807492000005823s
+Low point swamp fill  0.7093052559999933  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7424178690000645s
 13 : 79
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>265  iterations, time =  0.38919239100005143
-Build low point catchments -  0.39018921400003137  seconds
-0  Sort spills -  0.006829759999959606
-0  Gather spill data -  0.00013510299999097697
-0  Sort all spills -  0.0001207019999469594
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>231  iterations, time =  0.3644428599999401
+Build low point catchments -  0.3658281649999253  seconds
+0  Sort spills -  0.006535322999980053
+0  Gather spill data -  0.0016079060000038226
+0  Sort all spills -  0.0001357000001007691
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.22110346300001993s
-Low point swamp fill  0.7423283370000036  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.20981552500006728s
+Low point swamp fill  0.6930741959999978  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7569909669999788s
-14 : 63
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7395353540000542s
+14 : 71
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>265  iterations, time =  0.38974179199999526
-Build low point catchments -  0.3908201170000325  seconds
-0  Sort spills -  0.006039240999996309
-0  Gather spill data -  0.00012360299996316826
-0  Sort all spills -  9.370300000455245e-05
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>257  iterations, time =  0.3991418779999094
+Build low point catchments -  0.4004630819999875  seconds
+0  Sort spills -  0.008804131000033522
+0  Gather spill data -  0.00010659999998097192
+0  Sort all spills -  8.339999999407155e-05
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.22066894400001047s
-Low point swamp fill  0.7150621780000392  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2170257490000722s
+Low point swamp fill  0.7339614329999904  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7256843119999985s
-15 : 66
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7393962500000271s
+15 : 82
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>265  iterations, time =  0.4002049190000321
-Build low point catchments -  0.4012514439999677  seconds
-0  Sort spills -  0.006344846999979836
-0  Gather spill data -  0.00011080299998411647
-0  Sort all spills -  9.360200004948638e-05
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>257  iterations, time =  0.3872544339999422
+Build low point catchments -  0.3884920379999812  seconds
+0  Sort spills -  0.006619523000040317
+0  Gather spill data -  0.00013270000010834337
+0  Sort all spills -  6.840100002136751e-05
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.22123785000002272s
-Low point swamp fill  0.7213336959999879  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19821318299989343s
+Low point swamp fill  0.6933684880000328  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7237092400000051s
-16 : 53
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7418375539999715s
+16 : 59
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>271  iterations, time =  0.38836313199999495
-Build low point catchments -  0.38944215700001905  seconds
-0  Sort spills -  0.005320123999979387
-0  Gather spill data -  0.0004380109999715387
-0  Sort all spills -  0.0003569080000147551
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>257  iterations, time =  0.3991813740000225
+Build low point catchments -  0.4007270790000348  seconds
+0  Sort spills -  0.00776082699997005
+0  Gather spill data -  0.00037230099997032085
+0  Sort all spills -  9.230000000570726e-05
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.22185415899997452s
-Low point swamp fill  0.7001909829999704  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2165270440000313s
+Low point swamp fill  0.720093477999967  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7286302279999859s
-17 : 39
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7284837040000411s
+17 : 50
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>271  iterations, time =  0.3811848529999793
-Build low point catchments -  0.38203577299998415  seconds
-0  Sort spills -  0.005477127000006021
-0  Gather spill data -  0.00011130299998285409
-0  Sort all spills -  8.110100003477783e-05
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>257  iterations, time =  0.40322638500003904
+Build low point catchments -  0.40442978900000526  seconds
+0  Sort spills -  0.006599222999966514
+0  Gather spill data -  0.0006250019999924916
+0  Sort all spills -  8.309999998346029e-05
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2320391860000086s
-Low point swamp fill  0.6984473159999993  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21445743599997513s
+Low point swamp fill  0.7081734319999669  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7343672399999832s
-18 : 32
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7612356129999398s
+18 : 37
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>271  iterations, time =  0.39850794100004805
-Build low point catchments -  0.3995130640000184  seconds
-0  Sort spills -  0.00507461800003739
-0  Gather spill data -  0.000482211000019106
-0  Sort all spills -  0.00029900600003429645
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>257  iterations, time =  0.3818277100000387
+Build low point catchments -  0.3827877130000843  seconds
+0  Sort spills -  0.005573419000029389
+0  Gather spill data -  0.0005251019999832351
+0  Sort all spills -  0.00021010000000387663
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21738274099999444s
-Low point swamp fill  0.6953065220000099  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.19693037499996535s
+Low point swamp fill  0.6564421519999541  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7355928430000063s
-19 : 30
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.748394865000023s
+19 : 28
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>271  iterations, time =  0.3820993510000221
-Build low point catchments -  0.3832019769999988  seconds
-0  Sort spills -  0.004080195000028652
-0  Gather spill data -  9.030300003587399e-05
-0  Sort all spills -  6.0402000030990166e-05
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>257  iterations, time =  0.39260374399998454
+Build low point catchments -  0.3936237479999818  seconds
+0  Sort spills -  0.005517018999967149
+0  Gather spill data -  0.0005055010000205584
+0  Sort all spills -  6.610000002638117e-05
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.22376057899998614s
-Low point swamp fill  0.6798390419999691  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.21320912999999564s
+Low point swamp fill  0.6769303180000179  seconds
 </pre></div>
 </div>
 </div>

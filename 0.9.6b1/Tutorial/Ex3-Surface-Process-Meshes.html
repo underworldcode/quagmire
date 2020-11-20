@@ -187,6 +187,78 @@
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
+  Idealised Examples
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/MorningBun.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/MorningBun2.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/OrogenicLandscapeDemo.html">
+   Orogenic Landscape Modelling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/OrogenicLandscapeDemo.html#create-mesh">
+   Create Mesh
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/PixMeshOctoPants.html">
+   PixMeshes and the Octopants Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html">
+   Rosenbrock landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#rosenbrock-function">
+   Rosenbrock function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#compare-one-and-two-downhill-pathways">
+   Compare one and two downhill pathways
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#probability-densities">
+   Probability densities
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#animation-of-stream-flow">
+   Animation of stream flow
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html">
+   Swamp filling of local minima
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html#semi-circular-gutter-with-incline">
+   Semi-circular gutter with incline
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/TriMeshOctoPants.html">
+   TriMeshes and the Octopants Landscape
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
   Worked Examples (Building landscapes from data)
  </span>
 </p>
@@ -438,14 +510,14 @@
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.2003340140000205s
-0 - Calculate node weights and area 0.005810748999977022s
-0 - Find boundaries 0.001566539999998895s
-0 - cKDTree 0.014134461000026022s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.2257034400000748s
+0 - Calculate node weights and area 0.005448620000038318s
+0 - Find boundaries 0.0015920060000098601s
+0 - cKDTree 0.011461143000019547s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.4357360189999895s, (0.24115155599997706s + 0.19454426200002217s)
-0 - Construct rbf weights 0.045519059000014295s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.3823527219999505s, (0.2051600629999939s + 0.17716295799993986s)
+0 - Construct rbf weights 0.0613037279999844s
 Triangulation has 62234 points
 </pre></div>
 </div>
@@ -470,10 +542,10 @@ Triangulation has 62234 points
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.05961791799995808s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.046135572000025604s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.10934788500003378s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.1204308479999554s
 </pre></div>
 </div>
 </div>
@@ -504,7 +576,7 @@ Triangulation has 62234 points
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([5.01823305, 5.02685138, 5.01182266, ..., 2.66829351, 2.3281053 ,
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([5.03309626, 5.03456744, 5.01299025, ..., 2.66829351, 2.3281053 ,
        3.99135784])
 </pre></div>
 </div>
@@ -517,8 +589,8 @@ Triangulation has 62234 points
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.67819227e-05, 1.50343832e-05, 1.22251454e-05, ...,
-       2.89543741e-06, 4.61156167e-06, 4.60867179e-06])
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([3.39238801e-05, 1.16799280e-05, 7.93463772e-06, ...,
+       5.38685904e-06, 3.03301176e-06, 7.06488427e-06])
 </pre></div>
 </div>
 </div>
@@ -550,7 +622,7 @@ Triangulation has 62234 points
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([2.2401413 , 2.24206409, 2.23871004, ..., 0.47308102, 0.42065372,
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([2.24345632, 2.24378418, 2.2389708 , ..., 0.47308102, 0.42065372,
        0.36434709])
 </pre></div>
 </div>
@@ -762,34 +834,33 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>20 outflow nodes:
-[61753 61803 61853 61902 61903 61952 61953 61954 61955 61957 61958 62002
- 62052 62102 62151 62152 62201 62202 62203 62204]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>21 outflow nodes:
+[61753 61754 61755 61756 61803 61853 61902 61903 61952 61953 61954 61955
+ 62002 62006 62052 62102 62151 62152 62201 62202 62204]
 0 internal low point nodes:
-[61753 61803 61853 61902 61903 61952 61953 61954 61955 61957 61958 62002
- 62052 62102 62151 62152 62201 62202 62203 62204]
-[1.37323937e+00 2.97107715e+00 7.07166267e+00 3.93480386e+00
- 1.42993705e-01 1.67192246e+00 8.72737493e-02 1.37212787e-04
- 3.40076323e-04 3.48531161e-05 2.69516250e-03 1.66038230e+00
- 3.70795266e+00 6.44530499e+00 4.17749734e+00 1.27726689e-01
- 1.09361645e+00 3.16210451e-02 2.83031746e-02 5.96891137e-03]
-0 - Build downhill matrices 0.05688194500004329s
+[61753 61754 61755 61756 61803 61853 61902 61903 61952 61953 61954 61955
+ 62002 62006 62052 62102 62151 62152 62201 62202 62204]
+[1.39142959e+00 9.53873043e-04 3.37598896e-04 2.36623707e-05
+ 2.82899684e+00 7.02722257e+00 3.83865201e+00 1.45409857e-01
+ 1.76273230e+00 7.70264853e-02 1.09702004e-04 2.59686481e-02
+ 1.69378993e+00 1.28032831e-04 3.78227450e+00 6.34456185e+00
+ 3.93412271e+00 1.25744370e-01 1.55383224e+00 4.34773487e-04
+ 7.24364798e-04]
+0 - Build downhill matrices 0.051279190999935054s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.08674860400003581s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.08535831699998653s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>23 outflow nodes:
-[61754 61755 61802 61804 61853 61953 61954 61955 61956 61957 61958 61961
- 62002 62052 62102 62103 62152 62154 62202 62203 62204 62207 62210]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>14 outflow nodes:
+[61754 61756 61802 61903 61904 61952 61955 61956 61960 62002 62006 62101
+ 62152 62202]
 0 internal low point nodes:
 []
-[8.13168023e-03 4.94962823e-04 1.62298376e-01 8.30189379e-02
- 1.01434950e-01 5.85624731e-02 1.28457850e-04 2.35575966e-04
- 8.59721207e-02 2.99471420e-05 6.31247611e-05 2.38660386e-03
- 1.77980000e-02 1.98206310e-01 1.11914336e-01 1.25405974e-02
- 6.70750171e-02 1.12535543e-01 3.37838788e-04 3.21118425e-02
- 2.89241770e-02 2.07810285e-05 5.47722185e-03]
+[1.22750390e-03 2.27448443e-05 1.46979191e-01 4.48688893e-02
+ 1.53909386e-01 5.07931190e-02 1.62681922e-04 6.26225441e-02
+ 1.50450823e-05 1.19747047e-02 7.00582277e-05 4.77938267e-02
+ 1.33800178e-01 8.21608948e-02]
 </pre></div>
 </div>
 </div>

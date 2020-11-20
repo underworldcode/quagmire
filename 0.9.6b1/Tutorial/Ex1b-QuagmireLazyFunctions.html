@@ -187,6 +187,78 @@
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
+  Idealised Examples
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/MorningBun.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/MorningBun2.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/OrogenicLandscapeDemo.html">
+   Orogenic Landscape Modelling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/OrogenicLandscapeDemo.html#create-mesh">
+   Create Mesh
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/PixMeshOctoPants.html">
+   PixMeshes and the Octopants Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html">
+   Rosenbrock landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#rosenbrock-function">
+   Rosenbrock function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#compare-one-and-two-downhill-pathways">
+   Compare one and two downhill pathways
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#probability-densities">
+   Probability densities
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#animation-of-stream-flow">
+   Animation of stream flow
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html">
+   Swamp filling of local minima
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html#semi-circular-gutter-with-incline">
+   Semi-circular gutter with incline
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/TriMeshOctoPants.html">
+   TriMeshes and the Octopants Landscape
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
   Worked Examples (Building landscapes from data)
  </span>
 </p>
@@ -476,12 +548,12 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-0 - Delaunay triangulation 0.03408675100001801s
-0 - Calculate node weights and area 0.0018954590000248572s
-0 - Find boundaries 0.00045371400000249196s
-0 - cKDTree 0.0032740999999987253s
-0 - Construct neighbour cloud arrays 0.10154723099998364s, (0.05914262400000325s + 0.04237560699999676s)
-0 - Construct rbf weights 0.011494853999977295s
+0 - Delaunay triangulation 0.04372008200004984s
+0 - Calculate node weights and area 0.0019349080000665708s
+0 - Find boundaries 0.0006431030000157989s
+0 - cKDTree 0.003899616000012429s
+0 - Construct neighbour cloud arrays 0.11689388799993594s, (0.06473037099999601s + 0.052135416999931294s)
+0 - Construct rbf weights 0.020359584999937397s
 </pre></div>
 </div>
 </div>
@@ -521,7 +593,9 @@
 Exp(100.0) = [2.68811714e+43]
 Exp([10.]) = [22026.46579481]
 Exp([100.]) = [2.68811714e+43]
-Exp([101.]) = [7.30705998e+43]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Exp([101.]) = [7.30705998e+43]
 [1.]
 </pre></div>
 </div>
@@ -590,18 +664,18 @@ to extract the relevant mesh directions. That means we can do this:</p>
 <div class="cell_output docutils container">
 <div class="output text_latex math notranslate nohighlight">
 \[\displaystyle \sin\left(x\right)\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[ 0.          0.22880579  0.45757098 ... -2.40178127  2.28476613
-  2.28940162]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[ 0.          0.22880579  0.45757098 ... -3.19291068  0.2414775
+  5.3616935 ]
 </pre></div>
 </div>
 <div class="output text_latex math notranslate nohighlight">
 \[\displaystyle \sin\left(x \, + \, y\right) - \cos\left(x \;y\right)\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-0.06200002  1.13622105  1.95463295 ...  1.18684483  0.25676713
-  0.3921524 ]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[-0.06200002  1.13622105  1.95463295 ...  0.48540878  0.05348331
+  1.6916329 ]
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 0.        ,  0.22880579,  0.45757098, ..., -2.40178127,
-        2.28476613,  2.28940162])
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 0.        ,  0.22880579,  0.45757098, ..., -3.19291068,
+        0.2414775 ,  5.3616935 ])
 </pre></div>
 </div>
 </div>
@@ -708,16 +782,16 @@ This allows us to define operators with coefficients that can be supplied as mut
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Height: [ 0.          0.2268146   0.44177027 ... -0.67414861  0.75576826
-  0.75272464]
-Rainfall Fn evaluation: [158.48931925 174.73809632 190.93890947 ... 115.24537367 216.01964597
- 215.76842018]
-Rainfall Direct       : [158.48931925 174.73809632 190.93890947 ... 115.24537367 216.01964597
- 215.76842018]
-Rainfall Fn evaluation: [10.         10.45362919 10.88354053 ...  8.65170278 11.51153652
- 11.50544929]
-Rainfall Direct       : [158.48931925 174.73809632 190.93890947 ... 115.24537367 216.01964597
- 215.76842018]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Height: [ 0.          0.2268146   0.44177027 ...  0.0512955   0.23913752
+ -0.7965045 ]
+Rainfall Fn evaluation: [158.48931925 174.73809632 190.93890947 ... 162.08846023 175.64570953
+ 108.19552061]
+Rainfall Direct       : [158.48931925 174.73809632 190.93890947 ... 162.08846023 175.64570953
+ 108.19552061]
+Rainfall Fn evaluation: [10.         10.45362919 10.88354053 ... 10.102591   10.47827503
+  8.406991  ]
+Rainfall Direct       : [158.48931925 174.73809632 190.93890947 ... 162.08846023 175.64570953
+ 108.19552061]
 </pre></div>
 </div>
 </div>
@@ -734,13 +808,13 @@ Rainfall Direct       : [158.48931925 174.73809632 190.93890947 ... 115.24537367
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Height:   [ 1.          0.97393795  0.89712821 ... -0.73859573 -0.65483917
- -0.65833548]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Height:   [ 1.          0.97393795  0.89712821 ... -0.99868352  0.97098571
+  0.6046326 ]
 Height =  cos(X)
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([12.        , 11.94787591, 11.79425643, ...,  8.52280854,
-        8.69032166,  8.68332903])
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([12.        , 11.94787591, 11.79425643, ...,  8.00263296,
+       11.94197142, 11.20926519])
 </pre></div>
 </div>
 </div>
@@ -782,10 +856,10 @@ Height =  cos(X)
 \[\displaystyle \sqrt{ \left. \nabla(h\left(x,y\right))\right|_0^{2} \, + \, \left. \nabla(h\left(x,y\right))\right|_1^{2} }^{1.3}\]</div>
 <div class="output text_latex math notranslate nohighlight">
 \[\displaystyle \left| \nabla h\left(x,y\right) \right|^{1.3}\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.00080641 0.14990454 0.33872492 ... 0.59896304 0.69456788 0.69110958]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.00087184 0.1445975  0.3387474  ... 0.02105623 0.15600046 0.74395165]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.00080641 0.14990454 0.33872492 ... 0.59896304 0.69456788 0.69110958]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.00087184 0.1445975  0.3387474  ... 0.02105623 0.15600046 0.74395165]
 </pre></div>
 </div>
 </div>
@@ -856,8 +930,10 @@ This is ususally inherited from a mesh but it can be defined independently of th
 \[\displaystyle \sqrt{ \left. \nabla(h\left(x,y\right))\right|_0^{2} \, + \, \left. \nabla(h\left(x,y\right))\right|_1^{2} }^{1.3}\]</div>
 <div class="output text_latex math notranslate nohighlight">
 \[\displaystyle \left| \nabla h\left(x,y\right) \right|^{1.3}\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.00080641 0.14990454 0.33872492 ... 0.59896304 0.69456788 0.69110958]
-[0.00080641 0.14990454 0.33872492 ... 0.59896304 0.69456788 0.69110958]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.00087184 0.1445975  0.3387474  ... 0.02105623 0.15600046 0.74395165]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.00087184 0.1445975  0.3387474  ... 0.02105623 0.15600046 0.74395165]
 </pre></div>
 </div>
 </div>
@@ -914,10 +990,11 @@ independently and that it is better to build a new vector instead. We may relax 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dhdX (error) =  [ 7.33041929e-08 -5.30734805e-03  6.94964410e-03 ...  2.11070943e-05
-  2.55126130e-04  1.06749366e-04]
-dhdY (error) =  [ 0.00834562  0.01712214  0.01085537 ...  0.00028768 -0.00075856
-  0.00026388]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dhdX (error) =  [-1.27164190e-08  1.00411328e-03  6.92759038e-03 ... -2.48873773e-05
+ -3.74569952e-04 -4.70804029e-09]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dhdY (error) =  [0.00886173 0.01456523 0.0108785  ... 0.00036865 0.00042232 0.00030921]
 </pre></div>
 </div>
 </div>
@@ -3415,43 +3492,43 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140090894689200, 8081);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 139896650408976, 8081);
 _wi[viewerid].actions = {
-  "hJk05tj3uJ" : "select; specular=---VAL---; ",
-  "STPSz1juu0" : "select; axis=---VAL---; ",
-  "ZdemDe27bS" : "<triangles>colour=---VAL---; ",
-  "fDNL86G6ka" : "<triangles>visible=---VAL---; ",
-  "3XM71mgobh" : "<triangles_colourbar>colour=---VAL---; ",
-  "RYZcut2SN1" : "<triangles_colourbar>visible=---VAL---; ",
-  "njXpMCM77K" : "<triangles>wireframe=---VAL---; ",
-  "856AK5T0v7" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
+  "n5eJrcDWe3" : "select; specular=---VAL---; ",
+  "bp5p2d0i9r" : "select; axis=---VAL---; ",
+  "kZs7gkhmSg" : "<triangles>colour=---VAL---; ",
+  "pc6W01JrBS" : "<triangles>visible=---VAL---; ",
+  "POr0i8sqLi" : "<triangles_colourbar>colour=---VAL---; ",
+  "ZKFmcP8IPm" : "<triangles_colourbar>visible=---VAL---; ",
+  "Bxwki2iXRX" : "<triangles>wireframe=---VAL---; ",
+  "6BREc3siIR" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: right;">
-<img id="imgtarget_uW5Bhk9FyO" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_qxk4HE3VjH" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['uW5Bhk9FyO'].box.mode = this.value;">
+             <select onchange="_wi['qxk4HE3VjH'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['uW5Bhk9FyO'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['qxk4HE3VjH'].execute('reset');">
            </div></div>
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Specular:</p>
-<input id="lvctrl_hJk05tj3uJ_number" class="lvctrl_hJk05tj3uJ" type="number"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.nextElementSibling.value=this.value; _wi['uW5Bhk9FyO'].do_action('hJk05tj3uJ', this.value, this);" >
-<input id="lvctrl_hJk05tj3uJ_range" class="lvctrl_hJk05tj3uJ" type="range"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.previousElementSibling.value=this.value; _wi['uW5Bhk9FyO'].do_action('hJk05tj3uJ', this.value, this);" >
+<input id="lvctrl_n5eJrcDWe3_number" class="lvctrl_n5eJrcDWe3" type="number"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.nextElementSibling.value=this.value; _wi['qxk4HE3VjH'].do_action('n5eJrcDWe3', this.value, this);" >
+<input id="lvctrl_n5eJrcDWe3_range" class="lvctrl_n5eJrcDWe3" type="range"min="0" max="1" step="0.1" data-property="specular" value="0.4" onchange="this.previousElementSibling.value=this.value; _wi['qxk4HE3VjH'].do_action('n5eJrcDWe3', this.value, this);" >
 <br>
 <label>
-<input id="lvctrl_STPSz1juu0_checkbox" class="lvctrl_STPSz1juu0" type="checkbox"checked="checked" step="any" data-property="axis" value="True" onchange="; _wi['uW5Bhk9FyO'].do_action('STPSz1juu0', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_bp5p2d0i9r_checkbox" class="lvctrl_bp5p2d0i9r" type="checkbox"checked="checked" step="any" data-property="axis" value="True" onchange="; _wi['qxk4HE3VjH'].do_action('bp5p2d0i9r', this.checked ? 1 : 0, this);" >
  Axis</label><br>
 <p>Objects:</p>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_ZdemDe27bS" data-target="triangles" data-property="colour"  class="colour lvctrl_ZdemDe27bS" onclick="
+          <div id="lvctrl_kZs7gkhmSg" data-target="triangles" data-property="colour"  class="colour lvctrl_kZs7gkhmSg" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -3459,24 +3536,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['uW5Bhk9FyO'].do_action('ZdemDe27bS', c.html(), el);
+              _wi['qxk4HE3VjH'].do_action('kZs7gkhmSg', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_ZdemDe27bS");
+        var el = document.getElementById("lvctrl_kZs7gkhmSg");
         //Set the initial colour
         var col = new Colour('#77ff88');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_fDNL86G6ka_checkbox" class="lvctrl_fDNL86G6ka" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['uW5Bhk9FyO'].do_action('fDNL86G6ka', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_pc6W01JrBS_checkbox" class="lvctrl_pc6W01JrBS" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['qxk4HE3VjH'].do_action('pc6W01JrBS', this.checked ? 1 : 0, this);" >
  triangles</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_3XM71mgobh" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_3XM71mgobh" onclick="
+          <div id="lvctrl_POr0i8sqLi" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_POr0i8sqLi" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -3484,32 +3561,32 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['uW5Bhk9FyO'].do_action('3XM71mgobh', c.html(), el);
+              _wi['qxk4HE3VjH'].do_action('POr0i8sqLi', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_3XM71mgobh");
+        var el = document.getElementById("lvctrl_POr0i8sqLi");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_RYZcut2SN1_checkbox" class="lvctrl_RYZcut2SN1" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['uW5Bhk9FyO'].do_action('RYZcut2SN1', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_ZKFmcP8IPm_checkbox" class="lvctrl_ZKFmcP8IPm" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['qxk4HE3VjH'].do_action('ZKFmcP8IPm', this.checked ? 1 : 0, this);" >
  triangles_colourbar</label><br>
 <label>
-<input id="lvctrl_njXpMCM77K_checkbox" class="lvctrl_njXpMCM77K" type="checkbox"step="any" data-target="triangles" data-property="wireframe" value="False" onchange="; _wi['uW5Bhk9FyO'].do_action('njXpMCM77K', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_Bxwki2iXRX_checkbox" class="lvctrl_Bxwki2iXRX" type="checkbox"step="any" data-target="triangles" data-property="wireframe" value="False" onchange="; _wi['qxk4HE3VjH'].do_action('Bxwki2iXRX', this.checked ? 1 : 0, this);" >
  Wireframe</label><br>
 <p>Display::</p>
-<select class="lvctrl_856AK5T0v7" id="lvctrl_856AK5T0v7" value="" data-target="triangles" data-property="colourby" onchange="_wi['uW5Bhk9FyO'].do_action('856AK5T0v7', this.value, this);">
+<select class="lvctrl_6BREc3siIR" id="lvctrl_6BREc3siIR" value="" data-target="triangles" data-property="colourby" onchange="_wi['qxk4HE3VjH'].do_action('6BREc3siIR', this.value, this);">
 <option>height</option>
 <option>steep</option>
 <option>flat</option>
 </select><br>
 </div>
-</form><!-- CREATION TIMESTAMP 20201120031323 --><script>init('uW5Bhk9FyO');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201120045525 --><script>init('qxk4HE3VjH');</script></div></div>
 </div>
 <p>Note how the derivative of the ‘level set’ functions works. We assume that the derivative of the
 masking function is zero everywhere so that the mask simply applies to the derivative of the masked

@@ -343,4 +343,3 @@ psi3.data
 ```{code-cell} ipython3
 print(phi.data[0], psi.data[0])
 ```
-

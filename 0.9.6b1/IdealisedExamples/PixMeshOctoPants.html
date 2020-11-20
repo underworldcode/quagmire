@@ -1,0 +1,933 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PixMeshes and the Octopants Landscape &#8212; Quagmire.tex</title>
+    
+  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Rosenbrock landscape" href="RosenbrockSurface.html" />
+    <link rel="prev" title="Orogenic Landscape Modelling" href="OrogenicLandscapeDemo.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">Quagmire.tex</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../FrontPage.html">
+   Introduction to Quagmire
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Tutorial
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex1-Creating-Meshes.html">
+   Example 1 - creating structured and unstructured meshes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex1a-QuagmireMeshVariables.html">
+   quagmire.mesh MeshVariable
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex1b-QuagmireLazyFunctions.html">
+   Quagmire.function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex1b-QuagmireLazyFunctions.html#vector-functions">
+   Vector functions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex1c-QuagmireCoordinateGeometry.html">
+   Quagmire.function.geometry
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex1d-QuagmireCloud.html">
+   quagmire.tools.cloud
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex2-Topography-Meshes.html">
+   Example 2 - Meshes for Topography
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex3-Surface-Process-Meshes.html">
+   Example 3 - Meshes for Surface Process Models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex4-Multiple-downhill-pathways.html">
+   Example 4 - Matrix approaches - multiple paths
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex5-PreprocessingSurfaces.html">
+   Example 5 - Preprocessing a surface
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex6-Catchment-Analysis.html">
+   Example 6- Catchment analysis from the matrix transpose.
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex7-LinearDiffusion.html">
+   Linear diffusion - time evolution / benchmarking
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex7-LinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
+   Spatially variable diffusivity (circular “inclusion”)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex7a-NonLinearDiffusion.html">
+   Non-Linear diffusion - a critical-slope diffusion implementation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex7a-NonLinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
+   Spatially variable diffusivity (circular “inclusion”)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex8-ErosionDeposition.html">
+   Example 8 - Incision and Deposition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex9-LandscapeEvolution.html">
+   Example 9 - Landscape Evolution
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Idealised Examples
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="MorningBun.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="MorningBun2.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="OrogenicLandscapeDemo.html">
+   Orogenic Landscape Modelling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="OrogenicLandscapeDemo.html#create-mesh">
+   Create Mesh
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   PixMeshes and the Octopants Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="RosenbrockSurface.html">
+   Rosenbrock landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="RosenbrockSurface.html#rosenbrock-function">
+   Rosenbrock function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="RosenbrockSurface.html#compare-one-and-two-downhill-pathways">
+   Compare one and two downhill pathways
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="RosenbrockSurface.html#probability-densities">
+   Probability densities
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="RosenbrockSurface.html#animation-of-stream-flow">
+   Animation of stream flow
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="SwampFillingDemo.html">
+   Swamp filling of local minima
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="SwampFillingDemo.html#semi-circular-gutter-with-incline">
+   Semi-circular gutter with incline
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TriMeshOctoPants.html">
+   TriMeshes and the Octopants Landscape
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Worked Examples (Building landscapes from data)
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx1-ETOPO1-workflow.html">
+   Meshing ETOPO1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx1b-ETOPO1-highres-workflow.html">
+   Meshing ETOPO1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx2-ETOPO1-Tasmania.html">
+   Etopo1 Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html#retrieve-geoscience-australia-9s-dem-using-ga-wcs-service">
+   Retrieve Geoscience Australia 9s DEM using GA WCS service
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4p-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4s-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx5-GlobalModels.html">
+   Models on the Sphere
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-Preliminary-crop.html">
+   Spherical mesh of Australia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-spherical-mesh-of-Australia.html">
+   Spherical mesh of Australia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-UsingStoredMeshes.html">
+   Models from the cloud
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx7-Diffusion.html">
+   Diffusion
+  </a>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        <a class="dropdown-buttons"
+            href="../_sources/IdealisedExamples/PixMeshOctoPants.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download notebook file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/IdealisedExamples/PixMeshOctoPants.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/underworldcode/quagmire"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/underworldcode/quagmire/dev?urlpath=tree/jupyterbook/IdealisedExamples/PixMeshOctoPants.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pixmesh">
+   PixMesh
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="pixmeshes-and-the-octopants-landscape">
+<h1>PixMeshes and the Octopants Landscape<a class="headerlink" href="#pixmeshes-and-the-octopants-landscape" title="Permalink to this headline">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">tools</span> <span class="k">as</span> <span class="n">meshtools</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="pixmesh">
+<h2>PixMesh<a class="headerlink" href="#pixmesh" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span> 
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span> <span class="c1"># all routines we need are within this class</span>
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span>
+
+<span class="n">meshX</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">meshY</span> <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMDA</span><span class="p">(</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="n">meshX</span><span class="p">,</span> <span class="n">meshY</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">)</span>  <span class="c1">## cloud array etc can surely be done better ... </span>
+<span class="n">mesh_noise</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: PixMesh
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - cKDTree 0.44835161000003154s
+0 - Find boundaries 0.014428413000018736s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 8.102521260000003s, (3.3996173300000123s + 4.702868130000013s)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct rbf weights 1.0564918160000047s
+Underlying Mesh type: PixMesh
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - cKDTree 0.4393130789999873s
+0 - Find boundaries 0.011952288999964367s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 8.201292905000003s, (3.265741771000023s + 4.93551373300005s)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct rbf weights 1.0628996120000238s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">radius</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">theta</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">height</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.025</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.2</span><span class="o">*</span><span class="n">radius</span><span class="p">)</span><span class="o">**</span><span class="mi">4</span>  <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">10.0</span><span class="o">*</span><span class="n">theta</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="c1">## Less so</span>
+<span class="n">height</span>  <span class="o">+=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="mf">0.2</span><span class="o">*</span><span class="n">radius</span><span class="p">)</span>
+<span class="n">height_noise</span> <span class="o">=</span> <span class="n">height</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">height</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.001</span> <span class="c1"># random noise</span>
+
+<span class="n">rainfall</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
+<span class="n">rainfall</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="n">radius</span> <span class="o">&gt;</span> <span class="mf">5.0</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.0</span> 
+<span class="n">fn_rainfall</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="s2">&quot;rainfall&quot;</span><span class="p">)</span>
+<span class="n">fn_rainfall</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">rainfall</span>
+
+<span class="n">mesh</span><span class="o">.</span><span class="n">downhill_neighbours</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">mesh_noise</span><span class="o">.</span><span class="n">downhill_neighbours</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="k">with</span> <span class="n">mesh</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
+    <span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">height</span>
+
+<span class="k">with</span> <span class="n">mesh_noise</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
+    <span class="n">mesh_noise</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">height_noise</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.9661304799999471s
+0 - Build upstream areas 0.022387958999956936s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.9871684969999706s
+0 - Build upstream areas 0.023556266000014148s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 1.0936337129999174s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 5.414667836999911s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 1.0223967050000056s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 7.318292032000045s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mo1</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">identify_outflow_points</span><span class="p">()</span>
+<span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">mo1</span><span class="p">])</span>
+<span class="n">outflows</span> <span class="o">=</span> <span class="n">mo1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+<span class="n">mo1n</span> <span class="o">=</span> <span class="n">mesh_noise</span><span class="o">.</span><span class="n">identify_outflow_points</span><span class="p">()</span>
+<span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">mo1n</span><span class="p">])</span>
+<span class="n">outflows_noise</span> <span class="o">=</span> <span class="n">mo1n</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flowpaths</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">fn_rainfall</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">logpaths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">flowpaths</span><span class="p">)</span>
+<span class="n">sqrtpaths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">flowpaths</span><span class="p">)</span>
+
+<span class="n">flowpaths_noise</span> <span class="o">=</span> <span class="n">mesh_noise</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">fn_rainfall</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">logpaths_noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">flowpaths_noise</span><span class="p">)</span>
+<span class="n">sqrtpaths_noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">flowpaths_noise</span><span class="p">)</span>
+
+<span class="n">mesh</span><span class="o">.</span><span class="n">downhill_neighbours</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">mesh_noise</span><span class="o">.</span><span class="n">downhill_neighbours</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="c1"># flow pathways are automatically updated</span>
+
+<span class="n">flowpaths3</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">fn_rainfall</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">logpaths3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">flowpaths3</span><span class="p">)</span>
+<span class="n">sqrtpaths3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">flowpaths3</span><span class="p">)</span>
+
+<span class="n">flowpaths_noise3</span> <span class="o">=</span> <span class="n">mesh_noise</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">fn_rainfall</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">logpaths_noise3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">flowpaths_noise3</span><span class="p">)</span>
+<span class="n">sqrtpaths_noise3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">flowpaths_noise3</span><span class="p">)</span>
+
+<span class="n">mesh</span><span class="o">.</span><span class="n">downhill_neighbours</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">mesh_noise</span><span class="o">.</span><span class="n">downhill_neighbours</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="c1"># flow pathways are automatically updated</span>
+
+<span class="n">flowpaths1</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">fn_rainfall</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">logpaths1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">flowpaths1</span><span class="p">)</span>
+<span class="n">sqrtpaths1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">flowpaths1</span><span class="p">)</span>
+
+<span class="n">flowpaths_noise1</span> <span class="o">=</span> <span class="n">mesh_noise</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">fn_rainfall</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">logpaths_noise1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">flowpaths_noise1</span><span class="p">)</span>
+<span class="n">sqrtpaths_noise1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">flowpaths_noise1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/ipykernel_launcher.py:2: RuntimeWarning: divide by zero encountered in log10
+  
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/ipykernel_launcher.py:6: RuntimeWarning: divide by zero encountered in log10
+  
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 1.563045460000012s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 8.098708000999977s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 1.6885136399999965s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 9.089314046000027s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## What&#39;s happening with the outflow points - how to find them ? </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">circum_points = np.where( np.abs(radius-4.9) &lt;= 0.001 )[0]</span>
+<span class="sd">circum_angle = theta[circum_points]</span>
+
+<span class="sd">circum_flow_1 = flowpaths1[circum_points]</span>
+<span class="sd">circum_flow_2 = flowpaths[circum_points]</span>
+<span class="sd">circum_flow_3 = flowpaths3[circum_points]</span>
+
+<span class="sd">circum_flow_1n = flowpaths_noise1[circum_points]</span>
+<span class="sd">circum_flow_2n = flowpaths_noise[circum_points]</span>
+<span class="sd">circum_flow_3n = flowpaths_noise3[circum_points]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Choose a scale to plot all six flow results</span>
+<span class="n">fmax</span> <span class="o">=</span> <span class="mf">1.0</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sqrtpaths</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span>   <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+               <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">)</span>
+<span class="n">im2</span>  <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span> <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+                 <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">bone_r</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">im3</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sqrtpaths_noise</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span>  <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+                 <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">)</span>
+<span class="n">im4</span>  <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span> <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+                  <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">bone_r</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">outflows</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">outflows</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">outflows_noise</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">outflows_noise</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># fig.savefig(&quot;PixMesh_FlowPaths_N2.png&quot;, dpi=300)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sqrtpaths3</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span> <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+               <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">)</span>
+<span class="n">im2</span>  <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span> <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span>
+                 <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">bone_r</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">im3</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sqrtpaths_noise3</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span> <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+                 <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">)</span>
+<span class="n">im4</span>  <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span> <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+                  <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">bone_r</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">outflows</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">outflows</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">outflows_noise</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">outflows_noise</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+
+<span class="c1"># fig.savefig(&quot;PixMesh_FlowPaths_N3.png&quot;, dpi=300)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sqrtpaths1</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span>   <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+               <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">)</span>
+<span class="n">im2</span>  <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span> <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+                 <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">bone_r</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">im3</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sqrtpaths_noise1</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span>  <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+                 <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">)</span>
+<span class="n">im4</span>  <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span> <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+                  <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">bone_r</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">outflows</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">outflows</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">outflows_noise</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">outflows_noise</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># fig.savefig(&quot;PixMesh_FlowPaths_N1.png&quot;, dpi=300)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The following may not matter but noise can break up the outflows</span>
+
+<span class="n">theta_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">21</span><span class="p">))</span>
+<span class="n">outflow_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">outflows_noise</span><span class="p">],</span> <span class="n">theta_vals</span><span class="p">)</span>
+<span class="n">theta_bins</span> <span class="o">=</span> <span class="n">theta_vals</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">20</span>
+
+<span class="n">raw_flowsN1</span> <span class="o">=</span> <span class="n">flowpaths_noise1</span><span class="p">[</span><span class="n">outflows_noise</span><span class="p">]</span>
+<span class="n">raw_flowsN2</span> <span class="o">=</span> <span class="n">flowpaths_noise</span><span class="p">[</span><span class="n">outflows_noise</span><span class="p">]</span>
+<span class="n">raw_flowsN3</span> <span class="o">=</span> <span class="n">flowpaths_noise3</span><span class="p">[</span><span class="n">outflows_noise</span><span class="p">]</span>
+
+<span class="n">bin_flowsN1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">bin_flowsN2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">bin_flowsN3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">outflows_noise</span><span class="p">)):</span>
+    <span class="n">bin_flowsN1</span><span class="p">[</span><span class="n">outflow_bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">raw_flowsN1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">bin_flowsN2</span><span class="p">[</span><span class="n">outflow_bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">raw_flowsN2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">bin_flowsN3</span><span class="p">[</span><span class="n">outflow_bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">raw_flowsN1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+
+<span class="c1"># print bin_flowsN1, bin_flowsN1.sum()</span>
+<span class="c1"># print bin_flowsN2, bin_flowsN2.sum()</span>
+<span class="c1"># print bin_flowsN3, bin_flowsN3.sum()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">reference</span> <span class="o">=</span> <span class="mi">25</span> <span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">20.0</span> 
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">60</span><span class="p">))</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">60</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;Black&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;Black&quot;</span><span class="p">)</span>
+
+
+<span class="c1">#ax.set_ylim(0.0, 100.0)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">outflows</span><span class="p">])</span><span class="o">+</span><span class="mf">0.0</span><span class="p">,</span> <span class="p">(</span><span class="n">flowpaths1</span><span class="p">[</span><span class="n">outflows</span><span class="p">]</span><span class="o">-</span><span class="n">reference</span><span class="p">),</span>  <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;Black&quot;</span><span class="p">,</span>
+                                            <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#00FFCC&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">outflows</span><span class="p">])</span><span class="o">+</span><span class="mf">4.0</span><span class="p">,</span>     <span class="p">(</span><span class="n">flowpaths</span><span class="p">[</span><span class="n">outflows</span><span class="p">]</span><span class="o">-</span><span class="n">reference</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;Black&quot;</span><span class="p">,</span>
+                                           <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#CC4400&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">outflows</span><span class="p">])</span><span class="o">+</span><span class="mf">8.0</span><span class="p">,</span> <span class="p">(</span><span class="n">flowpaths3</span><span class="p">[</span><span class="n">outflows</span><span class="p">]</span><span class="o">-</span><span class="n">reference</span><span class="p">),</span>  <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;Black&quot;</span><span class="p">,</span>
+                                           <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#004400&quot;</span><span class="p">)</span>
+
+
+
+<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">theta_bins</span><span class="p">)</span><span class="o">+</span><span class="mf">2.0</span><span class="p">,</span> <span class="p">(</span><span class="n">bin_flowsN1</span><span class="o">-</span><span class="n">reference</span><span class="p">),</span>  <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;Black&quot;</span><span class="p">,</span>
+                                            <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#00FFCC&quot;</span><span class="p">)</span>
+
+<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">theta_bins</span><span class="p">)</span><span class="o">+</span><span class="mf">6.0</span><span class="p">,</span> <span class="p">(</span><span class="n">bin_flowsN2</span><span class="o">-</span><span class="n">reference</span><span class="p">),</span>  <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;Black&quot;</span><span class="p">,</span> 
+                                           <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#CC4400&quot;</span><span class="p">)</span>
+
+
+<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">theta_bins</span><span class="p">)</span><span class="o">+</span><span class="mf">10.0</span><span class="p">,</span> <span class="p">(</span><span class="n">bin_flowsN3</span><span class="o">-</span><span class="n">reference</span><span class="p">),</span>  <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;Black&quot;</span><span class="p">,</span>
+                                           <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#004400&quot;</span><span class="p">)</span>
+
+
+
+
+<span class="c1"># ax.bar( np.arange(0,20),  flowpaths[outflows], width = 0.05)</span>
+<span class="c1"># ax.bar( 0.2 + np.arange(0,20),  flowpaths_noise[outflows_noise] , width = 0.05 )</span>
+
+<span class="c1"># ax.bar( 0.4 + np.arange(0,20),  flowpaths1[outflows], width = 0.05)</span>
+<span class="c1"># ax.bar( 0.6 + np.arange(0,20),  flowpaths_noise1[outflows_noise] , width = 0.05 )</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">downhill_neighbours</span><span class="o">=</span><span class="mi">3</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cum1</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">fn_rainfall</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cum3</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">rbf_smoother</span><span class="p">(</span><span class="n">cum1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fmax</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cum3</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span>   <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+               <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">)</span>
+<span class="n">im2</span>  <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span> <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+                 <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">bone_r</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">im3</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cum1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span>  <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+                 <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">fmax</span><span class="p">)</span>
+<span class="n">im4</span>  <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meshX</span><span class="p">,</span><span class="n">meshY</span><span class="p">)),</span> <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">,</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">],</span> 
+                  <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">bone_r</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="c1"># ax.scatter(mesh.coords[outflows, 0], mesh.coords[outflows, 1])</span>
+<span class="c1"># ax2.scatter(mesh.coords[outflows_noise, 0], mesh.coords[outflows_noise, 1])</span>
+
+<span class="c1"># fig.savefig(&quot;PixMesh_FlowPaths_N2_Averages.png&quot;, dpi=300)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./IdealisedExamples"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="OrogenicLandscapeDemo.html" title="previous page">Orogenic Landscape Modelling</a>
+    <a class='right-next' id="next-link" href="RosenbrockSurface.html" title="next page">Rosenbrock landscape</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Louis Moresi, Ben Mather, Romain Beucher<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>

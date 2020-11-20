@@ -1,0 +1,1083 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Swamp filling of local minima &#8212; Quagmire.tex</title>
+    
+  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="TriMeshes and the Octopants Landscape" href="TriMeshOctoPants.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="SpiralZigguratDemo.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">Quagmire.tex</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../FrontPage.html">
+   Introduction to Quagmire
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Tutorial
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex1-Creating-Meshes.html">
+   Example 1 - creating structured and unstructured meshes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex1a-QuagmireMeshVariables.html">
+   quagmire.mesh MeshVariable
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex1b-QuagmireLazyFunctions.html">
+   Quagmire.function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex1b-QuagmireLazyFunctions.html#vector-functions">
+   Vector functions
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex1c-QuagmireCoordinateGeometry.html">
+   Quagmire.function.geometry
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex1d-QuagmireCloud.html">
+   quagmire.tools.cloud
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex2-Topography-Meshes.html">
+   Example 2 - Meshes for Topography
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex3-Surface-Process-Meshes.html">
+   Example 3 - Meshes for Surface Process Models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex4-Multiple-downhill-pathways.html">
+   Example 4 - Matrix approaches - multiple paths
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex5-PreprocessingSurfaces.html">
+   Example 5 - Preprocessing a surface
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex6-Catchment-Analysis.html">
+   Example 6- Catchment analysis from the matrix transpose.
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex7-LinearDiffusion.html">
+   Linear diffusion - time evolution / benchmarking
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex7-LinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
+   Spatially variable diffusivity (circular “inclusion”)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex7a-NonLinearDiffusion.html">
+   Non-Linear diffusion - a critical-slope diffusion implementation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex7a-NonLinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
+   Spatially variable diffusivity (circular “inclusion”)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex8-ErosionDeposition.html">
+   Example 8 - Incision and Deposition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tutorial/Ex9-LandscapeEvolution.html">
+   Example 9 - Landscape Evolution
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Idealised Examples
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="MorningBun.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="MorningBun2.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="OrogenicLandscapeDemo.html">
+   Orogenic Landscape Modelling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="OrogenicLandscapeDemo.html#create-mesh">
+   Create Mesh
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="PixMeshOctoPants.html">
+   PixMeshes and the Octopants Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="RosenbrockSurface.html">
+   Rosenbrock landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="RosenbrockSurface.html#rosenbrock-function">
+   Rosenbrock function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="RosenbrockSurface.html#compare-one-and-two-downhill-pathways">
+   Compare one and two downhill pathways
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="RosenbrockSurface.html#probability-densities">
+   Probability densities
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="RosenbrockSurface.html#animation-of-stream-flow">
+   Animation of stream flow
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Swamp filling of local minima
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#semi-circular-gutter-with-incline">
+   Semi-circular gutter with incline
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TriMeshOctoPants.html">
+   TriMeshes and the Octopants Landscape
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Worked Examples (Building landscapes from data)
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx1-ETOPO1-workflow.html">
+   Meshing ETOPO1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx1b-ETOPO1-highres-workflow.html">
+   Meshing ETOPO1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx2-ETOPO1-Tasmania.html">
+   Etopo1 Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html#retrieve-geoscience-australia-9s-dem-using-ga-wcs-service">
+   Retrieve Geoscience Australia 9s DEM using GA WCS service
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4p-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx4s-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx5-GlobalModels.html">
+   Models on the Sphere
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-Preliminary-crop.html">
+   Spherical mesh of Australia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-spherical-mesh-of-Australia.html">
+   Spherical mesh of Australia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx6-UsingStoredMeshes.html">
+   Models from the cloud
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../WorkedExamples/WEx7-Diffusion.html">
+   Diffusion
+  </a>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        <a class="dropdown-buttons"
+            href="../_sources/IdealisedExamples/SwampFillingDemo.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download notebook file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/IdealisedExamples/SwampFillingDemo.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/underworldcode/quagmire"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/underworldcode/quagmire/dev?urlpath=tree/jupyterbook/IdealisedExamples/SwampFillingDemo.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Swamp filling of local minima
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#semi-circular-gutter-with-incline">
+   Semi-circular gutter with incline
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="swamp-filling-of-local-minima">
+<h1>Swamp filling of local minima<a class="headerlink" href="#swamp-filling-of-local-minima" title="Permalink to this headline">¶</a></h1>
+<p>This notebook illustrates the strategy that the swamp-filling algorithm takes and shows why multiple iterations are needed.</p>
+<p>We start with a simple, semi-circular channel (gutter) and introduce nested hemispherical depressions (local minima).</p>
+<!-- #### Contents
+
+- [Rosenbrock function](#Rosenbrock-function)
+- [Compare one and two downhill pathways](#Compare-one-and-two-downhill-pathways)
+- [Probability densities](#Probability-densities)
+- [Animation of stream flow](#Animation-of-stream-flow) --><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span>
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">tools</span> <span class="k">as</span> <span class="n">meshtools</span>
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">function</span> <span class="k">as</span> <span class="n">fn</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span>
+<span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span> <span class="o">=</span>  <span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.0</span>
+
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">bmask</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">generate_square_points</span><span class="p">(</span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span><span class="p">,</span> <span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">boundary_samples</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">lloyd_mesh_improvement</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">bmask</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+<span class="n">DM</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_points</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">bmask</span><span class="p">)</span>
+<span class="n">sp</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">)</span>
+<span class="n">catchments0</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;low_point_catchments0&quot;</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
+0 - Delaunay triangulation 0.18607505900001797s
+0 - Calculate node weights and area 0.004769121999970594s
+0 - Find boundaries 0.0016190069999311163s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - cKDTree 0.00897154100005082s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.301407688999916s, (0.15571941799998967s + 0.14563697099993078s)
+0 - Construct rbf weights 0.05301154400001451s
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="semi-circular-gutter-with-incline">
+<h1>Semi-circular gutter with incline<a class="headerlink" href="#semi-circular-gutter-with-incline" title="Permalink to this headline">¶</a></h1>
+<div class="math notranslate nohighlight">
+\[
+h(x,y) = (1-x)^2 
+\]</div>
+<p>we introduce a small incline to ensure the streams terminate at the boundary.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">height</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">((</span><span class="mf">0.5</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>  
+
+<span class="k">with</span> <span class="n">sp</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
+    <span class="n">sp</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">height</span>
+
+<span class="n">gradient</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">slope</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.07198553099999572s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.1059219869999879s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Add hemispherical blisters</span>
+
+<span class="n">blisters</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">2.4</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">),(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.9</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">),</span> 
+            <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),]</span>
+
+
+<span class="n">height</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">dh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">blis</span> <span class="ow">in</span> <span class="n">blisters</span><span class="p">:</span>
+    <span class="n">x0</span>  <span class="o">=</span> <span class="n">blis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">y0</span>  <span class="o">=</span> <span class="n">blis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">r0</span>  <span class="o">=</span> <span class="n">blis</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">s0</span>  <span class="o">=</span> <span class="n">blis</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    
+    <span class="n">points</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">cKDTree</span><span class="o">.</span><span class="n">query_ball_point</span><span class="p">((</span><span class="n">x0</span><span class="p">,</span><span class="n">y0</span><span class="p">),</span> <span class="n">r0</span><span class="p">)</span>   
+    <span class="n">r</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">points</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x0</span><span class="p">,</span> <span class="n">sp</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">points</span><span class="p">][:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y0</span><span class="p">)</span>
+    <span class="n">dh</span><span class="p">[</span><span class="n">points</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">dh</span><span class="p">[</span><span class="n">points</span><span class="p">],</span> <span class="n">s0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">r0</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    
+
+<span class="n">height</span> <span class="o">-=</span> <span class="n">dh</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">height</span> <span class="o">+=</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">y</span> <span class="c1"># make a small incline</span>
+<span class="n">height</span> <span class="o">-=</span> <span class="n">height</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ones</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">mesh</span><span class="o">=</span><span class="n">sp</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="mi">980</span><span class="n">a466492b6</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">ones</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">mesh</span><span class="o">=</span><span class="n">sp</span><span class="p">)</span>
+
+<span class="nn">~/work/quagmire/quagmire/quagmire/function/function_classes.py</span> in <span class="ni">__init__</span><span class="nt">(self, value, *args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">535</span> 
+<span class="g g-Whitespace">    </span><span class="mi">536</span>     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="ne">--&gt; </span><span class="mi">537</span>         <span class="nb">super</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">538</span>         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+<span class="g g-Whitespace">    </span><span class="mi">539</span>         <span class="bp">self</span><span class="o">.</span><span class="n">math</span> <span class="o">=</span> <span class="k">lambda</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">latex</span>
+
+<span class="ne">TypeError</span>: __init__() got an unexpected keyword argument &#39;mesh&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">sp</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
+    <span class="n">sp</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">height</span>
+    
+<span class="c1"># Compute a flow ... </span>
+
+<span class="n">cumulative_flow_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">1.0e-6</span> <span class="o">+</span> <span class="n">sp</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">ones</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">sp</span><span class="p">))</span>
+<span class="n">lowpts0</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">identify_low_points</span><span class="p">(</span><span class="n">ref_height</span><span class="o">=-</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">height0</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Low points - </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lowpts0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.07443054299994856s
+0 - Build upstream areas 0.16133644299998195s
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="mi">64</span><span class="n">b26c384ab4</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="c1"># Compute a flow ...</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> 
+<span class="ne">----&gt; </span><span class="mi">6</span> <span class="n">cumulative_flow_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">1.0e-6</span> <span class="o">+</span> <span class="n">sp</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">ones</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">sp</span><span class="p">))</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">lowpts0</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">identify_low_points</span><span class="p">(</span><span class="n">ref_height</span><span class="o">=-</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">height0</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="ne">NameError</span>: name &#39;ones&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catchments0</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">uphill_propagation</span><span class="p">(</span><span class="n">points</span> <span class="o">=</span> <span class="n">lowpts0</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">indices</span><span class="p">((</span><span class="n">lowpts0</span><span class="o">.</span><span class="n">shape</span><span class="p">)),</span> <span class="n">fill</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">its</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="mi">325242</span><span class="n">b6410c</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">catchments0</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">uphill_propagation</span><span class="p">(</span><span class="n">points</span> <span class="o">=</span> <span class="n">lowpts0</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">indices</span><span class="p">((</span><span class="n">lowpts0</span><span class="o">.</span><span class="n">shape</span><span class="p">)),</span> <span class="n">fill</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">its</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;lowpts0&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">outflows</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">identify_outflow_points</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sp</span><span class="o">.</span><span class="n">low_points_swamp_fill</span><span class="p">(</span><span class="n">its</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">ref_height</span><span class="o">=-</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">saddles</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">cumulative_flow_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">1.0e-6</span> <span class="o">+</span> <span class="n">sp</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">ones</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">sp</span><span class="p">))</span>
+<span class="n">lowpts1</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">identify_low_points</span><span class="p">(</span><span class="n">ref_height</span><span class="o">=-</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">height1</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: Low points - </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lowpts1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">lowpts1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>186  iterations, time =  0.09038821499996175
+Build low point catchments -  0.0912258189999875  seconds
+0  Sort spills -  0.0023901109999542314
+0  Gather spill data -  0.00015270100004727283
+0  Sort all spills -  5.220100001679384e-05
+0 - Build downhill matrices 0.06752950999998575s
+Low point swamp fill  0.18870886600006997  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.16618946300002335s
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="n">fefbfb01e2ed</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">sp</span><span class="o">.</span><span class="n">low_points_swamp_fill</span><span class="p">(</span><span class="n">its</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">ref_height</span><span class="o">=-</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">saddles</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">2</span> <span class="n">cumulative_flow_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">1.0e-6</span> <span class="o">+</span> <span class="n">sp</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">ones</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">sp</span><span class="p">))</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">lowpts1</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">identify_low_points</span><span class="p">(</span><span class="n">ref_height</span><span class="o">=-</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">height1</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> 
+
+<span class="ne">NameError</span>: name &#39;ones&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sp</span><span class="o">.</span><span class="n">low_points_swamp_fill</span><span class="p">(</span><span class="n">its</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">ref_height</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">saddles</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">cumulative_flow_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">1.0e-6</span> <span class="o">+</span> <span class="n">sp</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">ones</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">sp</span><span class="p">))</span>
+<span class="n">lowpts2</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">identify_low_points</span><span class="p">()</span>
+<span class="n">height2</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: Low points - </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lowpts2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">lowpts2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>191  iterations, time =  0.09826875099997778
+Build low point catchments -  0.09929105599997001  seconds
+0  Sort spills -  0.0020161090000101467
+0  Gather spill data -  0.0001133000000663742
+0  Sort all spills -  4.94010000693379e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.07164932899991072s
+Low point swamp fill  0.19639960200004225  seconds
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.24351391799996236s
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">9055</span><span class="n">eba861e4</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">sp</span><span class="o">.</span><span class="n">low_points_swamp_fill</span><span class="p">(</span><span class="n">its</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">ref_height</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">saddles</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> 
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">cumulative_flow_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">1.0e-6</span> <span class="o">+</span> <span class="n">sp</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">ones</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">sp</span><span class="p">))</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">lowpts2</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">identify_low_points</span><span class="p">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">height2</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="ne">NameError</span>: name &#39;ones&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
+
+<span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">1000</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">)</span>
+<span class="n">lv</span><span class="p">[</span><span class="s2">&quot;axis&quot;</span><span class="p">]</span><span class="o">=</span><span class="kc">False</span>
+<span class="n">lv</span><span class="p">[</span><span class="s1">&#39;specular&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="n">verts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">verts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">height0</span> <span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">verts_s1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">verts_s1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">verts_s1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">height1</span><span class="o">&gt;</span><span class="n">height0</span><span class="p">,</span> <span class="n">height1</span><span class="p">,</span> <span class="n">height0</span><span class="o">-</span><span class="mf">0.01</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">verts_s2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">verts_s2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">verts_s2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">height2</span><span class="o">&gt;</span><span class="n">height0</span><span class="p">,</span> <span class="n">height2</span><span class="p">,</span> <span class="n">height0</span><span class="o">-</span><span class="mf">0.01</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">tris</span>  <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;spmesh&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="n">logScale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">tris</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">verts</span><span class="p">)</span>
+<span class="n">tris</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+<span class="n">tris</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">cumulative_flow_0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;flow0&quot;</span><span class="p">)</span>
+<span class="n">tris</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">cumulative_flow_1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;flow1&quot;</span><span class="p">)</span>
+<span class="n">tris</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">cumulative_flow_2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;flow2&quot;</span><span class="p">)</span>
+<span class="n">tris</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">ones</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">sp</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;blank&quot;</span><span class="p">)</span>
+<span class="n">tris</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;Grey #335599&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="n">trisW</span>  <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;spwire&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#335599&quot;</span><span class="p">)</span>
+<span class="n">trisW</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">verts</span><span class="o">+</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.001</span><span class="p">))</span>
+<span class="n">trisW</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+
+<span class="n">trisC</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;spcatch&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#335599&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+<span class="n">trisC</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">verts</span><span class="p">)</span>
+<span class="n">trisC</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+<span class="n">trisC</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">catchments0</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">sp</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;catchment&quot;</span><span class="p">)</span>
+<span class="n">trisC</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;#BBBBBB #AA5522 #8899FF #00FF66 #FFFF55 #999999&quot;</span><span class="p">)</span>
+
+<span class="n">tris_s1</span>  <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;spmesh_s1&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="n">logScale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#88BBAA&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+<span class="n">tris_s1</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">verts_s1</span><span class="p">)</span>
+<span class="n">tris_s1</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+<span class="c1"># tris_s1.values(cumulative_flow_1, label=&quot;flow&quot;)</span>
+<span class="c1"># tris_s1.values(ones.evaluate(sp), label=&quot;blank&quot;)</span>
+<span class="c1"># tris_s1.colourmap(&quot;Grey Blue&quot;, range=[-2, -1])</span>
+
+<span class="n">tris_s2</span>  <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;spmesh_s2&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="n">logScale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#88BBAA&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+<span class="n">tris_s2</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">verts_s2</span><span class="p">)</span>
+<span class="n">tris_s2</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
+<span class="c1"># tris_s2.values(ones.evaluate(sp), label=&quot;blank&quot;)</span>
+<span class="c1"># tris_s2.colourmap(&quot;Grey Blue&quot;, range=[-2, 0])</span>
+
+
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="s2">&quot;vertices&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#666677&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">nodes</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">verts</span><span class="o">+</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.001</span><span class="p">))</span>
+<span class="n">nodes</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">bmask</span><span class="p">)</span>
+
+<span class="n">lownodes</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="s2">&quot;lows1&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;Green&quot;</span><span class="p">)</span>
+<span class="n">lownodes</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">verts_s1</span><span class="p">[</span><span class="n">lowpts1</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.01</span><span class="p">))</span>
+
+<span class="n">lownodes0</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="s2">&quot;lows&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;Red&quot;</span><span class="p">)</span>
+<span class="n">lownodes0</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">verts</span><span class="p">[</span><span class="n">lowpts0</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.01</span><span class="p">))</span>
+
+<span class="n">outflownodes0</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="s2">&quot;outflows&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;Blue&quot;</span><span class="p">)</span>
+<span class="n">outflownodes0</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">verts</span><span class="p">[</span><span class="n">outflows</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.01</span><span class="p">))</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">translation</span><span class="p">(</span><span class="mf">0.348</span><span class="p">,</span> <span class="mf">0.304</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.403</span><span class="p">)</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="o">-</span><span class="mf">46.218</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">Panel</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">ObjectList</span><span class="p">()</span>
+
+<span class="n">tris</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;blank&quot;</span><span class="p">,</span> <span class="s2">&quot;flow0&quot;</span><span class="p">,</span> <span class="s2">&quot;flow1&quot;</span><span class="p">,</span> <span class="s2">&quot;flow2&quot;</span><span class="p">,</span> <span class="s2">&quot;catch&quot;</span><span class="p">],</span>    <span class="n">value</span><span class="o">=</span><span class="s2">&quot;blank&quot;</span><span class="p">,</span> <span class="nb">property</span><span class="o">=</span><span class="s2">&quot;colourby&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s2">&quot;redraw&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LavaVu Run error: Failed to open X display
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="n">f4df44708818</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> 
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">verts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="ne">----&gt; </span><span class="mi">8</span> <span class="n">verts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">height0</span> <span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> 
+<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="n">verts_s1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="ne">NameError</span>: name &#39;height0&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Figure: Mesh plus low points </span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">translation</span><span class="p">(</span><span class="mf">0.348</span><span class="p">,</span> <span class="mf">0.304</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.403</span><span class="p">)</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="o">-</span><span class="mf">46.218</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+<span class="n">tris</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">trisC</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">tris_s1</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">tris_s2</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">lownodes</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">lownodes0</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">redraw</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s1">&#39;NodesAndLows0.png&#39;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span><span class="mi">1500</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">13</span><span class="o">-</span><span class="mi">17</span><span class="n">de953081a7</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">lv</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="o">-</span><span class="mf">46.218</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> 
+<span class="ne">----&gt; </span><span class="mi">6</span> <span class="n">tris</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">trisC</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">tris_s1</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="ne">NameError</span>: name &#39;tris&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Figure: Initial flow and lows</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">translation</span><span class="p">(</span><span class="mf">0.348</span><span class="p">,</span> <span class="mf">0.304</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.403</span><span class="p">)</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="o">-</span><span class="mf">46.218</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+<span class="n">tris</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">trisW</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">trisC</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">tris_s1</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">tris_s2</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">lownodes</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">lownodes0</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">tris</span><span class="p">[</span><span class="s2">&quot;colourby&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;flow0&quot;</span>
+
+
+<span class="n">lv</span><span class="o">.</span><span class="n">redraw</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s1">&#39;FlowsAndLows0.png&#39;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span><span class="mi">1500</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">14</span><span class="o">-</span><span class="mi">08778</span><span class="n">dd7c75b</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">lv</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="o">-</span><span class="mf">46.218</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> 
+<span class="ne">----&gt; </span><span class="mi">6</span> <span class="n">tris</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">trisW</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">trisC</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="ne">NameError</span>: name &#39;tris&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Figure: One Iteration flow and lows</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">translation</span><span class="p">(</span><span class="mf">0.348</span><span class="p">,</span> <span class="mf">0.304</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.403</span><span class="p">)</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="o">-</span><span class="mf">46.218</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+<span class="n">tris</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">trisC</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">trisW</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">tris_s1</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">tris_s2</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">lownodes</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">lownodes0</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">tris</span><span class="p">[</span><span class="s2">&quot;colourby&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;flow1&quot;</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">redraw</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s1">&#39;FlowsAndLows1.png&#39;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span><span class="mi">1500</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">15</span><span class="o">-</span><span class="mi">686</span><span class="n">c7697a0ef</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">lv</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="o">-</span><span class="mf">46.218</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> 
+<span class="ne">----&gt; </span><span class="mi">6</span> <span class="n">tris</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">trisC</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">trisW</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="ne">NameError</span>: name &#39;tris&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Figure: Two iterations flow and lows</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">translation</span><span class="p">(</span><span class="mf">0.348</span><span class="p">,</span> <span class="mf">0.304</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.403</span><span class="p">)</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="o">-</span><span class="mf">46.218</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+<span class="n">tris</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">tris_s1</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">tris_s2</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">lownodes</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">lownodes0</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">tris</span><span class="p">[</span><span class="s2">&quot;colourby&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;flow2&quot;</span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">redraw</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s1">&#39;FlowsAndLows2.png&#39;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span><span class="mi">1500</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">16</span><span class="o">-</span><span class="n">ae5190fd04d0</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">lv</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="o">-</span><span class="mf">46.218</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> 
+<span class="ne">----&gt; </span><span class="mi">6</span> <span class="n">tris</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">tris_s1</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">tris_s2</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="ne">NameError</span>: name &#39;tris&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span> open .
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Couldn&#39;t get a file descriptor referring to the console
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lv</span><span class="o">.</span><span class="n">camera</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Close up view of the catchment boundary - perhaps the catchment information for the low nodes here too ... </span>
+
+<span class="n">lv</span><span class="o">.</span><span class="n">translation</span><span class="p">(</span><span class="mf">0.476</span><span class="p">,</span> <span class="mf">0.414</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.211</span><span class="p">)</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="o">-</span><span class="mf">2.026</span><span class="p">,</span> <span class="o">-</span><span class="mf">30.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">90.587</span><span class="p">)</span>
+<span class="n">tris</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">trisC</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">trisW</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">tris_s1</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">tris_s2</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">nodes</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">lownodes</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">lownodes0</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">redraw</span><span class="p">()</span>
+<span class="n">lv</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="s2">&quot;CatchmentCloseUp.png&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span><span class="mi">1500</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">19</span><span class="o">-</span><span class="mi">536</span><span class="n">b82f07010</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">lv</span><span class="o">.</span><span class="n">translation</span><span class="p">(</span><span class="mf">0.476</span><span class="p">,</span> <span class="mf">0.414</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.211</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">lv</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="o">-</span><span class="mf">2.026</span><span class="p">,</span> <span class="o">-</span><span class="mf">30.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">90.587</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">5</span> <span class="n">tris</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">trisC</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">trisW</span><span class="p">[</span><span class="s2">&quot;visible&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="ne">NameError</span>: name &#39;tris&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./IdealisedExamples"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="SpiralZigguratDemo.html" title="previous page">&lt;no title&gt;</a>
+    <a class='right-next' id="next-link" href="TriMeshOctoPants.html" title="next page">TriMeshes and the Octopants Landscape</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Louis Moresi, Ben Mather, Romain Beucher<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>

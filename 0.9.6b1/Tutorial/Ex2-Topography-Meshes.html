@@ -187,6 +187,78 @@
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
+  Idealised Examples
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/MorningBun.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/MorningBun2.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/OrogenicLandscapeDemo.html">
+   Orogenic Landscape Modelling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/OrogenicLandscapeDemo.html#create-mesh">
+   Create Mesh
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/PixMeshOctoPants.html">
+   PixMeshes and the Octopants Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html">
+   Rosenbrock landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#rosenbrock-function">
+   Rosenbrock function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#compare-one-and-two-downhill-pathways">
+   Compare one and two downhill pathways
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#probability-densities">
+   Probability densities
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#animation-of-stream-flow">
+   Animation of stream flow
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html">
+   Swamp filling of local minima
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html#semi-circular-gutter-with-incline">
+   Semi-circular gutter with incline
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../IdealisedExamples/TriMeshOctoPants.html">
+   TriMeshes and the Octopants Landscape
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
   Worked Examples (Building landscapes from data)
  </span>
 </p>
@@ -442,16 +514,16 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-0 - Delaunay triangulation 0.18680323699999235s
-0 - Calculate node weights and area 0.0056931470000449735s
-0 - Find boundaries 0.0016212419999988015s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - cKDTree 0.014883684999972502s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.21419360400000187s
+0 - Calculate node weights and area 0.0062750239999331825s
+0 - Find boundaries 0.0017539059999762685s
+0 - cKDTree 0.013887352000097053s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.4559926800000085s, (0.2538726589999669s + 0.20207541999997147s)
-0 - Construct rbf weights 0.04384453199998006s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.41103954299990164s, (0.227877454999998s + 0.18313088800005062s)
+0 - Construct rbf weights 0.0655178460000343s
 Triangulation has 62234 points
 </pre></div>
 </div>
@@ -490,8 +562,10 @@ Triangulation has 62234 points
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>quagmire.MeshVariable: h(x,y) - is locked
 Update topography data array (automatically rebuilds matrices)
 Update topography data array (automatically rebuilds matrices ONCE ONLY)
-0 - Build downhill matrices 0.05389929200003962s
-0 - Build upstream areas 0.06366344500003152s
+0 - Build downhill matrices 0.04945978599994305s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.07784829199999876s
 </pre></div>
 </div>
 </div>
@@ -503,8 +577,8 @@ Update topography data array (automatically rebuilds matrices ONCE ONLY)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.50740808, 1.5073141 , 1.50911688, ..., 0.6984771 , 0.66382978,
-       0.62180732])
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.51367254, 1.51193607, 1.51118257, ..., 0.7019514 , 0.66408924,
+       0.62292594])
 </pre></div>
 </div>
 </div>
@@ -2971,33 +3045,33 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 139970874236656, 8080);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140263069800304, 8080);
 _wi[viewerid].actions = {
-  "6d4RK4Q7ds" : "<triangles>colour=---VAL---; ",
-  "t9GZimUiWw" : "<triangles>visible=---VAL---; ",
-  "HlTRgjsvrQ" : "<triangles_colourbar>colour=---VAL---; ",
-  "L3PmMuW64U" : "<triangles_colourbar>visible=---VAL---; ",
-  "GqsfpsFHTU" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
+  "fbCldTAq1x" : "<triangles>colour=---VAL---; ",
+  "4K9a0zHTjo" : "<triangles>visible=---VAL---; ",
+  "L1pVPGsLiv" : "<triangles_colourbar>colour=---VAL---; ",
+  "lzcDbBpA7M" : "<triangles_colourbar>visible=---VAL---; ",
+  "9m0Rf5buLk" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: right;">
-<img id="imgtarget_zwttgyQDzI" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_KWThHCSyTX" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['zwttgyQDzI'].box.mode = this.value;">
+             <select onchange="_wi['KWThHCSyTX'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['zwttgyQDzI'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['KWThHCSyTX'].execute('reset');">
            </div></div>
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Objects:</p>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_6d4RK4Q7ds" data-target="triangles" data-property="colour"  class="colour lvctrl_6d4RK4Q7ds" onclick="
+          <div id="lvctrl_fbCldTAq1x" data-target="triangles" data-property="colour"  class="colour lvctrl_fbCldTAq1x" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -3005,24 +3079,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['zwttgyQDzI'].do_action('6d4RK4Q7ds', c.html(), el);
+              _wi['KWThHCSyTX'].do_action('fbCldTAq1x', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_6d4RK4Q7ds");
+        var el = document.getElementById("lvctrl_fbCldTAq1x");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_t9GZimUiWw_checkbox" class="lvctrl_t9GZimUiWw" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['zwttgyQDzI'].do_action('t9GZimUiWw', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_4K9a0zHTjo_checkbox" class="lvctrl_4K9a0zHTjo" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['KWThHCSyTX'].do_action('4K9a0zHTjo', this.checked ? 1 : 0, this);" >
  triangles</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_HlTRgjsvrQ" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_HlTRgjsvrQ" onclick="
+          <div id="lvctrl_L1pVPGsLiv" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_L1pVPGsLiv" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -3030,30 +3104,30 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['zwttgyQDzI'].do_action('HlTRgjsvrQ', c.html(), el);
+              _wi['KWThHCSyTX'].do_action('L1pVPGsLiv', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_HlTRgjsvrQ");
+        var el = document.getElementById("lvctrl_L1pVPGsLiv");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_L3PmMuW64U_checkbox" class="lvctrl_L3PmMuW64U" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['zwttgyQDzI'].do_action('L3PmMuW64U', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_lzcDbBpA7M_checkbox" class="lvctrl_lzcDbBpA7M" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['KWThHCSyTX'].do_action('lzcDbBpA7M', this.checked ? 1 : 0, this);" >
  triangles_colourbar</label><br>
 <p>Colourby:</p>
-<select class="lvctrl_GqsfpsFHTU" id="lvctrl_GqsfpsFHTU" value="" data-target="triangles" data-property="colourby" onchange="_wi['zwttgyQDzI'].do_action('GqsfpsFHTU', this.value, this);">
+<select class="lvctrl_9m0Rf5buLk" id="lvctrl_9m0Rf5buLk" value="" data-target="triangles" data-property="colourby" onchange="_wi['KWThHCSyTX'].do_action('9m0Rf5buLk', this.value, this);">
 <option>slope</option>
 <option>smooth_slope_a</option>
 <option>smooth_slope_b</option>
 <option>smooth_slope_c</option>
 </select><br>
 </div>
-</form><!-- CREATION TIMESTAMP 20201120031414 --><script>init('zwttgyQDzI');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201120045620 --><script>init('KWThHCSyTX');</script></div></div>
 </div>
 </div>
 </div>

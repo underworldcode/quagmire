@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.12
-    jupytext_version: 1.6.0
+    jupytext_version: 1.7.1
 kernelspec:
   display_name: Python 3
   language: python
@@ -25,10 +25,9 @@ The quagmire cloud uses [PyFilesystem](https://www.pyfilesystem.org/) to establi
 Storage for the cloud access is provided by [cloudstor](https://www.aarnet.edu.au/network-and-services/cloud-services/cloudstor/) which is hosted by [AARNET](https://www.aarnet.edu.au/). 
     
     
-In these examples, we will show how to access mesh and meshvariable data stored in the cloud. The examples we use are taken from the earlier examples. 
-    
+In these examples, we will show how to access mesh and meshvariable data stored in the cloud. The examples we use are taken from the earlier examples.
 
-```{code-cell}
+```{code-cell} ipython3
 from quagmire.tools import meshtools
 from quagmire import QuagMesh
 from quagmire.mesh import MeshVariable
@@ -63,7 +62,7 @@ print(mesh2.area)
 
 This mesh is available in the Quagmire cloud and we can create a new PETSc DM and a QuagMesh object directly from the cloud as follows (and it seems to create a valid mesh)
 
-```{code-cell}
+```{code-cell} ipython3
 from quagmire.tools.cloud import quagmire_cloud_fs
 
 DM_r2 = meshtools.create_DMPlex_from_cloud_fs("Examples/Tutorial/Ex1-refined_mesh.h5")
@@ -74,7 +73,7 @@ print(mesh2.npoints)
 print(mesh2.area)
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 DMC = meshtools.create_DMPlex_from_cloud_fs("Examples/Tutorial/Ex1a-circular_mesh.h5")
 meshC = QuagMesh(DMC)
 
@@ -85,7 +84,7 @@ phi = meshC.add_variable(name="PHI(X,Y)")
 psi = meshC.add_variable(name="PSI(X,Y)")
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 phi.load_from_cloud_fs("Examples/Tutorial/Ex1a-circular_mesh_phi.h5")
 ```
 
@@ -124,9 +123,9 @@ cloud_dir = fs.open_fs(webdav_url)
 phi.load_from_cloud_fs("Examples/Tutorial/Ex1a-circular_mesh_phi.h5", cloud_location_handle=cloud_dir)
 ```
 
-As long as you can obtain a valid fs.open_fs object that points to a folder somewhere, then meshes and mesh variables can be loaded from those locations without explicitly having to download those files first. You will need to dig into your cloud providers webdav interface to make this work for you. 
+As long as you can obtain a valid fs.open_fs object that points to a folder somewhere, then meshes and mesh variables can be loaded from those locations without explicitly having to download those files first. You will need to dig into your cloud providers webdav interface to make this work for you.
 
-```{code-cell}
+```{code-cell} ipython3
 username = "4SEAhkqSlTojYhv"
 password = "8M7idzp2Q7DXLMz()()()()()" 
 webdav_url = "webdav://{}:{}@cloudstor.aarnet.edu.au:443/plus/public.php/webdav/".format(username, password)
@@ -139,9 +138,9 @@ phi.load_from_cloud_fs("Examples/Tutorial/Ex1a-circular_mesh_phi.h5", cloud_loca
 
 If you can provide a url to a file that can be accessed, then the quagmire cloud tools allow you to load a mesh or mesh variable from that link. Examples include providing a dropbox or google drive public link to a file.
 
-Google drive provides urls for file sharing that need some manipulation to work in a python script. For a google URL that you copy from the web interface, use `url = quagmire.tools.cloud.google_drive_convert_link(g_url)` 
+Google drive provides urls for file sharing that need some manipulation to work in a python script. For a google URL that you copy from the web interface, use `url = quagmire.tools.cloud.google_drive_convert_link(g_url)`
 
-```{code-cell}
+```{code-cell} ipython3
 psi.data = 0.0
 psi.load_from_url("https://www.dropbox.com/s/5dzujlo3ayo5s35/Ex1a-circular_mesh_psi.h5?dl=0")
 print(psi.data)
@@ -157,7 +156,7 @@ psi.load_from_cloud_fs("Examples/Tutorial/Ex1a-circular_mesh_psi.h5", cloud_loca
 print(psi.data)
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 from quagmire.tools.cloud import google_drive_convert_link
 
 psi.data = 0.0
@@ -172,8 +171,8 @@ print(psi.data)
 
 The `quagmire.tools.cloud` functions `cloud_upload` and `cloud_download` wrap PyFilesystem calls to make sure that they check the validity of the filesystem objects and work well within a parallel environment (only the root processor will download the file).
 
-The `quagmire.tools.cloud` function `url_download` provides similar capability for a standard http or https request to download a file from a public link and also ensures this is done only once in a parallel environment. 
+The `quagmire.tools.cloud` function `url_download` provides similar capability for a standard http or https request to download a file from a public link and also ensures this is done only once in a parallel environment.
 
-```{code-cell}
+```{code-cell} ipython3
 
 ```
