@@ -614,16 +614,16 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
+0 - Delaunay triangulation 0.18936277500000642s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.1998424149999778s
-0 - Calculate node weights and area 0.0057942919999618425s
-0 - Find boundaries 0.001855961999979172s
-0 - cKDTree 0.015316207000012128s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Calculate node weights and area 0.006319439000037619s
+0 - Find boundaries 0.0013938079999888942s
+0 - cKDTree 0.013704785000015818s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.45837415299996564s, (0.2553589429999761s + 0.2029709079999975s)
-0 - Construct rbf weights 0.044534871999985626s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.414663169999983s, (0.22667180599995618s + 0.1879377640000257s)
+0 - Construct rbf weights 0.04111965399999917s
 Triangulation has 62234 points
 </pre></div>
 </div>
@@ -650,10 +650,10 @@ Triangulation has 62234 points
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.055437331999996786s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.05135741800000915s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.10989573199998404s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.09870301099999779s
 </pre></div>
 </div>
 </div>
@@ -684,7 +684,7 @@ Triangulation has 62234 points
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([5.0213245 , 5.03691782, 5.03349479, ..., 2.66829351, 2.3281053 ,
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([5.01328514, 5.01842546, 5.01653487, ..., 2.66829351, 2.3281053 ,
        3.99135784])
 </pre></div>
 </div>
@@ -697,8 +697,8 @@ Triangulation has 62234 points
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.34624889e-05, 1.74232582e-05, 1.03015962e-05, ...,
-       2.83458192e-06, 3.43641673e-06, 4.82525907e-06])
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([4.06358143e-05, 2.00167219e-05, 3.23315411e-05, ...,
+       6.62312482e-06, 3.26483415e-06, 9.59320402e-06])
 </pre></div>
 </div>
 </div>
@@ -730,7 +730,7 @@ Triangulation has 62234 points
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([2.24083121, 2.24430787, 2.24354514, ..., 0.47308102, 0.42065372,
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([2.23903665, 2.24018425, 2.23976223, ..., 0.47308102, 0.42065372,
        0.36434709])
 </pre></div>
 </div>
@@ -942,34 +942,33 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>17 outflow nodes:
-[61753 61803 61853 61902 61903 61952 61953 61954 61955 62002 62052 62102
- 62151 62152 62201 62202 62203]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>18 outflow nodes:
+[61753 61803 61853 61902 61903 61952 61953 61955 61956 62002 62052 62102
+ 62151 62152 62201 62202 62203 62204]
 0 internal low point nodes:
-[61753 61803 61853 61902 61903 61952 61953 61954 61955 62002 62052 62102
- 62151 62152 62201 62202 62203]
-[1.57580684e+00 2.88764040e+00 6.46374957e+00 4.30429854e+00
- 1.35414081e-01 1.73212134e+00 1.91806596e-02 2.74483191e-04
- 6.88051177e-02 1.84089758e+00 3.78211158e+00 6.28588206e+00
- 3.93670632e+00 1.40681699e-01 1.26617744e+00 3.57427937e-02
- 5.90886064e-02]
+[61753 61803 61853 61902 61903 61952 61953 61955 61956 62002 62052 62102
+ 62151 62152 62201 62202 62203 62204]
+[1.21279614e+00 3.25898694e+00 6.38643371e+00 4.06968999e+00
+ 1.41232662e-01 2.02748283e+00 4.01522535e-02 9.80507024e-05
+ 6.04891053e-02 1.78382616e+00 3.62400954e+00 6.25868621e+00
+ 4.29572058e+00 1.45947413e-01 1.12004795e+00 2.34646883e-04
+ 7.35773823e-04 1.07978622e-01]
+0 - Build downhill matrices 0.050856813999985206s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.05318995499999346s
-0 - Build upstream areas 0.08080076699997107s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.07997589399997196s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>22 outflow nodes:
-[61803 61852 61853 61902 61904 61905 61952 61953 61954 61955 61957 62052
- 62053 62101 62102 62103 62152 62153 62202 62203 62204 62205]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>19 outflow nodes:
+[61752 61753 61803 61853 61952 61953 61954 61955 62001 62002 62003 62101
+ 62151 62152 62154 62201 62203 62204 62206]
 0 internal low point nodes:
 []
-[2.28144572e-01 1.18876656e-01 2.02815386e-03 2.10171454e-02
- 1.55781065e-02 1.19570307e-01 8.27636593e-02 3.26196471e-02
- 1.06551496e-04 1.38579811e-03 6.94493133e-02 1.68806040e-01
- 1.95190550e-04 1.83274159e-01 1.56428391e-02 1.40444627e-03
- 5.04930147e-04 1.20362692e-01 8.90840306e-03 4.45514102e-04
- 4.00433075e-02 5.67101697e-02]
+[7.67609413e-03 1.34746625e-04 2.33162689e-01 9.06862657e-02
+ 8.54013772e-03 4.48206352e-04 4.38193982e-02 5.93775564e-02
+ 4.46708600e-02 2.31082447e-05 9.85207891e-04 2.46835669e-01
+ 3.53484517e-02 4.16809306e-02 1.20275174e-01 9.49698150e-03
+ 5.04080160e-04 5.68460441e-04 1.08428165e-01]
 </pre></div>
 </div>
 </div>
