@@ -186,6 +186,9 @@ class TopoMesh(object):
         return
 
     def _sort_nodes_by_field(self, height):
+        &#34;&#34;&#34;
+        Obsolete ??
+        
 
         # Sort neighbours by gradient
         indptr, indices = self.vertex_neighbour_vertices
@@ -210,7 +213,7 @@ class TopoMesh(object):
 
         self.neighbour_array_lo_hi = neighbour_array_lo_hi
         self.neighbour_array_2_low = neighbour_array_2_low
-
+        &#34;&#34;&#34;
 
 
     def _adjacency_matrix_template(self, nnz=(1,1)):
@@ -421,7 +424,6 @@ class TopoMesh(object):
 
 
     def cumulative_flow(self, vector, *args, **kwargs):
-
 
         niter, cumulative_flow_vector = self._cumulative_flow_verbose(vector, *args, **kwargs)
         return cumulative_flow_vector
@@ -664,13 +666,14 @@ class TopoMesh(object):
         Find the lowest node in the neighbour list of the given node
         &#34;&#34;&#34;
 
+        &#34;&#34;&#34;
         lowest = self.neighbour_array_lo_hi[node][0]
 
         if lowest != node:
             return lowest
         else:
             return -1
-
+        &#34;&#34;&#34;
 
 
     def _node_highest_neighbour(self, node):
@@ -678,12 +681,14 @@ class TopoMesh(object):
         Find the highest node in the neighbour list of the given node
         &#34;&#34;&#34;
 
+        &#34;&#34;&#34;
         highest = self.neighbour_array_lo_hi[node][-1]
 
         if highest != node:
             return highest
         else:
             return -1
+        &#34;&#34;&#34;
 
 
     def _node_walk_downhill(self, node):
@@ -691,6 +696,7 @@ class TopoMesh(object):
         Walks downhill terminating when the downhill node is already claimed
         &#34;&#34;&#34;
 
+        &#34;&#34;&#34;
         chain = -np.ones(self.npoints, dtype=np.int32)
 
         idx = 0
@@ -709,6 +715,7 @@ class TopoMesh(object):
             low_neighbour = self._node_lowest_neighbour(low_neighbour)
 
         return junction, chain[0:idx+1]
+        &#34;&#34;&#34;
 
 
     def build_node_chains(self):
@@ -729,10 +736,9 @@ class TopoMesh(object):
         into chain number 0.
         &#34;&#34;&#34;
 
+        &#34;&#34;&#34;
         self.node_chain_lookup = -np.ones(self.npoints, dtype=np.int32)
         self.node_chain_list = []
-
-
         node_chain_idx = 1
 
         self.node_chain_list.append([]) # placeholder for any isolated base-level nodes
@@ -756,8 +762,10 @@ class TopoMesh(object):
                 self.node_chain_list[0].append(this_chain[0])
                 self.node_chain_lookup[this_chain[0]] = 0
 
+        &#34;&#34;&#34;
 
-### Methods copied over from obseleted SurfMesh class
+
+### Methods copied over from previous SurfMesh class
 
     def low_points_local_flood_fill(self, its=99999, scale=1.0, smoothing_steps=2, ref_height=0.0):
         &#34;&#34;&#34;
@@ -1154,8 +1162,12 @@ class TopoMesh(object):
         return outflow_nodes
 
 
-# This seems to be out of date 
     def identify_flat_spots(self):
+        &#34;&#34;&#34; 
+        Find regions with a very low gradient ... 
+        ToDo: the criterion for &#39;flat&#39; should
+        be something that the user can set.
+        &#34;&#34;&#34;
 
         slope = self.slope.evaluate(self.topography._mesh)
         smooth_grad1 = self.local_area_smoothing(slope, its=1, centre_weight=0.5)
@@ -1312,6 +1324,9 @@ class TopoMesh(object):
         return
 
     def _sort_nodes_by_field(self, height):
+        &#34;&#34;&#34;
+        Obsolete ??
+        
 
         # Sort neighbours by gradient
         indptr, indices = self.vertex_neighbour_vertices
@@ -1336,7 +1351,7 @@ class TopoMesh(object):
 
         self.neighbour_array_lo_hi = neighbour_array_lo_hi
         self.neighbour_array_2_low = neighbour_array_2_low
-
+        &#34;&#34;&#34;
 
 
     def _adjacency_matrix_template(self, nnz=(1,1)):
@@ -1547,7 +1562,6 @@ class TopoMesh(object):
 
 
     def cumulative_flow(self, vector, *args, **kwargs):
-
 
         niter, cumulative_flow_vector = self._cumulative_flow_verbose(vector, *args, **kwargs)
         return cumulative_flow_vector
@@ -1790,13 +1804,14 @@ class TopoMesh(object):
         Find the lowest node in the neighbour list of the given node
         &#34;&#34;&#34;
 
+        &#34;&#34;&#34;
         lowest = self.neighbour_array_lo_hi[node][0]
 
         if lowest != node:
             return lowest
         else:
             return -1
-
+        &#34;&#34;&#34;
 
 
     def _node_highest_neighbour(self, node):
@@ -1804,12 +1819,14 @@ class TopoMesh(object):
         Find the highest node in the neighbour list of the given node
         &#34;&#34;&#34;
 
+        &#34;&#34;&#34;
         highest = self.neighbour_array_lo_hi[node][-1]
 
         if highest != node:
             return highest
         else:
             return -1
+        &#34;&#34;&#34;
 
 
     def _node_walk_downhill(self, node):
@@ -1817,6 +1834,7 @@ class TopoMesh(object):
         Walks downhill terminating when the downhill node is already claimed
         &#34;&#34;&#34;
 
+        &#34;&#34;&#34;
         chain = -np.ones(self.npoints, dtype=np.int32)
 
         idx = 0
@@ -1835,6 +1853,7 @@ class TopoMesh(object):
             low_neighbour = self._node_lowest_neighbour(low_neighbour)
 
         return junction, chain[0:idx+1]
+        &#34;&#34;&#34;
 
 
     def build_node_chains(self):
@@ -1855,10 +1874,9 @@ class TopoMesh(object):
         into chain number 0.
         &#34;&#34;&#34;
 
+        &#34;&#34;&#34;
         self.node_chain_lookup = -np.ones(self.npoints, dtype=np.int32)
         self.node_chain_list = []
-
-
         node_chain_idx = 1
 
         self.node_chain_list.append([]) # placeholder for any isolated base-level nodes
@@ -1882,8 +1900,10 @@ class TopoMesh(object):
                 self.node_chain_list[0].append(this_chain[0])
                 self.node_chain_lookup[this_chain[0]] = 0
 
+        &#34;&#34;&#34;
 
-### Methods copied over from obseleted SurfMesh class
+
+### Methods copied over from previous SurfMesh class
 
     def low_points_local_flood_fill(self, its=99999, scale=1.0, smoothing_steps=2, ref_height=0.0):
         &#34;&#34;&#34;
@@ -2280,8 +2300,12 @@ class TopoMesh(object):
         return outflow_nodes
 
 
-# This seems to be out of date 
     def identify_flat_spots(self):
+        &#34;&#34;&#34; 
+        Find regions with a very low gradient ... 
+        ToDo: the criterion for &#39;flat&#39; should
+        be something that the user can set.
+        &#34;&#34;&#34;
 
         slope = self.slope.evaluate(self.topography._mesh)
         smooth_grad1 = self.local_area_smoothing(slope, its=1, centre_weight=0.5)
@@ -2450,10 +2474,9 @@ into chain number 0.</p></div>
     into chain number 0.
     &#34;&#34;&#34;
 
+    &#34;&#34;&#34;
     self.node_chain_lookup = -np.ones(self.npoints, dtype=np.int32)
     self.node_chain_list = []
-
-
     node_chain_idx = 1
 
     self.node_chain_list.append([]) # placeholder for any isolated base-level nodes
@@ -2475,7 +2498,9 @@ into chain number 0.</p></div>
 
         else:
             self.node_chain_list[0].append(this_chain[0])
-            self.node_chain_lookup[this_chain[0]] = 0</code></pre>
+            self.node_chain_lookup[this_chain[0]] = 0
+
+    &#34;&#34;&#34;</code></pre>
 </details>
 </dd>
 <dt id="quagmire.topomesh.topomesh.TopoMesh.cumulative_flow"><code class="name flex">
@@ -2488,7 +2513,6 @@ into chain number 0.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def cumulative_flow(self, vector, *args, **kwargs):
-
 
     niter, cumulative_flow_vector = self._cumulative_flow_verbose(vector, *args, **kwargs)
     return cumulative_flow_vector</code></pre>
@@ -2537,12 +2561,19 @@ into chain number 0.</p></div>
 <span>def <span class="ident">identify_flat_spots</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Find regions with a very low gradient &hellip;
+ToDo: the criterion for 'flat' should
+be something that the user can set.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def identify_flat_spots(self):
+    &#34;&#34;&#34; 
+    Find regions with a very low gradient ... 
+    ToDo: the criterion for &#39;flat&#39; should
+    be something that the user can set.
+    &#34;&#34;&#34;
 
     slope = self.slope.evaluate(self.topography._mesh)
     smooth_grad1 = self.local_area_smoothing(slope, its=1, centre_weight=0.5)
