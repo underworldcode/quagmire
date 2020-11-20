@@ -1,0 +1,1096 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>quagmire.equation_systems.erosion_deposition API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>quagmire.equation_systems.erosion_deposition</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># Copyright 2016-2020 Louis Moresi, Ben Mather, Romain Beucher
+# 
+# This file is part of Quagmire.
+# 
+# Quagmire is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or any later version.
+# 
+# Quagmire is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+
+
+import numpy as np
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+
+from quagmire.function import LazyEvaluation as _LazyEvaluation
+
+# To do ... an interface for (iteratively) dealing with
+# boundaries with normals that are not aligned to the coordinates
+
+class ErosionDepositionEquation(object):
+
+    ## it is helpful to have a unique ID for each instance so we
+    ## can autogenerate unique names if we wish
+
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        ErosionDepositionEquation.__count += 1
+        return ErosionDepositionEquation.__count
+
+    def __init__(self):
+        self.__id = self._count()
+
+    @property
+    def id(self):
+        return self.__id
+
+    def __init__(self,
+                 mesh=None,
+                 rainfall_fn=None,
+                 m=1.0,
+                 n=1.0 ):
+
+        self.__id = self._count()
+
+        # These should become properties ...
+
+
+        self.mesh = mesh
+        self.rainfall = rainfall_fn
+        self.m = m
+        self.n = n
+
+        # This one can be generated and regenerated if mesh changes
+
+
+    @property
+    def mesh(self):
+        return self._mesh
+
+    @mesh.setter
+    def mesh(self, meshobject):
+        self._mesh = meshobject
+        self._erosion_rate   = meshobject.add_variable(name=&#34;qs_{}&#34;.format(self.id))
+        self._deposition_rate   = meshobject.add_variable(name=&#34;ed_{}&#34;.format(self.id))
+        return
+
+    @property
+    def erosion_rate(self):
+        return self._erosion_rate
+    # No setter for this ... it is defined via the mesh.setter
+    @property
+    def deposition_rate(self):
+        return self._deposition_rate
+    # No setter for this ... it is defined via the mesh.setter
+
+    @property
+    def rainfall(self):
+        return self._rainfall
+
+    @rainfall.setter
+    def rainfall(self, fn_object):
+        # Should verify it is a function
+        self._rainfall = fn_object
+        return
+
+    @property
+    def m(self):
+        return self._m
+
+    @m.setter
+    def m(self, scalar):
+        # Should verify it is a function
+        self._m = scalar
+        return
+
+    @property
+    def n(self):
+        return self._n
+
+    @n.setter
+    def n(self, fn_object):
+        # Should verify it is a function
+        self._n = fn_object
+        return
+
+    @property
+    def erosion_deposition_fn(self):
+        return self._erosion_deposition_fn
+
+    @erosion_deposition_fn.setter
+    def erosion_deposition_fn(self, fn_object):
+        if hasattr(self, fn_object):
+            self._erosion_deposition_fn = fn_object
+        else:
+            raise ValueError(&#34;Choose a valid erosion-deposition function&#34;)
+    
+
+    def verify(self):
+
+        # Check to see we have provided everything in the correct form
+
+        return
+
+
+    def stream_power_fn(self):
+        &#34;&#34;&#34;
+        Compute the stream power
+
+        qs = UpInt(rainfall)^m * (grad H(x,y))^2
+        &#34;&#34;&#34;
+        slope = self._mesh.topography.slope()
+        rainfall_fn = self._rainfall
+        m = self._m
+        n = self._n
+
+        # integrate upstream rainfall
+        upstream_precipitation_integral_fn = self._mesh.upstream_integral_fn(rainfall_fn)
+
+        # create stream power function
+        stream_power_law_fn = upstream_precipitation_integral_fn**m * slope**n * self._mesh.mask
+        return stream_power_law_fn
+
+
+## Built-in erosion / deposition functions
+
+    def erosion_deposition_local_equilibrium(self, efficiency):
+        &#34;&#34;&#34;
+        Local equilibrium model
+        &#34;&#34;&#34;
+
+        stream_power_fn = self.stream_power_fn()
+        erosion_rate_fn = efficiency*stream_power_fn
+
+        # store erosion rate so we do not have to evaluate it
+        # again to compute the deposition rate
+        erosion_rate = self._erosion_rate
+        erosion_rate.unlock()
+        erosion_rate.data = erosion_rate_fn.evaluate(self._mesh)
+        erosion_rate.lock()
+
+        deposition_rate_fn = self._mesh.upstream_integral_fn(erosion_rate)
+
+        # might as well store deposition rate too
+        deposition_rate = self._deposition_rate
+        deposition_rate.unlock()
+        deposition_rate.data = deposition_rate_fn.evaluate(self._mesh)
+        deposition_rate.lock()
+
+        # erosion_deposition_fn = deposition_rate - erosion_rate
+        return erosion_rate.data, deposition_rate.data
+
+
+    def fn_local_equilibrium(self, efficiency):
+
+        import quagmire
+
+        def new_fn(*args, **kwargs):
+            
+            erosion_rate, deposition_rate = self.erosion_deposition_local_equilibrium(efficiency)
+            dHdt = deposition_rate - erosion_rate
+            # dHdt = self._mesh.sync(dHdt)
+
+            if len(args) == 1 and args[0] == self._mesh:
+                return dHdt
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+                mesh = args[0]
+                return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dHdt, **kwargs)
+            else:
+                xi = np.atleast_1d(args[0])  # .resize(-1,1)
+                yi = np.atleast_1d(args[1])  # .resize(-1,1)
+                i, e = self.interpolate(xi, yi, zdata=dHdt, **kwargs)
+                return i
+
+        newLazyFn = _LazyEvaluation(mesh=self._mesh)
+        newLazyFn.evaluate = new_fn
+        newLazyFn.description = &#34;dH/dt&#34;
+        newLazyFn.dependency_list = set([self.erosion_rate, self.deposition_rate])
+
+        return newLazyFn
+
+
+    def erosion_deposition_saltation_length(self):
+        &#34;&#34;&#34;
+        Saltation length
+        &#34;&#34;&#34;
+        raise NotImplementedError(&#34;Check back again soon!&#34;)
+
+
+    def erosion_deposition_transport_limited_flow(self, efficiency, alpha):
+        &#34;&#34;&#34;
+        Transport-limited
+        &#34;&#34;&#34;
+        slope = self._mesh.topography.slope()
+        rainfall_fn = self._rainfall
+        m = self._m
+        n = self._n
+        area = self._mesh.pointwise_area
+
+        # integrate upstream / calculate rate
+        upstream_precipitation_integral_fn = self._mesh.upstream_integral_fn(rainfall_fn)
+        upstream_precipitation_rate_fn = upstream_precipitation_integral_fn / area
+
+        # construct stream power function
+        stream_power_fn = upstream_precipitation_integral_fn**m * slope**n * self._mesh.mask
+
+        # only some is eroded
+        erosion_rate_fn = stream_power_fn*efficiency
+
+        # integrate upstream / calculate rate
+        upstream_eroded_material_integral_fn = self._mesh.upstream_integral_fn(erosion_rate_fn)
+        upstream_eroded_material_rate_fn = upstream_eroded_material_integral_fn / area
+
+        deposition_rate_fn = upstream_precipitation_rate_fn / (alpha * upstream_eroded_material_rate_fn)
+
+        erosion_rate = self._erosion_rate
+        erosion_rate.unlock()
+        erosion_rate.data = erosion_rate_fn.evaluate(self._mesh)
+        erosion_rate.lock()
+
+        deposition_rate = self._deposition_rate
+        deposition_rate.unlock()
+        deposition_rate.data = deposition_rate_fn.evaluate(self._mesh)
+        deposition_rate.lock()
+
+        return erosion_rate, deposition_rate
+
+
+    def erosion_deposition_timestep(self):
+
+        from quagmire import function as fn
+
+        # mesh variables
+        erosion_rate = self._erosion_rate
+        deposition_rate = self._deposition_rate
+        slope = self._mesh.topography.slope()
+
+        # protect against dividing by zero
+        min_slope = fn.parameter(1e-3)
+        min_depo  = fn.parameter(1e-6)
+        typical_l = fn.math.sqrt(self._mesh.pointwise_area)
+
+        erosion_timestep    = ((slope + min_slope) * typical_l / (erosion_rate + min_depo))
+        deposition_timestep = ((slope + min_slope) * typical_l / (deposition_rate + min_depo))
+
+        dt_erosion_local     = (erosion_timestep.evaluate(self._mesh)).min()
+        dt_deposition_local  = (deposition_timestep.evaluate(self._mesh)).min()
+        dt_erosion_global    = np.array(1e12)
+        dt_deposition_global = np.array(1e12)
+
+        comm.Allreduce([dt_erosion_local, MPI.DOUBLE], [dt_erosion_global, MPI.DOUBLE], op=MPI.MIN)
+        comm.Allreduce([dt_deposition_local, MPI.DOUBLE], [dt_deposition_global, MPI.DOUBLE], op=MPI.MIN)
+
+        return min(dt_erosion_global, dt_deposition_global)
+
+
+
+    def time_integration(self, timestep, steps=1, Delta_t=None, feedback=None):
+
+        from quagmire import function as fn
+
+        topography = self._mesh.topography
+
+        if Delta_t is not None:
+            steps = Delta_t // timestep
+            timestep = Delta_t / steps
+
+        elapsed_time = 0.0
+
+        for step in range(0, int(steps)):
+
+            # deal with local drainage
+            # mesh.low_points_local_flood_fill()
+
+            erosion_rate, deposition_rate = self.erosion_deposition_local_equilibrium()
+
+            # half timestep
+            topography0 = topography.copy()
+            topography.unlock()
+            topography.data = topography.data + 0.5*timestep*(deposition_rate - erosion_rate)
+            topography.lock()
+
+            # full timestep
+            erosion_rate, deposition_rate = self.erosion_deposition_local_equilibrium()
+
+            with self._mesh.deform_topography():
+                # rebuild downhill matrix structure
+                topography.data = topography0.data + timestep*(deposition_rate - erosion_rate)
+
+            elapsed_time += timestep
+
+            if feedback is not None and step%feedback == 0 or step == steps:
+                print(&#34;{:05d} - t = {:.3g}&#34;.format(step, elapsed_time))
+
+
+
+        return steps, elapsed_time</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation"><code class="flex name class">
+<span>class <span class="ident">ErosionDepositionEquation</span></span>
+<span>(</span><span>mesh=None, rainfall_fn=None, m=1.0, n=1.0)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ErosionDepositionEquation(object):
+
+    ## it is helpful to have a unique ID for each instance so we
+    ## can autogenerate unique names if we wish
+
+    __count = 0
+
+    @classmethod
+    def _count(cls):
+        ErosionDepositionEquation.__count += 1
+        return ErosionDepositionEquation.__count
+
+    def __init__(self):
+        self.__id = self._count()
+
+    @property
+    def id(self):
+        return self.__id
+
+    def __init__(self,
+                 mesh=None,
+                 rainfall_fn=None,
+                 m=1.0,
+                 n=1.0 ):
+
+        self.__id = self._count()
+
+        # These should become properties ...
+
+
+        self.mesh = mesh
+        self.rainfall = rainfall_fn
+        self.m = m
+        self.n = n
+
+        # This one can be generated and regenerated if mesh changes
+
+
+    @property
+    def mesh(self):
+        return self._mesh
+
+    @mesh.setter
+    def mesh(self, meshobject):
+        self._mesh = meshobject
+        self._erosion_rate   = meshobject.add_variable(name=&#34;qs_{}&#34;.format(self.id))
+        self._deposition_rate   = meshobject.add_variable(name=&#34;ed_{}&#34;.format(self.id))
+        return
+
+    @property
+    def erosion_rate(self):
+        return self._erosion_rate
+    # No setter for this ... it is defined via the mesh.setter
+    @property
+    def deposition_rate(self):
+        return self._deposition_rate
+    # No setter for this ... it is defined via the mesh.setter
+
+    @property
+    def rainfall(self):
+        return self._rainfall
+
+    @rainfall.setter
+    def rainfall(self, fn_object):
+        # Should verify it is a function
+        self._rainfall = fn_object
+        return
+
+    @property
+    def m(self):
+        return self._m
+
+    @m.setter
+    def m(self, scalar):
+        # Should verify it is a function
+        self._m = scalar
+        return
+
+    @property
+    def n(self):
+        return self._n
+
+    @n.setter
+    def n(self, fn_object):
+        # Should verify it is a function
+        self._n = fn_object
+        return
+
+    @property
+    def erosion_deposition_fn(self):
+        return self._erosion_deposition_fn
+
+    @erosion_deposition_fn.setter
+    def erosion_deposition_fn(self, fn_object):
+        if hasattr(self, fn_object):
+            self._erosion_deposition_fn = fn_object
+        else:
+            raise ValueError(&#34;Choose a valid erosion-deposition function&#34;)
+    
+
+    def verify(self):
+
+        # Check to see we have provided everything in the correct form
+
+        return
+
+
+    def stream_power_fn(self):
+        &#34;&#34;&#34;
+        Compute the stream power
+
+        qs = UpInt(rainfall)^m * (grad H(x,y))^2
+        &#34;&#34;&#34;
+        slope = self._mesh.topography.slope()
+        rainfall_fn = self._rainfall
+        m = self._m
+        n = self._n
+
+        # integrate upstream rainfall
+        upstream_precipitation_integral_fn = self._mesh.upstream_integral_fn(rainfall_fn)
+
+        # create stream power function
+        stream_power_law_fn = upstream_precipitation_integral_fn**m * slope**n * self._mesh.mask
+        return stream_power_law_fn
+
+
+## Built-in erosion / deposition functions
+
+    def erosion_deposition_local_equilibrium(self, efficiency):
+        &#34;&#34;&#34;
+        Local equilibrium model
+        &#34;&#34;&#34;
+
+        stream_power_fn = self.stream_power_fn()
+        erosion_rate_fn = efficiency*stream_power_fn
+
+        # store erosion rate so we do not have to evaluate it
+        # again to compute the deposition rate
+        erosion_rate = self._erosion_rate
+        erosion_rate.unlock()
+        erosion_rate.data = erosion_rate_fn.evaluate(self._mesh)
+        erosion_rate.lock()
+
+        deposition_rate_fn = self._mesh.upstream_integral_fn(erosion_rate)
+
+        # might as well store deposition rate too
+        deposition_rate = self._deposition_rate
+        deposition_rate.unlock()
+        deposition_rate.data = deposition_rate_fn.evaluate(self._mesh)
+        deposition_rate.lock()
+
+        # erosion_deposition_fn = deposition_rate - erosion_rate
+        return erosion_rate.data, deposition_rate.data
+
+
+    def fn_local_equilibrium(self, efficiency):
+
+        import quagmire
+
+        def new_fn(*args, **kwargs):
+            
+            erosion_rate, deposition_rate = self.erosion_deposition_local_equilibrium(efficiency)
+            dHdt = deposition_rate - erosion_rate
+            # dHdt = self._mesh.sync(dHdt)
+
+            if len(args) == 1 and args[0] == self._mesh:
+                return dHdt
+            elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+                mesh = args[0]
+                return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dHdt, **kwargs)
+            else:
+                xi = np.atleast_1d(args[0])  # .resize(-1,1)
+                yi = np.atleast_1d(args[1])  # .resize(-1,1)
+                i, e = self.interpolate(xi, yi, zdata=dHdt, **kwargs)
+                return i
+
+        newLazyFn = _LazyEvaluation(mesh=self._mesh)
+        newLazyFn.evaluate = new_fn
+        newLazyFn.description = &#34;dH/dt&#34;
+        newLazyFn.dependency_list = set([self.erosion_rate, self.deposition_rate])
+
+        return newLazyFn
+
+
+    def erosion_deposition_saltation_length(self):
+        &#34;&#34;&#34;
+        Saltation length
+        &#34;&#34;&#34;
+        raise NotImplementedError(&#34;Check back again soon!&#34;)
+
+
+    def erosion_deposition_transport_limited_flow(self, efficiency, alpha):
+        &#34;&#34;&#34;
+        Transport-limited
+        &#34;&#34;&#34;
+        slope = self._mesh.topography.slope()
+        rainfall_fn = self._rainfall
+        m = self._m
+        n = self._n
+        area = self._mesh.pointwise_area
+
+        # integrate upstream / calculate rate
+        upstream_precipitation_integral_fn = self._mesh.upstream_integral_fn(rainfall_fn)
+        upstream_precipitation_rate_fn = upstream_precipitation_integral_fn / area
+
+        # construct stream power function
+        stream_power_fn = upstream_precipitation_integral_fn**m * slope**n * self._mesh.mask
+
+        # only some is eroded
+        erosion_rate_fn = stream_power_fn*efficiency
+
+        # integrate upstream / calculate rate
+        upstream_eroded_material_integral_fn = self._mesh.upstream_integral_fn(erosion_rate_fn)
+        upstream_eroded_material_rate_fn = upstream_eroded_material_integral_fn / area
+
+        deposition_rate_fn = upstream_precipitation_rate_fn / (alpha * upstream_eroded_material_rate_fn)
+
+        erosion_rate = self._erosion_rate
+        erosion_rate.unlock()
+        erosion_rate.data = erosion_rate_fn.evaluate(self._mesh)
+        erosion_rate.lock()
+
+        deposition_rate = self._deposition_rate
+        deposition_rate.unlock()
+        deposition_rate.data = deposition_rate_fn.evaluate(self._mesh)
+        deposition_rate.lock()
+
+        return erosion_rate, deposition_rate
+
+
+    def erosion_deposition_timestep(self):
+
+        from quagmire import function as fn
+
+        # mesh variables
+        erosion_rate = self._erosion_rate
+        deposition_rate = self._deposition_rate
+        slope = self._mesh.topography.slope()
+
+        # protect against dividing by zero
+        min_slope = fn.parameter(1e-3)
+        min_depo  = fn.parameter(1e-6)
+        typical_l = fn.math.sqrt(self._mesh.pointwise_area)
+
+        erosion_timestep    = ((slope + min_slope) * typical_l / (erosion_rate + min_depo))
+        deposition_timestep = ((slope + min_slope) * typical_l / (deposition_rate + min_depo))
+
+        dt_erosion_local     = (erosion_timestep.evaluate(self._mesh)).min()
+        dt_deposition_local  = (deposition_timestep.evaluate(self._mesh)).min()
+        dt_erosion_global    = np.array(1e12)
+        dt_deposition_global = np.array(1e12)
+
+        comm.Allreduce([dt_erosion_local, MPI.DOUBLE], [dt_erosion_global, MPI.DOUBLE], op=MPI.MIN)
+        comm.Allreduce([dt_deposition_local, MPI.DOUBLE], [dt_deposition_global, MPI.DOUBLE], op=MPI.MIN)
+
+        return min(dt_erosion_global, dt_deposition_global)
+
+
+
+    def time_integration(self, timestep, steps=1, Delta_t=None, feedback=None):
+
+        from quagmire import function as fn
+
+        topography = self._mesh.topography
+
+        if Delta_t is not None:
+            steps = Delta_t // timestep
+            timestep = Delta_t / steps
+
+        elapsed_time = 0.0
+
+        for step in range(0, int(steps)):
+
+            # deal with local drainage
+            # mesh.low_points_local_flood_fill()
+
+            erosion_rate, deposition_rate = self.erosion_deposition_local_equilibrium()
+
+            # half timestep
+            topography0 = topography.copy()
+            topography.unlock()
+            topography.data = topography.data + 0.5*timestep*(deposition_rate - erosion_rate)
+            topography.lock()
+
+            # full timestep
+            erosion_rate, deposition_rate = self.erosion_deposition_local_equilibrium()
+
+            with self._mesh.deform_topography():
+                # rebuild downhill matrix structure
+                topography.data = topography0.data + timestep*(deposition_rate - erosion_rate)
+
+            elapsed_time += timestep
+
+            if feedback is not None and step%feedback == 0 or step == steps:
+                print(&#34;{:05d} - t = {:.3g}&#34;.format(step, elapsed_time))
+
+
+
+        return steps, elapsed_time</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.deposition_rate"><code class="name">var <span class="ident">deposition_rate</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def deposition_rate(self):
+    return self._deposition_rate</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_fn"><code class="name">var <span class="ident">erosion_deposition_fn</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def erosion_deposition_fn(self):
+    return self._erosion_deposition_fn</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_rate"><code class="name">var <span class="ident">erosion_rate</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def erosion_rate(self):
+    return self._erosion_rate</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.id"><code class="name">var <span class="ident">id</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def id(self):
+    return self.__id</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.m"><code class="name">var <span class="ident">m</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def m(self):
+    return self._m</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.mesh"><code class="name">var <span class="ident">mesh</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def mesh(self):
+    return self._mesh</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.n"><code class="name">var <span class="ident">n</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def n(self):
+    return self._n</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.rainfall"><code class="name">var <span class="ident">rainfall</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def rainfall(self):
+    return self._rainfall</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_local_equilibrium"><code class="name flex">
+<span>def <span class="ident">erosion_deposition_local_equilibrium</span></span>(<span>self, efficiency)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Local equilibrium model</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def erosion_deposition_local_equilibrium(self, efficiency):
+    &#34;&#34;&#34;
+    Local equilibrium model
+    &#34;&#34;&#34;
+
+    stream_power_fn = self.stream_power_fn()
+    erosion_rate_fn = efficiency*stream_power_fn
+
+    # store erosion rate so we do not have to evaluate it
+    # again to compute the deposition rate
+    erosion_rate = self._erosion_rate
+    erosion_rate.unlock()
+    erosion_rate.data = erosion_rate_fn.evaluate(self._mesh)
+    erosion_rate.lock()
+
+    deposition_rate_fn = self._mesh.upstream_integral_fn(erosion_rate)
+
+    # might as well store deposition rate too
+    deposition_rate = self._deposition_rate
+    deposition_rate.unlock()
+    deposition_rate.data = deposition_rate_fn.evaluate(self._mesh)
+    deposition_rate.lock()
+
+    # erosion_deposition_fn = deposition_rate - erosion_rate
+    return erosion_rate.data, deposition_rate.data</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_saltation_length"><code class="name flex">
+<span>def <span class="ident">erosion_deposition_saltation_length</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Saltation length</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def erosion_deposition_saltation_length(self):
+    &#34;&#34;&#34;
+    Saltation length
+    &#34;&#34;&#34;
+    raise NotImplementedError(&#34;Check back again soon!&#34;)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_timestep"><code class="name flex">
+<span>def <span class="ident">erosion_deposition_timestep</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def erosion_deposition_timestep(self):
+
+    from quagmire import function as fn
+
+    # mesh variables
+    erosion_rate = self._erosion_rate
+    deposition_rate = self._deposition_rate
+    slope = self._mesh.topography.slope()
+
+    # protect against dividing by zero
+    min_slope = fn.parameter(1e-3)
+    min_depo  = fn.parameter(1e-6)
+    typical_l = fn.math.sqrt(self._mesh.pointwise_area)
+
+    erosion_timestep    = ((slope + min_slope) * typical_l / (erosion_rate + min_depo))
+    deposition_timestep = ((slope + min_slope) * typical_l / (deposition_rate + min_depo))
+
+    dt_erosion_local     = (erosion_timestep.evaluate(self._mesh)).min()
+    dt_deposition_local  = (deposition_timestep.evaluate(self._mesh)).min()
+    dt_erosion_global    = np.array(1e12)
+    dt_deposition_global = np.array(1e12)
+
+    comm.Allreduce([dt_erosion_local, MPI.DOUBLE], [dt_erosion_global, MPI.DOUBLE], op=MPI.MIN)
+    comm.Allreduce([dt_deposition_local, MPI.DOUBLE], [dt_deposition_global, MPI.DOUBLE], op=MPI.MIN)
+
+    return min(dt_erosion_global, dt_deposition_global)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_transport_limited_flow"><code class="name flex">
+<span>def <span class="ident">erosion_deposition_transport_limited_flow</span></span>(<span>self, efficiency, alpha)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Transport-limited</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def erosion_deposition_transport_limited_flow(self, efficiency, alpha):
+    &#34;&#34;&#34;
+    Transport-limited
+    &#34;&#34;&#34;
+    slope = self._mesh.topography.slope()
+    rainfall_fn = self._rainfall
+    m = self._m
+    n = self._n
+    area = self._mesh.pointwise_area
+
+    # integrate upstream / calculate rate
+    upstream_precipitation_integral_fn = self._mesh.upstream_integral_fn(rainfall_fn)
+    upstream_precipitation_rate_fn = upstream_precipitation_integral_fn / area
+
+    # construct stream power function
+    stream_power_fn = upstream_precipitation_integral_fn**m * slope**n * self._mesh.mask
+
+    # only some is eroded
+    erosion_rate_fn = stream_power_fn*efficiency
+
+    # integrate upstream / calculate rate
+    upstream_eroded_material_integral_fn = self._mesh.upstream_integral_fn(erosion_rate_fn)
+    upstream_eroded_material_rate_fn = upstream_eroded_material_integral_fn / area
+
+    deposition_rate_fn = upstream_precipitation_rate_fn / (alpha * upstream_eroded_material_rate_fn)
+
+    erosion_rate = self._erosion_rate
+    erosion_rate.unlock()
+    erosion_rate.data = erosion_rate_fn.evaluate(self._mesh)
+    erosion_rate.lock()
+
+    deposition_rate = self._deposition_rate
+    deposition_rate.unlock()
+    deposition_rate.data = deposition_rate_fn.evaluate(self._mesh)
+    deposition_rate.lock()
+
+    return erosion_rate, deposition_rate</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.fn_local_equilibrium"><code class="name flex">
+<span>def <span class="ident">fn_local_equilibrium</span></span>(<span>self, efficiency)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fn_local_equilibrium(self, efficiency):
+
+    import quagmire
+
+    def new_fn(*args, **kwargs):
+        
+        erosion_rate, deposition_rate = self.erosion_deposition_local_equilibrium(efficiency)
+        dHdt = deposition_rate - erosion_rate
+        # dHdt = self._mesh.sync(dHdt)
+
+        if len(args) == 1 and args[0] == self._mesh:
+            return dHdt
+        elif len(args) == 1 and quagmire.mesh.check_object_is_a_q_mesh_and_raise(args[0]):
+            mesh = args[0]
+            return self.interpolate(mesh.coords[:,0], mesh.coords[:,1], zdata=dHdt, **kwargs)
+        else:
+            xi = np.atleast_1d(args[0])  # .resize(-1,1)
+            yi = np.atleast_1d(args[1])  # .resize(-1,1)
+            i, e = self.interpolate(xi, yi, zdata=dHdt, **kwargs)
+            return i
+
+    newLazyFn = _LazyEvaluation(mesh=self._mesh)
+    newLazyFn.evaluate = new_fn
+    newLazyFn.description = &#34;dH/dt&#34;
+    newLazyFn.dependency_list = set([self.erosion_rate, self.deposition_rate])
+
+    return newLazyFn</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.stream_power_fn"><code class="name flex">
+<span>def <span class="ident">stream_power_fn</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compute the stream power</p>
+<p>qs = UpInt(rainfall)^m * (grad H(x,y))^2</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stream_power_fn(self):
+    &#34;&#34;&#34;
+    Compute the stream power
+
+    qs = UpInt(rainfall)^m * (grad H(x,y))^2
+    &#34;&#34;&#34;
+    slope = self._mesh.topography.slope()
+    rainfall_fn = self._rainfall
+    m = self._m
+    n = self._n
+
+    # integrate upstream rainfall
+    upstream_precipitation_integral_fn = self._mesh.upstream_integral_fn(rainfall_fn)
+
+    # create stream power function
+    stream_power_law_fn = upstream_precipitation_integral_fn**m * slope**n * self._mesh.mask
+    return stream_power_law_fn</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.time_integration"><code class="name flex">
+<span>def <span class="ident">time_integration</span></span>(<span>self, timestep, steps=1, Delta_t=None, feedback=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def time_integration(self, timestep, steps=1, Delta_t=None, feedback=None):
+
+    from quagmire import function as fn
+
+    topography = self._mesh.topography
+
+    if Delta_t is not None:
+        steps = Delta_t // timestep
+        timestep = Delta_t / steps
+
+    elapsed_time = 0.0
+
+    for step in range(0, int(steps)):
+
+        # deal with local drainage
+        # mesh.low_points_local_flood_fill()
+
+        erosion_rate, deposition_rate = self.erosion_deposition_local_equilibrium()
+
+        # half timestep
+        topography0 = topography.copy()
+        topography.unlock()
+        topography.data = topography.data + 0.5*timestep*(deposition_rate - erosion_rate)
+        topography.lock()
+
+        # full timestep
+        erosion_rate, deposition_rate = self.erosion_deposition_local_equilibrium()
+
+        with self._mesh.deform_topography():
+            # rebuild downhill matrix structure
+            topography.data = topography0.data + timestep*(deposition_rate - erosion_rate)
+
+        elapsed_time += timestep
+
+        if feedback is not None and step%feedback == 0 or step == steps:
+            print(&#34;{:05d} - t = {:.3g}&#34;.format(step, elapsed_time))
+
+
+
+    return steps, elapsed_time</code></pre>
+</details>
+</dd>
+<dt id="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.verify"><code class="name flex">
+<span>def <span class="ident">verify</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def verify(self):
+
+    # Check to see we have provided everything in the correct form
+
+    return</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="quagmire.equation_systems" href="index.html">quagmire.equation_systems</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation">ErosionDepositionEquation</a></code></h4>
+<ul class="">
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.deposition_rate" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.deposition_rate">deposition_rate</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_fn" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_fn">erosion_deposition_fn</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_local_equilibrium" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_local_equilibrium">erosion_deposition_local_equilibrium</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_saltation_length" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_saltation_length">erosion_deposition_saltation_length</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_timestep" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_timestep">erosion_deposition_timestep</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_transport_limited_flow" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_deposition_transport_limited_flow">erosion_deposition_transport_limited_flow</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_rate" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.erosion_rate">erosion_rate</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.fn_local_equilibrium" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.fn_local_equilibrium">fn_local_equilibrium</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.id" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.id">id</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.m" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.m">m</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.mesh" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.mesh">mesh</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.n" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.n">n</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.rainfall" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.rainfall">rainfall</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.stream_power_fn" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.stream_power_fn">stream_power_fn</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.time_integration" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.time_integration">time_integration</a></code></li>
+<li><code><a title="quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.verify" href="#quagmire.equation_systems.erosion_deposition.ErosionDepositionEquation.verify">verify</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

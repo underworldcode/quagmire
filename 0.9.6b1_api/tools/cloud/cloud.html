@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>quagmire.tools.cloud.cloud API documentation</title>
+<meta name="description" content="We use the python filesystem `fs` package to provide simple and similar access patterns for files stored in the cloud …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML'></script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>quagmire.tools.cloud.cloud</code></h1>
+</header>
+<section id="section-intro">
+<p>We use the python filesystem <code>fs</code> package to provide simple and similar access patterns for files stored in the cloud.</p>
+<p>By default, we return a handle to access a cloudstor directory where read-only examples,
+meshes, pre-computed topography etc can be provided. These are typically too large to include in github.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># Copyright 2016-2020 Louis Moresi, Ben Mather, Romain Beucher
+# 
+# This file is part of Quagmire.
+# 
+# Quagmire is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or any later version.
+# 
+# Quagmire is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public License
+# along with Quagmire.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+
+
+&#34;&#34;&#34;
+We use the python filesystem `fs` package to provide simple and similar access patterns for files stored in the cloud.
+
+By default, we return a handle to access a cloudstor directory where read-only examples, 
+meshes, pre-computed topography etc can be provided. These are typically too large to include in github. 
+&#34;&#34;&#34;
+
+# Let the fs package be directly available to users
+
+import fs
+
+
+def verify_cloud_fs(cloud_fs_location):
+    &#34;&#34;&#34;Verify that cloud_fs_location is a valid filesystem type&#34;&#34;&#34;
+
+    if isinstance(cloud_fs_location, fs.base.FS):
+        cloud_fs_location.check()
+        return True
+
+    # this may have raised an error already ?
+    return False 
+
+def cloud_download(cloud_filename, local_filename, cloud_fs_location_handle=None):
+        &#34;&#34;&#34;
+        Load a file from a cloud_location pointed to by
+        a pyfilesystem object. (By default, the quagmire cloud service on cloudstor)
+
+        Parameters
+        ----------
+
+        cloud_fs_location_handle: fs.base.FS
+
+
+        cloud_filename: str
+            The filename for the file in the cloud. It should be possible to do 
+            a cloud_location_handle.listdir(&#34;.&#34;) to check the file names
+
+        local_filename: str
+            The local destination for the cloud file. No error checking is performed - see
+            FS.download() for more information on usage / errors
+        &#34;&#34;&#34;
+
+        if cloud_fs_location_handle is None:
+           cloud_fs_location_handle = quagmire_cloud_fs
+
+        try:
+            verify_cloud_fs(cloud_fs_location_handle)
+        except:
+            print(&#34;Not a valid cloud location - no files available&#34;, flush=True)
+            return
+
+        if not cloud_fs_location_handle.exists(str(cloud_filename)):
+            print(&#34;Not a valid cloud file - {}&#34;.format(str(cloud_filename)), flush=True)
+            return
+
+
+
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+
+        if rank == 0:
+            with open(str(local_filename), &#39;wb&#39;) as local_file:
+                cloud_fs_location_handle.download(str(cloud_filename), local_file)
+
+        comm.barrier()
+
+        return
+
+def google_drive_convert_link(share_url):
+    &#34;&#34;&#34; Given a url that is returned from a google drive &#34;share this file&#34; link, convert to 
+    a downloadable url that works with  `cloud_download`.
+
+    Note that google drive files are limited in size to 100Mb for direct download. 
+    Permissions need to be set to &#39;anyone with this link can view&#39; otherwise the download will
+    fail (no authorization) 
+    &#34;&#34;&#34;
+
+    u1 = share_url.split(&#39;/d/&#39;)[1]
+    u2 = u1.split(&#34;/&#34;)[0]
+    
+    download_url = &#34;https://drive.google.com/uc?export=download&amp;id={}&#34;.format(u2)
+    
+    return download_url
+    
+
+
+def url_download(url, local_filename):
+    &#34;&#34;&#34;Given a publicly accessible url to a file, download the file to the local_filename&#34;&#34;&#34;
+
+    import requests
+    filepath=local_filename
+
+    from mpi4py import MPI
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+
+    if rank == 0:
+
+        headers = {&#39;user-agent&#39;: &#39;Wget/1.16 (linux-gnu)&#39;}
+        r = requests.get(url, stream=True, headers=headers)
+        with open(filepath, &#39;wb&#39;) as f:
+            for chunk in r.iter_content(chunk_size=1024): 
+                if chunk:
+                    f.write(chunk)
+
+    comm.barrier()
+
+    return
+
+
+def cloud_upload(cloud_filename, local_filename, cloud_fs_location_handle):
+        &#34;&#34;&#34;
+        Load a file from a cloud_location pointed to by
+        a pyfilesystem object. (By default, the quagmire cloud service on cloudstor)
+
+        Parameters
+        ----------
+
+        cloud_fs_location_handle: fs.base.FS
+
+        cloud_filename: str
+            The filename for the file in the cloud. It should be possible to do 
+            a cloud_location_handle.listdir(&#34;.&#34;) to check the file names
+
+        local_filename: str
+            The local destination for the cloud file. No error checking is performed - see
+            FS.download() for more information on usage / errors
+        &#34;&#34;&#34;
+
+        try:
+            verify_cloud_fs(cloud_fs_location_handle)
+        except:
+            print(&#34;Not a valid cloud location - no data was uploaded&#34;, flush=True)
+            return
+
+        # Note - this is not reliable and is unlikely to fail until the verification step
+        if cloud_fs_location_handle.getmeta()[&#34;read_only&#34;]:
+            print(&#34;The cloud location you have provided is read only - no data was uploaded&#34;, flush=True)
+            return
+
+        if cloud_fs_location_handle == quagmire_cloud_fs:
+            print(&#34;The quagmire cloud is read only - no data was uploaded&#34;, flush=True)
+            return
+
+    
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+
+        if rank == 0:
+            with open(local_filename, &#39;rb&#39;) as local_file:
+                cloud_fs_location_handle.upload(cloud_filename, local_file)
+
+        comm.barrier()
+
+        # Verify upload 
+        if not  cloud_fs_location_handle.exists(cloud_filename):
+            print(&#34;Warning: Upload can&#39;t be verified for file {}&#34;.format(cloud_filename), flush=True)
+
+
+
+        return
+
+
+def cloudstor(private=False, url=None, password=None, username=None):
+        &#34;&#34;&#34;Return a cloudstor (webdav) pyfilesystem handle for public or private
+           access. Password is not stored anywhere unless you provide it in your
+           script. It is not advisable to code a password directly in any script
+           that you publish anywhere.
+
+           Cloudstore allows public access to any file or directory with read-only or
+           read-write options and (temporary) password protection if needed.
+
+           You can also obtain an app password that you can control separately to
+           your online account password but this still provides unlimited access to
+           your files.
+
+           You can also provide any password information via environment variables
+           if you prefer (see Examples)
+        &#34;&#34;&#34;
+
+        import fs
+        # from requests.auth import HTTPBasicAuth
+        import getpass
+
+        if not private:
+            if url is None:
+                print(&#34;The public url to the cloudstor shared resource is required&#34;)
+                print(&#34;It should be of the form:&#34;)
+                print(&#34;\t https://cloudstor.aarnet.edu.au/plus/s/UNoxqDf8nevZk&#34;)
+                print(&#34;\t or just specify the key string ....... UNoxqDf8nevZk&#34;)
+                print(&#34;\n&#34;)
+                raise(RuntimeError(&#34;The public url to the cloudstor shared resource is required&#34;))
+            else:
+                username = url.replace(&#34;https://cloudstor.aarnet.edu.au/plus/s/&#34;,&#34;&#34;)
+
+            public_url = &#34;https://cloudstor.aarnet.edu.au/plus/s/&#34; + username
+
+            if password is None:
+                password = getpass.getpass(&#34;Password for {}&#34;.format(public_url))
+
+            webdav_url = &#34;webdav://{}:{}@cloudstor.aarnet.edu.au:443/plus/public.php/webdav/&#34;.format(username, password)
+
+        else:
+            if username is None:
+                raise(RuntimeError(&#34;The username for the cloudstore resource is required&#34;))
+
+            url = &#34;https://cloudstor.aarnet.edu.au&#34;
+
+            if password is None:
+                password = getpass.getpass(&#34;Cloudstore password for {}&#34;.format(username))
+
+            webdav_url = &#34;webdav://{}:{}@cloudstor.aarnet.edu.au:443/plus/remote.php/webdav/&#34;.format(username, password)
+
+        return fs.open_fs(webdav_url)
+
+
+# _underworldcode_cloudstor_fs = cloudstor(url=&#34;https://cloudstor.aarnet.edu.au/plus/s/ladjou9ky26ZG0A&#34;, password=&#34;8M7idzp2Q7DXLMz()()()()()&#34;)
+_underworldcode_cloudstor_fs = cloudstor(url=&#34;https://cloudstor.aarnet.edu.au/plus/s/4SEAhkqSlTojYhv&#34;, password=&#34;8M7idzp2Q7DXLMz()()()()()&#34;)
+quagmire_cloud_fs = _underworldcode_cloudstor_fs.opendir(&#39;/&#39;)
+
+# This is a file drop location where developers can read 
+_underworldcode_cloudstor_fs = cloudstor(url=&#34;https://cloudstor.aarnet.edu.au/plus/s/eyOWXBY1u4bIrLg&#34;, password=&#34;8M7idzp2Q7DXLMz()()()()()&#34;)
+quagmire_cloud_filedrop_fs = _underworldcode_cloudstor_fs.opendir(&#39;/&#39;)
+
+del _underworldcode_cloudstor_fs
+
+# This is a temporary directory that we can pass around 
+# and use for unpacking cloud files etc. In parallel, 
+# we need a filesystem directory and name to pass around
+
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+
+if rank == 0:
+    _quagmire_cloud_cache_dir = fs.open_fs(&#34;temp://_quagmire_cache_dir&#34;)
+    _quagmire_cloud_cache_root_path = _quagmire_cloud_cache_dir.root_path
+else:
+    _quagmire_cloud_cache_root_path = None
+
+comm.barrier()
+
+
+quagmire_cloud_cache_dir_name = comm.bcast(_quagmire_cloud_cache_root_path, root=0)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="quagmire.tools.cloud.cloud.cloud_download"><code class="name flex">
+<span>def <span class="ident">cloud_download</span></span>(<span>cloud_filename, local_filename, cloud_fs_location_handle=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load a file from a cloud_location pointed to by
+a pyfilesystem object. (By default, the quagmire cloud service on cloudstor)</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>cloud_fs_location_handle</code></strong> :&ensp;<code>fs.base.FS</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>cloud_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>The filename for the file in the cloud. It should be possible to do
+a cloud_location_handle.listdir(".") to check the file names</dd>
+<dt><strong><code>local_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>The local destination for the cloud file. No error checking is performed - see
+FS.download() for more information on usage / errors</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cloud_download(cloud_filename, local_filename, cloud_fs_location_handle=None):
+        &#34;&#34;&#34;
+        Load a file from a cloud_location pointed to by
+        a pyfilesystem object. (By default, the quagmire cloud service on cloudstor)
+
+        Parameters
+        ----------
+
+        cloud_fs_location_handle: fs.base.FS
+
+
+        cloud_filename: str
+            The filename for the file in the cloud. It should be possible to do 
+            a cloud_location_handle.listdir(&#34;.&#34;) to check the file names
+
+        local_filename: str
+            The local destination for the cloud file. No error checking is performed - see
+            FS.download() for more information on usage / errors
+        &#34;&#34;&#34;
+
+        if cloud_fs_location_handle is None:
+           cloud_fs_location_handle = quagmire_cloud_fs
+
+        try:
+            verify_cloud_fs(cloud_fs_location_handle)
+        except:
+            print(&#34;Not a valid cloud location - no files available&#34;, flush=True)
+            return
+
+        if not cloud_fs_location_handle.exists(str(cloud_filename)):
+            print(&#34;Not a valid cloud file - {}&#34;.format(str(cloud_filename)), flush=True)
+            return
+
+
+
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+
+        if rank == 0:
+            with open(str(local_filename), &#39;wb&#39;) as local_file:
+                cloud_fs_location_handle.download(str(cloud_filename), local_file)
+
+        comm.barrier()
+
+        return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.cloud.cloud.cloud_upload"><code class="name flex">
+<span>def <span class="ident">cloud_upload</span></span>(<span>cloud_filename, local_filename, cloud_fs_location_handle)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load a file from a cloud_location pointed to by
+a pyfilesystem object. (By default, the quagmire cloud service on cloudstor)</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>cloud_fs_location_handle</code></strong> :&ensp;<code>fs.base.FS</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>cloud_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>The filename for the file in the cloud. It should be possible to do
+a cloud_location_handle.listdir(".") to check the file names</dd>
+<dt><strong><code>local_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>The local destination for the cloud file. No error checking is performed - see
+FS.download() for more information on usage / errors</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cloud_upload(cloud_filename, local_filename, cloud_fs_location_handle):
+        &#34;&#34;&#34;
+        Load a file from a cloud_location pointed to by
+        a pyfilesystem object. (By default, the quagmire cloud service on cloudstor)
+
+        Parameters
+        ----------
+
+        cloud_fs_location_handle: fs.base.FS
+
+        cloud_filename: str
+            The filename for the file in the cloud. It should be possible to do 
+            a cloud_location_handle.listdir(&#34;.&#34;) to check the file names
+
+        local_filename: str
+            The local destination for the cloud file. No error checking is performed - see
+            FS.download() for more information on usage / errors
+        &#34;&#34;&#34;
+
+        try:
+            verify_cloud_fs(cloud_fs_location_handle)
+        except:
+            print(&#34;Not a valid cloud location - no data was uploaded&#34;, flush=True)
+            return
+
+        # Note - this is not reliable and is unlikely to fail until the verification step
+        if cloud_fs_location_handle.getmeta()[&#34;read_only&#34;]:
+            print(&#34;The cloud location you have provided is read only - no data was uploaded&#34;, flush=True)
+            return
+
+        if cloud_fs_location_handle == quagmire_cloud_fs:
+            print(&#34;The quagmire cloud is read only - no data was uploaded&#34;, flush=True)
+            return
+
+    
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+
+        if rank == 0:
+            with open(local_filename, &#39;rb&#39;) as local_file:
+                cloud_fs_location_handle.upload(cloud_filename, local_file)
+
+        comm.barrier()
+
+        # Verify upload 
+        if not  cloud_fs_location_handle.exists(cloud_filename):
+            print(&#34;Warning: Upload can&#39;t be verified for file {}&#34;.format(cloud_filename), flush=True)
+
+
+
+        return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.cloud.cloud.cloudstor"><code class="name flex">
+<span>def <span class="ident">cloudstor</span></span>(<span>private=False, url=None, password=None, username=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a cloudstor (webdav) pyfilesystem handle for public or private
+access. Password is not stored anywhere unless you provide it in your
+script. It is not advisable to code a password directly in any script
+that you publish anywhere.</p>
+<p>Cloudstore allows public access to any file or directory with read-only or
+read-write options and (temporary) password protection if needed.</p>
+<p>You can also obtain an app password that you can control separately to
+your online account password but this still provides unlimited access to
+your files.</p>
+<p>You can also provide any password information via environment variables
+if you prefer (see Examples)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cloudstor(private=False, url=None, password=None, username=None):
+        &#34;&#34;&#34;Return a cloudstor (webdav) pyfilesystem handle for public or private
+           access. Password is not stored anywhere unless you provide it in your
+           script. It is not advisable to code a password directly in any script
+           that you publish anywhere.
+
+           Cloudstore allows public access to any file or directory with read-only or
+           read-write options and (temporary) password protection if needed.
+
+           You can also obtain an app password that you can control separately to
+           your online account password but this still provides unlimited access to
+           your files.
+
+           You can also provide any password information via environment variables
+           if you prefer (see Examples)
+        &#34;&#34;&#34;
+
+        import fs
+        # from requests.auth import HTTPBasicAuth
+        import getpass
+
+        if not private:
+            if url is None:
+                print(&#34;The public url to the cloudstor shared resource is required&#34;)
+                print(&#34;It should be of the form:&#34;)
+                print(&#34;\t https://cloudstor.aarnet.edu.au/plus/s/UNoxqDf8nevZk&#34;)
+                print(&#34;\t or just specify the key string ....... UNoxqDf8nevZk&#34;)
+                print(&#34;\n&#34;)
+                raise(RuntimeError(&#34;The public url to the cloudstor shared resource is required&#34;))
+            else:
+                username = url.replace(&#34;https://cloudstor.aarnet.edu.au/plus/s/&#34;,&#34;&#34;)
+
+            public_url = &#34;https://cloudstor.aarnet.edu.au/plus/s/&#34; + username
+
+            if password is None:
+                password = getpass.getpass(&#34;Password for {}&#34;.format(public_url))
+
+            webdav_url = &#34;webdav://{}:{}@cloudstor.aarnet.edu.au:443/plus/public.php/webdav/&#34;.format(username, password)
+
+        else:
+            if username is None:
+                raise(RuntimeError(&#34;The username for the cloudstore resource is required&#34;))
+
+            url = &#34;https://cloudstor.aarnet.edu.au&#34;
+
+            if password is None:
+                password = getpass.getpass(&#34;Cloudstore password for {}&#34;.format(username))
+
+            webdav_url = &#34;webdav://{}:{}@cloudstor.aarnet.edu.au:443/plus/remote.php/webdav/&#34;.format(username, password)
+
+        return fs.open_fs(webdav_url)</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.cloud.cloud.google_drive_convert_link"><code class="name flex">
+<span>def <span class="ident">google_drive_convert_link</span></span>(<span>share_url)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given a url that is returned from a google drive "share this file" link, convert to
+a downloadable url that works with
+<code><a title="quagmire.tools.cloud.cloud.cloud_download" href="#quagmire.tools.cloud.cloud.cloud_download">cloud_download()</a></code>.</p>
+<p>Note that google drive files are limited in size to 100Mb for direct download.
+Permissions need to be set to 'anyone with this link can view' otherwise the download will
+fail (no authorization)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def google_drive_convert_link(share_url):
+    &#34;&#34;&#34; Given a url that is returned from a google drive &#34;share this file&#34; link, convert to 
+    a downloadable url that works with  `cloud_download`.
+
+    Note that google drive files are limited in size to 100Mb for direct download. 
+    Permissions need to be set to &#39;anyone with this link can view&#39; otherwise the download will
+    fail (no authorization) 
+    &#34;&#34;&#34;
+
+    u1 = share_url.split(&#39;/d/&#39;)[1]
+    u2 = u1.split(&#34;/&#34;)[0]
+    
+    download_url = &#34;https://drive.google.com/uc?export=download&amp;id={}&#34;.format(u2)
+    
+    return download_url</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.cloud.cloud.url_download"><code class="name flex">
+<span>def <span class="ident">url_download</span></span>(<span>url, local_filename)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given a publicly accessible url to a file, download the file to the local_filename</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def url_download(url, local_filename):
+    &#34;&#34;&#34;Given a publicly accessible url to a file, download the file to the local_filename&#34;&#34;&#34;
+
+    import requests
+    filepath=local_filename
+
+    from mpi4py import MPI
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+
+    if rank == 0:
+
+        headers = {&#39;user-agent&#39;: &#39;Wget/1.16 (linux-gnu)&#39;}
+        r = requests.get(url, stream=True, headers=headers)
+        with open(filepath, &#39;wb&#39;) as f:
+            for chunk in r.iter_content(chunk_size=1024): 
+                if chunk:
+                    f.write(chunk)
+
+    comm.barrier()
+
+    return</code></pre>
+</details>
+</dd>
+<dt id="quagmire.tools.cloud.cloud.verify_cloud_fs"><code class="name flex">
+<span>def <span class="ident">verify_cloud_fs</span></span>(<span>cloud_fs_location)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Verify that cloud_fs_location is a valid filesystem type</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def verify_cloud_fs(cloud_fs_location):
+    &#34;&#34;&#34;Verify that cloud_fs_location is a valid filesystem type&#34;&#34;&#34;
+
+    if isinstance(cloud_fs_location, fs.base.FS):
+        cloud_fs_location.check()
+        return True
+
+    # this may have raised an error already ?
+    return False </code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="quagmire.tools.cloud" href="index.html">quagmire.tools.cloud</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="quagmire.tools.cloud.cloud.cloud_download" href="#quagmire.tools.cloud.cloud.cloud_download">cloud_download</a></code></li>
+<li><code><a title="quagmire.tools.cloud.cloud.cloud_upload" href="#quagmire.tools.cloud.cloud.cloud_upload">cloud_upload</a></code></li>
+<li><code><a title="quagmire.tools.cloud.cloud.cloudstor" href="#quagmire.tools.cloud.cloud.cloudstor">cloudstor</a></code></li>
+<li><code><a title="quagmire.tools.cloud.cloud.google_drive_convert_link" href="#quagmire.tools.cloud.cloud.google_drive_convert_link">google_drive_convert_link</a></code></li>
+<li><code><a title="quagmire.tools.cloud.cloud.url_download" href="#quagmire.tools.cloud.cloud.url_download">url_download</a></code></li>
+<li><code><a title="quagmire.tools.cloud.cloud.verify_cloud_fs" href="#quagmire.tools.cloud.cloud.verify_cloud_fs">verify_cloud_fs</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
