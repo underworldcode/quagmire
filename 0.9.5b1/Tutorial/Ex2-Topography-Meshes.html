@@ -622,14 +622,16 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-0 - Delaunay triangulation 0.1737117079999848s
-0 - Calculate node weights and area 0.005080912999972043s
-0 - Find boundaries 0.0015617420000353377s
-0 - cKDTree 0.012734532000024501s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.40417952800004286s, (0.22275390300001163s + 0.18137862600002563s)
-0 - Construct rbf weights 0.03877697299998317s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.20206464300002835s
+0 - Calculate node weights and area 0.0063187110000058055s
+0 - Find boundaries 0.0017824590000259377s
+0 - cKDTree 0.013815260999990642s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.4714806310000199s, (0.25566163000002007s + 0.21577859999996463s)
+0 - Construct rbf weights 0.04611393899995164s
 Triangulation has 62234 points
 </pre></div>
 </div>
@@ -670,8 +672,8 @@ Triangulation has 62234 points
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>quagmire.MeshVariable: h(x,y) - is locked
 Update topography data array (automatically rebuilds matrices)
 Update topography data array (automatically rebuilds matrices ONCE ONLY)
-0 - Build downhill matrices 0.04679147799998873s
-0 - Build upstream areas 0.054757785999981934s
+0 - Build downhill matrices 0.05278426099999933s
+0 - Build upstream areas 0.05933347899997443s
 </pre></div>
 </div>
 </div>
@@ -683,8 +685,8 @@ Update topography data array (automatically rebuilds matrices ONCE ONLY)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.5084981 , 1.51400636, 1.50817316, ..., 0.70693372, 0.66095444,
-       0.61410349])
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.51281272, 1.51036552, 1.51090532, ..., 0.69965017, 0.66265163,
+       0.6202122 ])
 </pre></div>
 </div>
 </div>
@@ -3151,33 +3153,33 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 139998580545968, 8080);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140601140136368, 8080);
 _wi[viewerid].actions = {
-  "AiCRRZmmBJ" : "<triangles>colour=---VAL---; ",
-  "vl9dMFHZhJ" : "<triangles>visible=---VAL---; ",
-  "TBHhS38vhx" : "<triangles_colourbar>colour=---VAL---; ",
-  "hUY6JPhhXj" : "<triangles_colourbar>visible=---VAL---; ",
-  "g9HMSGYqOD" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
+  "BPCryAHs0A" : "<triangles>colour=---VAL---; ",
+  "f1vSapKZ3D" : "<triangles>visible=---VAL---; ",
+  "Jztqzo8OkZ" : "<triangles_colourbar>colour=---VAL---; ",
+  "CnJkzUxdpM" : "<triangles_colourbar>visible=---VAL---; ",
+  "4xbiFlhr4v" : "<triangles>colourby=---VAL---; redraw ---VAL---"};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: right;">
-<img id="imgtarget_Dh740ZVqc0" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_D9OAt64hbP" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['Dh740ZVqc0'].box.mode = this.value;">
+             <select onchange="_wi['D9OAt64hbP'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['Dh740ZVqc0'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['D9OAt64hbP'].execute('reset');">
            </div></div>
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Objects:</p>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_AiCRRZmmBJ" data-target="triangles" data-property="colour"  class="colour lvctrl_AiCRRZmmBJ" onclick="
+          <div id="lvctrl_BPCryAHs0A" data-target="triangles" data-property="colour"  class="colour lvctrl_BPCryAHs0A" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -3185,24 +3187,24 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['Dh740ZVqc0'].do_action('AiCRRZmmBJ', c.html(), el);
+              _wi['D9OAt64hbP'].do_action('BPCryAHs0A', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_AiCRRZmmBJ");
+        var el = document.getElementById("lvctrl_BPCryAHs0A");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_vl9dMFHZhJ_checkbox" class="lvctrl_vl9dMFHZhJ" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['Dh740ZVqc0'].do_action('vl9dMFHZhJ', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_f1vSapKZ3D_checkbox" class="lvctrl_f1vSapKZ3D" type="checkbox"checked="checked" step="any" data-target="triangles" data-property="visible" value="True" onchange="; _wi['D9OAt64hbP'].do_action('f1vSapKZ3D', this.checked ? 1 : 0, this);" >
  triangles</label><br>
 
         <div class="colourbg checkerboard" style="border: #888 1px solid; display: inline-block; width: 20px; height: 20px;">
-          <div id="lvctrl_TBHhS38vhx" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_TBHhS38vhx" onclick="
+          <div id="lvctrl_Jztqzo8OkZ" data-target="triangles_colourbar" data-property="colour"  class="colour lvctrl_Jztqzo8OkZ" onclick="
             var col = new Colour(this.style.backgroundColor);
             var offset = [this.getBoundingClientRect().left, this.getBoundingClientRect().top];
             var el = this;
@@ -3210,30 +3212,30 @@ _wi[viewerid].actions = {
               var c = new Colour(0);
               c.setHSV(val);
               el.style.backgroundColor = c.html();
-              _wi['Dh740ZVqc0'].do_action('TBHhS38vhx', c.html(), el);
+              _wi['D9OAt64hbP'].do_action('Jztqzo8OkZ', c.html(), el);
             }
             el.picker = new ColourPicker(savefn);
             el.picker.pick(col, offset[0], offset[1]);">
           </div>
         </div>
         <script>
-        var el = document.getElementById("lvctrl_TBHhS38vhx");
+        var el = document.getElementById("lvctrl_Jztqzo8OkZ");
         //Set the initial colour
         var col = new Colour('[0, 0, 0, 255]');
         el.style.backgroundColor = col.html();
         </script>
         <label>
-<input id="lvctrl_hUY6JPhhXj_checkbox" class="lvctrl_hUY6JPhhXj" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['Dh740ZVqc0'].do_action('hUY6JPhhXj', this.checked ? 1 : 0, this);" >
+<input id="lvctrl_CnJkzUxdpM_checkbox" class="lvctrl_CnJkzUxdpM" type="checkbox"checked="checked" step="any" data-target="triangles_colourbar" data-property="visible" value="True" onchange="; _wi['D9OAt64hbP'].do_action('CnJkzUxdpM', this.checked ? 1 : 0, this);" >
  triangles_colourbar</label><br>
 <p>Colourby:</p>
-<select class="lvctrl_g9HMSGYqOD" id="lvctrl_g9HMSGYqOD" value="" data-target="triangles" data-property="colourby" onchange="_wi['Dh740ZVqc0'].do_action('g9HMSGYqOD', this.value, this);">
+<select class="lvctrl_4xbiFlhr4v" id="lvctrl_4xbiFlhr4v" value="" data-target="triangles" data-property="colourby" onchange="_wi['D9OAt64hbP'].do_action('4xbiFlhr4v', this.value, this);">
 <option>slope</option>
 <option>smooth_slope_a</option>
 <option>smooth_slope_b</option>
 <option>smooth_slope_c</option>
 </select><br>
 </div>
-</form><!-- CREATION TIMESTAMP 20201119111339 --><script>init('Dh740ZVqc0');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201119235618 --><script>init('D9OAt64hbP');</script></div></div>
 </div>
 </div>
 

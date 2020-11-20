@@ -3260,73 +3260,73 @@ var defaultcolourmaps = ["diverge", "isolum", "isorainbow", "cubelaw", "cubelaw2
 
 </script>
 </div><div class="output text_html"><script type="text/javascript">
-function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140472299973712, 8081);
+function init(viewerid) {_wi[viewerid] = new WindowInteractor(viewerid, 140094951414768, 8081);
 _wi[viewerid].actions = {
-  "8Ku67pfqjO" : "<triangles>colourby=---VAL---; redraw ---VAL---",
-  "k5KyFKsIc9" : "select; timestep ---VAL---"};
+  "Q2tPipls6r" : "<triangles>colourby=---VAL---; redraw ---VAL---",
+  "Nh7Ar3ZIdR" : "select; timestep ---VAL---"};
 }
 </script>
 <form novalidate><div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 <p>Colourby:</p>
-<select class="lvctrl_8Ku67pfqjO" id="lvctrl_8Ku67pfqjO" value="" data-target="triangles" data-property="colourby" onchange="_wi['RMmGBEwnlX'].do_action('8Ku67pfqjO', this.value, this);">
+<select class="lvctrl_Q2tPipls6r" id="lvctrl_Q2tPipls6r" value="" data-target="triangles" data-property="colourby" onchange="_wi['6ZtDhWTVkJ'].do_action('Q2tPipls6r', this.value, this);">
 <option>incision</option>
 <option>deposition</option>
 <option>diffusion</option>
 </select><br>
 <p>Timestep:</p>
-<input id="lvctrl_k5KyFKsIc9_number" class="lvctrl_k5KyFKsIc9" type="number"min="0" max="0" step="1" data-property="timestep" value="0" onchange="this.nextElementSibling.value=this.value; _wi['RMmGBEwnlX'].do_action('k5KyFKsIc9', this.value, this);" >
-<input id="lvctrl_k5KyFKsIc9_range" class="lvctrl_k5KyFKsIc9" type="range"min="0" max="0" step="1" data-property="timestep" value="0" onchange="this.previousElementSibling.value=this.value; _wi['RMmGBEwnlX'].do_action('k5KyFKsIc9', this.value, this);" >
+<input id="lvctrl_Nh7Ar3ZIdR_number" class="lvctrl_Nh7Ar3ZIdR" type="number"min="0" max="0" step="1" data-property="timestep" value="0" onchange="this.nextElementSibling.value=this.value; _wi['6ZtDhWTVkJ'].do_action('Nh7Ar3ZIdR', this.value, this);" >
+<input id="lvctrl_Nh7Ar3ZIdR_range" class="lvctrl_Nh7Ar3ZIdR" type="range"min="0" max="0" step="1" data-property="timestep" value="0" onchange="this.previousElementSibling.value=this.value; _wi['6ZtDhWTVkJ'].do_action('Nh7Ar3ZIdR', this.value, this);" >
 <br>
 
         <script>
-        var timer_lvctrl_k5KyFKsIc9 = -1;
-        function startTimer_lvctrl_k5KyFKsIc9() {
-          if (timer_lvctrl_k5KyFKsIc9 >= 0) {
-            if (timer_lvctrl_k5KyFKsIc9 > 0)
-              window.cancelAnimationFrame(timer_lvctrl_k5KyFKsIc9);
-            timer_lvctrl_k5KyFKsIc9 = window.requestAnimationFrame(nextStep_lvctrl_k5KyFKsIc9);
+        var timer_lvctrl_Nh7Ar3ZIdR = -1;
+        function startTimer_lvctrl_Nh7Ar3ZIdR() {
+          if (timer_lvctrl_Nh7Ar3ZIdR >= 0) {
+            if (timer_lvctrl_Nh7Ar3ZIdR > 0)
+              window.cancelAnimationFrame(timer_lvctrl_Nh7Ar3ZIdR);
+            timer_lvctrl_Nh7Ar3ZIdR = window.requestAnimationFrame(nextStep_lvctrl_Nh7Ar3ZIdR);
           }
         }
-        function nextStep_lvctrl_k5KyFKsIc9() {
-          el = document.getElementById('lvctrl_k5KyFKsIc9_number');
+        function nextStep_lvctrl_Nh7Ar3ZIdR() {
+          el = document.getElementById('lvctrl_Nh7Ar3ZIdR_number');
           if (el) {
             //Call again on image load - pass callback
-            var V = _wi['RMmGBEwnlX'];
+            var V = _wi['6ZtDhWTVkJ'];
             if (!V.box.canvas.mouse.isdown && !V.box.zoomTimer && (!V.box.gui || V.box.gui.closed))
-              V.execute("next", startTimer_lvctrl_k5KyFKsIc9);
+              V.execute("next", startTimer_lvctrl_Nh7Ar3ZIdR);
             else
-              setTimeout(nextStep_lvctrl_k5KyFKsIc9, 100);
+              setTimeout(nextStep_lvctrl_Nh7Ar3ZIdR, 100);
           }
         }
-        function playPause_lvctrl_k5KyFKsIc9(btn) {
-          if (timer_lvctrl_k5KyFKsIc9 >= 0) {
+        function playPause_lvctrl_Nh7Ar3ZIdR(btn) {
+          if (timer_lvctrl_Nh7Ar3ZIdR >= 0) {
             btn.value="\u25BA";
-            window.cancelAnimationFrame(timer_lvctrl_k5KyFKsIc9);
-            timer_lvctrl_k5KyFKsIc9 = -1;
+            window.cancelAnimationFrame(timer_lvctrl_Nh7Ar3ZIdR);
+            timer_lvctrl_Nh7Ar3ZIdR = -1;
           } else {
-            timer_lvctrl_k5KyFKsIc9 = 0;
-            startTimer_lvctrl_k5KyFKsIc9();
+            timer_lvctrl_Nh7Ar3ZIdR = 0;
+            startTimer_lvctrl_Nh7Ar3ZIdR();
             btn.value="\u25FE";
           }
         }
         </script>
-        <input type="button" style="width: 50px;" onclick="var el = document.getElementById('lvctrl_k5KyFKsIc9_range'); el.stepDown(); el.onchange()" value="&larr;" /><input type="button" style="width: 50px;" onclick="var el = document.getElementById('lvctrl_k5KyFKsIc9_range'); el.stepUp(); el.onchange()" value="&rarr;" /><input type="button" style="width: 60px;" onclick="playPause_lvctrl_k5KyFKsIc9(this);" value="&#9658;" /></div>
+        <input type="button" style="width: 50px;" onclick="var el = document.getElementById('lvctrl_Nh7Ar3ZIdR_range'); el.stepDown(); el.onchange()" value="&larr;" /><input type="button" style="width: 50px;" onclick="var el = document.getElementById('lvctrl_Nh7Ar3ZIdR_range'); el.stepUp(); el.onchange()" value="&rarr;" /><input type="button" style="width: 60px;" onclick="playPause_lvctrl_Nh7Ar3ZIdR(this);" value="&#9658;" /></div>
 <div style="min-height: 50px; min-width: 50px; position: relative; display: inline-block; float: left; margin-right: 10px;">
-<img id="imgtarget_RMmGBEwnlX" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
+<img id="imgtarget_6ZtDhWTVkJ" draggable=false style="margin: 0px; border: 1px solid #aaa; display: inline-block;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDINe/iSU1xh5IQPamKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAMBsGqBDct9xQAAAABJRU5ErkJggg==">
 
            <div style="display: none; z-index: 200; position: absolute; top: 5px; right: 5px;">
-             <select onchange="_wi['RMmGBEwnlX'].box.mode = this.value;">
+             <select onchange="_wi['6ZtDhWTVkJ'].box.mode = this.value;">
                <option>Rotate</option>
                <option>Translate</option>
                <option>Zoom</option>
              </select>
-             <input type="button" value="Reset" onclick="_wi['RMmGBEwnlX'].execute('reset');">
+             <input type="button" value="Reset" onclick="_wi['6ZtDhWTVkJ'].execute('reset');">
            </div></div>
 <div style="" class="lvctrl">
 <div style="padding:0px; margin: 0px; position: relative;" class="lvctrl">
 </div>
 </div>
-</form><!-- CREATION TIMESTAMP 20201119111540 --><script>init('RMmGBEwnlX');</script></div></div>
+</form><!-- CREATION TIMESTAMP 20201119235825 --><script>init('6ZtDhWTVkJ');</script></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
