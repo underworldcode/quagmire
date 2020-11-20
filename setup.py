@@ -6,7 +6,7 @@ import io
 import subprocess
 import platform 
 
-PYPI_VERSION = "0.9.5b1"
+PYPI_VERSION = "0.9.5"
 
 
 ext = Extension(name    = 'quagmire._fortran',

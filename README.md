@@ -6,6 +6,26 @@ Quagmire is a Python surface process framework for building erosion and depositi
 
 ![Quagmire Surface Process Framework](https://raw.githubusercontent.com/underworldcode/quagmire/dev/docs/images/AusFlow.png)
 
+
+
+## Documentation
+
+The documentation is in the form of jupyter notebooks that are online in the form of a jupyter-book
+
+### "Stable" code (developer release, 2020)
+
+  - Documentation / Notebooks [https://underworldcode.github.io/quagmire/0.9.5](https://underworldcode.github.io/quagmire/0.9.5)
+  - API documentation [https://underworldcode.github.io/stripy/quagmire/0.9.5](https://underworldcode.github.io/stripy/quagmire/0.9.5_api)
+
+
+### Bleeding edge code 
+
+  - Documentation / Notebooks [https://underworldcode.github.io/quagmire/0.9.6b1](https://underworldcode.github.io/quagmire/0.9.6b1)
+  - API documentation [https://underworldcode.github.io/stripy/quagmire/0.9.6b1_api](https://underworldcode.github.io/stripy/quagmire/0.9.6b1_api)
+
+
+
+
 ## Demonstration
 
 [![Launch Demo](https://img.shields.io/badge/Launch-Quagmire_Demo-Blue)](https://demon.underworldcloud.org/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Funderworld-community%2Fquagmire-examples-and-workflows&urlpath=lab%2Ftree%2Fquagmire-examples-and-workflows%2F0-StartHere.ipynb)

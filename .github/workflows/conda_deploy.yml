@@ -9,7 +9,7 @@ on:
   push:
     branches:
       - conda-testing
-      # - dev 
+      - dev 
 
 jobs:
   conda_build_test_deploy:
