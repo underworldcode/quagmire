@@ -8,7 +8,7 @@ dependencies:
   - compilers
   - geo-down-under::stripy==2.0.5b2
   - geo-down-under::litho1pt0
-  - geo-down-under::quagmire==0.9.5b1 # latest would be better if not in beta !
+  - geo-down-under::quagmire
   - matplotlib
   - pyproj
   - pyepsg
