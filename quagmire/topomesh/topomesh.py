@@ -881,6 +881,7 @@ class TopoMesh(object):
                 import quagmire
                 if isinstance(self, quagmire.mesh.strimesh.sTriMesh): 
                     spills['z'][ii] = self.data[spill,2] 
+
                 ii += 1
                 
 
