@@ -871,16 +871,21 @@ class TopoMesh(object):
         for l, this_low in enumerate(my_catchments):
             this_low_spills = edges[np.where(ctmt[edges] == this_low)]  ## local numbering
 
-            for spill in this_low_spills:
-                mesh_data_pt[0:ndim] = self.data[spill]
+            for spill in this_low_spills: 
+                spills['c'][ii] = this_low 
+                spills['h'][ii] = height[spill] 
+                spills['x'][ii] = self.data[spill,0] 
+                spills['y'][ii] = self.data[spill,1] 
 
-                spills['c'][ii] = this_low
-                spills['h'][ii] = height[spill]
-                spills['x'][ii] = mesh_data_pt[0]
-                spills['y'][ii] = mesh_data_pt[1]
-                spills['z'][ii] = mesh_data_pt[2]
+                # 3D coordinate system in strimesh
+                import quagmire
+                if isinstance(self, quagmire.mesh.strimesh.sTriMesh): 
+                    spills['z'][ii] = self.data[spill,2] 
+
                 ii += 1
+                
 
+                
         t = perf_counter()
 
         spills.sort(axis=0)  # Sorts by catchment then height ...
