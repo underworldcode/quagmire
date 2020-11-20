@@ -25,8 +25,6 @@ In this notebook we setup a height field and calculate its derivatives on an uns
 
 > Note: The API for the structured mesh is identical
 
-
-
 ```{code-cell} ipython3
 from quagmire.tools import meshtools
 from quagmire import QuagMesh, QuagMesh
