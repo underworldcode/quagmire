@@ -1,0 +1,11 @@
+.cache
+.eggs
+.ipynb_checkpoints
+.ipython
+.jupyter
+.local
+.spyproject
+.vscode
+.idea
+dist
+build
