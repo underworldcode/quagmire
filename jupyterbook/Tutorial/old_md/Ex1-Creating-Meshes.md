@@ -1,11 +1,10 @@
 ---
 jupytext:
-  formats: Notebooks/Tutorial//md,Examples/Tutorial//py:light
   text_representation:
     extension: .md
     format_name: myst
-    format_version: 0.12
-    jupytext_version: 1.6.0
+    format_version: 0.13
+    jupytext_version: 1.11.1
 kernelspec:
   display_name: Python 3
   language: python
@@ -30,8 +29,7 @@ All meshes are generated and handed to Quagmire using a `DM` object where the se
 
 In this notebook we setup different `DM` objects using meshes found in the `quagmire.tools.meshtools` path and hand them to `QuagMesh`.
 
-
-```{code-cell}
+```{code-cell} ipython3
 ---
 pycharm:
   is_executing: false
@@ -43,7 +41,7 @@ import numpy as np
 
 ## Structured grids
 
-```{code-cell}
+```{code-cell} ipython3
 ---
 pycharm:
   is_executing: false
@@ -68,7 +66,7 @@ help(DM)
 
 We hand this to `QuagMesh` to generate the necessary data structures for gradient operations, smoothing, neighbour allocation, etc.
 
-```{code-cell}
+```{code-cell} ipython3
 ---
 pycharm:
   is_executing: false
@@ -87,9 +85,9 @@ We attach data to a mesh solely through mesh variables (see [Example notebook](E
 The `sync` operation ensures data is coherent across processors - 
 it is harmless and relatively inexpensive so is safe to use even 
 in cases like this where there is no way for information to be out
-of sync between domains. 
+of sync between domains.
 
-```{code-cell}
+```{code-cell} ipython3
 ---
 pycharm:
   is_executing: false
@@ -103,7 +101,44 @@ mesh_variable2.data = np.sin(mesh.coords[:,0] * np.pi) * np.cos(mesh.coords[:,1]
 mesh_variable2.sync()
 ```
 
-```{code-cell}
+```{code-cell} ipython3
+
+```
+
+```{code-cell} ipython3
+import k3d
+plot = k3d.plot()
+
+# here you would normally create objects to display
+# and add them to the plot
+
+plot.display()
+```
+
+```{code-cell} ipython3
+import ipyvolume as ipv
+import numpy as np
+
+s = 1/2**0.5
+# 4 vertices for the tetrahedron
+x = np.array([1.,  -1, 0,  0])
+y = np.array([0,   0, 1., -1])
+z = np.array([-s, -s, s,  s])
+# and 4 surfaces (triangles), where the number refer to the vertex index
+triangles = [(0, 1, 2), (0, 1, 3), (0, 2, 3), (1,3,2)]
+```
+
+```{code-cell} ipython3
+ipv.figure()
+# we draw the tetrahedron
+mesh = ipv.plot_trisurf(x, y, z, triangles=triangles, color='orange')
+# and also mark the vertices
+ipv.scatter(x, y, z, marker='sphere', color='blue')
+ipv.xyzlim(-2, 2)
+ipv.show()
+```
+
+```{code-cell} ipython3
 ---
 pycharm:
   is_executing: false
@@ -173,7 +208,7 @@ The triangulation from the root processor is distributed to other processors usi
 
 ## Elliptical mesh
 
-```{code-cell}
+```{code-cell} ipython3
 spacingX = 0.1
 spacingY = 0.1
 
@@ -186,7 +221,7 @@ mesh = QuagMesh(DM)
 mesh_equant = mesh.neighbour_cloud_distances.mean(axis=1) / ( np.sqrt(mesh.area))
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 import lavavu
 
 lv = lavavu.Viewer(border=False, background="#FFFFFF", resolution=[1000,600], near=-10.0)
@@ -226,7 +261,7 @@ lv.show()
 
 Applies Lloyd's algorithm of iterated voronoi construction to improve the mesh point locations. This distributes the points to a more uniform spacing with more equant triangles. It can be very slow for anything but a small mesh. [Refining](#Mesh-refinement) the mesh a few times will produce a large, well-spaced mesh.
 
-```{code-cell}
+```{code-cell} ipython3
 bmask = mesh.bmask.copy()
 
 x1, y1 = meshtools.lloyd_mesh_improvement(x, y, bmask, iterations=3)
@@ -235,11 +270,11 @@ DM = meshtools.create_DMPlex_from_points(x1, y1, bmask)
 mesh1 = QuagMesh(DM)
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 mesh1_equant = mesh1.neighbour_cloud_distances.mean(axis=1) / ( np.sqrt(mesh1.area))
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 import lavavu
 
 lv = lavavu.Viewer(border=False, background="#FFFFFF", resolution=[1000,600], near=-10.0)
@@ -272,7 +307,7 @@ lv.control.show()
 lv.show()
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 # Comparison of point-wise area for original and improved mesh
 
 
@@ -299,7 +334,7 @@ Triangulating a large set of points on a single processor then distributing the 
 refine_DM(dm, refinement_levels=1)
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 spacingX = 0.5
 spacingY = 0.5
 
@@ -321,7 +356,7 @@ v = DM_r1.getCoordinates()
 v.array.shape
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 def plot_points(lv, points, label, **kwargs):    
     lv_pts = lv.points(label, **kwargs)
     lv_pts.vertices(points)
@@ -364,7 +399,7 @@ or a new label can be set using:
 mesh.set_label("my_label", indices)
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 coarse_pts0 = mesh0.get_label("coarse")
 coarse_pts1 = mesh1.get_label("coarse")
 coarse_pts2 = mesh2.get_label("coarse")
@@ -391,7 +426,7 @@ DM = meshtools.create_DMPlex_from_spherical_points(lons, lats, simplices, bmask=
 
 If no boundary information is provided, the boundary is calculated from any line segments that do not share a triangle with another.a
 
-```{code-cell}
+```{code-cell} ipython3
 lons, lats, bmask = meshtools.generate_elliptical_points(-40, 40, -80, 80, 0.1, 0.1, 1500, 200)
 
 DM = meshtools.create_DMPlex_from_spherical_points(lons, lats, bmask, refinement_levels=0)
@@ -403,7 +438,7 @@ mesh1 = QuagMesh(DM_r1)
 mesh2 = QuagMesh(DM_r2)
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 lv = lavavu.Viewer(border=False, background="#FFFFFF", resolution=[1000,600], near=-10.0)
 
 bnodes0 = plot_points(lv, mesh0.data[~mesh0.bmask], "boundary_points_r0", colour="red", pointsize=10)
@@ -427,7 +462,7 @@ A mesh can be saved and imported later. The `QuagMesh` object has the `save_mesh
 
 **Note:** Requires PETSc 3.8 or higher
 
-```{code-cell}
+```{code-cell} ipython3
 filename = "Ex1-refined_mesh.h5"
 
 # save from QuagMesh object:
@@ -442,7 +477,7 @@ DM_r2 = meshtools.create_DMPlex_from_hdf5(filename)
 mesh2 = QuagMesh(DM_r2)
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 print(mesh2.npoints)
 print(mesh2.area)
 ```

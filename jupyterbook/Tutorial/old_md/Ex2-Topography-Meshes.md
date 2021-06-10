@@ -3,8 +3,8 @@ jupytext:
   text_representation:
     extension: .md
     format_name: myst
-    format_version: 0.12
-    jupytext_version: 1.7.1
+    format_version: 0.13
+    jupytext_version: 1.11.1
 kernelspec:
   display_name: Python 3
   language: python
@@ -140,28 +140,51 @@ rbf_slope050 = rbf050.smooth_fn(mesh.slope).evaluate(mesh)
 **NOTE** - Building the RBF smoothing machinery is expensive and cannot be reused if the kernel properties are changed. We therefore have a two-stage implementation which builds and caches the smoothing matrices and defines a quagmire function that can be used in the usual way.
 
 ```{code-cell} ipython3
-import lavavu
+# import lavavu
 
-points = np.column_stack([mesh.tri.points, height])
+# points = np.column_stack([mesh.tri.points, height])
 
-lv = lavavu.Viewer(border=False, background="#FFFFFF", resolution=[600,600], near=-10.0)
+# lv = lavavu.Viewer(border=False, background="#FFFFFF", resolution=[600,600], near=-10.0)
 
-tri1 = lv.triangles("triangles")
-tri1.vertices(points)
-tri1.indices(mesh.tri.simplices)
-tri1.values(mesh.slope.evaluate(mesh), "slope")
-tri1.values(rbf_slope005, "smooth_slope_a")
-tri1.values(rbf_slope010, "smooth_slope_b")
-tri1.values(rbf_slope050, "smooth_slope_c")
+# tri1 = lv.triangles("triangles")
+# tri1.vertices(points)
+# tri1.indices(mesh.tri.simplices)
+# tri1.values(mesh.slope.evaluate(mesh), "slope")
+# tri1.values(rbf_slope005, "smooth_slope_a")
+# tri1.values(rbf_slope010, "smooth_slope_b")
+# tri1.values(rbf_slope050, "smooth_slope_c")
 
-tri1.colourmap("#990000 #FFFFFF #000099")
-tri1.colourbar()
+# tri1.colourmap("#990000 #FFFFFF #000099")
+# tri1.colourbar()
 
-lv.control.Panel()
-lv.control.ObjectList()
-tri1.control.List(options=["slope", "smooth_slope_a", "smooth_slope_b", "smooth_slope_c", ], property="colourby", value="slope", command="redraw")
+# lv.control.Panel()
+# lv.control.ObjectList()
+# tri1.control.List(options=["slope", "smooth_slope_a", "smooth_slope_b", "smooth_slope_c", ], property="colourby", value="slope", command="redraw")
 
-lv.control.show()
+# lv.control.show()
+```
+
+```{code-cell} ipython3
+import k3d
+plot = k3d.plot()
+plot
+```
+
+```{code-cell} ipython3
+indices = mesh.tri.simplices.astype(np.uint32)
+points = np.column_stack([mesh.tri.points, height]).astype(np.float32)
+
+plt_mesh = k3d.mesh(points, indices,
+                   color_map = k3d.colormaps.basic_color_maps.Jet,
+                   attribute=mesh.slope.evaluate(mesh),
+                   # color_range = [-1.1,2.01]
+                   )
+
+plot += plt_mesh
+```
+
+```{code-cell} ipython3
+
 ```
 
 ```{code-cell} ipython3
