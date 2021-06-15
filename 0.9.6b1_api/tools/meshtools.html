@@ -213,7 +213,7 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_levels=0):
     return _create_DMPlex(tri.points, tri.simplices, boundary_vertices, refinement_levels)
 
 
-def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_levels=0):
+def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_levels=0, radians=False):
     &#34;&#34;&#34;
     Triangulates lon,lat coordinates on rank 0 and creates a PETSc DMPlex object
     from the cells and vertices to distribute among processors.
@@ -245,8 +245,9 @@ def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_level
     &#34;&#34;&#34;
     from stripy import sTriangulation
 
-    rlons = _np.radians(lons)
-    rlats = _np.radians(lats)
+    if not radians:
+        rlons = _np.radians(lons)
+        rlats = _np.radians(lats)
 
     tri = sTriangulation(rlons, rlats, permute=True)
 
@@ -1530,7 +1531,7 @@ Boundary markers are automatically updated with each iteration.</p></div>
 </details>
 </dd>
 <dt id="quagmire.tools.meshtools.create_DMPlex_from_spherical_points"><code class="name flex">
-<span>def <span class="ident">create_DMPlex_from_spherical_points</span></span>(<span>lons, lats, bmask=None, refinement_levels=0)</span>
+<span>def <span class="ident">create_DMPlex_from_spherical_points</span></span>(<span>lons, lats, bmask=None, refinement_levels=0, radians=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Triangulates lon,lat coordinates on rank 0 and creates a PETSc DMPlex object
@@ -1561,7 +1562,7 @@ Boundary markers are automatically updated with each iteration.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_levels=0):
+<pre><code class="python">def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_levels=0, radians=False):
     &#34;&#34;&#34;
     Triangulates lon,lat coordinates on rank 0 and creates a PETSc DMPlex object
     from the cells and vertices to distribute among processors.
@@ -1593,8 +1594,9 @@ Boundary markers are automatically updated with each iteration.</p></div>
     &#34;&#34;&#34;
     from stripy import sTriangulation
 
-    rlons = _np.radians(lons)
-    rlats = _np.radians(lats)
+    if not radians:
+        rlons = _np.radians(lons)
+        rlats = _np.radians(lats)
 
     tri = sTriangulation(rlons, rlats, permute=True)
 
