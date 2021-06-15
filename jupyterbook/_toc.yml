@@ -1,7 +1,7 @@
-- file: FrontPage.md
-  numbered: false
-
-- part: Tutorial
+format: jb-book
+root: FrontPage
+parts:
+- caption: Tutorial
   chapters:
   - file: Tutorial/Ex1-Creating-Meshes.md
   - file: Tutorial/Ex1a-QuagmireMeshVariables.md
@@ -18,7 +18,7 @@
   - file: Tutorial/Ex8-ErosionDeposition.md
   - file: Tutorial/Ex9-LandscapeEvolution.md
 
-- part: Idealised Examples 
+- caption: Idealised Examples 
   chapters:
   - file: IdealisedExamples/MorningBun.md
   - file: IdealisedExamples/MorningBun2.md
@@ -29,7 +29,7 @@
   - file: IdealisedExamples/SwampFillingDemo.md
   - file: IdealisedExamples/TriMeshOctoPants.md
 
-- part: Worked Examples (Building landscapes from data)
+- caption: Worked Examples (Building landscapes from data)
   chapters:
   - file: WorkedExamples/WEx1-ETOPO1-workflow.md
   - file: WorkedExamples/WEx1b-ETOPO1-highres-workflow.md

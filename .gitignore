@@ -8,6 +8,8 @@
 Paper-Theory
 Paper-JOSS
 
+jupyterbook/_build
+
 *.mp4
 *.h5
 build/*

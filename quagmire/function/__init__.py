@@ -6,8 +6,6 @@ from . import coordinate_geometry as coordinates
 from . import coordinate_geometry as geometry
 
 
-
-
 ## A display function that tries the object methods first 
 
 def display(fn_object):
