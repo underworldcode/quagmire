@@ -15,6 +15,7 @@ jupyterbook/_build
 build/*
 egg-info.*
 *.xmf
+*.so
 
 www/*
 */build/*
