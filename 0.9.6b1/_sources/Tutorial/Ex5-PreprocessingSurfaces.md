@@ -1,5 +1,6 @@
 ---
 jupytext:
+  formats: Notebooks/Tutorial//ipynb,Examples/Tutorial//py:light
   text_representation:
     extension: .md
     format_name: myst
@@ -11,7 +12,7 @@ kernelspec:
   name: python3
 ---
 
-# Example 5 - Preprocessing a surface
+#### Example 5 - Preprocessing a surface
 
 
 Pit filling and swamp filling ... 
@@ -36,6 +37,11 @@ to specify the number of downhill neighbours (default is 2).
 In this notebook we use a landscape function with many outflow points to examine the effect of varying the number of recipient nodes on catchment area, stream lengths, and outflow fluxes.
 
 
+#### Notebook contents
+
+- [1-2-3 downhill neighbours](#1-2-3-downhill-neighbours)
+- [Upstream propogation](#Upstream-propogation)
+- [Dense downhill matrices](#Dense-downhill-matrices)
 
 ```{code-cell}
 import matplotlib.pyplot as plt

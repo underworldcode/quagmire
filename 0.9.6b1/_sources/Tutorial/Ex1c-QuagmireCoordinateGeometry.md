@@ -1,5 +1,6 @@
 ---
 jupytext:
+  formats: Notebooks/Tutorial//ipynb,Examples/Tutorial//py:light
   text_representation:
     extension: .md
     format_name: myst
@@ -11,7 +12,7 @@ kernelspec:
   name: python3
 ---
 
-# Quagmire.function.geometry
+## Quagmire.function.geometry
 
 Quagmire mesh variables are numerically differentiable and the various operators defined in the quagmire functions module also support limited (symbolic) differentiation
 

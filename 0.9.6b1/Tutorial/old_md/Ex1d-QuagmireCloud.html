@@ -1,0 +1,698 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>quagmire.tools.cloud &#8212; Quagmire.tex</title>
+    
+  <link href="../../_static/css/theme.css" rel="stylesheet" />
+  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+      
+      <h1 class="site-logo" id="site-title">Quagmire.tex</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../FrontPage.html">
+   Introduction to Quagmire
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Tutorial
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex1-Creating-Meshes.html">
+   Example 1 - creating structured and unstructured meshes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex1a-QuagmireMeshVariables.html">
+   quagmire.mesh MeshVariable
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex1b-QuagmireLazyFunctions.html">
+   Quagmire.function
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex1c-QuagmireCoordinateGeometry.html">
+   Quagmire.function.geometry
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex1d-QuagmireCloud.html">
+   quagmire.tools.cloud
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex2-Topography-Meshes.html">
+   Example 2 - Meshes for Topography
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex3-Surface-Process-Meshes.html">
+   Example 3 - Meshes for Surface Process Models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex4-Multiple-downhill-pathways.html">
+   Example 4 - Matrix approaches - multiple paths
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex5-PreprocessingSurfaces.html">
+   Example 5 - Preprocessing a surface
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex6-Catchment-Analysis.html">
+   Example 6- Catchment analysis from the matrix transpose.
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex7-LinearDiffusion.html">
+   Linear diffusion - time evolution / benchmarking
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex7a-NonLinearDiffusion.html">
+   Non-Linear diffusion - a critical-slope diffusion implementation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex8-ErosionDeposition.html">
+   Example 8 - Incision and Deposition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Ex9-LandscapeEvolution.html">
+   Example 9 - Landscape Evolution
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Idealised Examples
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../IdealisedExamples/MorningBun.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../IdealisedExamples/MorningBun2.html">
+   Morning Bun Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../IdealisedExamples/OrogenicLandscapeDemo.html">
+   Orogenic Landscape Modelling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../IdealisedExamples/PixMeshOctoPants.html">
+   PixMeshes and the Octopants Landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../IdealisedExamples/RosenbrockSurface.html">
+   Rosenbrock landscape
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../IdealisedExamples/SwampFillingDemo.html">
+   Swamp filling of local minima
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../IdealisedExamples/TriMeshOctoPants.html">
+   TriMeshes and the Octopants Landscape
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Worked Examples (Building landscapes from data)
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../WorkedExamples/WEx1-ETOPO1-workflow.html">
+   Meshing ETOPO1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../WorkedExamples/WEx1b-ETOPO1-highres-workflow.html">
+   Meshing ETOPO1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../WorkedExamples/WEx2-ETOPO1-Tasmania.html">
+   Etopo1 Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../WorkedExamples/WEx3-GADEM9H-Tasmania.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../WorkedExamples/WEx4-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../WorkedExamples/WEx4p-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../WorkedExamples/WEx4s-GADEM9H-Tasmania-Catchments.html">
+   Geoscience Australia 9s DEM Map of Tasmania
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../WorkedExamples/WEx5-GlobalModels.html">
+   Models on the Sphere
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../WorkedExamples/WEx6-Preliminary-crop.html">
+   Spherical mesh of Australia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../WorkedExamples/WEx6-spherical-mesh-of-Australia.html">
+   Spherical mesh of Australia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../WorkedExamples/WEx6-UsingStoredMeshes.html">
+   Models from the cloud
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../WorkedExamples/WEx7-Diffusion.html">
+   Diffusion
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        <a class="dropdown-buttons"
+            href="../../_sources/Tutorial/old_md/Ex1d-QuagmireCloud.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download notebook file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../../_sources/Tutorial/old_md/Ex1d-QuagmireCloud.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/underworldcode/quagmire"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/underworldcode/quagmire/dev?urlpath=tree/jupyterbook/Tutorial/old_md/Ex1d-QuagmireCloud.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#my-cloud">
+   My cloud ?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#my-cloud-but-not-cloudstor">
+   My cloud, but not cloudstor ?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#i-want-to-share-a-file-for-others-to-access">
+   I want to share a file for others to access
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#upload-download-tools">
+   Upload / download tools
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="quagmire-tools-cloud">
+<h1>quagmire.tools.cloud<a class="headerlink" href="#quagmire-tools-cloud" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">quagmire.tools.cloud</span></code> module helps to download and upload data (particularly meshes and meshvariables) from various cloud services.
+By default, this module provides read-only access to a central repository of meshes and datasets</p>
+<p>The quagmire cloud uses <a class="reference external" href="https://www.pyfilesystem.org/">PyFilesystem</a> to establish connections to cloud directories via webdav. This is what <code class="docutils literal notranslate"><span class="pre">PyFilesystem</span></code> promises:</p>
+<blockquote>
+<div><p>Filesystem Abstraction for Python.</p>
+</div></blockquote>
+<blockquote>
+<div><p>Work with files and directories in archives, memory, the cloud etc. as easily as your local drive. Write code now, decide later where the data will be stored; unit test without writing real files; upload files to the cloud without learning a new API; sandbox your file writing code; etc.</p>
+</div></blockquote>
+<p>Storage for the cloud access is provided by <a class="reference external" href="https://www.aarnet.edu.au/network-and-services/cloud-services/cloudstor/">cloudstor</a> which is hosted by <a class="reference external" href="https://www.aarnet.edu.au/">AARNET</a>.</p>
+<p>In these examples, we will show how to access mesh and meshvariable data stored in the cloud. The examples we use are taken from the earlier examples.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools</span> <span class="kn">import</span> <span class="n">meshtools</span>
+<span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span>
+<span class="kn">from</span> <span class="nn">quagmire.mesh</span> <span class="kn">import</span> <span class="n">MeshVariable</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the <code class="docutils literal notranslate"><span class="pre">Ex1-Creating-Meshes</span></code> notebook we learned how to save a mesh file and how to read it back to re-create the mesh.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;Ex1-refined_mesh.h5&quot;</span>
+
+<span class="c1"># save from QuagMesh object:</span>
+<span class="c1"># mesh2.save_mesh_to_hdf5(filename)</span>
+
+<span class="c1"># save from meshtools:</span>
+<span class="n">meshtools</span><span class="o">.</span><span class="n">save_DM_to_hdf5</span><span class="p">(</span><span class="n">DM_r2</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+<span class="c1"># load DM from file</span>
+<span class="n">DM_r2</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_hdf5</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+<span class="n">mesh2</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM_r2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">mesh2</span><span class="o">.</span><span class="n">npoints</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mesh2</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1333
+[0.1003038  0.09579325 0.07775106 ... 0.05819681 0.06067121 0.06067121]
+</pre></div>
+</div>
+<p>This mesh is available in the Quagmire cloud and we can create a new PETSc DM and a QuagMesh object directly from the cloud as follows (and it seems to create a valid mesh)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools.cloud</span> <span class="kn">import</span> <span class="n">quagmire_cloud_fs</span>
+
+<span class="n">DM_r2</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1-refined_mesh.h5&quot;</span><span class="p">)</span>
+<span class="n">mesh2</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM_r2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mesh2</span><span class="o">.</span><span class="n">npoints</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mesh2</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
+0 - Delaunay triangulation 0.0029457980000415773s
+0 - Calculate node weights and area 0.0007901259999698595s
+0 - Find boundaries 0.0002769089999219432s
+0 - cKDTree 0.0007595260000243798s
+0 - Construct neighbour cloud arrays 0.00975232700000106s, (0.005289876999995613s + 0.004443648000005851s)
+0 - Construct rbf weights 0.00204806900001131s
+
+1333
+[0.1003038  0.09579325 0.07775106 ... 0.05819681 0.06067121 0.06067121]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DMC</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh.h5&quot;</span><span class="p">)</span>
+<span class="n">meshC</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DMC</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">meshC</span><span class="o">.</span><span class="n">npoints</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">meshC</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>
+
+<span class="n">phi</span> <span class="o">=</span> <span class="n">meshC</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;PHI(X,Y)&quot;</span><span class="p">)</span>
+<span class="n">psi</span> <span class="o">=</span> <span class="n">meshC</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;PSI(X,Y)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
+0 - Delaunay triangulation 0.1670834939999395s
+0 - Calculate node weights and area 0.004972265999981573s
+0 - Find boundaries 0.0015315510000846189s
+0 - cKDTree 0.009246110000049157s
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.3229323129999102s, (0.1885026119999793s + 0.1343639990000156s)
+0 - Construct rbf weights 0.05818934900003114s
+47361
+[0.00110479 0.00115039 0.00175107 ... 0.0004392  0.00040675 0.0006897 ]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phi</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh_phi.h5&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="my-cloud">
+<h2>My cloud ?<a class="headerlink" href="#my-cloud" title="Permalink to this headline">¶</a></h2>
+<p>The quagmire cloud is intended for the developers to share examples and pre-computed meshes with users but it is read only. If you wish to use cloud-storage for your own files, you will need to use the full functionality of the quagmire cloud interface.</p>
+<p>For example, the functionality for loading the mesh variables has a more general form:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="kn">from</span> <span class="nn">quagmire.tools.cloud</span> <span class="kn">import</span> <span class="n">cloudstor</span>
+
+<span class="n">cloudstor_fs</span> <span class="o">=</span> <span class="n">cloudstor</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://cloudstor.aarnet.edu.au/plus/s/4SEAhkqSlTojYhv&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;8M7idzp2Q7DXLMz()()()()()&quot;</span><span class="p">)</span>
+<span class="n">cloud_dir</span> <span class="o">=</span> <span class="n">cloudstor_fs</span><span class="o">.</span><span class="n">opendir</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+<span class="n">phi</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh_phi.h5&quot;</span><span class="p">,</span> <span class="n">cloud_location_handle</span><span class="o">=</span><span class="n">cloud_dir</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<p>This is using the <code class="docutils literal notranslate"><span class="pre">PyFilesystem</span></code> webdav interface for accessing public urls on cloudstor. If you have a cloudstor account, you can use obtain a public link to share any folder, set your own password and create your own cloud access.</p>
+</div>
+<div class="section" id="my-cloud-but-not-cloudstor">
+<h2>My cloud, but not cloudstor ?<a class="headerlink" href="#my-cloud-but-not-cloudstor" title="Permalink to this headline">¶</a></h2>
+<p>The interface that we provide to cloudstor can be generalised some more:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">fs</span>
+
+<span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;4SEAhkqSlTojYhv&quot;</span>
+<span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;8M7idzp2Q7DXLMz()()()()()&quot;</span> 
+<span class="n">webdav_url</span> <span class="o">=</span> <span class="s2">&quot;webdav://</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">@cloudstor.aarnet.edu.au:443/plus/public.php/webdav/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+<span class="n">cloud_dir</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">open_fs</span><span class="p">(</span><span class="n">webdav_url</span><span class="p">)</span>
+
+<span class="n">phi</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh_phi.h5&quot;</span><span class="p">,</span> <span class="n">cloud_location_handle</span><span class="o">=</span><span class="n">cloud_dir</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As long as you can obtain a valid fs.open_fs object that points to a folder somewhere, then meshes and mesh variables can be loaded from those locations without explicitly having to download those files first. You will need to dig into your cloud providers webdav interface to make this work for you.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;4SEAhkqSlTojYhv&quot;</span>
+<span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;8M7idzp2Q7DXLMz()()()()()&quot;</span> 
+<span class="n">webdav_url</span> <span class="o">=</span> <span class="s2">&quot;webdav://</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">@cloudstor.aarnet.edu.au:443/plus/public.php/webdav/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+<span class="n">cloud_dir</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">open_fs</span><span class="p">(</span><span class="n">webdav_url</span><span class="p">)</span>
+
+<span class="n">phi</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh_phi.h5&quot;</span><span class="p">,</span> <span class="n">cloud_location_handle</span><span class="o">=</span><span class="n">cloud_dir</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="n">bc6588cc98c5</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;8M7idzp2Q7DXLMz()()()()()&quot;</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">webdav_url</span> <span class="o">=</span> <span class="s2">&quot;webdav://</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">@cloudstor.aarnet.edu.au:443/plus/public.php/webdav/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">cloud_dir</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">open_fs</span><span class="p">(</span><span class="n">webdav_url</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> 
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">phi</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh_phi.h5&quot;</span><span class="p">,</span> <span class="n">cloud_location_handle</span><span class="o">=</span><span class="n">cloud_dir</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;fs&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="i-want-to-share-a-file-for-others-to-access">
+<h2>I want to share a file for others to access<a class="headerlink" href="#i-want-to-share-a-file-for-others-to-access" title="Permalink to this headline">¶</a></h2>
+<p>If you can provide a url to a file that can be accessed, then the quagmire cloud tools allow you to load a mesh or mesh variable from that link. Examples include providing a dropbox or google drive public link to a file.</p>
+<p>Google drive provides urls for file sharing that need some manipulation to work in a python script. For a google URL that you copy from the web interface, use <code class="docutils literal notranslate"><span class="pre">url</span> <span class="pre">=</span> <span class="pre">quagmire.tools.cloud.google_drive_convert_link(g_url)</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">psi</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">psi</span><span class="o">.</span><span class="n">load_from_url</span><span class="p">(</span><span class="s2">&quot;https://www.dropbox.com/s/5dzujlo3ayo5s35/Ex1a-circular_mesh_psi.h5?dl=0&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">psi</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># Note the dropbox link is to the file only, regardless of the tail of the URL:</span>
+<span class="n">psi</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">psi</span><span class="o">.</span><span class="n">load_from_url</span><span class="p">(</span><span class="s2">&quot;https://www.dropbox.com/s/5dzujlo3ayo5s35&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">psi</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># Verification</span>
+<span class="n">psi</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">psi</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh_psi.h5&quot;</span><span class="p">,</span> <span class="n">cloud_location_handle</span><span class="o">=</span><span class="n">cloud_dir</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">psi</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.90167197 0.90920399 0.92674766 ... 0.90735785 0.91259299 0.91574316]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.90167197 0.90920399 0.92674766 ... 0.90735785 0.91259299 0.91574316]
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="mi">65</span><span class="n">cf2ac0d4ee</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="c1"># Verification</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="n">psi</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="ne">---&gt; </span><span class="mi">12</span> <span class="n">psi</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh_psi.h5&quot;</span><span class="p">,</span> <span class="n">cloud_location_handle</span><span class="o">=</span><span class="n">cloud_dir</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="nb">print</span><span class="p">(</span><span class="n">psi</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;cloud_dir&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools.cloud</span> <span class="kn">import</span> <span class="n">google_drive_convert_link</span>
+
+<span class="n">psi</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">gurl</span> <span class="o">=</span> <span class="s2">&quot;https://drive.google.com/file/d/17t8jbPFmnB8aHhyYDbxjGrzKqtq6IlCa/view?usp=sharing&quot;</span>
+<span class="n">url</span> <span class="o">=</span> <span class="n">google_drive_convert_link</span><span class="p">(</span><span class="n">gurl</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">psi</span><span class="o">.</span><span class="n">load_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">psi</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>https://drive.google.com/uc?export=download&amp;id=17t8jbPFmnB8aHhyYDbxjGrzKqtq6IlCa
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.90167197 0.90920399 0.92674766 ... 0.90735785 0.91259299 0.91574316]
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="upload-download-tools">
+<h2>Upload / download tools<a class="headerlink" href="#upload-download-tools" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">quagmire.tools.cloud</span></code> functions <code class="docutils literal notranslate"><span class="pre">cloud_upload</span></code> and <code class="docutils literal notranslate"><span class="pre">cloud_download</span></code> wrap PyFilesystem calls to make sure that they check the validity of the filesystem objects and work well within a parallel environment (only the root processor will download the file).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">quagmire.tools.cloud</span></code> function <code class="docutils literal notranslate"><span class="pre">url_download</span></code> provides similar capability for a standard http or https request to download a file from a public link and also ensures this is done only once in a parallel environment.</p>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./Tutorial/old_md"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Louis Moresi, Ben Mather, Romain Beucher<br/>
+        
+            &copy; Copyright 2021.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>

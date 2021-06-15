@@ -1,5 +1,6 @@
 ---
 jupytext:
+  formats: Notebooks/Tutorial//ipynb,Examples/Tutorial//py:light
   text_representation:
     extension: .md
     format_name: myst
@@ -11,7 +12,7 @@ kernelspec:
   name: python3
 ---
 
-# Example 4 - Matrix approaches - multiple paths
+## Example 4 - Matrix approaches - multiple paths
 
 `Quagmire` allows the user to specify the number of downhill pathways to model flow in regions where diverging flow does not naturally fit the single-path-downhill view of the converging tributary view of stream flow. This also has some interesting effects on the numerical / discretisation errors.
 
@@ -31,6 +32,13 @@ In this notebook we use a landscape function with many outflow points to examine
 
 We also consider how expensive it is to use multiple path approaches.
 
+
+#### Notebook contents
+
+- [Meshing](#Build-a-test-mesh)
+- [1-2-3 downhill neighbours](#1-2-3-downhill-neighbours)
+- [Computational efficiency](#Computational-Efficiency)
+- [Dense downhill matrices](#Dense-downhill-matrices)
 
 ```{code-cell}
 import matplotlib.pyplot as plt
@@ -299,4 +307,4 @@ plt.show()
 
 ---
 
-[Ex5-PreprocessingSurfaces](Ex5-PreprocessingSurfaces.md)
+[Ex5-PreprocessingSurfaces](Ex5-PreprocessingSurfaces.ipynb)

@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Example 3 - Meshes for Surface Process Models &#8212; Quagmire.tex</title>
     
-  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+  <link href="../_static/css/theme.css" rel="stylesheet" />
+  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
 
     
   <link rel="stylesheet"
@@ -19,14 +20,10 @@
 
     
       
-  <link rel="stylesheet"
-    href="../_static/vendor/open-sans_all/1.44.1/index.css">
-  <link rel="stylesheet"
-    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
 
     
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
@@ -34,20 +31,17 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
 
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <script src="../_static/togglebutton.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -55,18 +49,20 @@
         const thebe_selector_output = ".output"
     </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Example 4 - Matrix approaches - multiple paths" href="Ex4-Multiple-downhill-pathways.html" />
     <link rel="prev" title="Example 2 - Meshes for Topography" href="Ex2-Topography-Meshes.html" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
-
-
-
+    
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
     
 
     <div class="container-xl">
@@ -75,30 +71,30 @@
 <div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
     
         <div class="navbar-brand-box">
-<a class="navbar-brand text-wrap" href="../index.html">
-  
-  
-  <h1 class="site-logo" id="site-title">Quagmire.tex</h1>
-  
-</a>
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+      
+      <h1 class="site-logo" id="site-title">Quagmire.tex</h1>
+      
+    </a>
 </div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
-</form>
-<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-    <ul class="nav sidenav_l1">
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../FrontPage.html">
    Introduction to Quagmire
   </a>
  </li>
 </ul>
-<p class="caption collapsible-parent">
+<p class="caption">
  <span class="caption-text">
   Tutorial
  </span>
 </p>
-<ul class="current nav sidenav_l1">
+<ul class="current nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1-Creating-Meshes.html">
    Example 1 - creating structured and unstructured meshes
@@ -112,11 +108,6 @@
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1b-QuagmireLazyFunctions.html">
    Quagmire.function
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="Ex1b-QuagmireLazyFunctions.html#vector-functions">
-   Vector functions
   </a>
  </li>
  <li class="toctree-l1">
@@ -160,18 +151,8 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="Ex7-LinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
-   Spatially variable diffusivity (circular “inclusion”)
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="Ex7a-NonLinearDiffusion.html">
    Non-Linear diffusion - a critical-slope diffusion implementation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="Ex7a-NonLinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
-   Spatially variable diffusivity (circular “inclusion”)
   </a>
  </li>
  <li class="toctree-l1">
@@ -185,12 +166,12 @@
   </a>
  </li>
 </ul>
-<p class="caption collapsible-parent">
+<p class="caption">
  <span class="caption-text">
   Idealised Examples
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../IdealisedExamples/MorningBun.html">
    Morning Bun Landscape
@@ -207,11 +188,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../IdealisedExamples/OrogenicLandscapeDemo.html#create-mesh">
-   Create Mesh
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../IdealisedExamples/PixMeshOctoPants.html">
    PixMeshes and the Octopants Landscape
   </a>
@@ -222,33 +198,8 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#rosenbrock-function">
-   Rosenbrock function
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#compare-one-and-two-downhill-pathways">
-   Compare one and two downhill pathways
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#probability-densities">
-   Probability densities
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../IdealisedExamples/RosenbrockSurface.html#animation-of-stream-flow">
-   Animation of stream flow
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html">
    Swamp filling of local minima
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../IdealisedExamples/SwampFillingDemo.html#semi-circular-gutter-with-incline">
-   Semi-circular gutter with incline
   </a>
  </li>
  <li class="toctree-l1">
@@ -257,12 +208,12 @@
   </a>
  </li>
 </ul>
-<p class="caption collapsible-parent">
+<p class="caption">
  <span class="caption-text">
   Worked Examples (Building landscapes from data)
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../WorkedExamples/WEx1-ETOPO1-workflow.html">
    Meshing ETOPO1
@@ -281,11 +232,6 @@
  <li class="toctree-l1">
   <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html">
    Geoscience Australia 9s DEM Map of Tasmania
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html#retrieve-geoscience-australia-9s-dem-using-ga-wcs-service">
-   Retrieve Geoscience Australia 9s DEM using GA WCS service
   </a>
  </li>
  <li class="toctree-l1">
@@ -330,6 +276,7 @@
  </li>
 </ul>
 
+    </div>
 </nav> <!-- To handle the deprecated key -->
 
 <div class="navbar_extra_footer">
@@ -345,42 +292,39 @@
           
 <main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
     
-    <div class="row topbar fixed-top container-xl">
-    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
-    </div>
-    <div class="col pl-2 topbar-main">
-        
-        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
-            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
-            <i class="fas fa-bars"></i>
-            <i class="fas fa-arrow-left"></i>
-            <i class="fas fa-arrow-up"></i>
-        </button>
-        
-        
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
 <div class="dropdown-buttons-trigger">
     <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
             class="fas fa-download"></i></button>
 
     <div class="dropdown-buttons">
         <!-- ipynb file if we had a myst markdown file -->
-        <a class="dropdown-buttons"
-            href="../_sources/Tutorial/Ex3-Surface-Process-Meshes.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Download notebook file" data-toggle="tooltip"
-                data-placement="left">.ipynb</button></a>
+        
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/Tutorial/Ex3-Surface-Process-Meshes.md"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/Tutorial/Ex3-Surface-Process-Meshes.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.md</button></a>
+                data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
 </div>
 
-        <!-- Source interaction buttons -->
+            <!-- Source interaction buttons -->
 
 <div class="dropdown-buttons-trigger">
     <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
@@ -395,21 +339,21 @@
     </div>
 </div>
 
+            <!-- Full screen (wrap in <a> to have style consistency -->
 
-        <!-- Full screen (wrap in <a> to have style consistency -->
-        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-                title="Fullscreen mode"><i
-                    class="fas fa-expand"></i></button></a>
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
 
-        <!-- Launch buttons -->
+            <!-- Launch buttons -->
 
 <div class="dropdown-buttons-trigger">
     <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
         aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
     <div class="dropdown-buttons">
         
-        <a class="binder-button" href="https://mybinder.org/v2/gh/underworldcode/quagmire/dev?urlpath=tree/jupyterbook/Tutorial/Ex3-Surface-Process-Meshes.md"><button type="button"
+        <a class="binder-button" href="https://mybinder.org/v2/gh/underworldcode/quagmire/dev?urlpath=tree/jupyterbook/Tutorial/Ex3-Surface-Process-Meshes.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
                 data-placement="left"><img class="binder-button-logo"
                     src="../_static/images/logo_binder.svg"
@@ -421,16 +365,16 @@
     </div>
 </div>
 
-    </div>
-
-    <!-- Table of contents -->
-    <div class="d-none d-md-block col-md-2 bd-toc show">
-        
-        <div class="tocsection onthispage pt-5 pb-3">
-            <i class="fas fa-list"></i> Contents
         </div>
-        <nav id="bd-toc-nav">
-            <ul class="nav section-nav flex-column">
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#height-field-and-rainfall">
    Height field and Rainfall
@@ -455,8 +399,8 @@
  </li>
 </ul>
 
-        </nav>
-        
+            </nav>
+        </div>
     </div>
 </div>
     <div id="main-content" class="row">
@@ -510,14 +454,14 @@
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.2257034400000748s
-0 - Calculate node weights and area 0.005448620000038318s
-0 - Find boundaries 0.0015920060000098601s
-0 - cKDTree 0.011461143000019547s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.217437145999952s
+0 - Calculate node weights and area 0.008103469999923618s
+0 - Find boundaries 0.00173655800006145s
+0 - cKDTree 0.013532350999980736s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.3823527219999505s, (0.2051600629999939s + 0.17716295799993986s)
-0 - Construct rbf weights 0.0613037279999844s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.43170898599998964s, (0.24962431799997375s + 0.1820354660000021s)
+0 - Construct rbf weights 0.08250534999990577s
 Triangulation has 62234 points
 </pre></div>
 </div>
@@ -542,10 +486,10 @@ Triangulation has 62234 points
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.046135572000025604s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.05451581699992403s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.1204308479999554s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.11175482399994507s
 </pre></div>
 </div>
 </div>
@@ -576,7 +520,7 @@ Triangulation has 62234 points
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([5.03309626, 5.03456744, 5.01299025, ..., 2.66829351, 2.3281053 ,
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([5.03109282, 5.02976502, 5.01072309, ..., 2.66829351, 2.3281053 ,
        3.99135784])
 </pre></div>
 </div>
@@ -589,8 +533,8 @@ Triangulation has 62234 points
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([3.39238801e-05, 1.16799280e-05, 7.93463772e-06, ...,
-       5.38685904e-06, 3.03301176e-06, 7.06488427e-06])
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([4.90651433e-05, 1.19497636e-05, 2.23299420e-05, ...,
+       4.36636107e-06, 6.85957777e-06, 5.58861769e-06])
 </pre></div>
 </div>
 </div>
@@ -622,7 +566,7 @@ Triangulation has 62234 points
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([2.24345632, 2.24378418, 2.2389708 , ..., 0.47308102, 0.42065372,
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([2.24300977, 2.24271376, 2.23846445, ..., 0.47308102, 0.42065372,
        0.36434709])
 </pre></div>
 </div>
@@ -834,33 +778,33 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>21 outflow nodes:
-[61753 61754 61755 61756 61803 61853 61902 61903 61952 61953 61954 61955
- 62002 62006 62052 62102 62151 62152 62201 62202 62204]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>17 outflow nodes:
+[61753 61755 61803 61853 61902 61903 61952 61953 61954 62002 62052 62102
+ 62151 62152 62201 62202 62203]
 0 internal low point nodes:
-[61753 61754 61755 61756 61803 61853 61902 61903 61952 61953 61954 61955
- 62002 62006 62052 62102 62151 62152 62201 62202 62204]
-[1.39142959e+00 9.53873043e-04 3.37598896e-04 2.36623707e-05
- 2.82899684e+00 7.02722257e+00 3.83865201e+00 1.45409857e-01
- 1.76273230e+00 7.70264853e-02 1.09702004e-04 2.59686481e-02
- 1.69378993e+00 1.28032831e-04 3.78227450e+00 6.34456185e+00
- 3.93412271e+00 1.25744370e-01 1.55383224e+00 4.34773487e-04
- 7.24364798e-04]
-0 - Build downhill matrices 0.051279190999935054s
+[61753 61755 61803 61853 61902 61903 61952 61953 61954 62002 62052 62102
+ 62151 62152 62201 62202 62203]
+[1.51716428e+00 2.44658689e-05 3.05145256e+00 6.79070475e+00
+ 4.74960787e+00 1.22172156e-01 1.02178006e+00 7.88731583e-02
+ 2.49044816e-02 1.58263298e+00 3.36265060e+00 6.73919066e+00
+ 4.03018294e+00 1.33637454e-01 1.25625905e+00 1.28722394e-04
+ 7.30938960e-02]
+0 - Build downhill matrices 0.05341798100005235s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.08535831699998653s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.08735821099992336s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>14 outflow nodes:
-[61754 61756 61802 61903 61904 61952 61955 61956 61960 62002 62006 62101
- 62152 62202]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>18 outflow nodes:
+[61753 61755 61758 61803 61854 61903 61953 61954 61955 61956 61957 61958
+ 61961 61962 62002 62102 62201 62202]
 0 internal low point nodes:
 []
-[1.22750390e-03 2.27448443e-05 1.46979191e-01 4.48688893e-02
- 1.53909386e-01 5.07931190e-02 1.62681922e-04 6.26225441e-02
- 1.50450823e-05 1.19747047e-02 7.00582277e-05 4.77938267e-02
- 1.33800178e-01 8.21608948e-02]
+[6.92896213e-02 2.35676706e-05 6.95179187e-06 2.09602203e-01
+ 2.12713347e-02 3.11674425e-01 1.37889367e-01 1.11310920e-04
+ 9.54743642e-05 1.50922670e-04 3.01256145e-05 2.41984261e-02
+ 4.03921974e-05 2.15217219e-05 2.08813753e-02 3.58181522e-01
+ 1.99674644e-01 7.77482864e-02]
 </pre></div>
 </div>
 </div>
@@ -973,15 +917,15 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
 
               </div>
               
-        </div>
-    </div>
-    
-    
-    <div class='prev-next-bottom'>
         
+        <div class='prev-next-bottom'>
+            
     <a class='left-prev' id="prev-link" href="Ex2-Topography-Meshes.html" title="previous page">Example 2 - Meshes for Topography</a>
     <a class='right-next' id="next-link" href="Ex4-Multiple-downhill-pathways.html" title="next page">Example 4 - Matrix approaches - multiple paths</a>
 
+        </div>
+        
+        </div>
     </div>
     <footer class="footer mt-5 mt-md-0">
     <div class="container">
@@ -989,7 +933,7 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
         
           By Louis Moresi, Ben Mather, Romain Beucher<br/>
         
-            &copy; Copyright 2020.<br/>
+            &copy; Copyright 2021.<br/>
       </p>
     </div>
   </footer>
@@ -998,11 +942,9 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
 
       </div>
     </div>
+  
+  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
 
-    
-  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
-
-
-    
+  
   </body>
 </html>

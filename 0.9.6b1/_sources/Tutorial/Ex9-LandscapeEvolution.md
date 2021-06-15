@@ -1,5 +1,6 @@
 ---
 jupytext:
+  formats: Notebooks/Tutorial//ipynb,Examples/Tutorial//py:light
   text_representation:
     extension: .md
     format_name: myst
@@ -13,7 +14,7 @@ kernelspec:
 
 # Example 9 - Landscape Evolution
 
-The **local equilibrium** transport law from [Ex8-ErosionDeposition](./Ex8-ErosionDeposition.md) is implemented in a time-varying loop.
+The **local equilibrium** transport law from [Ex8-ErosionDeposition](./Ex8-ErosionDeposition.ipynb) is implemented in a time-varying loop.
 
 ```{code-cell}
 from quagmire import QuagMesh

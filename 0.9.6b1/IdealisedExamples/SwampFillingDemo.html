@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Swamp filling of local minima &#8212; Quagmire.tex</title>
     
-  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+  <link href="../_static/css/theme.css" rel="stylesheet" />
+  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
 
     
   <link rel="stylesheet"
@@ -19,14 +20,10 @@
 
     
       
-  <link rel="stylesheet"
-    href="../_static/vendor/open-sans_all/1.44.1/index.css">
-  <link rel="stylesheet"
-    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
 
     
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
@@ -34,20 +31,17 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
 
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <script src="../_static/togglebutton.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -55,18 +49,20 @@
         const thebe_selector_output = ".output"
     </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="TriMeshes and the Octopants Landscape" href="TriMeshOctoPants.html" />
     <link rel="prev" title="&lt;no title&gt;" href="SpiralZigguratDemo.html" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
-
-
-
+    
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
     
 
     <div class="container-xl">
@@ -75,30 +71,30 @@
 <div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
     
         <div class="navbar-brand-box">
-<a class="navbar-brand text-wrap" href="../index.html">
-  
-  
-  <h1 class="site-logo" id="site-title">Quagmire.tex</h1>
-  
-</a>
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+      
+      <h1 class="site-logo" id="site-title">Quagmire.tex</h1>
+      
+    </a>
 </div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
-</form>
-<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-    <ul class="nav sidenav_l1">
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../FrontPage.html">
    Introduction to Quagmire
   </a>
  </li>
 </ul>
-<p class="caption collapsible-parent">
+<p class="caption">
  <span class="caption-text">
   Tutorial
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1-Creating-Meshes.html">
    Example 1 - creating structured and unstructured meshes
@@ -112,11 +108,6 @@
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1b-QuagmireLazyFunctions.html">
    Quagmire.function
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../Tutorial/Ex1b-QuagmireLazyFunctions.html#vector-functions">
-   Vector functions
   </a>
  </li>
  <li class="toctree-l1">
@@ -160,18 +151,8 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../Tutorial/Ex7-LinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
-   Spatially variable diffusivity (circular “inclusion”)
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex7a-NonLinearDiffusion.html">
    Non-Linear diffusion - a critical-slope diffusion implementation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../Tutorial/Ex7a-NonLinearDiffusion.html#spatially-variable-diffusivity-circular-inclusion">
-   Spatially variable diffusivity (circular “inclusion”)
   </a>
  </li>
  <li class="toctree-l1">
@@ -185,12 +166,12 @@
   </a>
  </li>
 </ul>
-<p class="caption collapsible-parent">
+<p class="caption">
  <span class="caption-text">
   Idealised Examples
  </span>
 </p>
-<ul class="current nav sidenav_l1">
+<ul class="current nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="MorningBun.html">
    Morning Bun Landscape
@@ -207,11 +188,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="OrogenicLandscapeDemo.html#create-mesh">
-   Create Mesh
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="PixMeshOctoPants.html">
    PixMeshes and the Octopants Landscape
   </a>
@@ -221,34 +197,9 @@
    Rosenbrock landscape
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="RosenbrockSurface.html#rosenbrock-function">
-   Rosenbrock function
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="RosenbrockSurface.html#compare-one-and-two-downhill-pathways">
-   Compare one and two downhill pathways
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="RosenbrockSurface.html#probability-densities">
-   Probability densities
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="RosenbrockSurface.html#animation-of-stream-flow">
-   Animation of stream flow
-  </a>
- </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
    Swamp filling of local minima
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#semi-circular-gutter-with-incline">
-   Semi-circular gutter with incline
   </a>
  </li>
  <li class="toctree-l1">
@@ -257,12 +208,12 @@
   </a>
  </li>
 </ul>
-<p class="caption collapsible-parent">
+<p class="caption">
  <span class="caption-text">
   Worked Examples (Building landscapes from data)
  </span>
 </p>
-<ul class="nav sidenav_l1">
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../WorkedExamples/WEx1-ETOPO1-workflow.html">
    Meshing ETOPO1
@@ -281,11 +232,6 @@
  <li class="toctree-l1">
   <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html">
    Geoscience Australia 9s DEM Map of Tasmania
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../WorkedExamples/WEx3-GADEM9H-Tasmania.html#retrieve-geoscience-australia-9s-dem-using-ga-wcs-service">
-   Retrieve Geoscience Australia 9s DEM using GA WCS service
   </a>
  </li>
  <li class="toctree-l1">
@@ -330,6 +276,7 @@
  </li>
 </ul>
 
+    </div>
 </nav> <!-- To handle the deprecated key -->
 
 <div class="navbar_extra_footer">
@@ -345,21 +292,21 @@
           
 <main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
     
-    <div class="row topbar fixed-top container-xl">
-    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
-    </div>
-    <div class="col pl-2 topbar-main">
-        
-        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
-            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
-            <i class="fas fa-bars"></i>
-            <i class="fas fa-arrow-left"></i>
-            <i class="fas fa-arrow-up"></i>
-        </button>
-        
-        
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
 <div class="dropdown-buttons-trigger">
     <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
             class="fas fa-download"></i></button>
@@ -380,7 +327,7 @@
     </div>
 </div>
 
-        <!-- Source interaction buttons -->
+            <!-- Source interaction buttons -->
 
 <div class="dropdown-buttons-trigger">
     <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
@@ -395,14 +342,14 @@
     </div>
 </div>
 
+            <!-- Full screen (wrap in <a> to have style consistency -->
 
-        <!-- Full screen (wrap in <a> to have style consistency -->
-        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-                title="Fullscreen mode"><i
-                    class="fas fa-expand"></i></button></a>
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
 
-        <!-- Launch buttons -->
+            <!-- Launch buttons -->
 
 <div class="dropdown-buttons-trigger">
     <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
@@ -421,16 +368,16 @@
     </div>
 </div>
 
-    </div>
-
-    <!-- Table of contents -->
-    <div class="d-none d-md-block col-md-2 bd-toc show">
-        
-        <div class="tocsection onthispage pt-5 pb-3">
-            <i class="fas fa-list"></i> Contents
         </div>
-        <nav id="bd-toc-nav">
-            <ul class="nav section-nav flex-column">
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
  <li class="toc-h1 nav-item toc-entry">
   <a class="reference internal nav-link" href="#">
    Swamp filling of local minima
@@ -443,8 +390,8 @@
  </li>
 </ul>
 
-        </nav>
-        
+            </nav>
+        </div>
     </div>
 </div>
     <div id="main-content" class="row">
@@ -495,16 +442,16 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-0 - Delaunay triangulation 0.18607505900001797s
-0 - Calculate node weights and area 0.004769121999970594s
-0 - Find boundaries 0.0016190069999311163s
+0 - Delaunay triangulation 0.17801580700006525s
+0 - Calculate node weights and area 0.006247915000017201s
+0 - Find boundaries 0.0018177630000764111s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - cKDTree 0.00897154100005082s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - cKDTree 0.011447992000057639s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.301407688999916s, (0.15571941799998967s + 0.14563697099993078s)
-0 - Construct rbf weights 0.05301154400001451s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.34389299700001175s, (0.1980617940000684s + 0.14578260000007504s)
+0 - Construct rbf weights 0.07225707800000691s
 </pre></div>
 </div>
 </div>
@@ -529,10 +476,10 @@ h(x,y) = (1-x)^2
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.07198553099999572s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.07996424299994942s
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.1059219869999879s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.09921730400003526s
 </pre></div>
 </div>
 </div>
@@ -585,11 +532,11 @@ h(x,y) = (1-x)^2
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">ones</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">mesh</span><span class="o">=</span><span class="n">sp</span><span class="p">)</span>
 
 <span class="nn">~/work/quagmire/quagmire/quagmire/function/function_classes.py</span> in <span class="ni">__init__</span><span class="nt">(self, value, *args, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">535</span> 
-<span class="g g-Whitespace">    </span><span class="mi">536</span>     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">537</span>         <span class="nb">super</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">538</span>         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
-<span class="g g-Whitespace">    </span><span class="mi">539</span>         <span class="bp">self</span><span class="o">.</span><span class="n">math</span> <span class="o">=</span> <span class="k">lambda</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">latex</span>
+<span class="g g-Whitespace">    </span><span class="mi">588</span> 
+<span class="g g-Whitespace">    </span><span class="mi">589</span>     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="ne">--&gt; </span><span class="mi">590</span>         <span class="nb">super</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">591</span>         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+<span class="g g-Whitespace">    </span><span class="mi">592</span>         <span class="bp">self</span><span class="o">.</span><span class="n">math</span> <span class="o">=</span> <span class="k">lambda</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">latex</span>
 
 <span class="ne">TypeError</span>: __init__() got an unexpected keyword argument &#39;mesh&#39;
 </pre></div>
@@ -612,8 +559,8 @@ h(x,y) = (1-x)^2
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.07443054299994856s
-0 - Build upstream areas 0.16133644299998195s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.07575889899999311s
+0 - Build upstream areas 0.1513377919999357s
 </pre></div>
 </div>
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
@@ -666,16 +613,16 @@ h(x,y) = (1-x)^2
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>186  iterations, time =  0.09038821499996175
-Build low point catchments -  0.0912258189999875  seconds
-0  Sort spills -  0.0023901109999542314
-0  Gather spill data -  0.00015270100004727283
-0  Sort all spills -  5.220100001679384e-05
-0 - Build downhill matrices 0.06752950999998575s
-Low point swamp fill  0.18870886600006997  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>185  iterations, time =  0.08663347200001681
+Build low point catchments -  0.08774281000000883  seconds
+0  Sort spills -  0.0022796790000256806
+0  Gather spill data -  0.00019600699999955395
+0  Sort all spills -  7.190299993453664e-05
+0 - Build downhill matrices 0.0787948030000507s
+Low point swamp fill  0.19460067500006062  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.16618946300002335s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.1503275569999687s
 </pre></div>
 </div>
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
@@ -704,18 +651,18 @@ Low point swamp fill  0.18870886600006997  seconds
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>191  iterations, time =  0.09826875099997778
-Build low point catchments -  0.09929105599997001  seconds
-0  Sort spills -  0.0020161090000101467
-0  Gather spill data -  0.0001133000000663742
-0  Sort all spills -  4.94010000693379e-05
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>185  iterations, time =  0.08937236600002052
+Build low point catchments -  0.09057120699992538  seconds
+0  Sort spills -  0.0024031829999557885
+0  Gather spill data -  0.00014250499998524901
+0  Sort all spills -  6.850299996585818e-05
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.07164932899991072s
-Low point swamp fill  0.19639960200004225  seconds
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.07453735699994013s
+Low point swamp fill  0.1905237359999319  seconds
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.24351391799996236s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.22204171699991093s
 </pre></div>
 </div>
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
@@ -973,7 +920,7 @@ Low point swamp fill  0.19639960200004225  seconds
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Couldn&#39;t get a file descriptor referring to the console
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/bin/sh: 1: open: not found
 </pre></div>
 </div>
 </div>
@@ -1048,15 +995,15 @@ Low point swamp fill  0.19639960200004225  seconds
 
               </div>
               
-        </div>
-    </div>
-    
-    
-    <div class='prev-next-bottom'>
         
+        <div class='prev-next-bottom'>
+            
     <a class='left-prev' id="prev-link" href="SpiralZigguratDemo.html" title="previous page">&lt;no title&gt;</a>
     <a class='right-next' id="next-link" href="TriMeshOctoPants.html" title="next page">TriMeshes and the Octopants Landscape</a>
 
+        </div>
+        
+        </div>
     </div>
     <footer class="footer mt-5 mt-md-0">
     <div class="container">
@@ -1064,7 +1011,7 @@ Low point swamp fill  0.19639960200004225  seconds
         
           By Louis Moresi, Ben Mather, Romain Beucher<br/>
         
-            &copy; Copyright 2020.<br/>
+            &copy; Copyright 2021.<br/>
       </p>
     </div>
   </footer>
@@ -1073,11 +1020,9 @@ Low point swamp fill  0.19639960200004225  seconds
 
       </div>
     </div>
+  
+  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
 
-    
-  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
-
-
-    
+  
   </body>
 </html>
