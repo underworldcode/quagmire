@@ -598,10 +598,17 @@ class TopoMesh(object):
                 if isinstance(input, (quagmire.mesh.trimesh.TriMesh, 
                                       quagmire.mesh.pixmesh.PixMesh,
                                       quagmire.mesh.strimesh.sTriMesh)):
-                    if input == meshVar._mesh:
+
+                    try:
+                        meshVarmesh = meshVar._mesh
+                    except:
+                        meshVarmesh = None
+
+                    if input == meshVarmesh:
                         return smoothed
                     else:
                         return self.interpolate(input.coords[:,0], input.coords[:,1], zdata=smoothed, **kwargs)
+
                 elif isinstance(input, (tuple, list, np.ndarray)):
                     input = np.array(input)
                     input = np.reshape(input, (-1, 2))
@@ -774,12 +781,15 @@ class TopoMesh(object):
 
         return
 
-    def low_points_local_patch_fill(self, its=1, smoothing_steps=1, ref_height=0.0, fraction=0.01):
+    def low_points_local_patch_fill(self, its=2, smoothing_steps=1, ref_height=0.0, fraction=0.25):
 
         """
         Local patch algorithm to fill low points - raises the topography at a local minimum to be
         a small fraction higher than the lowest neighbour. If smoothing is used, then that correction
         in topography is spread around all the local nodes. 
+
+        If smoothing, you can set the fraction to be 1.0, otherwise, closer to 0.25 is better. Smoothing makes a 
+        nice looking surface but doesn't necessarily fill all the holes
         """
         
         from petsc4py import PETSc
@@ -791,21 +801,26 @@ class TopoMesh(object):
             low_points = self.identify_low_points(ref_height=ref_height)
 
             h = self.topography.data
-            delta_height = np.zeros_like(h)
+            new_height = h.copy()
+            weight  = np.zeros_like(h)
 
             ## Note, the smoother has a communication barrier so needs to be called even if it has no work to do on this process
 
             for i in low_points:
-                delta_height[i] =  ( (1.0-fraction) * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).min() +
-                                           fraction * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).max() 
-                                      - h[i] )
+                new_height[i] =  ( (1.0-fraction) * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).min() +
+                                           fraction * (h[self.natural_neighbours[i,1:self.natural_neighbours_count[i]]]).max())
+                weight[self.natural_neighbours[i]] = 1.0
+                                        
 
             ## Note, the smoother has a communication barrier so needs to be called even
             ## if len(low_points==0) and there is no work to do on this process
-            smoothed_height = h + self.rbf_smoother(delta_height, iterations=smoothing_steps)
+
+            smoothed_weight = self.rbf_smoother(weight, iterations=smoothing_steps)
+            smoothed_weight /= smoothed_weight.max()
+            smoothed_topography = self.rbf_smoother(new_height, iterations=smoothing_steps)
 
             self.topography.unlock()
-            self.topography.data = np.maximum(smoothed_height, h)
+            self.topography.data = np.maximum(smoothed_weight * smoothed_topography + (1.0-smoothed_weight) * h, h)
             self.topography.sync()
             self.topography.lock()
             self._update_height()
