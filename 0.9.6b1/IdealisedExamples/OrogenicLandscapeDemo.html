@@ -95,72 +95,72 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1-Creating-Meshes.html">
-   Example 1 - creating structured and unstructured meshes
+   1. Creating meshes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1a-QuagmireMeshVariables.html">
-   quagmire.mesh MeshVariable
+   1.a Mesh Variables
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1b-QuagmireLazyFunctions.html">
-   Quagmire.function
+   1.b Functions
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1c-QuagmireCoordinateGeometry.html">
-   Quagmire.function.geometry
+   1.c Coordinate Geometry
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1d-QuagmireCloud.html">
-   quagmire.tools.cloud
+   1.d Quagmire cloud
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex2-Topography-Meshes.html">
-   Example 2 - Meshes for Topography
+   2. Meshes with Topography
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex3-Surface-Process-Meshes.html">
-   Example 3 - Meshes for Surface Process Models
+   3. Meshes for Surface Processes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex4-Multiple-downhill-pathways.html">
-   Example 4 - Matrix approaches - multiple paths
+   4. Multiple paths downhill
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex5-PreprocessingSurfaces.html">
-   Example 5 - Preprocessing a surface
+   5. Preprocessing a surface
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex6-Catchment-Analysis.html">
-   Example 6- Catchment analysis from the matrix transpose.
+   6. Catchment analysis.
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex7-LinearDiffusion.html">
-   Linear diffusion - time evolution / benchmarking
+   7. Diffusion equation
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex7a-NonLinearDiffusion.html">
-   Non-Linear diffusion - a critical-slope diffusion implementation
+   7.a Non-Linear diffusion
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex8-ErosionDeposition.html">
-   Example 8 - Incision and Deposition
+   8. Erosion and Deposition
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex9-LandscapeEvolution.html">
-   Example 9 - Landscape Evolution
+   9. Landscape Evolution
   </a>
  </li>
 </ul>
@@ -441,35 +441,35 @@
 <p>We investigate the drainage network dynamics and the steady-state drainage patterns that emerge from erosion of an uplifting mountain.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">quagmire</span> <span class="k">as</span> <span class="nn">qg</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">quagmire</span> <span class="k">as</span> <span class="nn">qg</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">qg</span><span class="o">.</span><span class="n">nd</span> <span class="o">=</span> <span class="n">qg</span><span class="o">.</span><span class="n">scaling</span><span class="o">.</span><span class="n">non_dimensionalise</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qg</span><span class="o">.</span><span class="n">nd</span> <span class="o">=</span> <span class="n">qg</span><span class="o">.</span><span class="n">scaling</span><span class="o">.</span><span class="n">non_dimensionalise</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">=</span> <span class="n">qg</span><span class="o">.</span><span class="n">scaling</span><span class="o">.</span><span class="n">_scaling</span><span class="o">.</span><span class="n">u</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">=</span> <span class="n">qg</span><span class="o">.</span><span class="n">scaling</span><span class="o">.</span><span class="n">_scaling</span><span class="o">.</span><span class="n">u</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scaling_coefficients</span> <span class="o">=</span> <span class="n">qg</span><span class="o">.</span><span class="n">scaling</span><span class="o">.</span><span class="n">_scaling</span><span class="o">.</span><span class="n">get_coefficients</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scaling_coefficients</span> <span class="o">=</span> <span class="n">qg</span><span class="o">.</span><span class="n">scaling</span><span class="o">.</span><span class="n">_scaling</span><span class="o">.</span><span class="n">get_coefficients</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scaling_coefficients</span><span class="p">[</span><span class="s2">&quot;[length]&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">80</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scaling_coefficients</span><span class="p">[</span><span class="s2">&quot;[length]&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">80</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span>
 <span class="n">scaling_coefficients</span><span class="p">[</span><span class="s2">&quot;[time]&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">years</span>
 </pre></div>
 </div>
@@ -483,7 +483,7 @@
 <h1>Create Mesh<a class="headerlink" href="#create-mesh" title="Permalink to this headline">¶</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span>
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">tools</span> <span class="k">as</span> <span class="n">meshtools</span>
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">function</span> <span class="k">as</span> <span class="n">fn</span>
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">equation_systems</span> <span class="k">as</span> <span class="n">systems</span>
@@ -492,14 +492,14 @@
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
 
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">qg</span><span class="o">.</span><span class="n">nd</span><span class="p">(</span><span class="mf">80.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">qg</span><span class="o">.</span><span class="n">nd</span><span class="p">(</span><span class="mf">80.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">)</span>
 <span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">qg</span><span class="o">.</span><span class="n">nd</span><span class="p">(</span><span class="mf">40.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">)</span>
 <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">qg</span><span class="o">.</span><span class="n">nd</span><span class="p">(</span><span class="mi">500</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">),</span> <span class="n">qg</span><span class="o">.</span><span class="n">nd</span><span class="p">(</span><span class="mi">500</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
 
@@ -509,45 +509,18 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-0 - Delaunay triangulation 0.036136509000016304s
-0 - Calculate node weights and area 0.0020448690000876013s
-0 - Find boundaries 0.0007725259999915579s
-0 - cKDTree 0.003151006000052803s
-0 - Construct neighbour cloud arrays 0.09814888500000052s, (0.05963979599994218s + 0.03847088699990309s)
-0 - Construct rbf weights 0.01734118000001672s
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Number of points in the triangulation: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">npoints</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Number of points in the triangulation: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">npoints</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span> <span class="s2">&quot;Downhill neighbour paths: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">downhill_neighbours</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of points in the triangulation: 13041
-Downhill neighbour paths: 2
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">boundary_mask_fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">9</span><span class="o">-</span><span class="n">a7bda448ab5c</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">boundary_mask_fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
-
-<span class="ne">AttributeError</span>: module &#39;quagmire.function.misc&#39; has no attribute &#39;levelset&#39;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">boundary_mask_fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -556,29 +529,17 @@ Downhill neighbour paths: 2
 <h2>Initial topography<a class="headerlink" href="#initial-topography" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mesh</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mesh</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
     <span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.024329914999952962s
-0 - Build upstream areas 0.0018982629999300116s
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mesh</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mesh</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
     <span class="n">new_elevation</span> <span class="o">=</span> <span class="n">qg</span><span class="o">.</span><span class="n">nd</span><span class="p">(</span><span class="mf">100.</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">meter</span><span class="p">)</span> <span class="o">*</span> <span class="n">mesh</span><span class="o">.</span><span class="n">mask</span>
     <span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">new_elevation</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.02018797599998834s
-0 - Build upstream areas 0.0015783530000135215s
 </pre></div>
 </div>
 </div>
@@ -588,7 +549,7 @@ Downhill neighbour paths: 2
 <h2>Rainfall Function<a class="headerlink" href="#rainfall-function" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall_fn</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;rainfall&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall_fn</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;rainfall&quot;</span><span class="p">)</span>
 <span class="n">rainfall_fn</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">qg</span><span class="o">.</span><span class="n">nd</span><span class="p">(</span><span class="mf">1.</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -599,7 +560,7 @@ Downhill neighbour paths: 2
 <h2>Uplift function<a class="headerlink" href="#uplift-function" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">uplift_rate_fn</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;uplift&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uplift_rate_fn</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;uplift&quot;</span><span class="p">)</span>
 <span class="n">uplift_rate_fn</span> <span class="o">=</span> <span class="n">qg</span><span class="o">.</span><span class="n">nd</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">mm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">year</span><span class="p">)</span> <span class="o">*</span> <span class="n">mesh</span><span class="o">.</span><span class="n">mask</span>
 </pre></div>
 </div>
@@ -610,7 +571,7 @@ Downhill neighbour paths: 2
 <h2>Stream Power Law<a class="headerlink" href="#stream-power-law" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># vary these and visualise difference</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># vary these and visualise difference</span>
 <span class="n">m</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="n">n</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
 <span class="n">K</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="n">qg</span><span class="o">.</span><span class="n">nd</span><span class="p">(</span><span class="mf">5.0e-6</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">year</span><span class="p">))</span>
@@ -624,27 +585,13 @@ Downhill neighbour paths: 2
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">14</span><span class="o">-</span><span class="n">e998d81d3e49</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="c1"># create stream power function</span>
-<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">upstream_precipitation_integral_fn</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">rainfall_fn</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">8</span> <span class="n">stream_power_fn</span> <span class="o">=</span> <span class="n">K</span><span class="o">*</span><span class="n">upstream_precipitation_integral_fn</span><span class="o">**</span><span class="n">m</span> <span class="o">*</span> <span class="n">mesh</span><span class="o">.</span><span class="n">slope</span><span class="o">**</span><span class="n">n</span> <span class="o">*</span> <span class="n">boundary_mask_fn</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span> 
-<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="c1"># evaluate on the mesh</span>
-
-<span class="ne">NameError</span>: name &#39;boundary_mask_fn&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 </div>
 <div class="section" id="diffusion-and-transport-solvers">
 <h2>Diffusion and Transport Solvers<a class="headerlink" href="#diffusion-and-transport-solvers" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">quagmire.equation_systems</span> <span class="k">as</span> <span class="nn">systems</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">quagmire.equation_systems</span> <span class="k">as</span> <span class="nn">systems</span>
 
 <span class="c1">## Set up diffusion solver</span>
 <span class="n">diffusion_solver</span> <span class="o">=</span> <span class="n">systems</span><span class="o">.</span><span class="n">DiffusionEquation</span><span class="p">(</span><span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">)</span>
@@ -665,27 +612,13 @@ Downhill neighbour paths: 2
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">15</span><span class="o">-</span><span class="mi">0</span><span class="n">a3f3abdfd55</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="c1">## Set up diffusion solver</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">diffusion_solver</span> <span class="o">=</span> <span class="n">systems</span><span class="o">.</span><span class="n">DiffusionEquation</span><span class="p">(</span><span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">5</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">neumann_x_mask</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">neumann_y_mask</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">dirichlet_mask</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
-
-<span class="ne">AttributeError</span>: module &#39;quagmire.function.misc&#39; has no attribute &#39;levelset&#39;
-</pre></div>
-</div>
-</div>
 </div>
 </div>
 <div class="section" id="timestepping">
 <h2>Timestepping<a class="headerlink" href="#timestepping" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">save_fields</span> <span class="o">=</span> <span class="kc">True</span>
 
 <span class="n">efficiency</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="n">qg</span><span class="o">.</span><span class="n">nd</span><span class="p">(</span><span class="mf">5.0e-6</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">year</span><span class="p">))</span>
@@ -740,27 +673,6 @@ Downhill neighbour paths: 2
         <span class="n">simulation_time</span> <span class="o">=</span> <span class="n">qg</span><span class="o">.</span><span class="n">scaling</span><span class="o">.</span><span class="n">dimensionalise</span><span class="p">(</span><span class="n">sim_time</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">simulation_time</span><span class="p">,</span> <span class="n">topo_scaled</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">topo_scaled</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
                            <span class="n">topo_scaled</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">16</span><span class="o">-</span><span class="mi">15</span><span class="n">c3c56de945</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">     </span><span class="mi">16</span> 
-<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="c1"># get timestep size</span>
-<span class="ne">---&gt; </span><span class="mi">18</span>     <span class="n">dt</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">diffusion_solver</span><span class="o">.</span><span class="n">diffusion_timestep</span><span class="p">(),</span> <span class="n">transport_solver</span><span class="o">.</span><span class="n">erosion_deposition_timestep</span><span class="p">())</span>
-<span class="g g-Whitespace">     </span><span class="mi">19</span> 
-<span class="g g-Whitespace">     </span><span class="mi">20</span>     <span class="c1"># build diffusion, erosion + deposition</span>
-
-<span class="nn">~/work/quagmire/quagmire/quagmire/equation_systems/diffusion.py</span> in <span class="ni">diffusion_timestep</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">179</span>     <span class="k">def</span> <span class="nf">diffusion_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">180</span> 
-<span class="ne">--&gt; </span><span class="mi">181</span>         <span class="n">local_diff_timestep</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span><span class="o">.</span><span class="n">area</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diffusivity</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span><span class="p">))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">182</span> 
-<span class="g g-Whitespace">    </span><span class="mi">183</span>         <span class="c1"># synchronise ...</span>
-
-<span class="ne">AttributeError</span>: &#39;NoneType&#39; object has no attribute &#39;evaluate&#39;
 </pre></div>
 </div>
 </div>

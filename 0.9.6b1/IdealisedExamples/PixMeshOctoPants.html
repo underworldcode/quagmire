@@ -95,72 +95,72 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1-Creating-Meshes.html">
-   Example 1 - creating structured and unstructured meshes
+   1. Creating meshes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1a-QuagmireMeshVariables.html">
-   quagmire.mesh MeshVariable
+   1.a Mesh Variables
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1b-QuagmireLazyFunctions.html">
-   Quagmire.function
+   1.b Functions
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1c-QuagmireCoordinateGeometry.html">
-   Quagmire.function.geometry
+   1.c Coordinate Geometry
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1d-QuagmireCloud.html">
-   quagmire.tools.cloud
+   1.d Quagmire cloud
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex2-Topography-Meshes.html">
-   Example 2 - Meshes for Topography
+   2. Meshes with Topography
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex3-Surface-Process-Meshes.html">
-   Example 3 - Meshes for Surface Process Models
+   3. Meshes for Surface Processes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex4-Multiple-downhill-pathways.html">
-   Example 4 - Matrix approaches - multiple paths
+   4. Multiple paths downhill
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex5-PreprocessingSurfaces.html">
-   Example 5 - Preprocessing a surface
+   5. Preprocessing a surface
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex6-Catchment-Analysis.html">
-   Example 6- Catchment analysis from the matrix transpose.
+   6. Catchment analysis.
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex7-LinearDiffusion.html">
-   Linear diffusion - time evolution / benchmarking
+   7. Diffusion equation
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex7a-NonLinearDiffusion.html">
-   Non-Linear diffusion - a critical-slope diffusion implementation
+   7.a Non-Linear diffusion
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex8-ErosionDeposition.html">
-   Example 8 - Incision and Deposition
+   8. Erosion and Deposition
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex9-LandscapeEvolution.html">
-   Example 9 - Landscape Evolution
+   9. Landscape Evolution
   </a>
  </li>
 </ul>
@@ -396,11 +396,11 @@
 <h1>PixMeshes and the Octopants Landscape<a class="headerlink" href="#pixmeshes-and-the-octopants-landscape" title="Permalink to this headline">¶</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">tools</span> <span class="k">as</span> <span class="n">meshtools</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
 </pre></div>
 </div>
 </div>
@@ -409,7 +409,7 @@
 <h2>PixMesh<a class="headerlink" href="#pixmesh" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span> 
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span> 
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span> <span class="c1"># all routines we need are within this class</span>
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span>
 
@@ -423,41 +423,15 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">)</span>  <span class="c1">## cloud array etc can surely be done better ... </span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">)</span>  <span class="c1">## cloud array etc can surely be done better ... </span>
 <span class="n">mesh_noise</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: PixMesh
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - cKDTree 0.4816252399999712s
-0 - Find boundaries 0.017375782999920375s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 8.932433924999941s, (3.7777059979999876s + 5.154676125000037s)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct rbf weights 1.3263555170000245s
-Underlying Mesh type: PixMesh
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - cKDTree 0.48311367799999516s
-0 - Find boundaries 0.012857130000043071s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 8.838364822000017s, (3.800039305000041s + 5.038276015000065s)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct rbf weights 1.3031534609999653s
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">coords</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
 
 <span class="n">radius</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
@@ -483,32 +457,10 @@ Underlying Mesh type: PixMesh
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 1.260542927000074s
-0 - Build upstream areas 0.025115443000004234s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 1.1916377129999773s
-0 - Build upstream areas 0.02587136800002554s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 1.1583081940000284s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 6.0525547590000315s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 1.2006159819999311s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 8.06710077899993s
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mo1</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">identify_outflow_points</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mo1</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">identify_outflow_points</span><span class="p">()</span>
 <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">mo1</span><span class="p">])</span>
 <span class="n">outflows</span> <span class="o">=</span> <span class="n">mo1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
@@ -521,7 +473,7 @@ Underlying Mesh type: PixMesh
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flowpaths</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">fn_rainfall</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">flowpaths</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">fn_rainfall</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 <span class="n">logpaths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">flowpaths</span><span class="p">)</span>
 <span class="n">sqrtpaths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">flowpaths</span><span class="p">)</span>
 
@@ -555,69 +507,10 @@ Underlying Mesh type: PixMesh
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/ipykernel_launcher.py:2: RuntimeWarning: divide by zero encountered in log10
-  
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/ipykernel_launcher.py:6: RuntimeWarning: divide by zero encountered in log10
-  
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 1.7516659369999843s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 8.709082183999953s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 1.781360745000029s
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="mi">6</span><span class="n">fb9f707f471</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">8</span> 
-<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="n">mesh</span><span class="o">.</span><span class="n">downhill_neighbours</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="ne">---&gt; </span><span class="mi">10</span> <span class="n">mesh_noise</span><span class="o">.</span><span class="n">downhill_neighbours</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="c1"># flow pathways are automatically updated</span>
-<span class="g g-Whitespace">     </span><span class="mi">12</span> 
-
-<span class="nn">~/work/quagmire/quagmire/quagmire/topomesh/topomesh.py</span> in <span class="ni">downhill_neighbours</span><span class="nt">(self, value)</span>
-<span class="g g-Whitespace">     </span><span class="mi">77</span>         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">_locked</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-<span class="g g-Whitespace">     </span><span class="mi">78</span>             <span class="bp">self</span><span class="o">.</span><span class="n">_update_height</span><span class="p">()</span>
-<span class="ne">---&gt; </span><span class="mi">79</span>             <span class="bp">self</span><span class="o">.</span><span class="n">_update_height_for_surface_flows</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">80</span> 
-<span class="g g-Whitespace">     </span><span class="mi">81</span>         <span class="k">return</span>
-
-<span class="nn">~/work/quagmire/quagmire/quagmire/topomesh/topomesh.py</span> in <span class="ni">_update_height_for_surface_flows</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">103</span> 
-<span class="g g-Whitespace">    </span><span class="mi">104</span>         <span class="bp">self</span><span class="o">.</span><span class="n">upstream_area</span><span class="o">.</span><span class="n">unlock</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">105</span>         <span class="bp">self</span><span class="o">.</span><span class="n">upstream_area</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumulative_flow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pointwise_area</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>  <span class="c1">## Should be upstream integral of 1.0</span>
-<span class="g g-Whitespace">    </span><span class="mi">106</span>         <span class="bp">self</span><span class="o">.</span><span class="n">upstream_area</span><span class="o">.</span><span class="n">lock</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">107</span> 
-
-<span class="nn">~/work/quagmire/quagmire/quagmire/topomesh/topomesh.py</span> in <span class="ni">cumulative_flow</span><span class="nt">(self, vector, *args, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">399</span>     <span class="k">def</span> <span class="nf">cumulative_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">400</span> 
-<span class="ne">--&gt; </span><span class="mi">401</span>         <span class="n">niter</span><span class="p">,</span> <span class="n">cumulative_flow_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cumulative_flow_verbose</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">402</span>         <span class="k">return</span> <span class="n">cumulative_flow_vector</span>
-<span class="g g-Whitespace">    </span><span class="mi">403</span> 
-
-<span class="nn">~/work/quagmire/quagmire/quagmire/topomesh/topomesh.py</span> in <span class="ni">_cumulative_flow_verbose</span><span class="nt">(self, vector, verbose, maximum_its, uphill)</span>
-<span class="g g-Whitespace">    </span><span class="mi">445</span>             <span class="c1">#dDX.assemble()</span>
-<span class="g g-Whitespace">    </span><span class="mi">446</span> 
-<span class="ne">--&gt; </span><span class="mi">447</span>             <span class="n">downhillMat</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="n">DX1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gvec</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">448</span>             <span class="n">DX1</span><span class="o">.</span><span class="n">setArray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gvec</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">449</span>             <span class="n">DX1</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
-
-<span class="ne">KeyboardInterrupt</span>: 
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## What&#39;s happening with the outflow points - how to find them ? </span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## What&#39;s happening with the outflow points - how to find them ? </span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">circum_points = np.where( np.abs(radius-4.9) &lt;= 0.001 )[0]</span>
 <span class="sd">circum_angle = theta[circum_points]</span>
@@ -637,7 +530,7 @@ Underlying Mesh type: PixMesh
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Choose a scale to plot all six flow results</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Choose a scale to plot all six flow results</span>
 <span class="n">fmax</span> <span class="o">=</span> <span class="mf">1.0</span>
 </pre></div>
 </div>
@@ -645,7 +538,7 @@ Underlying Mesh type: PixMesh
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 
@@ -672,7 +565,7 @@ Underlying Mesh type: PixMesh
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 
@@ -700,7 +593,7 @@ Underlying Mesh type: PixMesh
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 
@@ -727,7 +620,7 @@ Underlying Mesh type: PixMesh
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The following may not matter but noise can break up the outflows</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># The following may not matter but noise can break up the outflows</span>
 
 <span class="n">theta_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">21</span><span class="p">))</span>
 <span class="n">outflow_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">outflows_noise</span><span class="p">],</span> <span class="n">theta_vals</span><span class="p">)</span>
@@ -756,7 +649,7 @@ Underlying Mesh type: PixMesh
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 
@@ -808,28 +701,28 @@ Underlying Mesh type: PixMesh
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">downhill_neighbours</span><span class="o">=</span><span class="mi">3</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">downhill_neighbours</span><span class="o">=</span><span class="mi">3</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cum1</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">fn_rainfall</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cum1</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">fn_rainfall</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cum3</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">rbf_smoother</span><span class="p">(</span><span class="n">cum1</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cum3</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">rbf_smoother</span><span class="p">(</span><span class="n">cum1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fmax</span> <span class="o">=</span> <span class="mf">1.0</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fmax</span> <span class="o">=</span> <span class="mf">1.0</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">7.5</span><span class="p">))</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quagmire.function.geometry &#8212; Quagmire.tex</title>
+    <title>1.c Coordinate Geometry &#8212; Quagmire.tex</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -53,8 +53,8 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="quagmire.tools.cloud" href="Ex1d-QuagmireCloud.html" />
-    <link rel="prev" title="Quagmire.function" href="Ex1b-QuagmireLazyFunctions.html" />
+    <link rel="next" title="1.d Quagmire cloud" href="Ex1d-QuagmireCloud.html" />
+    <link rel="prev" title="1.b Functions" href="Ex1b-QuagmireLazyFunctions.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -97,72 +97,72 @@
 <ul class="current nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1-Creating-Meshes.html">
-   Example 1 - creating structured and unstructured meshes
+   1. Creating meshes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html">
-   quagmire.mesh MeshVariable
+   1.a Mesh Variables
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1b-QuagmireLazyFunctions.html">
-   Quagmire.function
+   1.b Functions
   </a>
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   Quagmire.function.geometry
+   1.c Coordinate Geometry
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1d-QuagmireCloud.html">
-   quagmire.tools.cloud
+   1.d Quagmire cloud
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex2-Topography-Meshes.html">
-   Example 2 - Meshes for Topography
+   2. Meshes with Topography
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex3-Surface-Process-Meshes.html">
-   Example 3 - Meshes for Surface Process Models
+   3. Meshes for Surface Processes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html">
-   Example 4 - Matrix approaches - multiple paths
+   4. Multiple paths downhill
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex5-PreprocessingSurfaces.html">
-   Example 5 - Preprocessing a surface
+   5. Preprocessing a surface
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex6-Catchment-Analysis.html">
-   Example 6- Catchment analysis from the matrix transpose.
+   6. Catchment analysis.
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex7-LinearDiffusion.html">
-   Linear diffusion - time evolution / benchmarking
+   7. Diffusion equation
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex7a-NonLinearDiffusion.html">
-   Non-Linear diffusion - a critical-slope diffusion implementation
+   7.a Non-Linear diffusion
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex8-ErosionDeposition.html">
-   Example 8 - Incision and Deposition
+   8. Erosion and Deposition
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex9-LandscapeEvolution.html">
-   Example 9 - Landscape Evolution
+   9. Landscape Evolution
   </a>
  </li>
 </ul>
@@ -408,8 +408,8 @@
         
               <div>
                 
-  <div class="section" id="quagmire-function-geometry">
-<h1>Quagmire.function.geometry<a class="headerlink" href="#quagmire-function-geometry" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="c-coordinate-geometry">
+<h1>1.c Coordinate Geometry<a class="headerlink" href="#c-coordinate-geometry" title="Permalink to this headline">¶</a></h1>
 <p>Quagmire mesh variables are numerically differentiable and the various operators defined in the quagmire functions module also support limited (symbolic) differentiation</p>
 <p>This is to allow the construction of more complicated operators that are equivalent on the flat plane and the surface of the spehre.</p>
 <p>This functionality is supported through the <code class="docutils literal notranslate"><span class="pre">quagmire.function.geometry</span></code> package.</p>
@@ -693,16 +693,12 @@ that are used when a derivative or gradient needs to be evaluated.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: sTriMesh
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.4393578310000521s
-0 - Calculate node weights and area 0.06733019600005719s
-0 - Find boundaries 0.0027295889999550127s
-0 - cKDTree 0.028815040000040426s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 1.4438821969999935s, (1.055767737999986s + 0.38806335800006764s)
-0 - Construct rbf weights 0.1520487590000812s
+0 - Delaunay triangulation 0.21779666599999814s
+0 - Calculate node weights and area 0.03310762499999953s
+0 - Find boundaries 0.014876750000002659s
+0 - cKDTree 0.01549533399999703s
+0 - Construct neighbour cloud arrays 0.7254632500000007s, (0.5542094169999991s + 0.1712229160000014s)
+0 - Construct rbf weights 0.045508500000000396s
 </pre></div>
 </div>
 </div>
@@ -791,8 +787,8 @@ that are used when a derivative or gradient needs to be evaluated.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([-1.        , -0.09259669,  0.03942575, ...,  0.34680752,
-        0.40071064,  0.23890213])
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([-1.        , -0.09259669,  0.03942575, ...,  0.91069208,
+        0.03873612,  0.03113295])
 </pre></div>
 </div>
 </div>
@@ -855,8 +851,8 @@ that are used when a derivative or gradient needs to be evaluated.</p>
         
         <div class='prev-next-bottom'>
             
-    <a class='left-prev' id="prev-link" href="Ex1b-QuagmireLazyFunctions.html" title="previous page">Quagmire.function</a>
-    <a class='right-next' id="next-link" href="Ex1d-QuagmireCloud.html" title="next page">quagmire.tools.cloud</a>
+    <a class='left-prev' id="prev-link" href="Ex1b-QuagmireLazyFunctions.html" title="previous page">1.b Functions</a>
+    <a class='right-next' id="next-link" href="Ex1d-QuagmireCloud.html" title="next page">1.d Quagmire cloud</a>
 
         </div>
         

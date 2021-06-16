@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Example 6- Catchment analysis from the matrix transpose. &#8212; Quagmire.tex</title>
+    <title>6. Catchment analysis. &#8212; Quagmire.tex</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -53,8 +53,8 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Linear diffusion - time evolution / benchmarking" href="Ex7-LinearDiffusion.html" />
-    <link rel="prev" title="Example 5 - Preprocessing a surface" href="Ex5-PreprocessingSurfaces.html" />
+    <link rel="next" title="7. Diffusion equation" href="Ex7-LinearDiffusion.html" />
+    <link rel="prev" title="5. Preprocessing a surface" href="Ex5-PreprocessingSurfaces.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -97,72 +97,72 @@
 <ul class="current nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1-Creating-Meshes.html">
-   Example 1 - creating structured and unstructured meshes
+   1. Creating meshes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html">
-   quagmire.mesh MeshVariable
+   1.a Mesh Variables
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1b-QuagmireLazyFunctions.html">
-   Quagmire.function
+   1.b Functions
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1c-QuagmireCoordinateGeometry.html">
-   Quagmire.function.geometry
+   1.c Coordinate Geometry
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1d-QuagmireCloud.html">
-   quagmire.tools.cloud
+   1.d Quagmire cloud
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex2-Topography-Meshes.html">
-   Example 2 - Meshes for Topography
+   2. Meshes with Topography
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex3-Surface-Process-Meshes.html">
-   Example 3 - Meshes for Surface Process Models
+   3. Meshes for Surface Processes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html">
-   Example 4 - Matrix approaches - multiple paths
+   4. Multiple paths downhill
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex5-PreprocessingSurfaces.html">
-   Example 5 - Preprocessing a surface
+   5. Preprocessing a surface
   </a>
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   Example 6- Catchment analysis from the matrix transpose.
+   6. Catchment analysis.
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex7-LinearDiffusion.html">
-   Linear diffusion - time evolution / benchmarking
+   7. Diffusion equation
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex7a-NonLinearDiffusion.html">
-   Non-Linear diffusion - a critical-slope diffusion implementation
+   7.a Non-Linear diffusion
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex8-ErosionDeposition.html">
-   Example 8 - Incision and Deposition
+   8. Erosion and Deposition
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex9-LandscapeEvolution.html">
-   Example 9 - Landscape Evolution
+   9. Landscape Evolution
   </a>
  </li>
 </ul>
@@ -416,8 +416,8 @@
         
               <div>
                 
-  <div class="section" id="example-6-catchment-analysis-from-the-matrix-transpose">
-<h1>Example 6- Catchment analysis from the matrix transpose.<a class="headerlink" href="#example-6-catchment-analysis-from-the-matrix-transpose" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="catchment-analysis">
+<h1>6. Catchment analysis.<a class="headerlink" href="#catchment-analysis" title="Permalink to this headline">¶</a></h1>
 <p>We start with “Swamp Mountain” from the previous notebooks. This is slightly modified so that there are no lakes / pits right at the boundary.</p>
 <p>The catchments are identified by first finding all the outflow points of the mesh (local minima that correspond to the boundary mask) and then using the transpose of the downhill-propagation matrix <span class="math notranslate nohighlight">\(D^T\)</span> to run information (the unique ID of each outflow points) up to the top of the catchment.</p>
 <p>The stopping condition is that no further change occurs.</p>
@@ -472,18 +472,12 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.711699115999977s
-0 - Calculate node weights and area 0.02306217199998173s
-0 - Find boundaries 0.004677255999922636s
-0 - cKDTree 0.04169209499991666s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 1.188501173000077s, (0.6741349600000603s + 0.5143125109999573s)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct rbf weights 0.21156408000001647s
+0 - Delaunay triangulation 0.3174192500000004s
+0 - Calculate node weights and area 0.02463904100000036s
+0 - Find boundaries 0.018807584000001043s
+0 - cKDTree 0.022422916000039095s
+0 - Construct neighbour cloud arrays 0.6958790830000225s, (0.4476076249999892s + 0.24823249999997188s)
+0 - Construct rbf weights 0.07766774999998916s
 
 Number of points in the triangulation: 156925
 </pre></div>
@@ -522,10 +516,8 @@ Number of points in the triangulation: 156925
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2536161870000342s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.3539214439999796s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 3.9534281659999806s
+0 - Build upstream areas 1.520386708999979s
 </pre></div>
 </div>
 </div>
@@ -541,9 +533,10 @@ Number of points in the triangulation: 156925
 <span class="k">with</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
     <span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span>
     
-<span class="n">mesh1s</span><span class="o">.</span><span class="n">low_points_local_patch_fill</span><span class="p">(</span><span class="n">its</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">smoothing_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+<span class="n">mesh1s</span><span class="o">.</span><span class="n">low_points_local_patch_fill</span><span class="p">(</span><span class="n">its</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">smoothing_steps</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">50</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">):</span>
     <span class="n">mesh1s</span><span class="o">.</span><span class="n">low_points_swamp_fill</span><span class="p">(</span><span class="n">ref_height</span><span class="o">=-</span><span class="mf">0.01</span><span class="p">)</span>
     
     <span class="c1"># In parallel, we can&#39;t break if ANY processor has work to do (barrier / sync issue)</span>
@@ -552,353 +545,62 @@ Number of points in the triangulation: 156925
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">low_points2</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
     <span class="k">if</span> <span class="n">low_points2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">break</span>
+        
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.6783228990000225s
-0 - Calculate node weights and area 0.02434012799994889s
-0 - Find boundaries 0.0034938200000169672s
-0 - cKDTree 0.040074777000086215s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 1.1258810829999675s, (0.6532053429999678s + 0.4726185380000061s)
-0 - Construct rbf weights 0.19766939199996614s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23364532799996596s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.35450958000001265s
+0 - Delaunay triangulation 0.2958527910000157s
+0 - Calculate node weights and area 0.025907167000013942s
+0 - Find boundaries 0.018733249999968393s
+0 - cKDTree 0.020705749999933687s
+0 - Construct neighbour cloud arrays 0.6505634170000576s, (0.42587704200002463s + 0.22465216600005533s)
+0 - Construct rbf weights 0.05773158399995282s
+0 - Build downhill matrices 2.4506870000000163s
+0 - Build upstream areas 1.5300563330000614s
 Low point local patch fill
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23541388900002858s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2359199060000492s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23494117200004894s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.22924407699997573s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23392853699999705s
-Low point local patch fill  1.3805430319999914  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.35570162100009384s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>132  iterations, time =  0.20567706599990743
-Build low point catchments -  0.20685710799989465  seconds
-0  Sort spills -  0.013868176000073618
-0  Gather spill data -  0.00022930800002995966
-0  Sort all spills -  0.0001710060000732483
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.24220922199992856s
-Low point swamp fill  0.6286396990000185  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.645149865999997s
-0 : 46
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>261  iterations, time =  0.38975069100001747
-Build low point catchments -  0.39110643699996217  seconds
-0  Sort spills -  0.007049443000028077
-0  Gather spill data -  0.00012700399997811473
-0  Sort all spills -  8.97030000714949e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23403704099996503s
-Low point swamp fill  0.725012310000011  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6543798830000469s
-1 : 23
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>269  iterations, time =  0.4052862239999513
-Build low point catchments -  0.4066325710000456  seconds
-0  Sort spills -  0.005334183999934794
-0  Gather spill data -  0.000126604000001862
-0  Sort all spills -  7.810300007804472e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.236261918000082s
-Low point swamp fill  0.7206495599999698  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6726988120000215s
-2 : 19
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>269  iterations, time =  0.39229335699997137
-Build low point catchments -  0.3936058009999215  seconds
-0  Sort spills -  0.0037585269999453885
-0  Gather spill data -  0.0001268050000362564
-0  Sort all spills -  7.400200001939083e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23452509000003374s
-Low point swamp fill  0.6971966159999283  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7001059539999233s
-3 : 16
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>307  iterations, time =  0.43035347899990484
-Build low point catchments -  0.4316427219999923  seconds
-0  Sort spills -  0.0036478230000511758
-0  Gather spill data -  0.00012360400000943628
-0  Sort all spills -  7.440199999564356e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23196410399998513s
-Low point swamp fill  0.726775650000036  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6941553530000419s
-4 : 13
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>308  iterations, time =  0.4241297689999328
-Build low point catchments -  0.4255989189999809  seconds
-0  Sort spills -  0.0034949180000012348
-0  Gather spill data -  0.00013240400005543052
-0  Sort all spills -  6.810299998960545e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.24968300000000454s
-Low point swamp fill  0.7551975069999344  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7086187399999062s
-5 : 7
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>313  iterations, time =  0.4515803930000857
-Build low point catchments -  0.45309954399999697  seconds
-0  Sort spills -  0.0012902429999712695
-0  Gather spill data -  0.00013110400004734402
-0  Sort all spills -  6.900300002143922e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23965016199997535s
-Low point swamp fill  0.7395543810000618  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6999441479999859s
-6 : 3
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>313  iterations, time =  0.4447929639999302
-Build low point catchments -  0.4460966080000617  seconds
-0  Sort spills -  0.0007526260000076945
-0  Gather spill data -  0.00012390400002004753
-0  Sort all spills -  6.21020000153294e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23178959800009125s
-Low point swamp fill  0.7215903759999946  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7275295760000517s
-7 : 2
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>313  iterations, time =  0.44748845499998424
-Build low point catchments -  0.4488015990000349  seconds
-0  Sort spills -  0.0006519219999745474
-0  Gather spill data -  0.00013240500004485511
-0  Sort all spills -  6.450200010021945e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23497890500004814s
-Low point swamp fill  0.726564843999995  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7235896440000715s
-8 : 5
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>313  iterations, time =  0.446117908999895
-Build low point catchments -  0.4473126489999686  seconds
-0  Sort spills -  0.0006675220000715854
-0  Gather spill data -  0.000566618999982893
-0  Sort all spills -  7.910199997240852e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2290656069999386s
-Low point swamp fill  0.7189414879999276  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7101216909999266s
-9 : 2
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>313  iterations, time =  0.4574078890000237
-Build low point catchments -  0.45880043599993314  seconds
-0  Sort spills -  0.0008059269999876051
-0  Gather spill data -  0.0001232049999089213
-0  Sort all spills -  5.960200007848471e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23794760500004486s
-Low point swamp fill  0.7409262280000348  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.705188325999984s
-10 : 5
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>313  iterations, time =  0.44444475299997066
-Build low point catchments -  0.4458155989999568  seconds
-0  Sort spills -  0.0006999230000701573
-0  Gather spill data -  0.00012780500003373163
-0  Sort all spills -  5.840199992235284e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23185800100009146s
-Low point swamp fill  0.7206730460000017  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.6955843019999293s
-11 : 3
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>313  iterations, time =  0.4541133789999776
-Build low point catchments -  0.4554933249999067  seconds
-0  Sort spills -  0.0006893229999604955
-0  Gather spill data -  0.0001242040000306588
-0  Sort all spills -  5.9001999943575356e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2388270349999857s
-Low point swamp fill  0.7374920119999615  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.728673515999958s
-12 : 5
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>313  iterations, time =  0.4364623849999134
-Build low point catchments -  0.43774812800006657  seconds
-0  Sort spills -  0.0006579219999593988
-0  Gather spill data -  0.0001248050000413059
-0  Sort all spills -  6.100199993852584e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.24113611300003868s
-Low point swamp fill  0.7212564659999998  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7137903149999829s
-13 : 4
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>313  iterations, time =  0.43544335599995065
-Build low point catchments -  0.43672249899998405  seconds
-0  Sort spills -  0.0008233280000240484
-0  Gather spill data -  0.00012650400003622053
-0  Sort all spills -  6.21020000153294e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2376847230000294s
-Low point swamp fill  0.7166134459999967  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7012567680000075s
-14 : 3
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>313  iterations, time =  0.44130369500010147
-Build low point catchments -  0.44248753399995167  seconds
-0  Sort spills -  0.0007740259999309274
-0  Gather spill data -  0.0005996200000026874
-0  Sort all spills -  0.0001330049999523908
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23876775899998393s
-Low point swamp fill  0.7238711319999993  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.7159905660000732s
-15 : 4
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>313  iterations, time =  0.44164460599995436
-Build low point catchments -  0.44291544900011104  seconds
-0  Sort spills -  0.0006708229999503601
-0  Gather spill data -  0.00012850500002059562
-0  Sort all spills -  5.3301999969335156e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.2346405189999814s
-Low point swamp fill  0.7195002839999916  seconds
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.711502714000062s
-16 : 3
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>313  iterations, time =  0.45990942299999915
-Build low point catchments -  0.46122586700005286  seconds
-0  Sort spills -  0.0007001230000014402
-0  Gather spill data -  0.00013460499997108855
-0  Sort all spills -  6.230200006029918e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.23114590099999077s
-Low point swamp fill  0.7353406189999987  seconds
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">4</span><span class="o">-</span><span class="mi">811</span><span class="n">f664c5aef</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">8</span> 
-<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">50</span><span class="p">):</span>
-<span class="ne">---&gt; </span><span class="mi">10</span>     <span class="n">mesh1s</span><span class="o">.</span><span class="n">low_points_swamp_fill</span><span class="p">(</span><span class="n">ref_height</span><span class="o">=-</span><span class="mf">0.01</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> 
-<span class="g g-Whitespace">     </span><span class="mi">12</span>     <span class="c1"># In parallel, we can&#39;t break if ANY processor has work to do (barrier / sync issue)</span>
-
-<span class="nn">~/work/quagmire/quagmire/quagmire/topomesh/topomesh.py</span> in <span class="ni">low_points_swamp_fill</span><span class="nt">(self, its, saddles, ref_height, ref_gradient, fluctuation_strength)</span>
-<span class="g g-Whitespace">    </span><span class="mi">960</span> 
-<span class="g g-Whitespace">    </span><span class="mi">961</span>         <span class="c1">## but now we need to rebuild the surface process information</span>
-<span class="ne">--&gt; </span><span class="mi">962</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_update_height_for_surface_flows</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">963</span>         <span class="k">return</span>
-<span class="g g-Whitespace">    </span><span class="mi">964</span> 
-
-<span class="nn">~/work/quagmire/quagmire/quagmire/topomesh/topomesh.py</span> in <span class="ni">_update_height_for_surface_flows</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">103</span> 
-<span class="g g-Whitespace">    </span><span class="mi">104</span>         <span class="bp">self</span><span class="o">.</span><span class="n">upstream_area</span><span class="o">.</span><span class="n">unlock</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">105</span>         <span class="bp">self</span><span class="o">.</span><span class="n">upstream_area</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumulative_flow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pointwise_area</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>  <span class="c1">## Should be upstream integral of 1.0</span>
-<span class="g g-Whitespace">    </span><span class="mi">106</span>         <span class="bp">self</span><span class="o">.</span><span class="n">upstream_area</span><span class="o">.</span><span class="n">lock</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">107</span> 
-
-<span class="nn">~/work/quagmire/quagmire/quagmire/topomesh/topomesh.py</span> in <span class="ni">cumulative_flow</span><span class="nt">(self, vector, *args, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">399</span>     <span class="k">def</span> <span class="nf">cumulative_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">400</span> 
-<span class="ne">--&gt; </span><span class="mi">401</span>         <span class="n">niter</span><span class="p">,</span> <span class="n">cumulative_flow_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cumulative_flow_verbose</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">402</span>         <span class="k">return</span> <span class="n">cumulative_flow_vector</span>
-<span class="g g-Whitespace">    </span><span class="mi">403</span> 
-
-<span class="nn">~/work/quagmire/quagmire/quagmire/topomesh/topomesh.py</span> in <span class="ni">_cumulative_flow_verbose</span><span class="nt">(self, vector, verbose, maximum_its, uphill)</span>
-<span class="g g-Whitespace">    </span><span class="mi">445</span>             <span class="c1">#dDX.assemble()</span>
-<span class="g g-Whitespace">    </span><span class="mi">446</span> 
-<span class="ne">--&gt; </span><span class="mi">447</span>             <span class="n">downhillMat</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="n">DX1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gvec</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">448</span>             <span class="n">DX1</span><span class="o">.</span><span class="n">setArray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gvec</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">449</span>             <span class="n">DX1</span><span class="o">.</span><span class="n">assemble</span><span class="p">()</span>
-
-<span class="ne">KeyboardInterrupt</span>: 
+0 - Build downhill matrices 2.43383074999997s
+0 - Build downhill matrices 2.4526279579999937s
+0 - Build downhill matrices 2.4396555829999897s
+Low point local patch fill  10.608140625000033  seconds
+0 - Build upstream areas 1.5366657079999868s
+137  iterations, time =  1.2963485420000325
+Build low point catchments -  1.2967541669999036  seconds
+0  Sort spills -  0.0075850000000627915
+0  Gather spill data -  6.412499999441934e-05
+0  Sort all spills -  5.966699995951785e-05
+0 - Build downhill matrices 2.4458806249999725s
+Low point swamp fill  3.838560457999961  seconds
+0 - Build upstream areas 1.7615719579999904s
+0 : 72
+169  iterations, time =  1.3446816670000317
+Build low point catchments -  1.3451523749999978  seconds
+0  Sort spills -  0.004237167000042064
+0  Gather spill data -  6.758300003184559e-05
+0  Sort all spills -  4.949999993186793e-05
+0 - Build downhill matrices 2.4374321249999866s
+Low point swamp fill  3.833339459000058  seconds
+0 - Build upstream areas 1.972699499999976s
+1 : 16
+282  iterations, time =  1.536034083000004
+Build low point catchments -  1.5364633750000394  seconds
+0  Sort spills -  0.001867416999971283
+0  Gather spill data -  6.645799999205337e-05
+0  Sort all spills -  0.00011812500008545612
+0 - Build downhill matrices 2.451272208999967s
+Low point swamp fill  4.021867333000046  seconds
+0 - Build upstream areas 2.0030419999999367s
+2 : 7
+282  iterations, time =  1.6317061669999475
+Build low point catchments -  1.6321679579999682  seconds
+0  Sort spills -  0.001334499999984473
+0  Gather spill data -  6.400000006578921e-05
+0  Sort all spills -  2.237499995771941e-05
+0 - Build downhill matrices 2.4534335420000843s
+Low point swamp fill  4.112114665999911  seconds
+0 - Build upstream areas 1.980670000000032s
+3 : 0
 </pre></div>
 </div>
 </div>
@@ -907,7 +609,7 @@ Low point swamp fill  0.7353406189999987  seconds
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall_fn_1s</span>  <span class="o">=</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span> <span class="o">**</span> <span class="mf">2.0</span>
 <span class="n">flowrate_fn_1s</span>  <span class="o">=</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">rainfall_fn_1s</span><span class="p">)</span>
-<span class="n">str_power_fn_1s</span> <span class="o">=</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">rainfall_fn_1s</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">mesh</span><span class="o">.</span><span class="n">slope</span> <span class="o">**</span> <span class="mf">2.0</span>
+<span class="n">str_power_fn_1s</span> <span class="o">=</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">rainfall_fn_1s</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">slope</span> <span class="o">**</span> <span class="mf">2.0</span>
 </pre></div>
 </div>
 </div>
@@ -923,6 +625,11 @@ Low point swamp fill  0.7353406189999987  seconds
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mesh has 21 outflows
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -931,59 +638,50 @@ Low point swamp fill  0.7353406189999987  seconds
 </pre></div>
 </div>
 </div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
-
-<span class="n">outpoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">outflows</span><span class="p">],</span> <span class="n">heightn</span><span class="p">[</span><span class="n">outflows</span><span class="p">]])</span>
-<span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">heightn</span><span class="p">])</span>
-
-<span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">600</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">near</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">)</span>
-
-<span class="n">nodes</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">pointtype</span><span class="o">=</span><span class="s2">&quot;shiny&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#FF0000&quot;</span> <span class="p">)</span>
-<span class="n">nodes</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">outpoints</span><span class="p">)</span>
-
-<span class="n">tri1</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;triangles&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">tri1</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-<span class="n">tri1</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
-
-<span class="n">tri1</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">flowrate_fn_1s</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh1s</span><span class="p">)),</span> <span class="s2">&quot;cum-rain-swamp&quot;</span><span class="p">)</span>
-<span class="n">tri1</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">flowrate_fn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)),</span>     <span class="s2">&quot;cumulative rain&quot;</span><span class="p">)</span>
-
-<span class="n">tri1</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;#BBEEBB #889988 #000099&quot;</span><span class="p">)</span>
-<span class="n">tri1</span><span class="o">.</span><span class="n">colourbar</span><span class="p">()</span>
-
-<span class="c1">## Swamped</span>
-
-<span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">-</span><span class="mf">0.01</span><span class="p">])</span>
-
-<span class="n">tri2</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;triangles2&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">tri2</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-<span class="n">tri2</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
-
-<span class="n">tri2</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">-</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>   <span class="s2">&quot;swamps&quot;</span><span class="p">)</span>
-<span class="n">tri2</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="p">),</span> <span class="s2">&quot;blank&quot;</span><span class="p">)</span>
-<span class="n">tri2</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">flowrate_fn_1s</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh1s</span><span class="p">)),</span> <span class="s2">&quot;cum-rain-swamp&quot;</span><span class="p">)</span>
-
-<span class="n">tri2</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;#003366:0.5, #000099:0.8, #000099&quot;</span><span class="p">)</span>
-<span class="n">tri2</span><span class="o">.</span><span class="n">colourbar</span><span class="p">()</span>
-
-
-<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">Panel</span><span class="p">()</span>
-<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">ObjectList</span><span class="p">()</span>
-<span class="n">tri1</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cum-rain-swamp&quot;</span><span class="p">,</span>
-                   <span class="s2">&quot;cumulative rain&quot;</span><span class="p">,</span> 
-                   <span class="p">],</span> <span class="nb">property</span><span class="o">=</span><span class="s2">&quot;colourby&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s2">&quot;redraw&quot;</span><span class="p">)</span>
-
-<span class="n">tri2</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;blank&quot;</span><span class="p">,</span> <span class="s2">&quot;swamps&quot;</span><span class="p">,</span> 
-                   <span class="s2">&quot;cum-rain-swamp&quot;</span><span class="p">],</span> <span class="nb">property</span><span class="o">=</span><span class="s2">&quot;colourby&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s2">&quot;redraw&quot;</span><span class="p">)</span>
-
-
-<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
 </pre></div>
 </div>
 </div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">k3d</span>
+
+
+<span class="n">low_points</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">identify_low_points</span><span class="p">()</span>
+<span class="n">lowsxyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">low_points</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">low_points</span><span class="p">]])</span>
+
+<span class="n">xyz</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="p">])</span>
+<span class="n">xyz2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="p">])</span>
+
+<span class="n">indices</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
+
+<span class="n">plot</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">camera_auto_fit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">grid_visible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lighting</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+
+<span class="n">surface</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">mesh</span><span class="p">(</span><span class="n">xyz2</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flat_shading</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+                    <span class="n">color_map</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">colormaps</span><span class="o">.</span><span class="n">matplotlib_color_maps</span><span class="o">.</span><span class="n">Blues</span><span class="p">,</span>
+                    <span class="n">attribute</span><span class="o">=</span><span class="n">flowrate_fn_1s</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">),</span>
+                    <span class="n">color_range</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]</span>
+                   <span class="p">)</span>
+
+<span class="n">lakes_surface</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">mesh</span><span class="p">(</span><span class="n">xyz</span><span class="o">-</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.005</span><span class="p">),</span> <span class="n">indices</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flat_shading</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="mh">0x0010C0</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span>
+                   <span class="p">)</span>
+
+<span class="n">lows</span>    <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="n">lowsxyz</span><span class="p">,</span> <span class="n">point_size</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="mh">0xFF0000</span><span class="p">)</span>
+
+
+<span class="n">plot</span> <span class="o">+=</span> <span class="n">surface</span> <span class="o">+</span> <span class="n">lows</span> <span class="o">+</span> <span class="n">lakes_surface</span>
+
+<span class="n">plot</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "ee909270a57a495baa9ea99767588186", "version_major": 2, "version_minor": 0}
+</script></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1024,57 +722,64 @@ Low point swamp fill  0.7353406189999987  seconds
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>282  iterations, time =  1.5911248339999702
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;ipython-input-20-a1316dff9ef9&gt;:11: DeprecationWarning: `np.int` is a deprecated alias for the builtin `int`. To silence this warning, use `int` by itself. Doing this will not modify any behavior and is safe. When replacing `np.int`, you may wish to use e.g. `np.int64` or `np.int32` to specify the precision. If you wish to review your current use, check the release note link for additional information.
+Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+  ctmt = mesh1s.uphill_propagation(outflows,  outflowID, its=99999, fill=-999999).astype(np.int)
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 <div class="section" id="visualise-the-catchment-information">
 <h2>Visualise the catchment information<a class="headerlink" href="#visualise-the-catchment-information" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">k3d</span>
 
-<span class="n">outpoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">outflows</span><span class="p">],</span> <span class="n">heightn</span><span class="p">[</span><span class="n">outflows</span><span class="p">]])</span>
-<span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="p">])</span>
+<span class="n">xyz</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="p">])</span>
+<span class="n">xyz2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span>   <span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="p">])</span>
 
-<span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">900</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">near</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">)</span>
+<span class="n">indices</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
 
-<span class="n">nodes</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">points</span><span class="p">(</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">pointtype</span><span class="o">=</span><span class="s2">&quot;shiny&quot;</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;#FF0000&quot;</span> <span class="p">)</span>
-<span class="n">nodes</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">outpoints</span><span class="p">)</span>
+<span class="n">plot</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">camera_auto_fit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">grid_visible</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lighting</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
 
-<span class="n">tri1</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;triangles&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-<span class="n">tri1</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-<span class="n">tri1</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
-<span class="n">tri1</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">flowrate_fn_1s</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh1s</span><span class="p">)),</span><span class="s2">&quot;cum-rain-swamp&quot;</span><span class="p">)</span>
+<span class="n">surface</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">mesh</span><span class="p">(</span><span class="n">xyz2</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flat_shading</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+                    <span class="n">color_map</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">colormaps</span><span class="o">.</span><span class="n">matplotlib_color_maps</span><span class="o">.</span><span class="n">Blues</span><span class="p">,</span>
+                    <span class="n">attribute</span><span class="o">=</span><span class="n">flowrate_fn_1s</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">),</span>
+                    <span class="n">color_range</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]</span>
+                   <span class="p">)</span>
 
-<span class="n">tri1</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;#BBEEBB:0.0, #889988:0.2, #889988:0.2, #0000FF:0.2, #0000FF&quot;</span><span class="p">)</span>
-<span class="n">tri1</span><span class="o">.</span><span class="n">colourbar</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="c1">## Swamped</span>
-
-<span class="n">tri2</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;triangles2&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">tri2</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="o">-</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.01</span><span class="p">))</span>
-<span class="n">tri2</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
-
-<span class="n">tri2</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">ctmt</span><span class="p">,</span>   <span class="s2">&quot;catchments&quot;</span><span class="p">)</span>
-
-<span class="n">tri2</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;spectral&quot;</span><span class="p">,</span> <span class="n">discrete</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">outflows</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">tri2</span><span class="o">.</span><span class="n">colourbar</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="n">tri3</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="s2">&quot;triangles3&quot;</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">tri3</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="o">-</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.005</span><span class="p">))</span>
-
-<span class="n">tri3</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
-<span class="n">tri3</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">mesh1s</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="o">-</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>   <span class="s2">&quot;swamps&quot;</span><span class="p">)</span>
-<span class="n">tri3</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;#003366:0.0, #000099,  #000099, #000099, #0000FF&quot;</span><span class="p">)</span>
-<span class="n">tri3</span><span class="o">.</span><span class="n">colourbar</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">lakes_surface</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">mesh</span><span class="p">(</span><span class="n">xyz</span><span class="o">-</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.01</span><span class="p">),</span> <span class="n">indices</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flat_shading</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="mh">0x0010C0</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 
 
-<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">Panel</span><span class="p">()</span>
-<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">ObjectList</span><span class="p">()</span>
+<span class="n">catchments</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">mesh</span><span class="p">(</span><span class="n">xyz2</span><span class="o">+</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.01</span><span class="p">),</span> <span class="n">indices</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flat_shading</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+                    <span class="n">color_map</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">colormaps</span><span class="o">.</span><span class="n">matplotlib_color_maps</span><span class="o">.</span><span class="n">Greens</span><span class="p">,</span>
+                    <span class="n">attribute</span><span class="o">=</span><span class="n">ctmt</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span>
+                    <span class="c1"># color_range = [0.0,1.0]</span>
+                   <span class="p">)</span>
 
-<span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+
+<span class="n">plot</span> <span class="o">+=</span> <span class="n">surface</span> <span class="o">+</span> <span class="n">lows</span> <span class="o">+</span> <span class="n">lakes_surface</span> <span class="o">+</span> <span class="n">catchments</span>
+
+<span class="n">plot</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/lmoresi/mambaforge/envs/underworld/lib/python3.9/site-packages/traittypes/traittypes.py:97: UserWarning: Given trait value dtype &quot;float64&quot; does not match required type &quot;float32&quot;. A coerced copy has been created.
+  warnings.warn(
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "20bcc97d705546a5821978b7a2b44ec8", "version_major": 2, "version_minor": 0}
+</script></div>
 </div>
 </div>
 </div>
@@ -1104,8 +809,8 @@ Low point swamp fill  0.7353406189999987  seconds
         
         <div class='prev-next-bottom'>
             
-    <a class='left-prev' id="prev-link" href="Ex5-PreprocessingSurfaces.html" title="previous page">Example 5 - Preprocessing a surface</a>
-    <a class='right-next' id="next-link" href="Ex7-LinearDiffusion.html" title="next page">Linear diffusion - time evolution / benchmarking</a>
+    <a class='left-prev' id="prev-link" href="Ex5-PreprocessingSurfaces.html" title="previous page">5. Preprocessing a surface</a>
+    <a class='right-next' id="next-link" href="Ex7-LinearDiffusion.html" title="next page">7. Diffusion equation</a>
 
         </div>
         

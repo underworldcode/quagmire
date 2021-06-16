@@ -95,72 +95,72 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1-Creating-Meshes.html">
-   Example 1 - creating structured and unstructured meshes
+   1. Creating meshes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1a-QuagmireMeshVariables.html">
-   quagmire.mesh MeshVariable
+   1.a Mesh Variables
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1b-QuagmireLazyFunctions.html">
-   Quagmire.function
+   1.b Functions
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1c-QuagmireCoordinateGeometry.html">
-   Quagmire.function.geometry
+   1.c Coordinate Geometry
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1d-QuagmireCloud.html">
-   quagmire.tools.cloud
+   1.d Quagmire cloud
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex2-Topography-Meshes.html">
-   Example 2 - Meshes for Topography
+   2. Meshes with Topography
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex3-Surface-Process-Meshes.html">
-   Example 3 - Meshes for Surface Process Models
+   3. Meshes for Surface Processes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex4-Multiple-downhill-pathways.html">
-   Example 4 - Matrix approaches - multiple paths
+   4. Multiple paths downhill
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex5-PreprocessingSurfaces.html">
-   Example 5 - Preprocessing a surface
+   5. Preprocessing a surface
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex6-Catchment-Analysis.html">
-   Example 6- Catchment analysis from the matrix transpose.
+   6. Catchment analysis.
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex7-LinearDiffusion.html">
-   Linear diffusion - time evolution / benchmarking
+   7. Diffusion equation
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex7a-NonLinearDiffusion.html">
-   Non-Linear diffusion - a critical-slope diffusion implementation
+   7.a Non-Linear diffusion
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex8-ErosionDeposition.html">
-   Example 8 - Incision and Deposition
+   8. Erosion and Deposition
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex9-LandscapeEvolution.html">
-   Example 9 - Landscape Evolution
+   9. Landscape Evolution
   </a>
  </li>
 </ul>
@@ -383,7 +383,7 @@
 <h1>Models on the Sphere<a class="headerlink" href="#models-on-the-sphere" title="Permalink to this headline">¶</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span> 
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">tools</span> <span class="k">as</span> <span class="n">meshtools</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
@@ -394,7 +394,7 @@
 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
 
 <span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
 <span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
@@ -407,33 +407,28 @@
 <p>lons, lats, simplices = global_CO_mesh(“icosahedral_mesh”, refinement_C=4, refinement_O=1, include_face_points=True)</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">simplices</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">global_CO_mesh</span><span class="p">(</span><span class="s2">&quot;icosahedral_mesh&quot;</span><span class="p">,</span> <span class="n">refinement_C</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">refinement_O</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">include_face_points</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">simplices</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">global_CO_mesh</span><span class="p">(</span><span class="s2">&quot;icosahedral_mesh&quot;</span><span class="p">,</span> <span class="n">refinement_C</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">refinement_O</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">include_face_points</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lats</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">lons</span><span class="o">.</span><span class="n">shape</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>((39210,), (39210,))
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lats</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">lons</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dm</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_spherical_DMPlex</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">simplices</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dm</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_spherical_DMPlex</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">simplices</span><span class="p">,</span> <span class="n">refinement_levels</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">dm</span><span class="p">,</span> <span class="n">downhill_neighbours</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">dm</span><span class="p">,</span> <span class="n">downhill_neighbours</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
 <span class="c1"># Mark up the shadow zones</span>
 
@@ -456,15 +451,10 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: sTriMesh
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rawheight</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="n">locked</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rawheight</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="n">locked</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">rawheight</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">mesh_height</span>
 </pre></div>
 </div>
@@ -472,14 +462,14 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">save_mesh_to_hdf5</span><span class="p">(</span><span class="s2">&quot;test.h5&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">save_mesh_to_hdf5</span><span class="p">(</span><span class="s2">&quot;test.h5&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Read ETOPO1 data from online service</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## Read ETOPO1 data from online service</span>
 <span class="c1">#</span>
 <span class="c1"># Note the slicing is a mix of the data range and the integer step</span>
 
@@ -501,7 +491,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh_height</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">map_global_raster_to_strimesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mesh_height</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">map_global_raster_to_strimesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
 <span class="k">with</span> <span class="n">mesh</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
     <span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">mesh_height</span>
     
@@ -511,7 +501,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># runoff  &quot;/thredds/wcs/agg_terraclimate_q_1958_CurrentYear_GLOBE.nc&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># runoff  &quot;/thredds/wcs/agg_terraclimate_q_1958_CurrentYear_GLOBE.nc&quot;</span>
 
 <span class="kn">from</span> <span class="nn">owslib.wcs</span> <span class="kn">import</span> <span class="n">WebCoverageService</span>
 <span class="c1"># import gdal</span>
@@ -552,7 +542,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">imageio</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">imageio</span>
 <span class="n">rain</span> <span class="o">=</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">&quot;GlobalRainfall.tif&quot;</span><span class="p">)[::</span><span class="mi">3</span><span class="p">,::</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 <span class="n">runoff</span> <span class="o">=</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">&quot;GlobalRunoff.tif&quot;</span><span class="p">)[::</span><span class="mi">3</span><span class="p">,::</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 
@@ -573,7 +563,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coastline</span> <span class="o">=</span> <span class="n">cfeature</span><span class="o">.</span><span class="n">NaturalEarthFeature</span><span class="p">(</span><span class="s1">&#39;physical&#39;</span><span class="p">,</span> <span class="s1">&#39;coastline&#39;</span><span class="p">,</span> <span class="s1">&#39;10m&#39;</span><span class="p">,</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">coastline</span> <span class="o">=</span> <span class="n">cfeature</span><span class="o">.</span><span class="n">NaturalEarthFeature</span><span class="p">(</span><span class="s1">&#39;physical&#39;</span><span class="p">,</span> <span class="s1">&#39;coastline&#39;</span><span class="p">,</span> <span class="s1">&#39;10m&#39;</span><span class="p">,</span>
                            <span class="n">edgecolor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">0.0</span><span class="p">),</span>
                            <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
 
@@ -607,7 +597,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">latitudes_in_radians</span>  <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">lats</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">latitudes_in_radians</span>  <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">lats</span>
 <span class="n">longitudes_in_radians</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">lons</span> 
 <span class="n">latitudes_in_degrees</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">latitudes_in_radians</span><span class="p">)</span> 
 <span class="n">longitudes_in_degrees</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">longitudes_in_radians</span><span class="p">)</span> 
@@ -630,7 +620,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vertices</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="o">*</span><span class="n">mesh_height</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vertices</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="o">*</span><span class="n">mesh_height</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">tri</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span>
 
 <span class="n">lv</span> <span class="o">=</span> <span class="n">lavavu</span><span class="o">.</span><span class="n">Viewer</span><span class="p">(</span><span class="n">border</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="p">[</span><span class="mi">600</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">near</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">)</span>
@@ -657,21 +647,21 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">low_points</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">identify_low_points</span><span class="p">(</span><span class="n">ref_height</span><span class="o">=</span><span class="mf">6.37</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">low_points</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">identify_low_points</span><span class="p">(</span><span class="n">ref_height</span><span class="o">=</span><span class="mf">6.37</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">low_points</span><span class="o">.</span><span class="n">shape</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">low_points</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ref_height</span><span class="o">=</span><span class="mf">6.37</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ref_height</span><span class="o">=</span><span class="mf">6.37</span>
 <span class="n">mesh</span><span class="o">.</span><span class="n">low_points_local_patch_fill</span><span class="p">(</span><span class="n">its</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">smoothing_steps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ref_height</span><span class="o">=</span><span class="n">ref_height</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">repeat</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">50</span><span class="p">):</span> 
@@ -694,14 +684,14 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">runoff_var</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">runoff_var</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">function</span> <span class="k">as</span> <span class="n">fn</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">function</span> <span class="k">as</span> <span class="n">fn</span>
 
 <span class="n">ones</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">)</span>
 <span class="n">cumulative_flow_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">1.0e-20</span> <span class="o">+</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">runoff_var</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">))</span>
@@ -715,7 +705,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">cumulative_flow_0</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">cumulative_flow_0</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">cumulative_flow_0</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">cumulative_flow_0</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">cumulative_area</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">cumulative_area</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -723,7 +713,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
 <span class="kn">import</span> <span class="nn">stripy</span>
 
 <span class="n">vertices0</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="o">*</span><span class="n">mesh_height</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
@@ -771,7 +761,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">save_mesh_to_hdf5</span><span class="p">(</span><span class="s2">&quot;global_OC_8.4_mesh&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">save_mesh_to_hdf5</span><span class="p">(</span><span class="s2">&quot;global_OC_8.4_mesh&quot;</span><span class="p">)</span>
 <span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;global_OC_8.4_topography&quot;</span><span class="p">)</span>
 <span class="n">rainfall</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;global_OC_8.4_rainfall&quot;</span><span class="p">)</span>
 <span class="n">runoff_var</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;global_OC_8.4_runoff&quot;</span><span class="p">)</span>
@@ -783,7 +773,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">h5py</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">h5py</span>
 <span class="n">fm</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;global_OC_8.4_mesh&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
 <span class="n">ft</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;global_OC_8.4_topography&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
 </pre></div>

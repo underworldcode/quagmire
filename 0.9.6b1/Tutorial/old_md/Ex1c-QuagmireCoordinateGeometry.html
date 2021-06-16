@@ -49,8 +49,6 @@
         const thebe_selector_output = ".output"
     </script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -95,72 +93,72 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1-Creating-Meshes.html">
-   Example 1 - creating structured and unstructured meshes
+   1. Creating meshes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1a-QuagmireMeshVariables.html">
-   quagmire.mesh MeshVariable
+   1.a Mesh Variables
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1b-QuagmireLazyFunctions.html">
-   Quagmire.function
+   1.b Functions
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1c-QuagmireCoordinateGeometry.html">
-   Quagmire.function.geometry
+   1.c Coordinate Geometry
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1d-QuagmireCloud.html">
-   quagmire.tools.cloud
+   1.d Quagmire cloud
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex2-Topography-Meshes.html">
-   Example 2 - Meshes for Topography
+   2. Meshes with Topography
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex3-Surface-Process-Meshes.html">
-   Example 3 - Meshes for Surface Process Models
+   3. Meshes for Surface Processes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex4-Multiple-downhill-pathways.html">
-   Example 4 - Matrix approaches - multiple paths
+   4. Multiple paths downhill
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex5-PreprocessingSurfaces.html">
-   Example 5 - Preprocessing a surface
+   5. Preprocessing a surface
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex6-Catchment-Analysis.html">
-   Example 6- Catchment analysis from the matrix transpose.
+   6. Catchment analysis.
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex7-LinearDiffusion.html">
-   Linear diffusion - time evolution / benchmarking
+   7. Diffusion equation
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex7a-NonLinearDiffusion.html">
-   Non-Linear diffusion - a critical-slope diffusion implementation
+   7.a Non-Linear diffusion
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex8-ErosionDeposition.html">
-   Example 8 - Incision and Deposition
+   8. Erosion and Deposition
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex9-LandscapeEvolution.html">
-   Example 9 - Landscape Evolution
+   9. Landscape Evolution
   </a>
  </li>
 </ul>
@@ -416,7 +414,7 @@
 <p>This functionality is supported through the <code class="docutils literal notranslate"><span class="pre">quagmire.function.geometry</span></code> package.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">quagmire.function</span> <span class="kn">import</span> <span class="n">display</span>
 
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span> 
@@ -431,7 +429,7 @@
 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
 </pre></div>
 </div>
 </div>
@@ -443,7 +441,7 @@ any differential operators that include mesh variables. It is also possible to a
 access a simple, 2D, Cartesian Coordinate Geometry</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CartesianCoordinates</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">CartesianCoordinates2D</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CartesianCoordinates</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">CartesianCoordinates2D</span><span class="p">()</span>
 <span class="n">SphericalCoordinates</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">SphericalSurfaceLonLat2D</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -451,7 +449,7 @@ access a simple, 2D, Cartesian Coordinate Geometry</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># These are the coordinate directions is symbolic form. They are also functions that </span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># These are the coordinate directions is symbolic form. They are also functions that </span>
 <span class="c1"># mask the appropriate member of a coordinate tuple</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">CartesianCoordinates</span><span class="o">.</span><span class="n">xi0</span>
@@ -474,16 +472,6 @@ access a simple, 2D, Cartesian Coordinate Geometry</p>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.0 2.0
-[0.         0.33069396 0.66138793 0.99208189 1.32277585 1.65346982
- 1.98416378 2.31485774 2.64555171 2.97624567 3.30693964 3.6376336
- 3.96832756 4.29902153 4.62971549 4.96040945 5.29110342 5.62179738
- 5.95249134 6.28318531]
-[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
-</pre></div>
-</div>
-</div>
 </div>
 <div class="section" id="vector-operators">
 <h3>Vector operators<a class="headerlink" href="#vector-operators" title="Permalink to this headline">¶</a></h3>
@@ -491,7 +479,7 @@ access a simple, 2D, Cartesian Coordinate Geometry</p>
 <p>When we calculate a derivative, they should be symbolically equivalent but the gradients are not.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">CoordinateSystem</span> <span class="ow">in</span> <span class="p">[</span><span class="n">CartesianCoordinates</span><span class="p">,</span> <span class="n">SphericalCoordinates</span><span class="p">]:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">CoordinateSystem</span> <span class="ow">in</span> <span class="p">[</span><span class="n">CartesianCoordinates</span><span class="p">,</span> <span class="n">SphericalCoordinates</span><span class="p">]:</span>
     
     <span class="n">xi0</span> <span class="o">=</span> <span class="n">CoordinateSystem</span><span class="o">.</span><span class="n">xi0</span>
     <span class="n">xi1</span> <span class="o">=</span> <span class="n">CoordinateSystem</span><span class="o">.</span><span class="n">xi1</span>
@@ -522,66 +510,6 @@ access a simple, 2D, Cartesian Coordinate Geometry</p>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Derivatives
-</pre></div>
-</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \sin\left(x^{2}\right) \, + \, x \;2 \;x \;\cos\left(x^{2}\right) \, + \, y\]</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \sin\left(y^{2}\right) \, + \, y \;2 \;y \;\cos\left(y^{2}\right) \, + \, x\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Grad 0
-</pre></div>
-</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \sin\left(x^{2}\right) \, + \, x \;2 \;x \;\cos\left(x^{2}\right) \, + \, y\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Grad 1
-</pre></div>
-</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \sin\left(y^{2}\right) \, + \, y \;2 \;y \;\cos\left(y^{2}\right) \, + \, x\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>div.grad
-</pre></div>
-</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle 2 \;x \;\cos\left(x^{2}\right) \, + \, 2 \;x \;\cos\left(x^{2}\right) \, + \, x \;(2 \;\cos\left(x^{2}\right) \, + \, 2 \;x \;-2 \;x \;\sin\left(x^{2}\right)) \, + \, 2 \;y \;\cos\left(y^{2}\right) \, + \, 2 \;y \;\cos\left(y^{2}\right) \, + \, y \;(2 \;\cos\left(y^{2}\right) \, + \, 2 \;y \;-2 \;y \;\sin\left(y^{2}\right))\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Laplacian
-</pre></div>
-</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle 2 \;x \;\cos\left(x^{2}\right) \, + \, 2 \;x \;\cos\left(x^{2}\right) \, + \, x \;(2 \;\cos\left(x^{2}\right) \, + \, 2 \;x \;-2 \;x \;\sin\left(x^{2}\right)) \, + \, 2 \;y \;\cos\left(y^{2}\right) \, + \, 2 \;y \;\cos\left(y^{2}\right) \, + \, y \;(2 \;\cos\left(y^{2}\right) \, + \, 2 \;y \;-2 \;y \;\sin\left(y^{2}\right))\]</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \nabla \left( x \;y \cdot \nabla \left(  x \;\sin\left(x^{2}\right) \, + \, y \;\sin\left(y^{2}\right) \, + \, x \;y \right)\right)\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Derivatives
-</pre></div>
-</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \sin\left(\theta^{2}\right) \, + \, \theta \;2 \;\theta \;\cos\left(\theta^{2}\right) \, + \, \phi' \]</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \sin\left(\phi' ^{2}\right) \, + \, \phi'  \;2 \;\phi'  \;\cos\left(\phi' ^{2}\right) \, + \, \theta\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Grad 0
-</pre></div>
-</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \frac{ \sin\left(\theta^{2}\right) \, + \, \theta \;2 \;\theta \;\cos\left(\theta^{2}\right) \, + \, \phi'  }{ \cos\left(\phi' \right)  }\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Grad 1
-</pre></div>
-</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \sin\left(\phi' ^{2}\right) \, + \, \phi'  \;2 \;\phi'  \;\cos\left(\phi' ^{2}\right) \, + \, \theta\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>div.grad
-</pre></div>
-</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \frac{ \frac{ 2 \;\theta \;\cos\left(\theta^{2}\right) \, + \, 2 \;\theta \;\cos\left(\theta^{2}\right) \, + \, \theta \;(2 \;\cos\left(\theta^{2}\right) \, + \, 2 \;\theta \;-2 \;\theta \;\sin\left(\theta^{2}\right)) }{ \cos\left(\phi' \right)  } }{ \cos\left(\theta\right)  } \, + \, \frac{ (2 \;\phi'  \;\cos\left(\phi' ^{2}\right) \, + \, 2 \;\phi'  \;\cos\left(\phi' ^{2}\right) \, + \, \phi'  \;(2 \;\cos\left(\phi' ^{2}\right) \, + \, 2 \;\phi'  \;-2 \;\phi'  \;\sin\left(\phi' ^{2}\right))) \;\cos\left(\theta\right) }{ \cos\left(\theta\right)  }\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Laplacian
-</pre></div>
-</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \frac{ \frac{ 2 \;\theta \;\cos\left(\theta^{2}\right) \, + \, 2 \;\theta \;\cos\left(\theta^{2}\right) \, + \, \theta \;(2 \;\cos\left(\theta^{2}\right) \, + \, 2 \;\theta \;-2 \;\theta \;\sin\left(\theta^{2}\right)) }{ \cos\left(\phi' \right)  } }{ \cos\left(\theta\right)  } \, + \, \frac{ (2 \;\phi'  \;\cos\left(\phi' ^{2}\right) \, + \, 2 \;\phi'  \;\cos\left(\phi' ^{2}\right) \, + \, \phi'  \;(2 \;\cos\left(\phi' ^{2}\right) \, + \, 2 \;\phi'  \;-2 \;\phi'  \;\sin\left(\phi' ^{2}\right))) \;\cos\left(\theta\right) }{ \cos\left(\theta\right)  }\]</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \nabla \left( \theta \;\phi'  \cdot \nabla \left(  \theta \;\sin\left(\theta^{2}\right) \, + \, \phi'  \;\sin\left(\phi' ^{2}\right) \, + \, \theta \;\phi'  \right)\right)\]</div>
-</div>
 </div>
 </div>
 </div>
@@ -590,7 +518,7 @@ access a simple, 2D, Cartesian Coordinate Geometry</p>
 <p>These are placeholders for developing a function that you can then substitute later. This is most useful as an aid to debugging functions …</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">k0</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;k_0&quot;</span><span class="p">,</span> <span class="n">lname</span><span class="o">=</span><span class="s2">&quot;k_0&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">k0</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;k_0&quot;</span><span class="p">,</span> <span class="n">lname</span><span class="o">=</span><span class="s2">&quot;k_0&quot;</span><span class="p">)</span>
 <span class="n">k1</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;k_1&quot;</span><span class="p">,</span> <span class="n">lname</span><span class="o">=</span><span class="s2">&quot;k_1&quot;</span><span class="p">)</span>
 <span class="n">display</span><span class="p">((</span><span class="n">k0</span><span class="p">,</span> <span class="n">k1</span><span class="p">))</span>
 
@@ -613,24 +541,6 @@ access a simple, 2D, Cartesian Coordinate Geometry</p>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle k_0\]</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle k_1\]</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle x \;\sin\left(k_0 \;x \, + \, \frac{ k_0 }{ k_1 \, + \, x  }\right)\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Cannot evaluate H ... try making a subsitution
-</pre></div>
-</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \left\{  k_1 \leftarrow 0.0001\right\}\]</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle x \;\sin\left(\left\{  k_0 \leftarrow 4\right\} \;x \, + \, \frac{ \left\{  k_0 \leftarrow 4\right\} }{ \left\{  k_1 \leftarrow 0.0001\right\} \, + \, x  }\right)\]</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>H evaluated at (0.1,1.0):  [0.04623685]
-</pre></div>
-</div>
-</div>
 </div>
 </div>
 <div class="section" id="the-same-sort-of-thing-but-with-some-mesh-variables">
@@ -639,7 +549,7 @@ access a simple, 2D, Cartesian Coordinate Geometry</p>
 that are used when a derivative or gradient needs to be evaluated.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Add a mesh</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## Add a mesh</span>
 
 <span class="n">st0</span> <span class="o">=</span> <span class="n">stripy</span><span class="o">.</span><span class="n">spherical_meshes</span><span class="o">.</span><span class="n">icosahedral_mesh</span><span class="p">(</span><span class="n">refinement_levels</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">include_face_points</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">dm</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_spherical_DMPlex</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">st0</span><span class="o">.</span><span class="n">lons</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">st0</span><span class="o">.</span><span class="n">lats</span><span class="p">),</span> <span class="n">st0</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
@@ -650,25 +560,10 @@ that are used when a derivative or gradient needs to be evaluated.</p>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: sTriMesh
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.45045900299999175s
-0 - Calculate node weights and area 0.07064848499999243s
-0 - Find boundaries 0.0030988040000465844s
-0 - cKDTree 0.03572470599999633s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 1.4574675910000678s, (1.065167150000093s + 0.3922500389999186s)
-0 - Construct rbf weights 0.1493679410000368s
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">F</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="n">lname</span><span class="o">=</span><span class="s2">&quot;\cal</span><span class="si">{F}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="n">lname</span><span class="o">=</span><span class="s2">&quot;\cal</span><span class="si">{F}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="n">l0</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>
 <span class="n">l1</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
@@ -681,38 +576,24 @@ that are used when a derivative or gradient needs to be evaluated.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
 <span class="n">G</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \cal{F}\left(\theta,\phi' \right)\]</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \cos\left(5 \;\frac{\pi}{180}\theta\right) \;\sin\left(2 \;\frac{\pi}{180}\phi' \right)\]</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">fn_gradient</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">fn_gradient</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 <span class="n">display</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 <span class="n">mesh</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">G</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \frac{ -0.0873 \;\sin\left(5 \;\frac{\pi}{180}\theta\right) \;\sin\left(2 \;\frac{\pi}{180}\phi' \right) }{ \cos\left(\phi' \right)  }\]</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle -0.0873 \;\sin\left(5 \;\frac{\pi}{180}\theta\right) \;\sin\left(2 \;\frac{\pi}{180}\phi' \right)\]</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \frac{ -0.0873 \;\sin\left(5 \;\frac{\pi}{180}\theta\right) \;\sin\left(2 \;\frac{\pi}{180}\phi' \right) }{ \cos\left(\phi' \right)  }\]</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Something with symbols we can substitute</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## Something with symbols we can substitute</span>
 
 <span class="n">m0</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;m_0&quot;</span><span class="p">,</span> <span class="n">lname</span><span class="o">=</span><span class="s2">&quot;m_0&quot;</span><span class="p">)</span>
 <span class="n">m1</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">symbol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;m_1&quot;</span><span class="p">,</span> <span class="n">lname</span><span class="o">=</span><span class="s2">&quot;m_1&quot;</span><span class="p">)</span>
@@ -734,24 +615,10 @@ that are used when a derivative or gradient needs to be evaluated.</p>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \cos\left(m_0 \;\frac{\pi}{180}\theta\right) \;\sin\left(m_1 \;\frac{\pi}{180}\phi' \right)\]</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \cos\left(\left\{  m_0 \leftarrow \cal{F}\left(\theta,\phi' \right)^{2}\right\} \;\frac{\pi}{180}\theta\right) \;\sin\left(\left\{  m_1 \leftarrow \cal{F}\left(\theta,\phi' \right)^{4}\right\} \;\frac{\pi}{180}\phi' \right)\]</div>
-<div class="output text_latex math notranslate nohighlight">
-\[\displaystyle \cos\left(\left\{  m_0 \leftarrow \cal{F}\left(\theta,\phi' \right) \, + \, 1\right\} \;\frac{\pi}{180}\theta\right) \;\sin\left(\left\{  m_1 \leftarrow \cal{F}\left(\theta,\phi' \right) - 1\right\} \;\frac{\pi}{180}\phi' \right)\]</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">H</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([-1.        , -0.09259669,  0.03942575, ...,  0.34680752,
-        0.40071064,  0.23890213])
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">H</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

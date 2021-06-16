@@ -93,72 +93,72 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1-Creating-Meshes.html">
-   Example 1 - creating structured and unstructured meshes
+   1. Creating meshes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1a-QuagmireMeshVariables.html">
-   quagmire.mesh MeshVariable
+   1.a Mesh Variables
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1b-QuagmireLazyFunctions.html">
-   Quagmire.function
+   1.b Functions
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1c-QuagmireCoordinateGeometry.html">
-   Quagmire.function.geometry
+   1.c Coordinate Geometry
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1d-QuagmireCloud.html">
-   quagmire.tools.cloud
+   1.d Quagmire cloud
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex2-Topography-Meshes.html">
-   Example 2 - Meshes for Topography
+   2. Meshes with Topography
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex3-Surface-Process-Meshes.html">
-   Example 3 - Meshes for Surface Process Models
+   3. Meshes for Surface Processes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex4-Multiple-downhill-pathways.html">
-   Example 4 - Matrix approaches - multiple paths
+   4. Multiple paths downhill
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex5-PreprocessingSurfaces.html">
-   Example 5 - Preprocessing a surface
+   5. Preprocessing a surface
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex6-Catchment-Analysis.html">
-   Example 6- Catchment analysis from the matrix transpose.
+   6. Catchment analysis.
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex7-LinearDiffusion.html">
-   Linear diffusion - time evolution / benchmarking
+   7. Diffusion equation
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex7a-NonLinearDiffusion.html">
-   Non-Linear diffusion - a critical-slope diffusion implementation
+   7.a Non-Linear diffusion
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex8-ErosionDeposition.html">
-   Example 8 - Incision and Deposition
+   8. Erosion and Deposition
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex9-LandscapeEvolution.html">
-   Example 9 - Landscape Evolution
+   9. Landscape Evolution
   </a>
  </li>
 </ul>
@@ -420,7 +420,7 @@ By default, this module provides read-only access to a central repository of mes
 <p>In these examples, we will show how to access mesh and meshvariable data stored in the cloud. The examples we use are taken from the earlier examples.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools</span> <span class="kn">import</span> <span class="n">meshtools</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools</span> <span class="kn">import</span> <span class="n">meshtools</span>
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span>
 <span class="kn">from</span> <span class="nn">quagmire.mesh</span> <span class="kn">import</span> <span class="n">MeshVariable</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  
@@ -454,7 +454,7 @@ By default, this module provides read-only access to a central repository of mes
 <p>This mesh is available in the Quagmire cloud and we can create a new PETSc DM and a QuagMesh object directly from the cloud as follows (and it seems to create a valid mesh)</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools.cloud</span> <span class="kn">import</span> <span class="n">quagmire_cloud_fs</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools.cloud</span> <span class="kn">import</span> <span class="n">quagmire_cloud_fs</span>
 
 <span class="n">DM_r2</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1-refined_mesh.h5&quot;</span><span class="p">)</span>
 <span class="n">mesh2</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DM_r2</span><span class="p">)</span>
@@ -465,24 +465,10 @@ By default, this module provides read-only access to a central repository of mes
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-0 - Delaunay triangulation 0.0029457980000415773s
-0 - Calculate node weights and area 0.0007901259999698595s
-0 - Find boundaries 0.0002769089999219432s
-0 - cKDTree 0.0007595260000243798s
-0 - Construct neighbour cloud arrays 0.00975232700000106s, (0.005289876999995613s + 0.004443648000005851s)
-0 - Construct rbf weights 0.00204806900001131s
-
-1333
-[0.1003038  0.09579325 0.07775106 ... 0.05819681 0.06067121 0.06067121]
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DMC</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh.h5&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DMC</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh.h5&quot;</span><span class="p">)</span>
 <span class="n">meshC</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">DMC</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">meshC</span><span class="o">.</span><span class="n">npoints</span><span class="p">)</span>
@@ -493,25 +479,10 @@ By default, this module provides read-only access to a central repository of mes
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-0 - Delaunay triangulation 0.1670834939999395s
-0 - Calculate node weights and area 0.004972265999981573s
-0 - Find boundaries 0.0015315510000846189s
-0 - cKDTree 0.009246110000049157s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.3229323129999102s, (0.1885026119999793s + 0.1343639990000156s)
-0 - Construct rbf weights 0.05818934900003114s
-47361
-[0.00110479 0.00115039 0.00175107 ... 0.0004392  0.00040675 0.0006897 ]
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phi</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh_phi.h5&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">phi</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh_phi.h5&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -548,26 +519,12 @@ By default, this module provides read-only access to a central repository of mes
 <p>As long as you can obtain a valid fs.open_fs object that points to a folder somewhere, then meshes and mesh variables can be loaded from those locations without explicitly having to download those files first. You will need to dig into your cloud providers webdav interface to make this work for you.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;4SEAhkqSlTojYhv&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;4SEAhkqSlTojYhv&quot;</span>
 <span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;8M7idzp2Q7DXLMz()()()()()&quot;</span> 
 <span class="n">webdav_url</span> <span class="o">=</span> <span class="s2">&quot;webdav://</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">@cloudstor.aarnet.edu.au:443/plus/public.php/webdav/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
 <span class="n">cloud_dir</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">open_fs</span><span class="p">(</span><span class="n">webdav_url</span><span class="p">)</span>
 
 <span class="n">phi</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh_phi.h5&quot;</span><span class="p">,</span> <span class="n">cloud_location_handle</span><span class="o">=</span><span class="n">cloud_dir</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="n">bc6588cc98c5</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;8M7idzp2Q7DXLMz()()()()()&quot;</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">webdav_url</span> <span class="o">=</span> <span class="s2">&quot;webdav://</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">@cloudstor.aarnet.edu.au:443/plus/public.php/webdav/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">cloud_dir</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">open_fs</span><span class="p">(</span><span class="n">webdav_url</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> 
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">phi</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh_phi.h5&quot;</span><span class="p">,</span> <span class="n">cloud_location_handle</span><span class="o">=</span><span class="n">cloud_dir</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;fs&#39; is not defined
 </pre></div>
 </div>
 </div>
@@ -579,7 +536,7 @@ By default, this module provides read-only access to a central repository of mes
 <p>Google drive provides urls for file sharing that need some manipulation to work in a python script. For a google URL that you copy from the web interface, use <code class="docutils literal notranslate"><span class="pre">url</span> <span class="pre">=</span> <span class="pre">quagmire.tools.cloud.google_drive_convert_link(g_url)</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">psi</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.0</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psi</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.0</span>
 <span class="n">psi</span><span class="o">.</span><span class="n">load_from_url</span><span class="p">(</span><span class="s2">&quot;https://www.dropbox.com/s/5dzujlo3ayo5s35/Ex1a-circular_mesh_psi.h5?dl=0&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">psi</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
@@ -595,29 +552,10 @@ By default, this module provides read-only access to a central repository of mes
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.90167197 0.90920399 0.92674766 ... 0.90735785 0.91259299 0.91574316]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.90167197 0.90920399 0.92674766 ... 0.90735785 0.91259299 0.91574316]
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="mi">65</span><span class="n">cf2ac0d4ee</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="c1"># Verification</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="n">psi</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.0</span>
-<span class="ne">---&gt; </span><span class="mi">12</span> <span class="n">psi</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;Examples/Tutorial/Ex1a-circular_mesh_psi.h5&quot;</span><span class="p">,</span> <span class="n">cloud_location_handle</span><span class="o">=</span><span class="n">cloud_dir</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="nb">print</span><span class="p">(</span><span class="n">psi</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;cloud_dir&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools.cloud</span> <span class="kn">import</span> <span class="n">google_drive_convert_link</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools.cloud</span> <span class="kn">import</span> <span class="n">google_drive_convert_link</span>
 
 <span class="n">psi</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.0</span>
 <span class="n">gurl</span> <span class="o">=</span> <span class="s2">&quot;https://drive.google.com/file/d/17t8jbPFmnB8aHhyYDbxjGrzKqtq6IlCa/view?usp=sharing&quot;</span>
@@ -625,14 +563,6 @@ By default, this module provides read-only access to a central repository of mes
 <span class="nb">print</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 <span class="n">psi</span><span class="o">.</span><span class="n">load_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">psi</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>https://drive.google.com/uc?export=download&amp;id=17t8jbPFmnB8aHhyYDbxjGrzKqtq6IlCa
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.90167197 0.90920399 0.92674766 ... 0.90735785 0.91259299 0.91574316]
 </pre></div>
 </div>
 </div>

@@ -93,72 +93,72 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1-Creating-Meshes.html">
-   Example 1 - creating structured and unstructured meshes
+   1. Creating meshes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1a-QuagmireMeshVariables.html">
-   quagmire.mesh MeshVariable
+   1.a Mesh Variables
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1b-QuagmireLazyFunctions.html">
-   Quagmire.function
+   1.b Functions
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1c-QuagmireCoordinateGeometry.html">
-   Quagmire.function.geometry
+   1.c Coordinate Geometry
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1d-QuagmireCloud.html">
-   quagmire.tools.cloud
+   1.d Quagmire cloud
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex2-Topography-Meshes.html">
-   Example 2 - Meshes for Topography
+   2. Meshes with Topography
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex3-Surface-Process-Meshes.html">
-   Example 3 - Meshes for Surface Process Models
+   3. Meshes for Surface Processes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex4-Multiple-downhill-pathways.html">
-   Example 4 - Matrix approaches - multiple paths
+   4. Multiple paths downhill
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex5-PreprocessingSurfaces.html">
-   Example 5 - Preprocessing a surface
+   5. Preprocessing a surface
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex6-Catchment-Analysis.html">
-   Example 6- Catchment analysis from the matrix transpose.
+   6. Catchment analysis.
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex7-LinearDiffusion.html">
-   Linear diffusion - time evolution / benchmarking
+   7. Diffusion equation
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex7a-NonLinearDiffusion.html">
-   Non-Linear diffusion - a critical-slope diffusion implementation
+   7.a Non-Linear diffusion
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex8-ErosionDeposition.html">
-   Example 8 - Incision and Deposition
+   8. Erosion and Deposition
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex9-LandscapeEvolution.html">
-   Example 9 - Landscape Evolution
+   9. Landscape Evolution
   </a>
  </li>
 </ul>
@@ -427,21 +427,21 @@
 <p>This is a simple diffusion model that has a high diffusivity when the slope is above the critical value and low diffusion rates below this value. It should clip the slope over a timescale given by the chosen maximum diffusivity. This is non-linear because the topopographic gradient controls the topographic diffusivity.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span><span class="p">,</span> <span class="n">QuagMesh</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span><span class="p">,</span> <span class="n">QuagMesh</span>
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">tools</span> <span class="k">as</span> <span class="n">meshtools</span>
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">function</span> <span class="k">as</span> <span class="n">fn</span>
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">mesh</span> <span class="k">as</span> <span class="n">qmesh</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span>
 <span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span>
 <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.02</span>
 
@@ -456,7 +456,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">erf</span><span class="p">,</span> <span class="n">erfc</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">erf</span><span class="p">,</span> <span class="n">erfc</span>
 
 <span class="k">def</span> <span class="nf">halfspace_cooling</span><span class="p">(</span><span class="n">kappa</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
     
@@ -472,7 +472,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 <span class="n">Zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mi">250</span><span class="p">)</span>
 <span class="n">Ts</span> <span class="o">=</span> <span class="n">halfspace_cooling</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">Zs</span><span class="p">,</span> <span class="n">time0</span><span class="p">)</span>
@@ -484,16 +484,10 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f59233dbc90&gt;]
-</pre></div>
-</div>
-<img alt="../../_images/Ex7a-NonLinearDiffusion_5_11.png" src="../../_images/Ex7a-NonLinearDiffusion_5_11.png" />
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cold_boundary_mask_fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">dirn</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>  <span class="mf">0.99</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cold_boundary_mask_fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">dirn</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>  <span class="mf">0.99</span><span class="p">)</span>
 <span class="n">hot_boundary_mask_fn</span>  <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">dirn</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>  <span class="mf">0.01</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">non_boundary_mask</span>     <span class="o">=</span> <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">cold_boundary_mask_fn</span> <span class="o">-</span> <span class="n">hot_boundary_mask_fn</span><span class="p">)</span>
 
@@ -505,26 +499,12 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="mi">1</span><span class="n">da36e51d4de</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">cold_boundary_mask_fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">dirn</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>  <span class="mf">0.99</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">hot_boundary_mask_fn</span>  <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="n">dirn</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>  <span class="mf">0.01</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">non_boundary_mask</span>     <span class="o">=</span> <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">cold_boundary_mask_fn</span> <span class="o">-</span> <span class="n">hot_boundary_mask_fn</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> 
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">dirichlet_mask</span> <span class="o">=</span> <span class="n">cold_boundary_mask_fn</span> <span class="o">+</span> <span class="n">hot_boundary_mask_fn</span>
-
-<span class="ne">AttributeError</span>: module &#39;quagmire.function.misc&#39; has no attribute &#39;levelset&#39;
-</pre></div>
-</div>
-</div>
 </div>
 <div class="section" id="diffusion-solver">
 <h2>Diffusion solver<a class="headerlink" href="#diffusion-solver" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">time</span> <span class="o">=</span> <span class="n">time0</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">time</span> <span class="o">=</span> <span class="n">time0</span>
 <span class="n">experiment_name</span> <span class="o">=</span> <span class="s2">&quot;TemperatureDiffusion_K=1&quot;</span>
 </pre></div>
 </div>
@@ -532,7 +512,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">quagmire.equation_systems</span> <span class="k">as</span> <span class="nn">systems</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">quagmire.equation_systems</span> <span class="k">as</span> <span class="nn">systems</span>
 
 <span class="n">diffusion_solver</span> <span class="o">=</span> <span class="n">systems</span><span class="o">.</span><span class="n">DiffusionEquation</span><span class="p">(</span><span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">)</span>
 
@@ -551,46 +531,14 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">a02d1eb77817</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="c1"># What the diffusion solver needs to run</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> 
-<span class="ne">----&gt; </span><span class="mi">7</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">neumann_x_mask</span> <span class="o">=</span> <span class="n">neumann_x_mask</span>
-<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">neumann_y_mask</span> <span class="o">=</span> <span class="n">neumann_y_mask</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">dirichlet_mask</span> <span class="o">=</span> <span class="n">dirichlet_mask</span>
-
-<span class="ne">NameError</span>: name &#39;neumann_x_mask&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 </div>
 <div class="section" id="diffusion-time-limit">
 <h2>Diffusion time limit<a class="headerlink" href="#diffusion-time-limit" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diff_timestep</span> <span class="o">=</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">diffusion_timestep</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">diff_timestep</span> <span class="o">=</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">diffusion_timestep</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Diffusion timestep limit = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">diff_timestep</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="mi">0</span><span class="n">b61049ee1b8</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">diff_timestep</span> <span class="o">=</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">diffusion_timestep</span><span class="p">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Diffusion timestep limit = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">diff_timestep</span><span class="p">))</span>
-
-<span class="nn">~/work/quagmire/quagmire/quagmire/equation_systems/diffusion.py</span> in <span class="ni">diffusion_timestep</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">179</span>     <span class="k">def</span> <span class="nf">diffusion_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">180</span> 
-<span class="ne">--&gt; </span><span class="mi">181</span>         <span class="n">local_diff_timestep</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span><span class="o">.</span><span class="n">area</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diffusivity</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span><span class="p">))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">182</span> 
-<span class="g g-Whitespace">    </span><span class="mi">183</span>         <span class="c1"># synchronise ...</span>
-
-<span class="ne">AttributeError</span>: &#39;NoneType&#39; object has no attribute &#39;evaluate&#39;
 </pre></div>
 </div>
 </div>
@@ -600,7 +548,7 @@
 <h2>Diffusion solver / time integration<a class="headerlink" href="#diffusion-solver-time-integration" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Solve this and keep some intermediate results</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## Solve this and keep some intermediate results</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Integrate t -&gt; t + 0.01&quot;</span><span class="p">)</span>
 <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">time_integration</span><span class="p">(</span><span class="n">diff_timestep</span><span class="p">,</span> <span class="n">Delta_t</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
@@ -618,30 +566,13 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Integrate t -&gt; t + 0.01
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">9</span><span class="o">-</span><span class="n">b9fdf7c67c40</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> 
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Integrate t -&gt; t + 0.01&quot;</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">time_integration</span><span class="p">(</span><span class="n">diff_timestep</span><span class="p">,</span> <span class="n">Delta_t</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">temp001</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> 
-
-<span class="ne">NameError</span>: name &#39;diff_timestep&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 </div>
 <div class="section" id="compare-to-analytic-solutions">
 <h2>Compare to analytic solutions<a class="headerlink" href="#compare-to-analytic-solutions" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Obtain horizontal profiles</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## Obtain horizontal profiles</span>
 
 <span class="n">Zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mi">250</span><span class="p">)</span>
 <span class="n">Ts0001</span> <span class="o">=</span> <span class="n">halfspace_cooling</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">Zs</span><span class="p">,</span> <span class="n">time0</span><span class="p">)</span>
@@ -670,27 +601,13 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">8262</span><span class="n">ec5053e1</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">8</span> 
-<span class="g g-Whitespace">      </span><span class="mi">9</span> 
-<span class="ne">---&gt; </span><span class="mi">10</span> <span class="n">TsN001</span> <span class="o">=</span> <span class="n">temp001</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mf">0.0</span><span class="o">*</span><span class="n">Zs</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">-</span><span class="n">Zs</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="n">TsN005</span> <span class="o">=</span> <span class="n">temp005</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mf">0.0</span><span class="o">*</span><span class="n">Zs</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">-</span><span class="n">Zs</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">12</span> <span class="n">TsN01</span>  <span class="o">=</span> <span class="n">temp01</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mf">0.0</span><span class="o">*</span><span class="n">Zs</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">-</span><span class="n">Zs</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;temp001&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 </div>
 <div class="section" id="browse">
 <h2>Browse<a class="headerlink" href="#browse" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
 
 <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">npoints</span><span class="p">)])</span>
 
@@ -716,23 +633,6 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LavaVu Run error: Failed to open X display
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="n">f4b74c1e6ced</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">tri1</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="n">tri1</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">10</span> <span class="n">tri1</span><span class="o">.</span><span class="n">values</span><span class="p">(</span> <span class="n">temp0</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span> <span class="p">,</span> <span class="s2">&quot;T0001&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="n">tri1</span><span class="o">.</span><span class="n">values</span><span class="p">(</span> <span class="n">temp001</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span> <span class="p">,</span>  <span class="s2">&quot;T001&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">12</span> <span class="n">tri1</span><span class="o">.</span><span class="n">values</span><span class="p">(</span> <span class="n">temp005</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span> <span class="p">,</span>  <span class="s2">&quot;T005&quot;</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;temp0&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -742,7 +642,7 @@
 <p>It would also be straightforward to add points close to the boundary to improve the resolution at the interface. Stripy does not offer contrained triangulations at this stage so we are not able to mesh the boundary itself.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kappa1</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">fn</span><span class="o">.</span> <span class="n">parameter</span><span class="p">(</span><span class="mf">99.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">kappa1</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">fn</span><span class="o">.</span> <span class="n">parameter</span><span class="p">(</span><span class="mf">99.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span>
                                  <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> 
                                  <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">)</span>
 
@@ -754,45 +654,20 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="n">e896fef8d3a9</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">kappa1</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">fn</span><span class="o">.</span> <span class="n">parameter</span><span class="p">(</span><span class="mf">99.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span>                                  <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span>                                  <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> 
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">diffusivity</span> <span class="o">=</span> <span class="n">kappa1</span>
-
-<span class="ne">AttributeError</span>: module &#39;quagmire.function.misc&#39; has no attribute &#39;levelset&#39;
-</pre></div>
-</div>
-</div>
 </div>
 <p>Also reset the initial temperature - let’s start from kappa=1.0 steady state case
 (i.e. a linear temperature gradient)</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">temperature</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">temperature</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 <span class="n">temp0</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">13</span><span class="o">-</span><span class="mi">188</span><span class="n">cc4117af5</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">temperature</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">temp0</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-<span class="ne">NameError</span>: name &#39;temperature&#39; is not defined
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Solve this and keep some intermediate results</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## Solve this and keep some intermediate results</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Integrate t -&gt; t + 0.001&quot;</span><span class="p">)</span>
 <span class="n">steps</span><span class="p">,</span> <span class="n">dt</span> <span class="o">=</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">time_integration</span><span class="p">(</span><span class="n">diff_timestep</span><span class="p">,</span> <span class="n">Delta_t</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">feedback</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
@@ -808,27 +683,10 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Integrate t -&gt; t + 0.001
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">14</span><span class="o">-</span><span class="mi">532</span><span class="n">b4c40b896</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> 
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Integrate t -&gt; t + 0.001&quot;</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">steps</span><span class="p">,</span> <span class="n">dt</span> <span class="o">=</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">time_integration</span><span class="p">(</span><span class="n">diff_timestep</span><span class="p">,</span> <span class="n">Delta_t</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">feedback</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">temp001</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> 
-
-<span class="ne">NameError</span>: name &#39;diff_timestep&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dTdx_fn</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">fn_gradient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">-</span><span class="n">neumann_x_mask</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dTdx_fn</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">fn_gradient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">-</span><span class="n">neumann_x_mask</span><span class="p">)</span>
 <span class="n">dTdy_fn</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">fn_gradient</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">-</span><span class="n">neumann_y_mask</span><span class="p">)</span>
 
 <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mesh</span><span class="o">.</span><span class="n">npoints</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
@@ -837,24 +695,10 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">15</span><span class="o">-</span><span class="mi">18</span><span class="n">aeb7e9a582</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">dTdx_fn</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">fn_gradient</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">-</span><span class="n">neumann_x_mask</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">dTdy_fn</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">fn_gradient</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">-</span><span class="n">neumann_y_mask</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> 
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">mesh</span><span class="o">.</span><span class="n">npoints</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">flux</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">dTdx_fn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;temperature&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
 
 <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">npoints</span><span class="p">)])</span>
 
@@ -892,27 +736,10 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LavaVu Run error: Failed to open X display
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">16</span><span class="o">-</span><span class="n">e77208b82baf</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">vec1</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">vectors</span><span class="p">(</span><span class="s2">&quot;flux_arrows&quot;</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;Blue&quot;</span> <span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">vec1</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">9</span> <span class="n">vec1</span><span class="o">.</span><span class="n">vectors</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="n">vec1</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;coolwarm&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> 
-
-<span class="ne">NameError</span>: name &#39;flux&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Mesh refinement</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## Mesh refinement</span>
 <span class="c1">##</span>
 <span class="c1">## Add a bunch of mesh points at the (known) interface location</span>
 </pre></div>
@@ -921,7 +748,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">temperature</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">temperature</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Integrate t -&gt; t + 0.01&quot;</span><span class="p">)</span>
 <span class="n">steps</span><span class="p">,</span> <span class="n">dt</span> <span class="o">=</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">time_integration</span><span class="p">(</span><span class="mf">5.0</span><span class="o">*</span><span class="n">diff_timestep</span><span class="p">,</span> <span class="n">Delta_t</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">feedback</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
@@ -929,24 +756,10 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">18</span><span class="o">-</span><span class="n">a04d0dc086b6</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">temperature</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> 
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Integrate t -&gt; t + 0.01&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">steps</span><span class="p">,</span> <span class="n">dt</span> <span class="o">=</span> <span class="n">diffusion_solver</span><span class="o">.</span><span class="n">time_integration</span><span class="p">(</span><span class="mf">5.0</span><span class="o">*</span><span class="n">diff_timestep</span><span class="p">,</span> <span class="n">Delta_t</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">feedback</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">temp015</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-<span class="ne">NameError</span>: name &#39;temperature&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
 
 <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">npoints</span><span class="p">)])</span>
 
@@ -981,23 +794,6 @@
                  <span class="p">[</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;dT015&quot;</span><span class="p">,</span> <span class="s2">&quot;dT01&quot;</span><span class="p">],</span> 
                   <span class="nb">property</span><span class="o">=</span><span class="s2">&quot;colourby&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s2">&quot;redraw&quot;</span><span class="p">)</span>
 <span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LavaVu Run error: Failed to open X display
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">19</span><span class="o">-</span><span class="mi">327</span><span class="n">feb08e3e0</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">vec1</span> <span class="o">=</span> <span class="n">lv</span><span class="o">.</span><span class="n">vectors</span><span class="p">(</span><span class="s2">&quot;flux_arrows&quot;</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;Blue&quot;</span> <span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">vec1</span><span class="o">.</span><span class="n">vertices</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">9</span> <span class="n">vec1</span><span class="o">.</span><span class="n">vectors</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="n">vec1</span><span class="o">.</span><span class="n">colourmap</span><span class="p">(</span><span class="s2">&quot;coolwarm&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> 
-
-<span class="ne">NameError</span>: name &#39;flux&#39; is not defined
 </pre></div>
 </div>
 </div>

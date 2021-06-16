@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Example 2 - Meshes for Topography &#8212; Quagmire.tex</title>
+    <title>2. Meshes with Topography &#8212; Quagmire.tex</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -53,8 +53,8 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Example 3 - Meshes for Surface Process Models" href="Ex3-Surface-Process-Meshes.html" />
-    <link rel="prev" title="quagmire.tools.cloud" href="Ex1d-QuagmireCloud.html" />
+    <link rel="next" title="3. Meshes for Surface Processes" href="Ex3-Surface-Process-Meshes.html" />
+    <link rel="prev" title="1.d Quagmire cloud" href="Ex1d-QuagmireCloud.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -97,72 +97,72 @@
 <ul class="current nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1-Creating-Meshes.html">
-   Example 1 - creating structured and unstructured meshes
+   1. Creating meshes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1a-QuagmireMeshVariables.html">
-   quagmire.mesh MeshVariable
+   1.a Mesh Variables
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1b-QuagmireLazyFunctions.html">
-   Quagmire.function
+   1.b Functions
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1c-QuagmireCoordinateGeometry.html">
-   Quagmire.function.geometry
+   1.c Coordinate Geometry
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex1d-QuagmireCloud.html">
-   quagmire.tools.cloud
+   1.d Quagmire cloud
   </a>
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   Example 2 - Meshes for Topography
+   2. Meshes with Topography
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex3-Surface-Process-Meshes.html">
-   Example 3 - Meshes for Surface Process Models
+   3. Meshes for Surface Processes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex4-Multiple-downhill-pathways.html">
-   Example 4 - Matrix approaches - multiple paths
+   4. Multiple paths downhill
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex5-PreprocessingSurfaces.html">
-   Example 5 - Preprocessing a surface
+   5. Preprocessing a surface
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex6-Catchment-Analysis.html">
-   Example 6- Catchment analysis from the matrix transpose.
+   6. Catchment analysis.
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex7-LinearDiffusion.html">
-   Linear diffusion - time evolution / benchmarking
+   7. Diffusion equation
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex7a-NonLinearDiffusion.html">
-   Non-Linear diffusion - a critical-slope diffusion implementation
+   7.a Non-Linear diffusion
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex8-ErosionDeposition.html">
-   Example 8 - Incision and Deposition
+   8. Erosion and Deposition
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="Ex9-LandscapeEvolution.html">
-   Example 9 - Landscape Evolution
+   9. Landscape Evolution
   </a>
  </li>
 </ul>
@@ -401,8 +401,8 @@
         
               <div>
                 
-  <div class="section" id="example-2-meshes-for-topography">
-<h1>Example 2 - Meshes for Topography<a class="headerlink" href="#example-2-meshes-for-topography" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="meshes-with-topography">
+<h1>2. Meshes with Topography<a class="headerlink" href="#meshes-with-topography" title="Permalink to this headline">¶</a></h1>
 <p>This notebook introduces the <code class="docutils literal notranslate"><span class="pre">QuagMesh</span></code> object, which builds the following data structures:</p>
 <ul class="simple">
 <li><p>hill slope</p></li>
@@ -458,16 +458,12 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.2156143869999596s
-0 - Calculate node weights and area 0.008052368999983628s
-0 - Find boundaries 0.001697855999964304s
-0 - cKDTree 0.015914629999997487s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.4392134380000243s, (0.25727857499998663s + 0.18188376199998402s)
-0 - Construct rbf weights 0.0868741949999503s
+0 - Delaunay triangulation 0.11218824999999555s
+0 - Calculate node weights and area 0.020123624999996537s
+0 - Find boundaries 0.007983166000002484s
+0 - cKDTree 0.006998583000004999s
+0 - Construct neighbour cloud arrays 0.2953688329999977s, (0.19133074999999877s + 0.10399454199999525s)
+0 - Construct rbf weights 0.028541665999995303s
 Triangulation has 62234 points
 </pre></div>
 </div>
@@ -506,10 +502,8 @@ Triangulation has 62234 points
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>quagmire.MeshVariable: h(x,y) - is locked
 Update topography data array (automatically rebuilds matrices)
 Update topography data array (automatically rebuilds matrices ONCE ONLY)
-0 - Build downhill matrices 0.05452101599996695s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.06314580399998704s
+0 - Build downhill matrices 1.1500198329999947s
+0 - Build upstream areas 0.5090339589999999s
 </pre></div>
 </div>
 </div>
@@ -521,8 +515,8 @@ Update topography data array (automatically rebuilds matrices ONCE ONLY)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.51618872, 1.51546336, 1.51239831, ..., 0.70327982, 0.66660783,
-       0.61404908])
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.50868874, 1.51634837, 1.50855902, ..., 0.70499342, 0.66836758,
+       0.61934834])
 </pre></div>
 </div>
 </div>
@@ -588,122 +582,27 @@ W_i = \frac{\exp \left( \frac{d_i}{\Delta} \right)^2}{\sum_{i} \left( \frac{d_i}
 <p><strong>NOTE</strong> - Building the RBF smoothing machinery is expensive and cannot be reused if the kernel properties are changed. We therefore have a two-stage implementation which builds and caches the smoothing matrices and defines a quagmire function that can be used in the usual way.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import lavavu</span>
-
-<span class="c1"># points = np.column_stack([mesh.tri.points, height])</span>
-
-<span class="c1"># lv = lavavu.Viewer(border=False, background=&quot;#FFFFFF&quot;, resolution=[600,600], near=-10.0)</span>
-
-<span class="c1"># tri1 = lv.triangles(&quot;triangles&quot;)</span>
-<span class="c1"># tri1.vertices(points)</span>
-<span class="c1"># tri1.indices(mesh.tri.simplices)</span>
-<span class="c1"># tri1.values(mesh.slope.evaluate(mesh), &quot;slope&quot;)</span>
-<span class="c1"># tri1.values(rbf_slope005, &quot;smooth_slope_a&quot;)</span>
-<span class="c1"># tri1.values(rbf_slope010, &quot;smooth_slope_b&quot;)</span>
-<span class="c1"># tri1.values(rbf_slope050, &quot;smooth_slope_c&quot;)</span>
-
-<span class="c1"># tri1.colourmap(&quot;#990000 #FFFFFF #000099&quot;)</span>
-<span class="c1"># tri1.colourbar()</span>
-
-<span class="c1"># lv.control.Panel()</span>
-<span class="c1"># lv.control.ObjectList()</span>
-<span class="c1"># tri1.control.List(options=[&quot;slope&quot;, &quot;smooth_slope_a&quot;, &quot;smooth_slope_b&quot;, &quot;smooth_slope_c&quot;, ], property=&quot;colourby&quot;, value=&quot;slope&quot;, command=&quot;redraw&quot;)</span>
-
-<span class="c1"># lv.control.show()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">k3d</span>
-<span class="n">plot</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid_visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">plot</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">7</span><span class="n">bcb74a7ac06</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">k3d</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">plot</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid_visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">plot</span>
 
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;k3d&#39;
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">indices</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
+<span class="n">plot</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid_visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">indices</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
 <span class="n">points</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">height</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 
-<span class="n">plt_mesh</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">mesh</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span>
-                    <span class="n">color_map</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">colormaps</span><span class="o">.</span><span class="n">basic_color_maps</span><span class="o">.</span><span class="n">Jet</span><span class="p">,</span>
+<span class="n">plt_mesh</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">mesh</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">wireframe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flat_shading</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+                    <span class="n">color_map</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">colormaps</span><span class="o">.</span><span class="n">basic_color_maps</span><span class="o">.</span><span class="n">CoolWarm</span><span class="p">,</span>
                     <span class="n">attribute</span><span class="o">=</span><span class="n">mesh</span><span class="o">.</span><span class="n">slope</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">),</span>
                     <span class="c1"># color_range = [-1.1,2.01]</span>
                    <span class="p">)</span>
 
 <span class="n">plot</span> <span class="o">+=</span> <span class="n">plt_mesh</span>
+<span class="n">plot</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">13</span><span class="o">-</span><span class="mf">1e0</span><span class="n">ef2508993</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">points</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">height</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> 
-<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">plt_mesh</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">mesh</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span>                     <span class="n">color_map</span> <span class="o">=</span> <span class="n">k3d</span><span class="o">.</span><span class="n">colormaps</span><span class="o">.</span><span class="n">basic_color_maps</span><span class="o">.</span><span class="n">Jet</span><span class="p">,</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span>                     <span class="n">attribute</span><span class="o">=</span><span class="n">mesh</span><span class="o">.</span><span class="n">slope</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">),</span>
-
-<span class="ne">NameError</span>: name &#39;k3d&#39; is not defined
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ipyvolume</span> <span class="k">as</span> <span class="nn">ipv</span>
-
-<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">x</span>
-<span class="n">Y</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">y</span>
-<span class="n">Z</span> <span class="o">=</span> <span class="n">height</span> <span class="o">*</span> <span class="mf">0.1</span>
-
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
-
-<span class="n">slope</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">slope</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-<span class="n">norm</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">slope</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">slope</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-<span class="n">color</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">coolwarm</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">slope</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">),))</span>
-
-
-<span class="n">fig3d</span> <span class="o">=</span> <span class="n">ipv</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
-<span class="n">fig3d</span><span class="o">.</span><span class="n">style</span><span class="p">[</span><span class="s1">&#39;axes&#39;</span><span class="p">][</span><span class="s1">&#39;visible&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="n">fig3d</span><span class="o">.</span><span class="n">style</span><span class="p">[</span><span class="s1">&#39;box&#39;</span><span class="p">][</span><span class="s1">&#39;visible&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="kc">False</span>
-<span class="n">fig3d</span><span class="o">.</span><span class="n">zlim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">]</span>
-<span class="n">surf</span> <span class="o">=</span> <span class="n">ipv</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">triangles</span><span class="o">=</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">simplices</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span> <span class="p">)</span>
-<span class="n">ipv</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">14</span><span class="o">-</span><span class="n">c2d83b659d00</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">ipyvolume</span> <span class="k">as</span> <span class="nn">ipv</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> 
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">X</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">x</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">y</span>
-
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;ipyvolume&#39;
-</pre></div>
-</div>
-</div>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "560e7bcf19f84a208b291e9de6cded5c", "version_major": 2, "version_minor": 0}
+</script></div>
 </div>
 </div>
 </div>
@@ -733,8 +632,8 @@ W_i = \frac{\exp \left( \frac{d_i}{\Delta} \right)^2}{\sum_{i} \left( \frac{d_i}
         
         <div class='prev-next-bottom'>
             
-    <a class='left-prev' id="prev-link" href="Ex1d-QuagmireCloud.html" title="previous page">quagmire.tools.cloud</a>
-    <a class='right-next' id="next-link" href="Ex3-Surface-Process-Meshes.html" title="next page">Example 3 - Meshes for Surface Process Models</a>
+    <a class='left-prev' id="prev-link" href="Ex1d-QuagmireCloud.html" title="previous page">1.d Quagmire cloud</a>
+    <a class='right-next' id="next-link" href="Ex3-Surface-Process-Meshes.html" title="next page">3. Meshes for Surface Processes</a>
 
         </div>
         

@@ -95,72 +95,72 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1-Creating-Meshes.html">
-   Example 1 - creating structured and unstructured meshes
+   1. Creating meshes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1a-QuagmireMeshVariables.html">
-   quagmire.mesh MeshVariable
+   1.a Mesh Variables
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1b-QuagmireLazyFunctions.html">
-   Quagmire.function
+   1.b Functions
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1c-QuagmireCoordinateGeometry.html">
-   Quagmire.function.geometry
+   1.c Coordinate Geometry
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex1d-QuagmireCloud.html">
-   quagmire.tools.cloud
+   1.d Quagmire cloud
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex2-Topography-Meshes.html">
-   Example 2 - Meshes for Topography
+   2. Meshes with Topography
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex3-Surface-Process-Meshes.html">
-   Example 3 - Meshes for Surface Process Models
+   3. Meshes for Surface Processes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex4-Multiple-downhill-pathways.html">
-   Example 4 - Matrix approaches - multiple paths
+   4. Multiple paths downhill
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex5-PreprocessingSurfaces.html">
-   Example 5 - Preprocessing a surface
+   5. Preprocessing a surface
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex6-Catchment-Analysis.html">
-   Example 6- Catchment analysis from the matrix transpose.
+   6. Catchment analysis.
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex7-LinearDiffusion.html">
-   Linear diffusion - time evolution / benchmarking
+   7. Diffusion equation
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex7a-NonLinearDiffusion.html">
-   Non-Linear diffusion - a critical-slope diffusion implementation
+   7.a Non-Linear diffusion
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex8-ErosionDeposition.html">
-   Example 8 - Incision and Deposition
+   8. Erosion and Deposition
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Tutorial/Ex9-LandscapeEvolution.html">
-   Example 9 - Landscape Evolution
+   9. Landscape Evolution
   </a>
  </li>
 </ul>
@@ -383,7 +383,7 @@
 <h1>Models from the cloud<a class="headerlink" href="#models-from-the-cloud" title="Permalink to this headline">¶</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span> 
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">tools</span> <span class="k">as</span> <span class="n">meshtools</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
@@ -394,7 +394,7 @@
 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
 
 <span class="c1"># import cartopy.crs as ccrs</span>
 <span class="c1"># import cartopy.feature as cfeature</span>
@@ -406,218 +406,40 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># dm = meshtools.create_DMPlex_from_hdf5(&quot;global_OC_8.4_mesh.h5&quot;)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># dm = meshtools.create_DMPlex_from_hdf5(&quot;global_OC_8.4_mesh.h5&quot;)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools.cloud</span> <span class="kn">import</span> <span class="n">quagmire_cloud_fs</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools.cloud</span> <span class="kn">import</span> <span class="n">quagmire_cloud_fs</span>
 
 <span class="n">quagmire_cloud_fs</span>
 <span class="n">quagmire_cloud_fs</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;Examples&#39;, &#39;global&#39;, &#39;quagmire_cloud_info.txt&#39;]
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># from quagmire.tools.cloud import cloud_download, cloud_upload</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># from quagmire.tools.cloud import cloud_download, cloud_upload</span>
 <span class="c1"># cloud_download(&#39;global_OC_8.4_topography.h5&#39;, &quot;gtopo3.h5&quot;)</span>
 <span class="n">quagmire_cloud_fs</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;/global&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;global_OC_8.4_mesh.h5&#39;,
- &#39;global_OC_8.4_rainfall.h5&#39;,
- &#39;global_OC_8.4_raw_topography.h5&#39;,
- &#39;global_OC_8.4_runoff.h5&#39;,
- &#39;global_OC_8.4_topography.h5&#39;]
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dm</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;global/global_OC_8.4_mesh.h5&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dm</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;global/global_OC_8.4_mesh.h5&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="mf">118e0146137</span><span class="n">a</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">dm</span> <span class="o">=</span> <span class="n">meshtools</span><span class="o">.</span><span class="n">create_DMPlex_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;global/global_OC_8.4_mesh.h5&quot;</span><span class="p">)</span>
-
-<span class="nn">~/work/quagmire/quagmire/quagmire/tools/meshtools.py</span> in <span class="ni">create_DMPlex_from_cloud_fs</span><span class="nt">(cloud_hdf5_filename, cloud_location_handle)</span>
-<span class="g g-Whitespace">    </span><span class="mi">376</span> 
-<span class="g g-Whitespace">    </span><span class="mi">377</span>     <span class="k">if</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>  <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">378</span>         <span class="n">cloud_download</span><span class="p">(</span><span class="n">cloud_hdf5_filename</span><span class="p">,</span> <span class="n">tempfile</span><span class="p">,</span> <span class="n">cloud_location_handle</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">379</span> 
-<span class="g g-Whitespace">    </span><span class="mi">380</span>     <span class="n">dm</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">DMPlex</span><span class="p">()</span><span class="o">.</span><span class="n">createFromFile</span><span class="p">(</span><span class="n">tempfile</span><span class="p">)</span>
-
-<span class="nn">~/work/quagmire/quagmire/quagmire/tools/cloud/cloud.py</span> in <span class="ni">cloud_download</span><span class="nt">(cloud_filename, local_filename, cloud_fs_location_handle)</span>
-<span class="g g-Whitespace">     </span><span class="mi">79</span>         <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-<span class="g g-Whitespace">     </span><span class="mi">80</span>             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">local_filename</span><span class="p">),</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">local_file</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">81</span>                 <span class="n">cloud_fs_location_handle</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cloud_filename</span><span class="p">),</span> <span class="n">local_file</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">82</span> 
-<span class="g g-Whitespace">     </span><span class="mi">83</span>         <span class="n">comm</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/fs/wrapfs.py</span> in <span class="ni">download</span><span class="nt">(self, path, file, chunk_size, **options)</span>
-<span class="g g-Whitespace">    </span><span class="mi">297</span>         <span class="n">_fs</span><span class="p">,</span> <span class="n">_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delegate_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">298</span>         <span class="k">with</span> <span class="n">unwrap_errors</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">299</span>             <span class="n">_fs</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">_path</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="n">chunk_size</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">300</span> 
-<span class="g g-Whitespace">    </span><span class="mi">301</span>     <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/fs/base.py</span> in <span class="ni">download</span><span class="nt">(self, path, file, chunk_size, **options)</span>
-<span class="g g-Whitespace">    </span><span class="mi">634</span>         <span class="s2">&quot;&quot;&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">635</span><span class="s2">         with self._lock:</span>
-<span class="ne">--&gt; </span><span class="mi">636</span><span class="s2">             with self.openbin(path, **options) as read_file:</span>
-<span class="g g-Whitespace">    </span><span class="mi">637</span><span class="s2">                 tools.copy_file_data(read_file, file, chunk_size=chunk_size)</span>
-<span class="g g-Whitespace">    </span><span class="mi">638</span><span class="s2"> </span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/webdavfs/webdavfs.py</span> in <span class="ni">openbin</span><span class="nt">(self, path, mode, buffering, **options)</span>
-<span class="g g-Whitespace">    </span><span class="mi">306</span><span class="s2">                 if _mode.exclusive:</span>
-<span class="g g-Whitespace">    </span><span class="mi">307</span><span class="s2">                     raise errors.FileExists(path)</span>
-<span class="ne">--&gt; </span><span class="mi">308</span><span class="s2">         return WebDAVFile(self, _path, _mode)</span>
-<span class="g g-Whitespace">    </span><span class="mi">309</span><span class="s2"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">310</span><span class="s2">     def remove(self, path):</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/webdavfs/webdavfs.py</span> in <span class="ni">__init__</span><span class="nt">(self, wdfs, path, mode)</span>
-<span class="g g-Whitespace">     </span><span class="mi">45</span><span class="s2">         self.mode = mode</span>
-<span class="g g-Whitespace">     </span><span class="mi">46</span><span class="s2">         self._lock = threading.RLock()</span>
-<span class="ne">---&gt; </span><span class="mi">47</span><span class="s2">         self.data = self._get_file_data()</span>
-<span class="g g-Whitespace">     </span><span class="mi">48</span><span class="s2"> </span>
-<span class="g g-Whitespace">     </span><span class="mi">49</span><span class="s2">         self.pos = 0</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/webdavfs/webdavfs.py</span> in <span class="ni">_get_file_data</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">     </span><span class="mi">60</span><span class="s2">             data = io.BytesIO()</span>
-<span class="g g-Whitespace">     </span><span class="mi">61</span><span class="s2">             try:</span>
-<span class="ne">---&gt; </span><span class="mi">62</span><span class="s2">                 self.res.write_to(data)</span>
-<span class="g g-Whitespace">     </span><span class="mi">63</span><span class="s2">                 if not self.mode.appending:</span>
-<span class="g g-Whitespace">     </span><span class="mi">64</span><span class="s2">                     data.seek(io.SEEK_SET)</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/webdav2/client.py</span> in <span class="ni">write_to</span><span class="nt">(self, buff)</span>
-<span class="g g-Whitespace">    </span><span class="mi">909</span><span class="s2"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">910</span><span class="s2">     def write_to(self, buff):</span>
-<span class="ne">--&gt; </span><span class="mi">911</span><span class="s2">         return self.client.download_to(buff=buff, remote_path=self.urn.path())</span>
-<span class="g g-Whitespace">    </span><span class="mi">912</span><span class="s2"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">913</span><span class="s2">     def write(self, local_path):</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/webdav2/client.py</span> in <span class="ni">_wrapper</span><span class="nt">(self, *args, **kw)</span>
-<span class="g g-Whitespace">     </span><span class="mi">56</span><span class="s2">         log.debug(&quot;Requesting </span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)&quot;, fn, args, kw)</span>
-<span class="g g-Whitespace">     </span><span class="mi">57</span><span class="s2">         try:</span>
-<span class="ne">---&gt; </span><span class="mi">58</span><span class="s2">             res = fn(self, *args, **kw)</span>
-<span class="g g-Whitespace">     </span><span class="mi">59</span><span class="s2">         except requests.ConnectionError:</span>
-<span class="g g-Whitespace">     </span><span class="mi">60</span><span class="s2">             raise NotConnection(self.webdav.hostname)</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/webdav2/client.py</span> in <span class="ni">download_to</span><span class="nt">(self, buff, remote_path)</span>
-<span class="g g-Whitespace">    </span><span class="mi">278</span><span class="s2">             options[&quot;URL&quot;],</span>
-<span class="g g-Whitespace">    </span><span class="mi">279</span><span class="s2">             auth=(self.webdav.login, self.webdav.password),</span>
-<span class="ne">--&gt; </span><span class="mi">280</span><span class="s2">             headers=self.get_header(&#39;download_to&#39;)</span>
-<span class="g g-Whitespace">    </span><span class="mi">281</span><span class="s2">         )</span>
-<span class="g g-Whitespace">    </span><span class="mi">282</span><span class="s2">         buff.write(response.content)</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/requests/api.py</span> in <span class="ni">request</span><span class="nt">(method, url, **kwargs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">59</span><span class="s2">     # cases, and look like a memory leak in others.</span>
-<span class="g g-Whitespace">     </span><span class="mi">60</span><span class="s2">     with sessions.Session() as session:</span>
-<span class="ne">---&gt; </span><span class="mi">61</span><span class="s2">         return session.request(method=method, url=url, **kwargs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">62</span><span class="s2"> </span>
-<span class="g g-Whitespace">     </span><span class="mi">63</span><span class="s2"> </span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/requests/sessions.py</span> in <span class="ni">request</span><span class="nt">(self, method, url, params, data, headers, cookies, files, auth, timeout, allow_redirects, proxies, hooks, stream, verify, cert, json)</span>
-<span class="g g-Whitespace">    </span><span class="mi">540</span><span class="s2">         }</span>
-<span class="g g-Whitespace">    </span><span class="mi">541</span><span class="s2">         send_kwargs.update(settings)</span>
-<span class="ne">--&gt; </span><span class="mi">542</span><span class="s2">         resp = self.send(prep, **send_kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">543</span><span class="s2"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">544</span><span class="s2">         return resp</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/requests/sessions.py</span> in <span class="ni">send</span><span class="nt">(self, request, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">695</span><span class="s2"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">696</span><span class="s2">         if not stream:</span>
-<span class="ne">--&gt; </span><span class="mi">697</span><span class="s2">             r.content</span>
-<span class="g g-Whitespace">    </span><span class="mi">698</span><span class="s2"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">699</span><span class="s2">         return r</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/requests/models.py</span> in <span class="ni">content</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">829</span><span class="s2">                 self._content = None</span>
-<span class="g g-Whitespace">    </span><span class="mi">830</span><span class="s2">             else:</span>
-<span class="ne">--&gt; </span><span class="mi">831</span><span class="s2">                 self._content = b&#39;&#39;.join(self.iter_content(CONTENT_CHUNK_SIZE)) or b&#39;&#39;</span>
-<span class="g g-Whitespace">    </span><span class="mi">832</span><span class="s2"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">833</span><span class="s2">         self._content_consumed = True</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/requests/models.py</span> in <span class="ni">generate</span><span class="nt">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">751</span><span class="s2">             if hasattr(self.raw, &#39;stream&#39;):</span>
-<span class="g g-Whitespace">    </span><span class="mi">752</span><span class="s2">                 try:</span>
-<span class="ne">--&gt; </span><span class="mi">753</span><span class="s2">                     for chunk in self.raw.stream(chunk_size, decode_content=True):</span>
-<span class="g g-Whitespace">    </span><span class="mi">754</span><span class="s2">                         yield chunk</span>
-<span class="g g-Whitespace">    </span><span class="mi">755</span><span class="s2">                 except ProtocolError as e:</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/urllib3/response.py</span> in <span class="ni">stream</span><span class="nt">(self, amt, decode_content)</span>
-<span class="g g-Whitespace">    </span><span class="mi">574</span><span class="s2">         else:</span>
-<span class="g g-Whitespace">    </span><span class="mi">575</span><span class="s2">             while not is_fp_closed(self._fp):</span>
-<span class="ne">--&gt; </span><span class="mi">576</span><span class="s2">                 data = self.read(amt=amt, decode_content=decode_content)</span>
-<span class="g g-Whitespace">    </span><span class="mi">577</span><span class="s2"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">578</span><span class="s2">                 if data:</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/site-packages/urllib3/response.py</span> in <span class="ni">read</span><span class="nt">(self, amt, decode_content, cache_content)</span>
-<span class="g g-Whitespace">    </span><span class="mi">517</span><span class="s2">             else:</span>
-<span class="g g-Whitespace">    </span><span class="mi">518</span><span class="s2">                 cache_content = False</span>
-<span class="ne">--&gt; </span><span class="mi">519</span><span class="s2">                 data = self._fp.read(amt) if not fp_closed else b&quot;&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">520</span><span class="s2">                 if (</span>
-<span class="g g-Whitespace">    </span><span class="mi">521</span><span class="s2">                     amt != 0 and not data</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/http/client.py</span> in <span class="ni">read</span><span class="nt">(self, amt)</span>
-<span class="g g-Whitespace">    </span><span class="mi">459</span><span class="s2">             # Amount is given, implement using readinto</span>
-<span class="g g-Whitespace">    </span><span class="mi">460</span><span class="s2">             b = bytearray(amt)</span>
-<span class="ne">--&gt; </span><span class="mi">461</span><span class="s2">             n = self.readinto(b)</span>
-<span class="g g-Whitespace">    </span><span class="mi">462</span><span class="s2">             return memoryview(b)[:n].tobytes()</span>
-<span class="g g-Whitespace">    </span><span class="mi">463</span><span class="s2">         else:</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/http/client.py</span> in <span class="ni">readinto</span><span class="nt">(self, b)</span>
-<span class="g g-Whitespace">    </span><span class="mi">503</span><span class="s2">         # connection, and the user is reading more bytes than will be provided</span>
-<span class="g g-Whitespace">    </span><span class="mi">504</span><span class="s2">         # (for example, reading in 1k chunks)</span>
-<span class="ne">--&gt; </span><span class="mi">505</span><span class="s2">         n = self.fp.readinto(b)</span>
-<span class="g g-Whitespace">    </span><span class="mi">506</span><span class="s2">         if not n and b:</span>
-<span class="g g-Whitespace">    </span><span class="mi">507</span><span class="s2">             # Ideally, we would raise IncompleteRead if the content-length</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/socket.py</span> in <span class="ni">readinto</span><span class="nt">(self, b)</span>
-<span class="g g-Whitespace">    </span><span class="mi">587</span><span class="s2">         while True:</span>
-<span class="g g-Whitespace">    </span><span class="mi">588</span><span class="s2">             try:</span>
-<span class="ne">--&gt; </span><span class="mi">589</span><span class="s2">                 return self._sock.recv_into(b)</span>
-<span class="g g-Whitespace">    </span><span class="mi">590</span><span class="s2">             except timeout:</span>
-<span class="g g-Whitespace">    </span><span class="mi">591</span><span class="s2">                 self._timeout_occurred = True</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/ssl.py</span> in <span class="ni">recv_into</span><span class="nt">(self, buffer, nbytes, flags)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1069</span><span class="s2">                   &quot;non-zero flags not allowed in calls to recv_into() on </span><span class="si">%s</span><span class="s2">&quot; %</span>
-<span class="g g-Whitespace">   </span><span class="mi">1070</span><span class="s2">                   self.__class__)</span>
-<span class="ne">-&gt; </span><span class="mi">1071</span><span class="s2">             return self.read(nbytes, buffer)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1072</span><span class="s2">         else:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1073</span><span class="s2">             return super().recv_into(buffer, nbytes, flags)</span>
-
-<span class="nn">/usr/share/miniconda3/envs/conda-build-docs/lib/python3.7/ssl.py</span> in <span class="ni">read</span><span class="nt">(self, len, buffer)</span>
-<span class="g g-Whitespace">    </span><span class="mi">927</span><span class="s2">         try:</span>
-<span class="g g-Whitespace">    </span><span class="mi">928</span><span class="s2">             if buffer is not None:</span>
-<span class="ne">--&gt; </span><span class="mi">929</span><span class="s2">                 return self._sslobj.read(len, buffer)</span>
-<span class="g g-Whitespace">    </span><span class="mi">930</span><span class="s2">             else:</span>
-<span class="g g-Whitespace">    </span><span class="mi">931</span><span class="s2">                 return self._sslobj.read(len)</span>
-
-<span class="ne">KeyboardInterrupt</span>: 
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">dm</span><span class="p">,</span> <span class="n">downhill_neighbours</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">QuagMesh</span><span class="p">(</span><span class="n">dm</span><span class="p">,</span> <span class="n">downhill_neighbours</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
 <span class="c1"># Mark up the shadow zones</span>
 
@@ -643,7 +465,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mesh</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mesh</span><span class="o">.</span><span class="n">deform_topography</span><span class="p">():</span>
     <span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;global/global_OC_8.4_topography.h5&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -651,7 +473,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">low_points</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">identify_low_points</span><span class="p">(</span><span class="n">ref_height</span><span class="o">=</span><span class="mf">6.37</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">low_points</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">identify_low_points</span><span class="p">(</span><span class="n">ref_height</span><span class="o">=</span><span class="mf">6.37</span><span class="p">)</span>
 <span class="n">low_points</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
@@ -659,7 +481,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.0</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.0</span>
 <span class="n">rainfall</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;global/global_OC_8.4_rainfall.h5&quot;</span><span class="p">,</span> <span class="n">quagmire_cloud_fs</span><span class="p">)</span>
 <span class="n">rainfall</span><span class="o">.</span><span class="n">data</span>
 </pre></div>
@@ -668,7 +490,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">runoff_var</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.0</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">runoff_var</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="mf">0.0</span>
 <span class="n">runoff_var</span><span class="o">.</span><span class="n">load_from_cloud_fs</span><span class="p">(</span><span class="s2">&quot;global/global_OC_8.4_runoff.h5&quot;</span><span class="p">,</span> <span class="n">quagmire_cloud_fs</span><span class="p">)</span>
 <span class="n">runoff_var</span><span class="o">.</span><span class="n">data</span>
 </pre></div>
@@ -677,7 +499,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># # runoff  &quot;/thredds/wcs/agg_terraclimate_q_1958_CurrentYear_GLOBE.nc&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># # runoff  &quot;/thredds/wcs/agg_terraclimate_q_1958_CurrentYear_GLOBE.nc&quot;</span>
 
 <span class="c1"># from owslib.wcs import WebCoverageService</span>
 <span class="c1"># # import gdal</span>
@@ -718,7 +540,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import imageio</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># import imageio</span>
 <span class="c1"># rain = imageio.imread(&quot;GlobalRainfall.tif&quot;)[::3,::3].astype(float)</span>
 <span class="c1"># runoff = imageio.imread(&quot;GlobalRunoff.tif&quot;)[::3,::3].astype(float)</span>
 
@@ -739,7 +561,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># coastline = cfeature.NaturalEarthFeature(&#39;physical&#39;, &#39;coastline&#39;, &#39;10m&#39;,</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># coastline = cfeature.NaturalEarthFeature(&#39;physical&#39;, &#39;coastline&#39;, &#39;10m&#39;,</span>
 <span class="c1">#                            edgecolor=(1.0,0.8,0.0),</span>
 <span class="c1">#                            facecolor=&quot;none&quot;)</span>
 
@@ -773,7 +595,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">latitudes_in_radians</span>  <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">lats</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">latitudes_in_radians</span>  <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">lats</span>
 <span class="n">longitudes_in_radians</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">lons</span> 
 <span class="n">latitudes_in_degrees</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">latitudes_in_radians</span><span class="p">)</span> 
 <span class="n">longitudes_in_degrees</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">longitudes_in_radians</span><span class="p">)</span> 
@@ -796,7 +618,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">function</span> <span class="k">as</span> <span class="n">fn</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">function</span> <span class="k">as</span> <span class="n">fn</span>
 
 <span class="n">ones</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">parameter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
 <span class="n">cumulative_flow_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">1.0e-20</span> <span class="o">+</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">runoff_var</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">))</span>
@@ -810,7 +632,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
 <span class="kn">import</span> <span class="nn">stripy</span>
 
 <span class="c1"># vertices0 = mesh.tri.points*mesh_height.reshape(-1,1)</span>

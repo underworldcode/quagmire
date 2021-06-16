@@ -95,72 +95,72 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1-Creating-Meshes.html">
-   Example 1 - creating structured and unstructured meshes
+   1. Creating meshes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1a-QuagmireMeshVariables.html">
-   quagmire.mesh MeshVariable
+   1.a Mesh Variables
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1b-QuagmireLazyFunctions.html">
-   Quagmire.function
+   1.b Functions
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1c-QuagmireCoordinateGeometry.html">
-   Quagmire.function.geometry
+   1.c Coordinate Geometry
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex1d-QuagmireCloud.html">
-   quagmire.tools.cloud
+   1.d Quagmire cloud
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex2-Topography-Meshes.html">
-   Example 2 - Meshes for Topography
+   2. Meshes with Topography
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex3-Surface-Process-Meshes.html">
-   Example 3 - Meshes for Surface Process Models
+   3. Meshes for Surface Processes
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex4-Multiple-downhill-pathways.html">
-   Example 4 - Matrix approaches - multiple paths
+   4. Multiple paths downhill
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex5-PreprocessingSurfaces.html">
-   Example 5 - Preprocessing a surface
+   5. Preprocessing a surface
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex6-Catchment-Analysis.html">
-   Example 6- Catchment analysis from the matrix transpose.
+   6. Catchment analysis.
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex7-LinearDiffusion.html">
-   Linear diffusion - time evolution / benchmarking
+   7. Diffusion equation
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex7a-NonLinearDiffusion.html">
-   Non-Linear diffusion - a critical-slope diffusion implementation
+   7.a Non-Linear diffusion
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex8-ErosionDeposition.html">
-   Example 8 - Incision and Deposition
+   8. Erosion and Deposition
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../Ex9-LandscapeEvolution.html">
-   Example 9 - Landscape Evolution
+   9. Landscape Evolution
   </a>
  </li>
 </ul>
@@ -418,7 +418,7 @@
 </div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools</span> <span class="kn">import</span> <span class="n">meshtools</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">quagmire.tools</span> <span class="kn">import</span> <span class="n">meshtools</span>
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">QuagMesh</span><span class="p">,</span> <span class="n">QuagMesh</span>
 <span class="kn">from</span> <span class="nn">quagmire</span> <span class="kn">import</span> <span class="n">function</span> <span class="k">as</span> <span class="n">fn</span>
 </pre></div>
@@ -427,17 +427,17 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">minX</span><span class="p">,</span> <span class="n">maxX</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span>
 <span class="n">minY</span><span class="p">,</span> <span class="n">maxY</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span>
 <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.02</span>
 
@@ -451,22 +451,6 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underlying Mesh type: TriMesh
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Delaunay triangulation 0.2272273620001215s
-0 - Calculate node weights and area 0.007943463999936284s
-0 - Find boundaries 0.0016422549999788316s
-0 - cKDTree 0.014363977999892086s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Construct neighbour cloud arrays 0.4417606999998043s, (0.2582920949998879s + 0.1834187029999157s)
-0 - Construct rbf weights 0.08825493700010156s
-Triangulation has 62234 points
-</pre></div>
-</div>
-</div>
 </div>
 <div class="section" id="height-field-and-rainfall">
 <h2>Height field and Rainfall<a class="headerlink" href="#height-field-and-rainfall" title="Permalink to this headline">¶</a></h2>
@@ -474,7 +458,7 @@ Triangulation has 62234 points
 <p>The <code class="docutils literal notranslate"><span class="pre">QuagMesh</span></code> stores a rainfall pattern that is used to compute the stream power assuming everything goes into the surface runoff it also records a sediment distribution pattern (etc).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">radius</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">radius</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
 <span class="n">theta</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1</span>
 
 <span class="n">height</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.025</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.2</span><span class="o">*</span><span class="n">radius</span><span class="p">)</span><span class="o">**</span><span class="mi">4</span>  <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">5.0</span><span class="o">*</span><span class="n">theta</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> 
@@ -486,63 +470,33 @@ Triangulation has 62234 points
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.06015090100004272s
-</pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build upstream areas 0.12168494900015503s
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">boundary_mask_fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">boundary_mask_fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="mi">8</span><span class="n">c2db27eba4b</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">boundary_mask_fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">levelset</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
-
-<span class="ne">AttributeError</span>: module &#39;quagmire.function.misc&#39; has no attribute &#39;levelset&#39;
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Rainfall&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">add_variable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Rainfall&quot;</span><span class="p">)</span>
 <span class="n">rainfall</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 <span class="n">mesh</span><span class="o">.</span><span class="n">cumulative_flow</span><span class="p">(</span><span class="n">rainfall</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([5.03449701, 5.01525263, 5.01728553, ..., 2.66829351, 2.3281053 ,
-       3.99135784])
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">((</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">((</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.32433763e-05, 1.91033032e-05, 2.51794207e-05, ...,
-       4.63634650e-06, 2.88589126e-06, 7.56916193e-06])
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># rbf1  = mesh.build_rbf_smoother(1.0, 1)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># rbf1  = mesh.build_rbf_smoother(1.0, 1)</span>
 <span class="c1"># rbf01 = mesh.build_rbf_smoother(0.1, 1)</span>
 <span class="c1"># rbf001 = mesh.build_rbf_smoother(0.01, 1)</span>
 
@@ -555,20 +509,14 @@ Triangulation has 62234 points
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># rbf001.smooth_fn(rainfall, iterations=1).evaluate(mesh)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># rbf001.smooth_fn(rainfall, iterations=1).evaluate(mesh)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([2.24376848, 2.23947597, 2.2399298 , ..., 0.47308102, 0.42065372,
-       0.36434709])
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -596,25 +544,11 @@ streamwise_smoothing(data, its, centre_weight=0.75)
 where `its` indicates the number of iterations to smooth the field stream-wise. Increasing `its` smooths the field further afield upstream and downstream.
 --><div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall_fn</span> <span class="o">=</span> <span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall_fn</span> <span class="o">=</span> <span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span>
 <span class="n">upstream_precipitation_integral_fn</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">rainfall_fn</span><span class="p">)</span>
 <span class="n">stream_power_fn</span> <span class="o">=</span> <span class="n">upstream_precipitation_integral_fn</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mesh</span><span class="o">.</span><span class="n">slope</span><span class="o">**</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">boundary_mask_fn</span>
 
 <span class="n">stream_power_fn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">89</span><span class="n">acfb2e8c7d</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">rainfall_fn</span> <span class="o">=</span> <span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">topography</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">upstream_precipitation_integral_fn</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">rainfall_fn</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">stream_power_fn</span> <span class="o">=</span> <span class="n">upstream_precipitation_integral_fn</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mesh</span><span class="o">.</span><span class="n">slope</span><span class="o">**</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">boundary_mask_fn</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> 
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">stream_power_fn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;boundary_mask_fn&#39; is not defined
 </pre></div>
 </div>
 </div>
@@ -625,7 +559,7 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
 <p>Note that we provide an operator called <code class="docutils literal notranslate"><span class="pre">streamwise_smoothing_fn</span></code> which is conservative, a centre weighted smoothing kernel that only operates on nodes that are connected to each other in the stream network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## We can apply some smoothing to this if necessary</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## We can apply some smoothing to this if necessary</span>
 
 <span class="n">rbf_smoother</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">build_rbf_smoother</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">rbf_smooth_str_power_fn</span> <span class="o">=</span> <span class="n">rbf_smoother</span><span class="o">.</span><span class="n">smooth_fn</span><span class="p">(</span><span class="n">stream_power_fn</span><span class="p">)</span>
@@ -636,24 +570,10 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="n">e15a98da088a</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> 
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">rbf_smoother</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">build_rbf_smoother</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">rbf_smooth_str_power_fn</span> <span class="o">=</span> <span class="n">rbf_smoother</span><span class="o">.</span><span class="n">smooth_fn</span><span class="p">(</span><span class="n">stream_power_fn</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="nb">print</span><span class="p">(</span><span class="n">rbf_smooth_str_power_fn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">))</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> 
-
-<span class="ne">NameError</span>: name &#39;stream_power_fn&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## We could also smooth the components that make up the stream power</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## We could also smooth the components that make up the stream power</span>
 
 <span class="n">rbf_smoothed_slope_fn</span> <span class="o">=</span> <span class="n">rbf_smoother</span><span class="o">.</span><span class="n">smooth_fn</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">slope</span><span class="p">)</span>
 <span class="n">rbf_smooth_str_power_fn2</span> <span class="o">=</span> <span class="n">upstream_precipitation_integral_fn</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">rbf_smoothed_slope_fn</span><span class="o">**</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">boundary_mask_fn</span>
@@ -665,24 +585,10 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">13</span><span class="o">-</span><span class="mi">7</span><span class="n">c76fcf1e9b8</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> 
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">rbf_smoothed_slope_fn</span> <span class="o">=</span> <span class="n">rbf_smoother</span><span class="o">.</span><span class="n">smooth_fn</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">slope</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">rbf_smooth_str_power_fn2</span> <span class="o">=</span> <span class="n">upstream_precipitation_integral_fn</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">rbf_smoothed_slope_fn</span><span class="o">**</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">boundary_mask_fn</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="nb">print</span><span class="p">(</span><span class="n">rbf_smooth_str_power_fn2</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">))</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> 
-
-<span class="ne">NameError</span>: name &#39;boundary_mask_fn&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">lavavu</span>
 
 <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mesh</span><span class="o">.</span><span class="n">tri</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">height</span><span class="p">])</span>
 
@@ -722,23 +628,6 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LavaVu Run error: Failed to open X display
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">14</span><span class="o">-</span><span class="mi">83016</span><span class="n">a160272</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> 
-<span class="g g-Whitespace">      </span><span class="mi">7</span> 
-<span class="ne">----&gt; </span><span class="mi">8</span> <span class="n">stream_power_0</span> <span class="o">=</span> <span class="n">stream_power_fn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="n">stream_power_a</span> <span class="o">=</span> <span class="n">rbf_smooth_str_power_fn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="n">stream_power_b</span> <span class="o">=</span> <span class="n">str_smooth_str_power_fn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;stream_power_fn&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -748,7 +637,7 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
 <p>When we introduce random noise we also (usually) introduce some internal low points in the mesh that capture some of the surface flow.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">outflow_nodes</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">identify_outflow_points</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">outflow_nodes</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">identify_outflow_points</span><span class="p">()</span>
 <span class="n">low_point_nodes</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">identify_low_points</span><span class="p">()</span>
 <span class="n">cumulative_rain</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">upstream_integral_fn</span><span class="p">(</span><span class="n">rainfall_fn</span><span class="p">)</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
 <span class="n">outflow_std_mesh</span> <span class="o">=</span> <span class="n">cumulative_rain</span><span class="p">[</span><span class="n">outflow_nodes</span><span class="p">]</span>
@@ -778,42 +667,11 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>18 outflow nodes:
-[61753 61803 61853 61902 61903 61952 61953 61954 61955 62002 62052 62102
- 62151 62152 62201 62202 62203 62205]
-0 internal low point nodes:
-[61753 61803 61853 61902 61903 61952 61953 61954 61955 62002 62052 62102
- 62151 62152 62201 62202 62203 62205]
-[1.26646033e+00 2.45075090e+00 7.37265235e+00 3.93822327e+00
- 1.49872017e-01 2.11291952e+00 1.42215380e-04 1.64836684e-02
- 7.78133958e-02 1.14228465e+00 4.24108038e+00 5.97380149e+00
- 4.12312161e+00 1.58995134e-01 1.43297712e+00 4.76420967e-04
- 7.64214987e-02 6.54068145e-05]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - Build downhill matrices 0.055295540000088295s
-0 - Build upstream areas 0.0820553309999923s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>20 outflow nodes:
-[61753 61803 61852 61854 61902 61904 61953 61955 61967 62002 62003 62053
- 62101 62102 62151 62153 62155 62156 62201 62205]
-0 internal low point nodes:
-[]
-[4.79543457e-02 2.00224559e-01 1.41689700e-01 2.44309866e-02
- 4.75089909e-02 1.66096056e-01 3.13890196e-02 8.29769348e-02
- 3.16997601e-03 1.10805669e-02 1.27918061e-04 2.17662949e-02
- 4.15524379e-02 2.55388399e-02 5.91120521e-02 5.68019048e-03
- 3.49712484e-03 1.29712647e-01 5.25472689e-02 4.58226369e-02]
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
 
 <span class="c1"># plot bar graph of cumulative rain for each outflow point</span>
 
@@ -825,13 +683,10 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<img alt="../../_images/Ex3-Surface-Process-Meshes_23_01.png" src="../../_images/Ex3-Surface-Process-Meshes_23_01.png" />
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Note, having changed the mesh topography and the related connectivity matrices, </span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## Note, having changed the mesh topography and the related connectivity matrices, </span>
 <span class="c1">## the stream power functions immediately reflect the new topology</span>
 
 <span class="kn">import</span> <span class="nn">lavavu</span>
@@ -871,23 +726,6 @@ where `its` indicates the number of iterations to smooth the field stream-wise. 
                    <span class="p">],</span> 
                    <span class="nb">property</span><span class="o">=</span><span class="s2">&quot;colourby&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;stream_power (RAW)&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s2">&quot;redraw&quot;</span><span class="p">)</span>
 <span class="n">lv</span><span class="o">.</span><span class="n">control</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LavaVu Run error: Failed to open X display
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">17</span><span class="o">-</span><span class="mf">71601e970515</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span> 
-<span class="g g-Whitespace">     </span><span class="mi">10</span> 
-<span class="ne">---&gt; </span><span class="mi">11</span> <span class="n">stream_power_0</span> <span class="o">=</span> <span class="n">stream_power_fn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">12</span> <span class="n">stream_power_a</span> <span class="o">=</span> <span class="n">rbf_smooth_str_power_fn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="n">stream_power_b</span> <span class="o">=</span> <span class="n">str_smooth_str_power_fn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;stream_power_fn&#39; is not defined
 </pre></div>
 </div>
 </div>
