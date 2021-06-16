@@ -58,3 +58,5 @@ src/_fortranmodule.c
 src/_fortran-f2pywrappers.f
 
 dist/*
+
+.DS_Store
