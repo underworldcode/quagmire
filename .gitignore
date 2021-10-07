@@ -8,11 +8,14 @@
 Paper-Theory
 Paper-JOSS
 
+jupyterbook/_build/
+
 *.mp4
 *.h5
 build/*
 egg-info.*
 *.xmf
+*.so
 
 www/*
 */build/*
@@ -55,3 +58,5 @@ src/_fortranmodule.c
 src/_fortran-f2pywrappers.f
 
 dist/*
+
+.DS_Store

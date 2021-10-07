@@ -1,4 +1,4 @@
-name: API docs / jupyterbook
+name: User docs / jupyterbook
 
 # We should trigger this from an upload event 
 

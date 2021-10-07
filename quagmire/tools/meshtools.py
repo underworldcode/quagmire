@@ -158,7 +158,7 @@ def create_DMPlex_from_points(x, y, bmask=None, refinement_levels=0):
     return _create_DMPlex(tri.points, tri.simplices, boundary_vertices, refinement_levels)
 
 
-def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_levels=0):
+def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_levels=0, radians=False):
     """
     Triangulates lon,lat coordinates on rank 0 and creates a PETSc DMPlex object
     from the cells and vertices to distribute among processors.
@@ -190,8 +190,9 @@ def create_DMPlex_from_spherical_points(lons, lats, bmask=None, refinement_level
     """
     from stripy import sTriangulation
 
-    rlons = _np.radians(lons)
-    rlats = _np.radians(lats)
+    if not radians:
+        rlons = _np.radians(lons)
+        rlats = _np.radians(lats)
 
     tri = sTriangulation(rlons, rlats, permute=True)
 

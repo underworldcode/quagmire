@@ -6,8 +6,14 @@ on:
 
   workflow_dispatch:
 
+  # push is OK provided there is a test in the build that stops it 
+  # from pushing broken stuff and also that there are beta tags on 
+  # all versions except when released. That will stop these builds 
+  # from being discovered by conda unless explicitly requested.
   push:
     branches:
+      - master
+      - dev 
       - conda-testing
 
 jobs:

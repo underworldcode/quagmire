@@ -118,8 +118,7 @@ class LazyEvaluation(object):
         
     def derivative(self, dirn):
         """
-        Compute values of the derivatives of PHI in the x, y directions at the nodal points.
-        This routine uses SRFPACK to compute derivatives on a C-1 bivariate function.
+        Compute values of the derivatives of this object
 
         Parameters
         ----------
@@ -469,7 +468,7 @@ class LazyEvaluation(object):
         
 
 class symbol(LazyEvaluation):
-    """A placeholder symbol"""
+    """A placeholder symbol that can have later be subsituted with a lazyFn """
 
     def __init__(self, name=None, lname=None, *args, **kwargs):
         super(symbol, self).__init__(*args, **kwargs)
@@ -489,46 +488,100 @@ class symbol(LazyEvaluation):
 
         self.math = lambda : self.latex  # function returning a string
 
+        self._placeholder = LazyEvaluation()
+        self.placeholder = lambda : self._placeholder
+        self._final = False # locks substitution
+
         return
 
     def evaluate(self, *args, **kwargs):
-        raise RuntimeWarning('Cannot evaluate a symbol - consider substitution') from None
+        try:
+            placeholder = self.placeholder()
+            placeholder.evaluate(*args, **kwargs)
+        except:
+            raise RuntimeWarning('Cannot evaluate a symbol - consider substitution') from None
+
+
+    def _lazy_derivative(self, dirn, *args, **kwargs):
+        """Returns the operations required to construct a derivative if the
+           placeholder should be defined"""
+        
+        # Obtain current value of the placeholder object
+        
+        placeholder = self.placeholder()
+                
+        # return a function that computes the derivative of that (symbol) object
+                  
+        return placeholder.derivative(dirn)
  
 
+## The symbol cannot be differentiated or evaluated,
+## but if subsituted, suddenly those methods should be available.
+## So we define this in such a way that it is lazy all the way to the top 
+
     def derivative(self, dirn, *args, **kwargs):
-
-        def cant_evaluate(*args, **kwargs):
-            print("Symbols cannot be evaluated", flush=True)
-            raise NotImplementedError   
-
-        newLazyFn_dx = symbol()
-        newLazyFn_dx.evaluate = cant_evaluate
+        
+        def no_substitutions(*args, **kwargs):
+            
+            # Perhaps should issue a warning 
+            
+            print("To sustitute into a derivative, please substitute the original symbol", flush=True)
+            return
+              
+        newLazyFn_dx = symbol() 
+        newLazyFn_dx.placeholder = lambda : self._placeholder # No independent placeholder 
         newLazyFn_dx.description = "d({})/dX".format(self.description)
+        newLazyFn_dx.evaluate = lambda *args, **kwargs : self._lazy_derivative(0).evaluate(*args, **kwargs)
         newLazyFn_dx.latex = r"\frac{{ \partial }}{{\partial x}}{}".format(self.latex)
-        newLazyFn_dx.math = lambda : newLazyFn_dx.latex
+        newLazyFn_dx.math = lambda : r"\frac{{ \partial }}{{\partial x}}{}".format(self.math())
         newLazyFn_dx.exposed_operator = "d"
+        newLazyFn_dx.substitute = no_substitutions
 
-        newLazyFn_dy = symbol()
-        newLazyFn_dy.evaluate = cant_evaluate
+        newLazyFn_dy = symbol() 
+        newLazyFn_dy.placeholder = lambda : self._placeholder # No independent placeholder 
         newLazyFn_dy.description = "d({})/dY".format(self.description)
+        newLazyFn_dy.evaluate = lambda *args, **kwargs : self._lazy_derivative(1).evaluate(*args, **kwargs)
         newLazyFn_dy.latex = r"\frac{{\partial}}{{\partial y}}{}".format(self.latex)
-        newLazyFn_dy.math = lambda : newLazyFn_dy.latex
+        newLazyFn_dy.math = lambda : r"\frac{{ \partial }}{{\partial y}}{}".format(self.math())
         newLazyFn_dy.exposed_operator = "d"
+        newLazyFn_dx.substitute = no_substitutions
 
         if dirn == 0:
             return newLazyFn_dx
         else:
             return newLazyFn_dy
 
-    def substitute(self, lazyFn):
 
+    def substitute(self, lazyFn):
+        """Symbols can be substituted with any quagmire function. Repeat substitution
+        is possible until the symbol is `finalised' """
+
+        self._placeholder = lazyFn
         self.evaluate    = lazyFn.evaluate
         self.derivative  = lazyFn.derivative 
         self.description = lazyFn.description
         self.exposed_operator = "S"
         self.latex = r"\left\{{  {} \leftarrow {}\right\}}".format(self._lname, lazyFn.math())
-
         self.math = lambda : self.latex
+
+
+    def finalise(self):
+        """Shut down any further substitutions into this symbol"""
+
+        if self._placeholder is None:
+            raise RuntimeError('Symbol cannot be finalised prior to subsitution')
+
+        self._final = True
+        self.exposed_operator = self._placeholder.exposed_operator
+
+        if self.exposed_operator in "+-":
+            form = r"\left( {} \right)"
+        else:
+            form = r"{}"
+
+        self.latex = form.format(self._placeholder.math())
+        self.math  = lambda : self.latex
+
 
 class parameter(LazyEvaluation):
     """Floating point parameter / coefficient for lazy evaluation of functions"""
@@ -561,10 +614,12 @@ class parameter(LazyEvaluation):
 
     def evaluate(self, *args, **kwargs):
 
-        if len(args) == 1:
+        if len(args) == 0:
+            return self.value
+        elif len(args) == 1:
             if quagmire.mesh.check_object_is_a_q_mesh(args[0]):
                 mesh = args[0]
-                return self.value * np.ones(mesh.npoints)
+                return self.value * np.ones(mesh.npoints)  ## Check if this is valid in parallel !! 
             else: # could be a tuple or a single np.array object
                 coords = np.array(args[0]).reshape(-1, 2)
                 return np.ones_like(coords[:,0]) * self.value

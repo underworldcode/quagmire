@@ -4,17 +4,16 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.12
-    jupytext_version: 1.6.0
+    jupytext_version: 1.7.1
 kernelspec:
   display_name: Python 3
   language: python
   name: python3
 ---
 
-## Models from the cloud
+# Models from the cloud
 
-
-```{code-cell}
+```{code-cell} ipython3
 import numpy as np
 from quagmire import QuagMesh 
 from quagmire import tools as meshtools
@@ -28,34 +27,34 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 %matplotlib inline
 
-import cartopy.crs as ccrs
-import cartopy.feature as cfeature
+# import cartopy.crs as ccrs
+# import cartopy.feature as cfeature
 
 # from scipy.ndimage.filters import gaussian_filter
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 # dm = meshtools.create_DMPlex_from_hdf5("global_OC_8.4_mesh.h5")
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 from quagmire.tools.cloud import quagmire_cloud_fs
 
 quagmire_cloud_fs
 quagmire_cloud_fs.listdir("/")
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 # from quagmire.tools.cloud import cloud_download, cloud_upload
 # cloud_download('global_OC_8.4_topography.h5', "gtopo3.h5")
 quagmire_cloud_fs.listdir('/global')
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 dm = meshtools.create_DMPlex_from_cloud_fs("global/global_OC_8.4_mesh.h5")
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 mesh = QuagMesh(dm, downhill_neighbours=2)
 
 # Mark up the shadow zones
@@ -78,29 +77,29 @@ runoff_var = mesh.add_variable(name="runoff", locked=False)
 print("{} mesh points".format(mesh.npoints))
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 with mesh.deform_topography():
     mesh.topography.load_from_cloud_fs("global/global_OC_8.4_topography.h5")
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 low_points = mesh.identify_low_points(ref_height=6.37)
 low_points.shape
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 rainfall.data = 0.0
 rainfall.load_from_cloud_fs("global/global_OC_8.4_rainfall.h5", quagmire_cloud_fs)
 rainfall.data
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 runoff_var.data = 0.0
 runoff_var.load_from_cloud_fs("global/global_OC_8.4_runoff.h5", quagmire_cloud_fs)
 runoff_var.data
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 # # runoff  "/thredds/wcs/agg_terraclimate_q_1958_CurrentYear_GLOBE.nc"
 
 # from owslib.wcs import WebCoverageService
@@ -138,7 +137,7 @@ runoff_var.data
     
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 # import imageio
 # rain = imageio.imread("GlobalRainfall.tif")[::3,::3].astype(float)
 # runoff = imageio.imread("GlobalRunoff.tif")[::3,::3].astype(float)
@@ -156,8 +155,7 @@ runoff_var.data
 # runoff_var.data  = np.maximum(0.0,meshtools.map_global_raster_to_strimesh(mesh, runoff[::-1,:]))
 ```
 
-```{code-cell}
-
+```{code-cell} ipython3
 # coastline = cfeature.NaturalEarthFeature('physical', 'coastline', '10m',
 #                            edgecolor=(1.0,0.8,0.0),
 #                            facecolor="none")
@@ -188,7 +186,7 @@ runoff_var.data
 #            cmap='Greens', origin='upper', vmin=0., vmax=50.)
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 latitudes_in_radians  = mesh.tri.lats
 longitudes_in_radians = mesh.tri.lons 
 latitudes_in_degrees  = np.degrees(latitudes_in_radians) 
@@ -208,10 +206,10 @@ plt.scatter(x=longitudes_in_degrees, y=latitudes_in_degrees, c=rainfall.data, tr
             cmap='Greens',  vmin=0., vmax=50.)
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 from quagmire import function as fn
 
-ones = fn.parameter(1.0, mesh=mesh)
+ones = fn.parameter(1.0)
 cumulative_flow_0 = np.log10(1.0e-20 + mesh.upstream_integral_fn(runoff_var).evaluate(mesh))
 cumulative_flow_0[mesh.topography.data < 6.37] = 0.0
 
@@ -219,7 +217,7 @@ cumulative_area = np.log10(1.0e-20 + mesh.upstream_integral_fn(ones).evaluate(me
 cumulative_area[mesh.topography.data < 6.37] = 0.0
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 import lavavu
 import stripy
 
@@ -262,4 +260,16 @@ tris.colourmap('#999999 #222222', range=(6.363,6.377))  # This is a good choice 
 lv.control.Panel()
 lv.control.ObjectList()
 lv.control.show()
+```
+
+```{code-cell} ipython3
+
+```
+
+```{code-cell} ipython3
+
+```
+
+```{code-cell} ipython3
+
 ```

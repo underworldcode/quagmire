@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-## Geoscience Australia 9s DEM Map of Tasmania
+# Geoscience Australia 9s DEM Map of Tasmania
 
 Here we show a workflow for handling the higher resolution (9 arc second) DEM of Tasmania supplied by Geoscience Australia. This has been clipped using gdaltranslate to capture the area of interest and save it as a geotiff file. This has roughly 2.4 million points on the island of Tasmania. This DEM is hydrologically enforced at the outset and therefore serves as a consistency test for the `quagmire` flow algorithms etc. 
 
@@ -20,7 +20,7 @@ In this notebook, we read the original DEM, check it for consistency and (SPOILE
 We then save the processed DEM ... 
 (TODO: parallel HDF5 would be better)
 
-### Dependencies
+## Dependencies
 
   - `quagmire` 
   - `gdal`     - used to read and write geotiff files

@@ -3,6 +3,9 @@
 ## 0.9.6b1
 
   - Added changelog !
+  - Fix notebooks:
+    - Proper title hierarchy
+
 
 ## 0.9.5 
 
