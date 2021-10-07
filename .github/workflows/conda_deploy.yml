@@ -14,6 +14,7 @@ on:
     branches:
       - master
       - dev 
+      - conda-testing
 
 jobs:
   conda_build_test_deploy:

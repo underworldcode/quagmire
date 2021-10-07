@@ -23,8 +23,6 @@ The documentation is in the form of jupyter notebooks that are online in the for
   - API documentation [https://underworldcode.github.io/stripy/quagmire/0.9.6b1_api](https://underworldcode.github.io/stripy/quagmire/0.9.6b1_api)
 
 
-
-
 ## Demonstration
 
 [![Launch Demo](https://img.shields.io/badge/Launch-Quagmire_Demo-Blue)](https://demon.underworldcloud.org/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Funderworld-community%2Fquagmire-examples-and-workflows&urlpath=lab%2Ftree%2Fquagmire-examples-and-workflows%2F0-StartHere.ipynb)

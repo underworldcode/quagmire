@@ -6,6 +6,7 @@
   - Fix notebooks:
     - Proper title hierarchy
 
+
 ## 0.9.5 
 
   - [Notebooks](https://underworldcode.github.io/quagmire/0.9.5)
