@@ -259,10 +259,10 @@ class PixMesh(_CommonMesh):
         """
         grid = np.array(zdata).reshape(self.ny, self.nx)
         
-        icoords = np.array(np.c_[xi,yi], dtype=np.float)
+        icoords = np.array(np.c_[xi,yi], dtype=np.float32)
 
         # check if inside bounds
-        inside_bounds = np.zeros(icoords.shape[0], dtype=np.bool)
+        inside_bounds = np.zeros(icoords.shape[0], dtype=bool)
         inside_bounds += icoords[:,0] < self.minX
         inside_bounds += icoords[:,0] > self.maxX
         inside_bounds += icoords[:,1] < self.minY
@@ -282,7 +282,7 @@ class PixMesh(_CommonMesh):
         # now interpolate
         ival = _map_coordinates(grid.T, icoords.T, order=order, mode='nearest')
         
-        return ival, inside_bounds.astype(np.int)
+        return ival, inside_bounds.astype(PETSc.IntType)
 
     def derivatives(self, PHI, **kwargs):
         return self.derivative_grad(PHI, **kwargs)
@@ -384,8 +384,8 @@ class PixMesh(_CommonMesh):
         numpy array for efficient lookup.
         """
 
-        natural_neighbours = np.empty((self.npoints, 9), dtype=np.int)
-        nodes = np.arange(0, self.npoints, dtype=np.int).reshape(self.ny,self.nx)
+        natural_neighbours = np.empty((self.npoints, 9), dtype=PETSc.IntType)
+        nodes = np.arange(0, self.npoints, dtype=PETSc.IntType).reshape(self.ny,self.nx)
         index = np.pad(nodes, (1,1), mode='constant', constant_values=-1)
 
 
@@ -441,14 +441,14 @@ class PixMesh(_CommonMesh):
         corners = [0, self.nx-1, -self.nx, -1]
 
         # interior nodes have 3*3 neighbours (including self)
-        neighbours = np.full(self.npoints, 9, dtype=np.int)
+        neighbours = np.full(self.npoints, 9, dtype=PETSc.IntType)
         neighbours[~self.bmask] = 6 # walls have 3*2 neighbours
         neighbours[corners] = 4 # corners have 4 neighbours
 
         self.near_neighbours = neighbours + 2
         self.extended_neighbours = np.full_like(neighbours, size)
 
-        # self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=np.bool)
+        # self.near_neighbour_mask = np.zeros_like(self.neighbour_cloud, dtype=bool)
 
         # for node in range(0,self.npoints):
         #     self.near_neighbour_mask[node, 0:self.near_neighbours[node]] = True

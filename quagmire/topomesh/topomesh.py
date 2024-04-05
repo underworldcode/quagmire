@@ -677,7 +677,7 @@ class TopoMesh(object):
         """
 
         """
-        chain = -np.ones(self.npoints, dtype=np.int32)
+        chain = -np.ones(self.npoints, dtype=PETSc.IntType32)
 
         idx = 0
         max_idx = self.npoints
@@ -717,7 +717,7 @@ class TopoMesh(object):
         """
 
         """
-        self.node_chain_lookup = -np.ones(self.npoints, dtype=np.int32)
+        self.node_chain_lookup = -np.ones(self.npoints, dtype=PETSc.IntType32)
         self.node_chain_list = []
         node_chain_idx = 1
 
@@ -852,7 +852,7 @@ class TopoMesh(object):
         my_glow_points = self.lgmap_row.apply(my_low_points.astype(PETSc.IntType))
 
         t = perf_counter()
-        ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(np.int)
+        ctmt = self.uphill_propagation(my_low_points,  my_glow_points, its=its, fill=-999999).astype(PETSc.IntType)
 
         height = self.topography.data.copy()
 
@@ -1077,7 +1077,7 @@ class TopoMesh(object):
 
         # from petsc4py import PETSc
 
-        nodes = np.arange(0, self.npoints, dtype=np.int)
+        nodes = np.arange(0, self.npoints, dtype=PETSc.IntType)
         gnodes = self.lgmap_row.apply(nodes.astype(PETSc.IntType))
 
         low_nodes = self.down_neighbour[1]
@@ -1142,7 +1142,7 @@ class TopoMesh(object):
         Identify the (boundary) outflow points and return an array of (local) node indices
         """
 
-        # nodes = np.arange(0, self.npoints, dtype=np.int)
+        # nodes = np.arange(0, self.npoints, dtype=PETSc.IntType)
         # low_nodes = self.down_neighbour[1]
         # mask = np.logical_and(nodes == low_nodes, self.bmask == False)
         #

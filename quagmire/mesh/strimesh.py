@@ -494,7 +494,7 @@ class sTriMesh(_CommonMesh):
         lend = self.tri.lend
         lptr = self.tri.lptr
 
-        segments_array = np.empty((len(lptr),2),dtype=np.int)
+        segments_array = np.empty((len(lptr),2),dtype=PETSc.IntType)
         segments_array[:,0] = np.abs(lst[:]) - 1
         segments_array[:,1] = np.abs(lst[lptr[:]-1]) - 1
         
@@ -511,7 +511,7 @@ class sTriMesh(_CommonMesh):
         istart = np.zeros_like(iend)
         istart[1:] = iend[:-1]
 
-        natural_neighbours = np.full((self.npoints, natural_neighbours_count.max()+1), -1, dtype=np.int)
+        natural_neighbours = np.full((self.npoints, natural_neighbours_count.max()+1), -1, dtype=PETSc.IntType)
 
         for j in range(0,self.npoints):
             natural_neighbours[j, 0] = j

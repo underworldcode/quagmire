@@ -185,7 +185,7 @@ class CommonMesh(object):
             pt_range = np.logical_and(labelIS.indices >= pStart, labelIS.indices < pEnd)
             indices = labelIS.indices[pt_range] - pStart
         else:
-            indices = np.zeros((0,), dtype=np.int)
+            indices = np.zeros((0,), dtype=PETSc.IntType)
 
         return indices
 

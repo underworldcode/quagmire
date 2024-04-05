@@ -581,10 +581,10 @@ def _create_DMPlex(points, simplices, boundary_vertices=None, refinement_levels=
     mesh_type = {2: "TriMesh", 3: "sTriMesh"}
 
     if PETSc.COMM_WORLD.rank == 0:
-        coords = _np.array(points, dtype=_np.float)
+        coords = _np.array(points, dtype=_np.float32)
         cells  = simplices.astype(PETSc.IntType)
     else:
-        coords = _np.zeros((0,ndim), dtype=_np.float)
+        coords = _np.zeros((0,ndim), dtype=_np.float32)
         cells  = _np.zeros((0,3), dtype=PETSc.IntType)
 
     dim = 2
@@ -1011,6 +1011,6 @@ def map_global_raster_to_strimesh(mesh, latlongrid, order=3, origin="lower", uni
 
     icoords = np.array((ilons, ilats))
 
-    mvals = ndimage.map_coordinates(raster, icoords , order=order, mode='nearest').astype(np.float)
+    mvals = ndimage.map_coordinates(raster, icoords , order=order, mode='nearest').astype(np.float32)
 
     return mvals
