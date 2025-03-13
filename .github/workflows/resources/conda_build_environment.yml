@@ -10,5 +10,7 @@ dependencies:
   - conda-build 
   - conda-verify
   - anaconda-client
+  - meson
+  - meson-python
 
 
