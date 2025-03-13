@@ -1,3 +1,33 @@
 [build-system]
-requires = ["setuptools >= 40.6.0", "numpy >= 1.16"]
-build-backend = "setuptools.build_meta"
+requires = ["setuptools >= 40.6.0", "wheel", "numpy >= 1.26", 'meson', 'meson-python']
+build-backend = "mesonpy"
+
+[project]
+name = "quagmire"
+authors = [
+  {name = "Ben Mather", email = "ben.mather@sydney.edu.au"},
+  {name = "Julian Giordani", email = "julian.giordani@sydney.edu.au"},
+]
+version = "0.9.7b1"
+readme = {file = "README.md", content-type = "text/markdown"}
+license = {file = "LICENCE"}
+description = "Python surface process framework on highly scalable unstructured meshes"
+dependencies = [ 
+  'numpy>=1.16.0',
+  'scipy>=1.0.0',
+  'stripy>=1.2',
+  'petsc4py',
+  'mpi4py',
+  'h5py',
+  'pint'
+]
+classifiers = [ 
+  "Programming Language :: Python :: 2",
+  "Programming Language :: Python :: 2.7",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.5",
+  "Programming Language :: Python :: 3.6",
+  "Programming Language :: Python :: 3.7"
+]
+
+
