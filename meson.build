@@ -1,6 +1,6 @@
 project( 'quagmire',
     'fortran', 'c', 
-    version:'0.9.7b1',
+    version:'0.9.7b0',
     license:'GPLv3',
     meson_version: '>=1.4.0',
     default_options : ['warning_level=2', 'python.install_env=auto'])
