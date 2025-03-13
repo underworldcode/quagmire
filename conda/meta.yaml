@@ -16,6 +16,7 @@ requirements:
     - make
     - pkg-config
     - setuptools
+    - meson-python
     - numpy >=1.16
   host:
     - python
