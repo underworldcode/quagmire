@@ -1,0 +1,20 @@
+name: sp 
+channels:
+  - conda-forge
+dependencies:
+  - python==3.12
+  - numpy<2
+  - scipy
+  - petsc4py==3.21.5
+  - mpi4py
+  - numpy<2
+  - h5py=*=mpi*
+  - pytest
+  - matplotlib
+  - jupyterlab
+  - jupytext
+  - pip 
+  - pip:
+    - lavavu
+    - k3d
+
